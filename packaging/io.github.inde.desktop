@@ -1,0 +1,10 @@
+[Desktop Entry]
+Type=Application
+Name=INDE
+Comment=Integrated Narrative Development Environment
+Exec=inde
+Icon=accessories-text-editor
+Terminal=false
+Categories=Office;GTK;
+MimeType=application/x-inde-project;
+

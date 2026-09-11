@@ -1,0 +1,67 @@
+INDE NON-COMMERCIAL EDUCATIONAL LICENSE 1.0
+
+Copyright (c) 2026 Roger Cardoso <r0g3r183@gmail.com>
+
+This license applies to the original INDE source code and repository files
+marked as covered by it. Third-party components keep their own licenses, listed
+in THIRD_PARTY_NOTICES.md.
+
+1. Permission
+
+Subject to the conditions below, the copyright holder grants a non-exclusive,
+worldwide, royalty-free license to view, copy, compile, run, modify, and
+redistribute the covered code solely for personal non-commercial use, student
+work, teaching, learning, or non-commercial university, educational, or
+research use.
+
+Notwithstanding the non-commercial limitation on the covered code itself, you are
+fully permitted to run the unmodified, compiled, or officially distributed
+binary version of the program to create, produce, edit, and publish literary
+works, artistic content, and intellectual property, including for commercial
+purposes or monetary gain.
+
+You may redistribute source or compiled copies of the code only for non-commercial
+purposes and only under this same license. You may charge only the actual cost of
+physical media or reasonable delivery, not a license fee or commercial service fee.
+
+2. Attribution and notices
+
+Every redistribution, substantial excerpt, or public derivative must retain
+this license, the copyright notice above, and THIRD_PARTY_NOTICES.md. Visible
+attribution must identify “INDE — Integrated Narrative Development Environment”
+and link to https://github.com/Roger-Cardoso/inde.
+
+Modified versions must state prominently that they were modified and must not
+present universities, schools, or users with an official INDE release.
+
+3. Restrictions
+
+You may not use the covered source code, modified versions of the code, or derivative
+software products for commercial use, commercial distribution, a paid software
+product or service, advertising or sponsored delivery, monetized hosting (e.g., SaaS),
+or any activity whose primary purpose is commercial advantage or monetary compensation
+derived from the software itself. You may not sublicense it under another license or
+remove attribution and license notices.
+
+4. Works Created with INDE (Output Ownership)
+
+The copyright holder claims no ownership, rights, or royalties over the works,
+texts, stories, documents, or intellectual property created, authored, or produced
+by users using the program. Users retain full ownership and commercial rights
+over their own output and generated content.
+
+5. No trademark or patent license
+
+This license grants no trademark rights and no patent license. “INDE” and any
+project logos remain distinct from the rights granted here.
+
+6. Disclaimer
+
+THE COVERED CODE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+NON-INFRINGEMENT. TO THE MAXIMUM EXTENT PERMITTED BY LAW, THE COPYRIGHT HOLDER
+IS NOT LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY ARISING FROM THE CODE OR
+ITS USE.
+
+For commercial licensing of the source code, custom terms, or rights outside this
+license, contact r0g3r183@gmail.com.
