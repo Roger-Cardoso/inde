@@ -2,9 +2,9 @@
 Type=Application
 Name=INDE
 Comment=Integrated Narrative Development Environment
-Exec=inde
-Icon=accessories-text-editor
+Exec=inde %f
+Icon=inde
 Terminal=false
-Categories=Office;GTK;
+Categories=Office;TextEditor;GTK;
 MimeType=application/x-inde-project;
-
+StartupWMClass=io.github.inde

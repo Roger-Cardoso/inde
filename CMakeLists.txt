@@ -77,9 +77,33 @@ target_include_directories(inde PRIVATE include)
 target_link_libraries(inde PRIVATE inde_core PkgConfig::GTKMM)
 target_compile_options(inde PRIVATE -Wall -Wextra -Wpedantic)
 
-install(TARGETS inde RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
-install(FILES packaging/io.github.inde.desktop
-        DESTINATION ${CMAKE_INSTALL_DATADIR}/applications)
+install(
+    TARGETS inde
+    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+)
+
+install(
+    FILES packaging/io.github.inde.desktop
+    DESTINATION ${CMAKE_INSTALL_DATADIR}/applications
+)
+
+install(
+    FILES assets/inde.png
+    DESTINATION ${CMAKE_INSTALL_DATADIR}/icons/hicolor/256x256/apps
+    RENAME inde.png
+)
+
+install(
+    FILES packaging/io.github.inde.xml
+    DESTINATION ${CMAKE_INSTALL_DATADIR}/mime/packages
+)
+
+install(
+    FILES
+        LICENSE
+        THIRD_PARTY_NOTICES.md
+    DESTINATION ${CMAKE_INSTALL_DATADIR}/doc/inde
+)
 
 include(CTest)
 if(BUILD_TESTING)
