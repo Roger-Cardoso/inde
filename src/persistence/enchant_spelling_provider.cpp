@@ -1,6 +1,7 @@
 #include "inde/persistence/enchant_spelling_provider.hpp"
 
 #include <algorithm>
+#include <cstdlib>
 #include <dlfcn.h>
 #include <stdexcept>
 #include <utility>
@@ -9,6 +10,7 @@ namespace inde::persistence {
 
 struct EnchantSpellingProvider::Impl {
   using BrokerInit = void *(*)();
+  using SetPrefixDir = void (*)(const char *);
   using BrokerFree = void (*)(void *);
   using RequestDict = void *(*)(void *, const char *);
   using FreeDict = void (*)(void *, void *);
@@ -36,6 +38,18 @@ struct EnchantSpellingProvider::Impl {
     library = dlopen("libenchant-2.so.2", RTLD_NOW | RTLD_LOCAL);
     if (!library)
       return;
+    const auto set_prefix_dir =
+        symbol<SetPrefixDir>("enchant_set_prefix_dir");
+    if (set_prefix_dir) {
+      if (const auto *prefix = std::getenv("INDE_ENCHANT_PREFIX_DIR");
+          prefix && *prefix) {
+        set_prefix_dir(prefix);
+      } else if (const auto *appdir = std::getenv("APPDIR");
+                 appdir && *appdir) {
+        const auto prefix_dir = std::string(appdir) + "/usr";
+        set_prefix_dir(prefix_dir.c_str());
+      }
+    }
     const auto broker_init = symbol<BrokerInit>("enchant_broker_init");
     broker_free = symbol<BrokerFree>("enchant_broker_free");
     const auto request_dict =

@@ -5,7 +5,14 @@
 
 namespace inde::ui {
 
-enum class WorkspaceId { Catalog, Planning, Writing, Editorial, Graphs };
+enum class WorkspaceId {
+  Catalog,
+  Planning,
+  Writing,
+  Editorial,
+  Graphs,
+  Cartography
+};
 
 [[nodiscard]] std::string_view workspace_name(WorkspaceId workspace) noexcept;
 
@@ -24,6 +31,7 @@ private:
     Gtk::ToggleButton writing_button_{"Escrita"};
     Gtk::ToggleButton editorial_button_{"Editorial"};
     Gtk::ToggleButton graphs_button_{"Gráficos"};
+    Gtk::ToggleButton cartography_button_{"Cartografia"};
     Gtk::Stack stack_;
     WorkspaceId current_{WorkspaceId::Editorial};
 };

@@ -14,6 +14,8 @@ std::string_view workspace_name(WorkspaceId workspace) noexcept {
     return "editorial";
   case WorkspaceId::Graphs:
     return "graphs";
+  case WorkspaceId::Cartography:
+    return "cartography";
   }
   return "editorial";
 }
@@ -30,16 +32,19 @@ WorkspaceShell::WorkspaceShell() : Gtk::Box(Gtk::Orientation::VERTICAL, 12) {
   navigation_.append(writing_button_);
   navigation_.append(editorial_button_);
   navigation_.append(graphs_button_);
+  navigation_.append(cartography_button_);
   planning_button_.set_group(catalog_button_);
   writing_button_.set_group(catalog_button_);
   editorial_button_.set_group(catalog_button_);
   graphs_button_.set_group(catalog_button_);
+  cartography_button_.set_group(catalog_button_);
 
   catalog_button_.set_action_name("win.show-catalog");
   planning_button_.set_action_name("win.show-planning");
   writing_button_.set_action_name("win.show-writing");
   editorial_button_.set_action_name("win.show-editorial");
   graphs_button_.set_action_name("win.show-graphs");
+  cartography_button_.set_action_name("win.show-cartography");
 
   stack_.set_vexpand(true);
   stack_.set_hexpand(true);
@@ -65,6 +70,7 @@ void WorkspaceShell::show(WorkspaceId workspace) {
   writing_button_.set_active(workspace == WorkspaceId::Writing);
   editorial_button_.set_active(workspace == WorkspaceId::Editorial);
   graphs_button_.set_active(workspace == WorkspaceId::Graphs);
+  cartography_button_.set_active(workspace == WorkspaceId::Cartography);
 }
 
 } // namespace inde::ui

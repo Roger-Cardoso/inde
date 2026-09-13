@@ -22,6 +22,7 @@
 
 #include <algorithm>
 #include <cassert>
+#include <chrono>
 #include <cstdio>
 #include <filesystem>
 #include <fstream>
@@ -651,7 +652,28 @@ void insert_database_project(inde::persistence::SqliteDatabase &database,
   insert.run();
 }
 
+void downgrade_v15_to_v14(inde::persistence::SqliteDatabase &database) {
+  database.execute("DROP TABLE cartographic_terrain_locks;"
+                   "ALTER TABLE cartographic_planets DROP COLUMN "
+                   "terrain_revision;"
+                   "DELETE FROM schema_migrations WHERE version=15;");
+}
+
+void downgrade_v14_to_v13(inde::persistence::SqliteDatabase &database) {
+  downgrade_v15_to_v14(database);
+  database.execute("DROP TRIGGER cartographic_local_type_guard;"
+                   "DROP TABLE cartographic_positions;"
+                   "DROP TABLE cartographic_position_index;"
+                   "DROP TABLE cartographic_chunks;"
+                   "DROP TABLE cartographic_planets;"
+                   "DELETE FROM schema_migrations WHERE version=14;");
+}
+
 void downgrade_v12_to_v11(inde::persistence::SqliteDatabase &database) {
+  downgrade_v14_to_v13(database);
+  database.execute("DROP TABLE document_text_references;"
+                   "DROP INDEX document_anchors_identity_idx;"
+                   "DELETE FROM schema_migrations WHERE version = 13;");
   database.execute("DROP TRIGGER editorial_nodes_structure_insert_guard;"
                    "DROP TRIGGER editorial_nodes_structure_update_guard;"
                    "DROP TRIGGER editorial_nodes_structure_default;"
@@ -3379,6 +3401,200 @@ void temporal_view_context_has_explicit_window_scope_and_limits() {
   assert(incompatible_point_rejected);
 }
 
+void textual_references_preserve_identity_and_protect_sources() {
+  using namespace inde;
+  TemporaryDirectory temporary;
+  setenv("XDG_CONFIG_HOME", (temporary.path / "config").c_str(), 1);
+  application::ProjectService service;
+  const auto original_path =
+      service.create(temporary.path / "Referências", "Referências").path();
+  auto source = service.writing().create_document("Guia");
+  auto target = service.writing().create_document("Profecia Ω");
+  target.content = "Ação 🌍\nQuando a lua surgir, voltaremos.";
+  const auto anchor_id = project::new_uuid();
+  target.anchors.push_back({anchor_id, "Juramento", 7, 37});
+  target = service.writing().update_document(target);
+  const auto third = service.writing().create_document("Apêndice");
+  const auto rejected = [](auto operation) {
+    bool failed = false;
+    try {
+      operation();
+    } catch (const std::exception &) {
+      failed = true;
+    }
+    assert(failed);
+  };
+
+  // Migração aditiva de v12 preserva corpo e identidade de âncora existentes.
+  service.close();
+  {
+    persistence::SqliteDatabase db(
+        persistence::ProjectDatabaseRepository::database_path(original_path));
+    downgrade_v14_to_v13(db);
+    db.execute("DROP TABLE document_text_references; DROP INDEX "
+               "document_anchors_identity_idx;"
+               "DELETE FROM schema_migrations WHERE version = 13;");
+    assert(persistence::SchemaMigrator{}.current_version(db) == 12);
+  }
+  service.open(original_path);
+  assert(service.writing().document(target.id)->content == target.content);
+  assert(service.writing().document(target.id)->anchors.front().id ==
+         anchor_id);
+  assert(service.writing().text_references({target.id, true}).total == 0);
+
+  const auto link = service.writing().add_text_reference(
+      source.id, target.id, anchor_id, "Fonte canônica");
+  const auto whole = service.writing().add_text_reference(source.id, target.id);
+  const auto other =
+      service.writing().add_text_reference(third.id, target.id, anchor_id);
+  assert(service.writing().text_references({target.id, true}).total == 3);
+  assert(
+      service.writing().text_references({target.id, true, anchor_id}).total ==
+      2);
+  const auto outgoing = service.writing().text_references({source.id, false});
+  assert(outgoing.total == 2);
+  auto query = persistence::WritingStore::TextReferenceQuery{
+      target.id, true, std::nullopt, 1, 0};
+  const auto first = service.writing().text_references(query);
+  assert(first.items.size() == 1 && first.total == 3);
+  query.offset = 1;
+  const auto second = service.writing().text_references(query);
+  assert(second.items.size() == 1 &&
+         first.items[0].reference.id != second.items[0].reference.id);
+  query.offset = 100;
+  assert(service.writing().text_references(query).items.empty());
+  query.limit = 0;
+  rejected(
+      [&] { static_cast<void>(service.writing().text_references(query)); });
+  query.limit = 501;
+  rejected(
+      [&] { static_cast<void>(service.writing().text_references(query)); });
+  rejected([&] {
+    static_cast<void>(
+        service.writing().add_text_reference(source.id, target.id, anchor_id));
+  });
+  rejected([&] {
+    static_cast<void>(
+        service.writing().add_text_reference(source.id, target.id));
+  });
+  rejected([&] {
+    static_cast<void>(
+        service.writing().add_text_reference(source.id, source.id));
+  });
+  rejected([&] {
+    static_cast<void>(
+        service.writing().add_text_reference(source.id, third.id, anchor_id));
+  });
+  rejected([&] {
+    static_cast<void>(
+        service.writing().add_text_reference(source.id, "missing"));
+  });
+  rejected([&] { service.writing().remove_text_reference(third.id, link.id); });
+
+  // A FK protege também chamadas diretas ao repositório, inclusive contra
+  // âncora pertencente a outro Documento e gravações parciais no change_log.
+  persistence::SqliteWritingRepository repository;
+  const auto change_count = [&] {
+    persistence::SqliteDatabase db(
+        persistence::ProjectDatabaseRepository::database_path(original_path));
+    return db.query_integer("SELECT count(*) FROM change_log");
+  };
+  const auto changes_before_rejections = change_count();
+  auto invalid = link;
+  invalid.id = project::new_uuid();
+  invalid.target_document_id = third.id;
+  rejected([&] { repository.add_text_reference(original_path, invalid); });
+  invalid.target_document_id = "missing";
+  invalid.target_anchor_id.reset();
+  rejected([&] { repository.add_text_reference(original_path, invalid); });
+  rejected([&] { service.writing().delete_document(target.id); });
+  rejected([&] { repository.remove(original_path, target.id); });
+  auto without_anchor = target;
+  without_anchor.anchors.clear();
+  without_anchor.content = "Não deve ser salvo";
+  rejected([&] {
+    static_cast<void>(service.writing().update_document(without_anchor));
+  });
+  rejected([&] { repository.save(original_path, without_anchor); });
+  assert(service.writing().document(target.id)->content == target.content);
+  assert(change_count() == changes_before_rejections);
+
+  target.title = "Profecia renomeada";
+  target.anchors.front().label = "Promessa";
+  target.content = "Antes: " + target.content;
+  target.anchors.front().start_offset += 7;
+  target.anchors.front().end_offset += 7;
+  target = service.writing().update_document(target);
+  auto changed =
+      service.writing().text_references({source.id, false, anchor_id});
+  assert(changed.items.front().reference.id == link.id);
+  assert(changed.items.front().target_title == target.title);
+  assert(changed.items.front().target_anchor_label == "Promessa");
+  assert(service.writing().document(source.id)->content.empty());
+  service.close();
+  service.open(original_path);
+  assert(service.writing().text_references({target.id, true}).total == 3);
+
+  // Salvar como conserva as referências com nova identidade do Projeto.
+  const auto copied_path = service.save_as(temporary.path / "Cópia").path();
+  assert(copied_path != original_path);
+  assert(service.writing().text_references({target.id, true}).total == 3);
+  // Consultar usos não exige bloqueio de escrita nem materializa o corpo.
+  {
+    persistence::SqliteDatabase writer(
+        persistence::ProjectDatabaseRepository::database_path(copied_path));
+    persistence::SqliteTransaction pending(writer);
+    assert(service.writing().text_references({target.id, true}).total == 3);
+  }
+  service.writing().delete_document(source.id);
+  assert(service.writing().text_references({target.id, true}).total == 1);
+  service.writing().remove_text_reference(third.id, other.id);
+  target.anchors.clear();
+  target = service.writing().update_document(target);
+  service.writing().delete_document(target.id);
+  service.close();
+  service.open(original_path);
+  assert(service.writing().text_references({target.id, true}).total == 3);
+  assert(service.writing().document(target.id)->anchors.front().id ==
+         anchor_id);
+  for (const auto &path : {original_path, copied_path}) {
+    persistence::SqliteDatabase db(
+        persistence::ProjectDatabaseRepository::database_path(path));
+    assert(db.query_text("PRAGMA integrity_check") == "ok");
+    auto fk = db.prepare("PRAGMA foreign_key_check");
+    assert(!fk.step());
+  }
+
+  // Paginação real acima do tamanho da UI, com fonte de 1 MiB.
+  target = *service.writing().document(target.id);
+  target.content += std::string(1024 * 1024, 'x');
+  target = service.writing().update_document(target);
+  for (int index = 0; index < 65; ++index) {
+    const auto consumer =
+        service.writing().create_document("Uso " + std::to_string(index));
+    static_cast<void>(service.writing().add_text_reference(
+        consumer.id, target.id, anchor_id));
+  }
+  auto page_query =
+      persistence::WritingStore::TextReferenceQuery{target.id, true};
+  const auto page_a = service.writing().text_references(page_query);
+  page_query.offset = 50;
+  const auto page_b = service.writing().text_references(page_query);
+  assert(page_a.total == 68 && page_a.items.size() == 50 &&
+         page_b.items.size() == 18);
+  for (const auto &a : page_a.items)
+    for (const auto &b : page_b.items)
+      assert(a.reference.id != b.reference.id);
+  const auto started = std::chrono::steady_clock::now();
+  for (int index = 0; index < 100; ++index)
+    assert(service.writing().text_references(page_query).total == 68);
+  const auto ms = std::chrono::duration<double, std::milli>(
+                      std::chrono::steady_clock::now() - started)
+                      .count();
+  std::cout << "Referências textuais: 68 usos, fonte 1 MiB, página 50; média "
+            << ms / 100.0 << " ms/consulta.\n";
+}
+
 } // namespace
 
 int main() {
@@ -3414,6 +3630,7 @@ int main() {
   narrative_foundation_enforces_identity_and_relations();
   narrative_foundation_survives_save_as_independently();
   writing_documents_persist_without_collapsing_editorial_identity();
+  textual_references_preserve_identity_and_protect_sources();
   planning_places_events_in_explicit_fictional_time();
   temporal_queries_are_limited_inside_the_selected_axis();
   narrative_editorial_links_preserve_layer_boundaries();

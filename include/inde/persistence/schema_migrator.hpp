@@ -4,7 +4,7 @@ namespace inde::persistence {
 
 class SqliteDatabase;
 
-inline constexpr int current_database_schema_version = 12;
+inline constexpr int current_database_schema_version = 15;
 
 class SchemaMigrator {
 public:
@@ -24,6 +24,9 @@ private:
   static void apply_version_10(SqliteDatabase &database);
   static void apply_version_11(SqliteDatabase &database);
   static void apply_version_12(SqliteDatabase &database);
+  static void apply_version_13(SqliteDatabase &database);
+  static void apply_version_14(SqliteDatabase &database);
+  static void apply_version_15(SqliteDatabase &database);
 };
 
 } // namespace inde::persistence

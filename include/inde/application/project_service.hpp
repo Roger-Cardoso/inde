@@ -1,5 +1,6 @@
 #pragma once
 
+#include "inde/application/cartography_service.hpp"
 #include "inde/application/catalog_service.hpp"
 #include "inde/application/narrative_service.hpp"
 #include "inde/application/planning_service.hpp"
@@ -11,6 +12,7 @@
 #include "inde/persistence/project_database_repository.hpp"
 #include "inde/persistence/project_repository.hpp"
 #include "inde/persistence/recent_projects_store.hpp"
+#include "inde/persistence/sqlite_cartography_repository.hpp"
 #include "inde/persistence/sqlite_catalog_repository.hpp"
 #include "inde/persistence/sqlite_narrative_repository.hpp"
 #include "inde/persistence/sqlite_planning_repository.hpp"
@@ -56,6 +58,12 @@ public:
     return structure_model_service_;
   }
   [[nodiscard]] WritingService &writing() noexcept { return writing_service_; }
+  [[nodiscard]] CartographyService &cartography() noexcept {
+    return cartography_service_;
+  }
+  [[nodiscard]] const CartographyService &cartography() const noexcept {
+    return cartography_service_;
+  }
   [[nodiscard]] const WritingService &writing() const noexcept {
     return writing_service_;
   }
@@ -120,6 +128,7 @@ private:
   persistence::SqliteNarrativeRepository narrative_repository_;
   persistence::SqlitePlanningRepository planning_repository_;
   persistence::SqliteWritingRepository writing_repository_;
+  persistence::SqliteCartographyRepository cartography_repository_;
   ProjectSession session_;
   CatalogService catalog_service_{session_, catalog_repository_};
   StructuralService structural_service_{session_, structural_repository_,
@@ -131,6 +140,7 @@ private:
   PlanningService planning_service_{session_, planning_repository_,
                                     narrative_repository_};
   WritingService writing_service_{session_, writing_repository_};
+  CartographyService cartography_service_{session_, cartography_repository_};
   PlanningContext planning_context_;
 };
 

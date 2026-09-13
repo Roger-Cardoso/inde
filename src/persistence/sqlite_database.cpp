@@ -152,6 +152,29 @@ void SqliteStatement::check_column(int index) const {
   }
 }
 
+void SqliteStatement::bind_blob(int index,
+                                std::span<const std::uint8_t> value) {
+  // A non-null pointer distinguishes an empty BLOB from SQL NULL.
+  static const std::uint8_t empty = 0;
+  const int code = sqlite3_bind_blob64(statement_, index,
+                                       value.empty() ? &empty : value.data(),
+                                       value.size(), SQLITE_TRANSIENT);
+  if (code != SQLITE_OK)
+    throw_error("vincular dados binários", code);
+}
+
+std::vector<std::uint8_t> SqliteStatement::column_blob(int index) const {
+  check_column(index);
+  if (sqlite3_column_type(statement_, index) != SQLITE_BLOB)
+    throw std::runtime_error("A coluna SQLite consultada não é binária");
+  const auto size = sqlite3_column_bytes(statement_, index);
+  if (size == 0)
+    return {};
+  const auto *data =
+      static_cast<const std::uint8_t *>(sqlite3_column_blob(statement_, index));
+  return {data, data + size};
+}
+
 [[noreturn]] void SqliteStatement::throw_error(std::string_view operation,
                                                 int code) const {
   throw SqliteError(error_message(database_, operation, code), code & 0xff,
@@ -255,9 +278,9 @@ int SqliteDatabase::changes() const noexcept {
                     database_ ? sqlite3_extended_errcode(database_) : code);
 }
 
-SqliteTransaction::SqliteTransaction(SqliteDatabase &database)
+SqliteTransaction::SqliteTransaction(SqliteDatabase &database, Mode mode)
     : database_(&database) {
-  database_->execute("BEGIN IMMEDIATE");
+  database_->execute(mode == Mode::Immediate ? "BEGIN IMMEDIATE" : "BEGIN");
 }
 
 SqliteTransaction::~SqliteTransaction() {

@@ -1,0 +1,96 @@
+name: AppImage
+
+on:
+  workflow_dispatch:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
+
+jobs:
+  appimage-x86_64:
+    runs-on: ubuntu-24.04
+    container:
+      image: debian:12-slim
+    timeout-minutes: 45
+    defaults:
+      run:
+        shell: bash
+
+    steps:
+      - name: Install build and packaging dependencies
+        run: |
+          apt-get update
+          DEBIAN_FRONTEND=noninteractive apt-get install --yes --no-install-recommends \
+            appstream \
+            build-essential \
+            ca-certificates \
+            cmake \
+            curl \
+            desktop-file-utils \
+            file \
+            gh \
+            git \
+            gobject-introspection \
+            libenchant-2-2 \
+            libglib2.0-dev \
+            libgirepository1.0-dev \
+            libgtkmm-4.0-dev \
+            libhunspell-dev \
+            librsvg2-dev \
+            libsqlite3-dev \
+            imagemagick \
+            ninja-build \
+            pkg-config \
+            uuid-dev \
+            hunspell-pt-br \
+            xauth \
+            xvfb
+
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Build, test and package
+        env:
+          INDE_APPIMAGE_JOBS: "2"
+          INDE_APPIMAGE_VERSION: ${{ startsWith(github.ref, 'refs/tags/v') && github.ref_name || '0.1.0-dev' }}
+        run: |
+          version="${INDE_APPIMAGE_VERSION#v}"
+          INDE_APPIMAGE_VERSION="$version" packaging/build-appimage.sh
+
+      - name: Smoke-test the AppImage with the Atlas fixture
+        run: |
+          smoke_root="$(mktemp -d)"
+          cp -a "examples/Atlas de Véspera — Projeto Integral.inde" \
+            "$smoke_root/Atlas AppImage.inde"
+          set +e
+          xvfb-run --auto-servernum env \
+            APPIMAGE_EXTRACT_AND_RUN=1 \
+            XDG_CONFIG_HOME="$smoke_root/config" \
+            timeout 12s dist/*.AppImage "$smoke_root/Atlas AppImage.inde"
+          status=$?
+          set -e
+          test "$status" -eq 124
+
+      - name: Upload workflow artifact
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: INDE-AppImage-x86_64
+          path: |
+            dist/*.AppImage
+            dist/*.sha256
+          if-no-files-found: error
+
+      - name: Attach files to the GitHub release
+        if: startsWith(github.ref, 'refs/tags/v')
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if gh release view "$GITHUB_REF_NAME" >/dev/null 2>&1; then
+            gh release upload "$GITHUB_REF_NAME" dist/*.AppImage dist/*.sha256 --clobber
+          else
+            gh release create "$GITHUB_REF_NAME" dist/*.AppImage dist/*.sha256 \
+              --generate-notes --title "INDE $GITHUB_REF_NAME"
+          fi

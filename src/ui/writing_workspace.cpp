@@ -16,6 +16,13 @@ namespace {
 
 constexpr std::size_t reading_speed = 200;
 
+// Content actions replace a modal without going through its response footer.
+// Release the old form after the clicked callback has finished using captures.
+void retire_text_reference_dialog(OverlayDialog *dialog) {
+  dialog->hide();
+  Glib::signal_idle().connect_once([dialog] { delete dialog; });
+}
+
 void prepare_tool_label(Gtk::Label &label) {
   label.set_xalign(0.0F);
   label.set_wrap(true);
@@ -318,6 +325,8 @@ void WritingWorkspace::build_ui() {
   tools_panel_.append(anchors_title_);
   tools_panel_.append(anchor_actions_);
   tools_panel_.append(anchors_list_);
+  tools_panel_.append(anchor_usages_button_);
+  tools_panel_.append(text_references_button_);
   references_title_.add_css_class("heading");
   references_title_.set_halign(Gtk::Align::START);
   reference_actions_.append(add_reference_button_);
@@ -460,6 +469,12 @@ void WritingWorkspace::build_ui() {
       sigc::mem_fun(*this, &WritingWorkspace::rename_anchor));
   remove_anchor_button_.signal_clicked().connect(
       sigc::mem_fun(*this, &WritingWorkspace::remove_anchor));
+  text_references_button_.signal_clicked().connect(
+      [this] { show_text_references(); });
+  anchor_usages_button_.signal_clicked().connect([this] {
+    if (selected_anchor_id_)
+      show_text_references(true, selected_anchor_id_);
+  });
   add_reference_button_.signal_clicked().connect(
       sigc::mem_fun(*this, &WritingWorkspace::add_entity_reference));
   open_reference_button_.signal_clicked().connect(
@@ -1680,6 +1695,7 @@ void WritingWorkspace::refresh_anchor_list() {
   const bool selected = selected_anchor_id_.has_value();
   rename_anchor_button_.set_sensitive(selected);
   remove_anchor_button_.set_sensitive(selected);
+  anchor_usages_button_.set_sensitive(selected);
 }
 
 void WritingWorkspace::select_anchor(std::string id) {
@@ -1803,6 +1819,19 @@ void WritingWorkspace::remove_anchor() {
   if (!selected_anchor_id_)
     return;
   const auto id = *selected_anchor_id_;
+  try {
+    if (current_document_ &&
+        service_.writing()
+                .text_references({current_document_->id, true, id, 1, 0})
+                .total != 0)
+      throw std::runtime_error(
+          "Esta âncora é referenciada por outros Documentos. "
+          "Abra Usos desta âncora e desvincule as referências antes de "
+          "removê-la.");
+  } catch (const std::exception &error) {
+    show_error("Não foi possível remover a âncora", error);
+    return;
+  }
   auto found =
       std::find_if(anchor_marks_.begin(), anchor_marks_.end(),
                    [&](const auto &anchor) { return anchor.id == id; });
@@ -1971,6 +2000,225 @@ void WritingWorkspace::open_reference_entity() {
   } catch (const std::exception &error) {
     show_error("Não foi possível salvar antes de navegar", error);
   }
+}
+
+void WritingWorkspace::show_text_references(
+    bool incoming, std::optional<std::string> anchor_id, std::size_t offset) {
+  if (!current_document_ || !owner_window())
+    return;
+  try {
+    flush_changes();
+    const auto page = service_.writing().text_references(
+        {current_document_->id, incoming, anchor_id, 50, offset});
+    auto *dialog = new OverlayDialog(anchor_id ? "Usos desta âncora"
+                                               : "Referências textuais",
+                                     *owner_window(), true);
+    dialog->set_secondary_text(
+        current_document_->title + " — " +
+        (incoming ? "Documentos que referenciam esta fonte."
+                  : "Fontes referenciadas por este Documento.") +
+        " O vínculo não incorpora nem copia o texto. Alterações de vínculo são "
+        "salvas imediatamente.");
+    dialog->add_button("Fechar", Gtk::ResponseType::CLOSE);
+    auto *body = dialog->get_content_area();
+    body->set_margin(16);
+    auto *modes = Gtk::make_managed<Gtk::Box>(Gtk::Orientation::HORIZONTAL, 8);
+    auto *out = Gtk::make_managed<Gtk::Button>("Referências deste Documento");
+    auto *in = Gtk::make_managed<Gtk::Button>("Usos deste Documento");
+    out->signal_clicked().connect([this, dialog] {
+      retire_text_reference_dialog(dialog);
+      show_text_references(false);
+    });
+    in->signal_clicked().connect([this, dialog] {
+      retire_text_reference_dialog(dialog);
+      show_text_references(true);
+    });
+    modes->append(*out);
+    modes->append(*in);
+    body->append(*modes);
+    if (!incoming) {
+      auto *add =
+          Gtk::make_managed<Gtk::Button>("Referenciar Documento ou âncora");
+      add->signal_clicked().connect([this, dialog] {
+        retire_text_reference_dialog(dialog);
+        add_text_reference();
+      });
+      body->append(*add);
+    }
+    auto *summary = Gtk::make_managed<Gtk::Label>(
+        page.total == 0
+            ? "Nenhuma referência explícita neste contexto."
+            : "Exibindo " +
+                  std::to_string(page.items.empty() ? 0 : offset + 1) + "–" +
+                  std::to_string(offset + page.items.size()) + " de " +
+                  std::to_string(page.total) + " referências.");
+    prepare_tool_label(*summary);
+    body->append(*summary);
+    for (const auto &item : page.items) {
+      auto *row = Gtk::make_managed<Gtk::Box>(Gtk::Orientation::VERTICAL, 4);
+      auto *label = Gtk::make_managed<Gtk::Label>(
+          item.source_title + " → " + item.target_title + " — " +
+          item.target_anchor_label.value_or("Documento inteiro"));
+      prepare_tool_label(*label);
+      row->append(*label);
+      if (!item.reference.notes.empty()) {
+        auto *note = Gtk::make_managed<Gtk::Label>(item.reference.notes);
+        prepare_tool_label(*note);
+        row->append(*note);
+      }
+      auto *actions =
+          Gtk::make_managed<Gtk::Box>(Gtk::Orientation::HORIZONTAL, 8);
+      auto *open = Gtk::make_managed<Gtk::Button>(
+          incoming ? "Abrir Documento que usa" : "Abrir fonte");
+      open->signal_clicked().connect([this, dialog, item, incoming] {
+        retire_text_reference_dialog(dialog);
+        const auto id = incoming ? item.reference.source_document_id
+                                 : item.reference.target_document_id;
+        open_document(id);
+        if (!incoming && item.reference.target_anchor_id && current_document_ &&
+            current_document_->id == id) {
+          select_anchor(*item.reference.target_anchor_id);
+          open_selected_anchor();
+        }
+        if (tools_visible_)
+          toggle_tools();
+      });
+      auto *remove = Gtk::make_managed<Gtk::Button>("Desvincular");
+      remove->signal_clicked().connect(
+          [this, dialog, item, incoming, anchor_id] {
+            retire_text_reference_dialog(dialog);
+            auto *confirm = new OverlayDialog("Desvincular referência textual",
+                                              *owner_window(), true);
+            confirm->set_secondary_text(
+                item.source_title + " → " + item.target_title + " — " +
+                item.target_anchor_label.value_or("Documento inteiro") +
+                ". O conteúdo de ambos os Documentos será preservado.");
+            confirm->add_button("Cancelar", Gtk::ResponseType::CANCEL);
+            confirm->add_button("Desvincular", Gtk::ResponseType::ACCEPT);
+            confirm->signal_response().connect(
+                [this, confirm, item, incoming, anchor_id](int response) {
+                  confirm->hide();
+                  try {
+                    if (response == Gtk::ResponseType::ACCEPT)
+                      service_.writing().remove_text_reference(
+                          item.reference.source_document_id, item.reference.id);
+                    show_text_references(incoming, anchor_id);
+                  } catch (const std::exception &error) {
+                    show_error("Não foi possível desvincular", error);
+                  }
+                });
+            confirm->present();
+          });
+      actions->append(*open);
+      actions->append(*remove);
+      row->append(*actions);
+      row->set_margin_bottom(12);
+      body->append(*row);
+    }
+    auto *pages = Gtk::make_managed<Gtk::Box>(Gtk::Orientation::HORIZONTAL, 8);
+    auto *previous = Gtk::make_managed<Gtk::Button>("Anterior");
+    previous->set_sensitive(offset != 0);
+    previous->signal_clicked().connect([this, dialog, incoming, anchor_id,
+                                        offset] {
+      retire_text_reference_dialog(dialog);
+      show_text_references(incoming, anchor_id, offset >= 50 ? offset - 50 : 0);
+    });
+    auto *next = Gtk::make_managed<Gtk::Button>("Próxima");
+    next->set_sensitive(offset + page.items.size() < page.total);
+    next->signal_clicked().connect([this, dialog, incoming, anchor_id, offset] {
+      retire_text_reference_dialog(dialog);
+      show_text_references(incoming, anchor_id, offset + 50);
+    });
+    pages->append(*previous);
+    pages->append(*next);
+    body->append(*pages);
+    dialog->signal_response().connect([dialog](int) { dialog->hide(); });
+    dialog->present();
+  } catch (const std::exception &error) {
+    show_error("Não foi possível consultar referências textuais", error);
+  }
+}
+
+void WritingWorkspace::add_text_reference() {
+  if (!current_document_ || !owner_window())
+    return;
+  const auto source_id = current_document_->id;
+  auto *dialog = new OverlayDialog("Referenciar Documento ou âncora",
+                                   *owner_window(), true);
+  dialog->set_secondary_text(
+      "Escolha uma fonte. A referência preserva a identidade e abre o texto "
+      "atual, sem incorporá-lo.");
+  dialog->add_button("Cancelar", Gtk::ResponseType::CANCEL);
+  dialog->add_button("Referenciar", Gtk::ResponseType::ACCEPT);
+  auto *body = dialog->get_content_area();
+  body->set_margin(16);
+  auto *document = Gtk::make_managed<IncrementalSelector>(
+      "Pesquisar Documento de destino",
+      [this, source_id](const std::string &search, std::size_t limit) {
+        persistence::DocumentQuery query;
+        query.search = search;
+        query.limit = std::min(limit, std::size_t{50});
+        std::vector<IncrementalSelection> result;
+        for (const auto &item : service_.writing().document_summaries(query))
+          if (item.id != source_id)
+            result.push_back({item.id, item.title, "Documento do Projeto"});
+        return result;
+      });
+  auto *anchor = Gtk::make_managed<Gtk::ComboBoxText>();
+  auto *target_error = Gtk::make_managed<Gtk::Label>();
+  prepare_tool_label(*target_error);
+  target_error->set_visible(false);
+  anchor->append("none", "Documento inteiro");
+  anchor->set_active_id("none");
+  document->signal_selection_changed().connect([this, document, anchor,
+                                                target_error] {
+    target_error->set_visible(false);
+    anchor->remove_all();
+    anchor->append("none", "Documento inteiro");
+    anchor->set_active_id("none");
+    try {
+      if (document->selected_id()) {
+        const auto target =
+            service_.writing().document(*document->selected_id());
+        if (!target)
+          throw std::runtime_error("Documento de destino indisponível");
+        for (const auto &item : target->anchors)
+          anchor->append(item.id, item.label);
+      }
+    } catch (const std::exception &error) {
+      target_error->set_text(
+          std::string{"Não foi possível carregar as âncoras: "} + error.what());
+      target_error->set_visible(true);
+    }
+  });
+  auto *notes = Gtk::make_managed<Gtk::Entry>();
+  notes->set_max_length(4096);
+  append_labeled_form_field(*body, "Documento de destino", *document);
+  append_labeled_form_field(*body, "Destino no texto", *anchor);
+  body->append(*target_error);
+  append_labeled_form_field(*body, "Nota opcional", *notes);
+  dialog->signal_response().connect(
+      [this, dialog, document, anchor, notes, source_id](int response) {
+        if (response == Gtk::ResponseType::ACCEPT) {
+          try {
+            if (!document->selected_id())
+              throw std::runtime_error("Escolha um Documento de destino");
+            const auto id = anchor->get_active_id().raw();
+            static_cast<void>(service_.writing().add_text_reference(
+                source_id, *document->selected_id(),
+                id.empty() || id == "none" ? std::nullopt
+                                           : std::optional<std::string>{id},
+                notes->get_text()));
+          } catch (const std::exception &error) {
+            dialog->hide();
+            show_error("Não foi possível criar a referência textual", error);
+            return;
+          }
+        }
+        dialog->hide();
+        show_text_references();
+      });
+  dialog->present();
 }
 
 project::Document WritingWorkspace::capture_editor_state() {

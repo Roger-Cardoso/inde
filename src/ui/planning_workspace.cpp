@@ -448,6 +448,12 @@ void PlanningWorkspace::build_ui() {
   detail_context_.add_css_class("dim-label");
   detail_header_.append(back_to_explorer_button_);
   detail_header_.append(entity_actions_button_);
+  detail_header_.append(cartography_button_);
+  cartography_button_.signal_clicked().connect([this] {
+    const auto entity = selected_entity();
+    if (entity)
+      signal_cartography_requested_.emit(entity->id);
+  });
   detail_header_.append(detail_context_);
   detail_header_.add_css_class("detail-toolbar");
   detail_page_.append(detail_header_);
@@ -1701,6 +1707,9 @@ void PlanningWorkspace::refresh_details() {
   edit_button_.set_sensitive(selected);
   remove_button_.set_sensitive(selected);
   entity_actions_button_.set_sensitive(selected);
+  cartography_button_.set_visible(selected &&
+                                  found->entity_type_id ==
+                                      "00000000-0000-4000-9000-000000000002");
   if (!selected) {
     entity_name_.set_text("");
     entity_type_.set_text("");
@@ -2070,6 +2079,9 @@ void PlanningWorkspace::reveal_entity(const std::string &id) {
     context.offset = 0;
     service_.set_planning_context(std::move(context));
     offset_ = 0;
+    // Source navigation must refresh the entity explorer even when the
+    // previously visible Planning page was narrative, relations or time.
+    show_explorer_page();
     refresh();
     const auto found =
         std::find_if(page_.begin(), page_.end(),

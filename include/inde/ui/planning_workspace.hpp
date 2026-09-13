@@ -35,6 +35,9 @@ public:
   signal_filter_documents_requested() {
     return signal_filter_documents_requested_;
   }
+  sigc::signal<void(const std::string &)> &signal_cartography_requested() {
+    return signal_cartography_requested_;
+  }
 
 private:
   struct NavigationState;
@@ -208,6 +211,7 @@ private:
   Gtk::Stack relation_results_stack_;
   Gtk::Box detail_header_{Gtk::Orientation::HORIZONTAL, 8};
   Gtk::Button back_to_explorer_button_{"← Voltar aos resultados"};
+  Gtk::Button cartography_button_{"Ver no mapa"};
   Gtk::Label detail_context_;
   Gtk::Box time_header_{Gtk::Orientation::HORIZONTAL, 8};
   Gtk::Label time_page_title_{"Tempo ficcional"};
@@ -404,6 +408,7 @@ private:
   sigc::signal<void(const Glib::ustring &)> signal_status_message_;
   sigc::signal<void(const std::string &)> signal_open_document_requested_;
   sigc::signal<void(const std::string &)> signal_filter_documents_requested_;
+  sigc::signal<void(const std::string &)> signal_cartography_requested_;
 };
 
 } // namespace inde::ui

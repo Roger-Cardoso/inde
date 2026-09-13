@@ -4,6 +4,7 @@
 
 #include <algorithm>
 #include <stdexcept>
+#include <unordered_set>
 #include <utility>
 
 namespace inde::application {
@@ -167,6 +168,17 @@ WritingService::update_document(const project::Document &input) {
   project::validate(value);
   validate_organization(value);
   validate_entity_references(value);
+  std::unordered_set<std::string> retained_anchors;
+  for (const auto &anchor : value.anchors)
+    retained_anchors.insert(anchor.id);
+  for (const auto &anchor : current->anchors) {
+    if (!retained_anchors.contains(anchor.id) &&
+        store_.text_references(active.path(), {value.id, true, anchor.id, 1, 0})
+                .total != 0)
+      throw std::runtime_error("A âncora “" + anchor.label +
+                               "” é referenciada por outro Documento. "
+                               "Desvincule seus usos antes de removê-la.");
+  }
   store_.save(active.path(), value);
   return value;
 }
@@ -175,7 +187,49 @@ void WritingService::delete_document(const std::string &id) {
   const auto &active = require_project();
   if (!store_.document(active.path(), id))
     throw std::runtime_error("Documento não encontrado");
+  if (store_.text_references(active.path(), {id, true, std::nullopt, 1, 0})
+          .total != 0)
+    throw std::runtime_error(
+        "Este Documento é referenciado por outros Documentos. "
+        "Abra Referências textuais e desvincule seus usos antes de removê-lo.");
   store_.remove(active.path(), id);
+}
+
+persistence::WritingStore::TextReferencePage WritingService::text_references(
+    const persistence::WritingStore::TextReferenceQuery &query) const {
+  return store_.text_references(require_project().path(), query);
+}
+
+project::DocumentTextReference
+WritingService::add_text_reference(const std::string &source_document_id,
+                                   const std::string &target_document_id,
+                                   std::optional<std::string> target_anchor_id,
+                                   std::string notes) {
+  const auto &path = require_project().path();
+  if (source_document_id == target_document_id)
+    throw std::runtime_error(
+        "Escolha outro Documento como destino da referência");
+  if (!store_.document(path, source_document_id))
+    throw std::runtime_error("Documento de origem não encontrado");
+  const auto target = store_.document(path, target_document_id);
+  if (!target)
+    throw std::runtime_error("Documento de destino não encontrado");
+  if (target_anchor_id &&
+      std::ranges::none_of(target->anchors, [&](const auto &anchor) {
+        return anchor.id == *target_anchor_id;
+      }))
+    throw std::runtime_error("A âncora não pertence ao Documento de destino");
+  project::DocumentTextReference value{
+      project::new_uuid(),         source_document_id, target_document_id,
+      std::move(target_anchor_id), std::move(notes),   project::utc_now()};
+  store_.add_text_reference(path, value);
+  return value;
+}
+
+void WritingService::remove_text_reference(
+    const std::string &source_document_id, const std::string &id) {
+  store_.remove_text_reference(require_project().path(), source_document_id,
+                               id);
 }
 
 } // namespace inde::application

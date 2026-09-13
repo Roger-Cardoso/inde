@@ -235,6 +235,128 @@ void record_change(SqliteDatabase &database, const std::string &owner,
 
 } // namespace
 
+WritingStore::TextReferencePage SqliteWritingRepository::text_references(
+    const std::filesystem::path &project_path,
+    const TextReferenceQuery &query) const {
+  if (query.document_id.empty() ||
+      (query.target_anchor_id && query.target_anchor_id->empty()))
+    throw std::runtime_error("Consulta de referências textuais inválida");
+  const auto limit = checked_limit(query.limit);
+  const auto offset = checked_offset(query.offset);
+  auto database = open_database(project_path);
+  const auto owner = project_id(database);
+  SqliteTransaction transaction(database, SqliteTransaction::Mode::Deferred);
+  std::string where = " WHERE r.project_id = ? AND r.";
+  where += query.incoming ? "target_document_id = ?" : "source_document_id = ?";
+  if (query.target_anchor_id)
+    where += " AND r.target_anchor_id = ?";
+  const auto bind = [&](SqliteStatement &statement) {
+    statement.bind(1, owner);
+    statement.bind(2, query.document_id);
+    if (query.target_anchor_id)
+      statement.bind(3, *query.target_anchor_id);
+  };
+  TextReferencePage result;
+  auto count = database.prepare(
+      "SELECT count(*) FROM document_text_references r" + where);
+  bind(count);
+  if (!count.step())
+    throw std::runtime_error("Não foi possível contar as referências textuais");
+  result.total = static_cast<std::size_t>(count.column_integer(0));
+  auto rows = database.prepare(
+      "SELECT r.id, r.source_document_id, r.target_document_id, "
+      "r.target_anchor_id, r.notes, r.created_at, s.title, t.title, a.label "
+      "FROM document_text_references r "
+      "JOIN documents s ON s.id = r.source_document_id AND s.project_id = "
+      "r.project_id "
+      "JOIN documents t ON t.id = r.target_document_id AND t.project_id = "
+      "r.project_id "
+      "LEFT JOIN document_anchors a ON a.id = r.target_anchor_id " +
+      where + " ORDER BY r.created_at, r.id LIMIT ? OFFSET ?");
+  bind(rows);
+  int parameter = query.target_anchor_id ? 4 : 3;
+  rows.bind(parameter++, limit);
+  rows.bind(parameter, offset);
+  while (rows.step()) {
+    result.items.push_back(
+        {{rows.column_text(0), rows.column_text(1), rows.column_text(2),
+          rows.column_is_null(3)
+              ? std::nullopt
+              : std::optional<std::string>{rows.column_text(3)},
+          rows.column_text(4), rows.column_text(5)},
+         rows.column_text(6),
+         rows.column_text(7),
+         rows.column_is_null(8)
+             ? std::nullopt
+             : std::optional<std::string>{rows.column_text(8)}});
+  }
+  transaction.commit();
+  return result;
+}
+
+void SqliteWritingRepository::add_text_reference(
+    const std::filesystem::path &project_path,
+    const project::DocumentTextReference &value) const {
+  if (value.id.empty() || value.source_document_id.empty() ||
+      value.target_document_id.empty() || value.created_at.empty() ||
+      value.source_document_id == value.target_document_id ||
+      (value.target_anchor_id && value.target_anchor_id->empty()) ||
+      project::utf8_character_count(value.notes) > 4096)
+    throw std::runtime_error("Referência textual inválida");
+  auto database = open_database(project_path);
+  const auto owner = project_id(database);
+  SqliteTransaction transaction(database);
+  auto duplicate = database.prepare(
+      "SELECT count(*) FROM document_text_references WHERE project_id = ? "
+      "AND source_document_id = ? AND target_document_id = ? "
+      "AND COALESCE(target_anchor_id, '') = ?");
+  duplicate.bind(1, owner);
+  duplicate.bind(2, value.source_document_id);
+  duplicate.bind(3, value.target_document_id);
+  duplicate.bind(4, value.target_anchor_id.value_or(""));
+  if (duplicate.step() && duplicate.column_integer(0) != 0)
+    throw std::runtime_error(
+        "Este Documento já referencia o mesmo destino textual");
+  auto insert = database.prepare(
+      "INSERT INTO document_text_references(id, project_id, "
+      "source_document_id, "
+      "target_document_id, target_anchor_id, notes, created_at) "
+      "VALUES (?, ?, ?, ?, ?, ?, ?)");
+  insert.bind(1, value.id);
+  insert.bind(2, owner);
+  insert.bind(3, value.source_document_id);
+  insert.bind(4, value.target_document_id);
+  if (value.target_anchor_id)
+    insert.bind(5, *value.target_anchor_id);
+  else
+    insert.bind_null(5);
+  insert.bind(6, value.notes);
+  insert.bind(7, value.created_at);
+  insert.run();
+  record_change(database, owner, "add_document_text_reference");
+  transaction.commit();
+}
+
+void SqliteWritingRepository::remove_text_reference(
+    const std::filesystem::path &project_path,
+    const std::string &source_document_id, const std::string &id) const {
+  auto database = open_database(project_path);
+  const auto owner = project_id(database);
+  SqliteTransaction transaction(database);
+  auto remove = database.prepare(
+      "DELETE FROM document_text_references WHERE project_id = ? "
+      "AND source_document_id = ? AND id = ?");
+  remove.bind(1, owner);
+  remove.bind(2, source_document_id);
+  remove.bind(3, id);
+  remove.run();
+  if (database.changes() != 1)
+    throw std::runtime_error(
+        "Referência textual não encontrada neste Documento");
+  record_change(database, owner, "remove_document_text_reference");
+  transaction.commit();
+}
+
 void SqliteWritingRepository::initialize(
     const std::filesystem::path &project_path) const {
   auto database = open_database(project_path);

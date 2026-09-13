@@ -27,6 +27,27 @@ class WritingStore {
 public:
   virtual ~WritingStore() = default;
 
+  struct TextReferenceQuery {
+    std::string document_id;
+    bool incoming{};
+    std::optional<std::string> target_anchor_id;
+    std::size_t limit{50};
+    std::size_t offset{};
+  };
+  struct TextReferencePage {
+    std::vector<project::DocumentTextReferenceSummary> items;
+    std::size_t total{};
+  };
+  [[nodiscard]] virtual TextReferencePage
+  text_references(const std::filesystem::path &project_path,
+                  const TextReferenceQuery &query) const = 0;
+  virtual void
+  add_text_reference(const std::filesystem::path &project_path,
+                     const project::DocumentTextReference &value) const = 0;
+  virtual void remove_text_reference(const std::filesystem::path &project_path,
+                                     const std::string &source_document_id,
+                                     const std::string &id) const = 0;
+
   virtual void initialize(const std::filesystem::path &project_path) const = 0;
   [[nodiscard]] virtual std::vector<project::Document>
   documents(const std::filesystem::path &project_path,

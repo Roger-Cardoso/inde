@@ -7,6 +7,26 @@
 namespace inde::persistence {
 namespace {
 
+constexpr auto schema_version_15 = R"sql(
+ALTER TABLE cartographic_planets ADD COLUMN terrain_revision INTEGER NOT NULL
+  DEFAULT 0 CHECK(terrain_revision>=0);
+CREATE TABLE cartographic_terrain_locks (
+  id TEXT PRIMARY KEY CHECK(length(id)>0),
+  project_id TEXT NOT NULL,
+  planet_id TEXT NOT NULL,
+  name TEXT NOT NULL CHECK(length(name)>0 AND length(name)<=256),
+  longitude_e6 INTEGER NOT NULL CHECK(longitude_e6 BETWEEN -180000000 AND 179999999),
+  latitude_e6 INTEGER NOT NULL CHECK(latitude_e6 BETWEEN -90000000 AND 90000000),
+  radius_e6 INTEGER NOT NULL CHECK(radius_e6 BETWEEN 500000 AND 15000000),
+  created_at TEXT NOT NULL CHECK(length(created_at)>0),
+  UNIQUE(id,planet_id),
+  FOREIGN KEY(planet_id,project_id) REFERENCES cartographic_planets(id,project_id)
+    ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED
+);
+CREATE INDEX cartographic_terrain_locks_planet_idx
+  ON cartographic_terrain_locks(project_id,planet_id,created_at,id);
+)sql";
+
 constexpr auto create_migration_table = R"sql(
 CREATE TABLE IF NOT EXISTS schema_migrations (
   version INTEGER PRIMARY KEY CHECK (version > 0),
@@ -648,6 +668,109 @@ WHEN OLD.is_builtin = 1
              WHERE n.structural_type_id = OLD.id) BEGIN
   SELECT RAISE(ABORT, 'structural type is protected or in use');
 END;
+)sql";
+
+constexpr auto schema_version_14 = R"sql(
+CREATE TABLE cartographic_planets (
+  id TEXT PRIMARY KEY CHECK(length(id)>0),
+  project_id TEXT NOT NULL REFERENCES projects(id) ON DELETE CASCADE,
+  name TEXT NOT NULL CHECK(length(name)>0 AND length(name)<=512),
+  radius_m INTEGER NOT NULL CHECK(radius_m BETWEEN 1000 AND 1000000000),
+  seed INTEGER NOT NULL CHECK(seed BETWEEN 0 AND 2147483647),
+  water_percent INTEGER NOT NULL CHECK(water_percent BETWEEN 5 AND 95),
+  fragmentation INTEGER NOT NULL CHECK(fragmentation BETWEEN 1 AND 8),
+  height_m INTEGER NOT NULL CHECK(height_m BETWEEN 100 AND 30000),
+  depth_m INTEGER NOT NULL CHECK(depth_m BETWEEN 100 AND 30000),
+  detail INTEGER NOT NULL CHECK(detail BETWEEN 0 AND 3),
+  generator INTEGER NOT NULL CHECK(generator=1),
+  created_at TEXT NOT NULL CHECK(length(created_at)>0),
+  UNIQUE(id,project_id)
+);
+CREATE INDEX cartographic_planets_project_idx ON cartographic_planets(project_id,name,id);
+CREATE TABLE cartographic_chunks (
+  planet_id TEXT NOT NULL REFERENCES cartographic_planets(id) ON DELETE CASCADE,
+  level INTEGER NOT NULL CHECK(level BETWEEN 0 AND 3),
+  x INTEGER NOT NULL CHECK(x>=0 AND x<(2<<level)),
+  y INTEGER NOT NULL CHECK(y>=0 AND y<(1<<level)),
+  elevation BLOB NOT NULL CHECK(typeof(elevation)='blob' AND length(elevation)=8192),
+  PRIMARY KEY(planet_id,level,x,y)
+) WITHOUT ROWID;
+CREATE TABLE cartographic_positions (
+  id INTEGER PRIMARY KEY,
+  project_id TEXT NOT NULL,
+  planet_id TEXT NOT NULL,
+  entity_id TEXT NOT NULL,
+  longitude_e6 INTEGER NOT NULL CHECK(longitude_e6 BETWEEN -180000000 AND 179999999),
+  latitude_e6 INTEGER NOT NULL CHECK(latitude_e6 BETWEEN -90000000 AND 90000000),
+  approximate INTEGER NOT NULL CHECK(approximate IN (0,1)),
+  importance INTEGER NOT NULL CHECK(importance BETWEEN 1 AND 100),
+  min_level INTEGER NOT NULL CHECK(min_level BETWEEN 0 AND 6),
+  symbol TEXT NOT NULL CHECK(symbol IN ('place','city','mountain')),
+  UNIQUE(planet_id,entity_id),
+  FOREIGN KEY(planet_id,project_id) REFERENCES cartographic_planets(id,project_id)
+    ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED,
+  FOREIGN KEY(entity_id,project_id) REFERENCES entities(id,project_id)
+    ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED
+);
+CREATE INDEX cartographic_positions_entity_idx ON cartographic_positions(project_id,entity_id);
+CREATE VIRTUAL TABLE cartographic_position_index USING rtree_i32(id,min_lon,max_lon,min_lat,max_lat);
+CREATE TRIGGER cartographic_position_insert AFTER INSERT ON cartographic_positions BEGIN
+  INSERT INTO cartographic_position_index VALUES(NEW.id,NEW.longitude_e6,NEW.longitude_e6,NEW.latitude_e6,NEW.latitude_e6);
+END;
+CREATE TRIGGER cartographic_position_update AFTER UPDATE OF longitude_e6,latitude_e6 ON cartographic_positions BEGIN
+  UPDATE cartographic_position_index SET min_lon=NEW.longitude_e6,max_lon=NEW.longitude_e6,
+    min_lat=NEW.latitude_e6,max_lat=NEW.latitude_e6 WHERE id=NEW.id;
+END;
+CREATE TRIGGER cartographic_position_delete AFTER DELETE ON cartographic_positions BEGIN
+  DELETE FROM cartographic_position_index WHERE id=OLD.id;
+END;
+CREATE TRIGGER cartographic_local_insert BEFORE INSERT ON cartographic_positions
+WHEN NOT EXISTS(SELECT 1 FROM entities WHERE id=NEW.entity_id
+  AND entity_type_id='00000000-0000-4000-9000-000000000002') BEGIN
+  SELECT RAISE(ABORT,'cartography requires a Local entity');
+END;
+CREATE TRIGGER cartographic_local_update BEFORE UPDATE OF entity_id ON cartographic_positions
+WHEN NOT EXISTS(SELECT 1 FROM entities WHERE id=NEW.entity_id
+  AND entity_type_id='00000000-0000-4000-9000-000000000002') BEGIN
+  SELECT RAISE(ABORT,'cartography requires a Local entity');
+END;
+CREATE TRIGGER cartographic_local_type_guard BEFORE UPDATE OF entity_type_id ON entities
+WHEN NEW.entity_type_id<>'00000000-0000-4000-9000-000000000002'
+  AND EXISTS(SELECT 1 FROM cartographic_positions WHERE entity_id=OLD.id) BEGIN
+  SELECT RAISE(ABORT,'remove cartographic positions before changing the Local type');
+END;
+)sql";
+
+constexpr auto schema_version_13 = R"sql(
+CREATE UNIQUE INDEX document_anchors_identity_idx
+  ON document_anchors(id, document_id, project_id);
+CREATE TABLE document_text_references (
+  id TEXT PRIMARY KEY CHECK (length(id) > 0),
+  project_id TEXT NOT NULL,
+  source_document_id TEXT NOT NULL,
+  target_document_id TEXT NOT NULL,
+  target_anchor_id TEXT,
+  notes TEXT NOT NULL DEFAULT '' CHECK (length(notes) <= 4096),
+  created_at TEXT NOT NULL CHECK (length(created_at) > 0),
+  CHECK (source_document_id <> target_document_id),
+  CHECK (target_anchor_id IS NULL OR length(target_anchor_id) > 0),
+  FOREIGN KEY (source_document_id, project_id) REFERENCES documents(id, project_id)
+    ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED,
+  FOREIGN KEY (target_document_id, project_id) REFERENCES documents(id, project_id)
+    ON DELETE NO ACTION DEFERRABLE INITIALLY DEFERRED,
+  FOREIGN KEY (target_anchor_id, target_document_id, project_id)
+    REFERENCES document_anchors(id, document_id, project_id)
+    ON DELETE NO ACTION DEFERRABLE INITIALLY DEFERRED
+);
+CREATE UNIQUE INDEX document_text_references_unique_idx
+  ON document_text_references(source_document_id, target_document_id,
+                              COALESCE(target_anchor_id, ''));
+CREATE INDEX document_text_references_source_idx
+  ON document_text_references(project_id, source_document_id, created_at, id);
+CREATE INDEX document_text_references_target_idx
+  ON document_text_references(project_id, target_document_id, created_at, id);
+CREATE INDEX document_text_references_anchor_idx
+  ON document_text_references(project_id, target_anchor_id, created_at, id);
 )sql";
 
 constexpr auto schema_version_12 = R"sql(
@@ -1696,6 +1819,26 @@ void SchemaMigrator::migrate(SqliteDatabase &database) const {
     record.run();
   }
 
+  if (version < 13) {
+    apply_version_13(database);
+    auto record =
+        database.prepare("INSERT INTO schema_migrations(version, applied_at) "
+                         "VALUES (13, strftime('%Y-%m-%dT%H:%M:%fZ', 'now'))");
+    record.run();
+  }
+
+  if (version < 14) {
+    apply_version_14(database);
+    database.execute("INSERT INTO schema_migrations(version, applied_at) "
+                     "VALUES (14, strftime('%Y-%m-%dT%H:%M:%fZ', 'now'))");
+  }
+
+  if (version < 15) {
+    apply_version_15(database);
+    database.execute("INSERT INTO schema_migrations(version, applied_at) "
+                     "VALUES (15, strftime('%Y-%m-%dT%H:%M:%fZ', 'now'))");
+  }
+
   transaction.commit();
 }
 
@@ -1757,6 +1900,18 @@ void SchemaMigrator::apply_version_11(SqliteDatabase &database) {
 
 void SchemaMigrator::apply_version_12(SqliteDatabase &database) {
   database.execute(schema_version_12);
+}
+
+void SchemaMigrator::apply_version_13(SqliteDatabase &database) {
+  database.execute(schema_version_13);
+}
+
+void SchemaMigrator::apply_version_14(SqliteDatabase &database) {
+  database.execute(schema_version_14);
+}
+
+void SchemaMigrator::apply_version_15(SqliteDatabase &database) {
+  database.execute(schema_version_15);
 }
 
 } // namespace inde::persistence

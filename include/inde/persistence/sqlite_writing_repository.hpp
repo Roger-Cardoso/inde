@@ -6,6 +6,15 @@ namespace inde::persistence {
 
 class SqliteWritingRepository final : public WritingStore {
 public:
+  [[nodiscard]] TextReferencePage
+  text_references(const std::filesystem::path &project_path,
+                  const TextReferenceQuery &query) const override;
+  void add_text_reference(
+      const std::filesystem::path &project_path,
+      const project::DocumentTextReference &value) const override;
+  void remove_text_reference(const std::filesystem::path &project_path,
+                             const std::string &source_document_id,
+                             const std::string &id) const override;
   void initialize(const std::filesystem::path &project_path) const override;
   [[nodiscard]] std::vector<project::Document>
   documents(const std::filesystem::path &project_path,

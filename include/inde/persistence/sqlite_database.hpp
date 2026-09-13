@@ -2,9 +2,11 @@
 
 #include <cstdint>
 #include <filesystem>
+#include <span>
 #include <stdexcept>
 #include <string>
 #include <string_view>
+#include <vector>
 
 struct sqlite3;
 struct sqlite3_stmt;
@@ -36,6 +38,7 @@ public:
   void bind(int index, std::string_view value);
   void bind(int index, std::int64_t value);
   void bind_null(int index);
+  void bind_blob(int index, std::span<const std::uint8_t> value);
 
   // Retorna true quando uma linha está disponível e false em SQLITE_DONE.
   bool step();
@@ -45,6 +48,7 @@ public:
   [[nodiscard]] bool column_is_null(int index) const;
   [[nodiscard]] std::int64_t column_integer(int index) const;
   [[nodiscard]] std::string column_text(int index) const;
+  [[nodiscard]] std::vector<std::uint8_t> column_blob(int index) const;
 
 private:
   void check_column(int index) const;
@@ -79,7 +83,9 @@ private:
 
 class SqliteTransaction {
 public:
-  explicit SqliteTransaction(SqliteDatabase &database);
+  enum class Mode { Immediate, Deferred };
+  explicit SqliteTransaction(SqliteDatabase &database,
+                             Mode mode = Mode::Immediate);
   ~SqliteTransaction();
 
   SqliteTransaction(const SqliteTransaction &) = delete;
@@ -97,4 +103,3 @@ private:
 };
 
 } // namespace inde::persistence
-

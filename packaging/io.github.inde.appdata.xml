@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component type="desktop-application">
+  <id>io.github.inde</id>
+  <metadata_license>CC0-1.0</metadata_license>
+  <project_license>LicenseRef-INDE-NCEL-1.0</project_license>
+  <name>INDE</name>
+  <summary>Integrated Narrative Development Environment</summary>
+  <summary xml:lang="pt-BR">Ambiente integrado de desenvolvimento narrativo</summary>
+  <description>
+    <p>
+      INDE is a native Linux application for planning, organizing and writing
+      long-form narrative projects while keeping their data local.
+    </p>
+    <p xml:lang="pt-BR">
+      O INDE é um aplicativo Linux nativo para planejar, organizar e escrever
+      projetos narrativos longos, mantendo os dados localmente.
+    </p>
+  </description>
+  <launchable type="desktop-id">io.github.inde.desktop</launchable>
+  <url type="homepage">https://github.com/Roger-Cardoso/inde</url>
+  <url type="bugtracker">https://github.com/Roger-Cardoso/inde/issues</url>
+  <developer id="io.github.roger-cardoso">
+    <name>Roger Cardoso</name>
+  </developer>
+  <provides>
+    <binary>inde</binary>
+    <mediatype>application/x-inde-project</mediatype>
+  </provides>
+  <releases>
+    <release version="0.1.0" date="2026-09-12">
+      <description>
+        <p>First AppImage-ready preview with the complete GTK 4 runtime.</p>
+        <p xml:lang="pt-BR">
+          Primeira prévia preparada para AppImage com o runtime GTK 4 completo.
+        </p>
+      </description>
+    </release>
+  </releases>
+  <content_rating type="oars-1.1"/>
+</component>

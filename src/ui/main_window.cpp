@@ -129,6 +129,18 @@ void MainWindow::build_ui() {
   workspace_shell_.add_workspace(writing_workspace_, WorkspaceId::Writing);
   workspace_shell_.add_workspace(editorial_workspace_, WorkspaceId::Editorial);
   workspace_shell_.add_workspace(graphs_workspace_, WorkspaceId::Graphs);
+  workspace_shell_.add_workspace(cartography_workspace_,
+                                 WorkspaceId::Cartography);
+  cartography_workspace_.signal_entity_source_requested().connect(
+      [this](const std::string &id) {
+        show_workspace(WorkspaceId::Planning);
+        planning_workspace_.reveal_entity(id);
+      });
+  planning_workspace_.signal_cartography_requested().connect(
+      [this](const std::string &id) {
+        show_workspace(WorkspaceId::Cartography);
+        cartography_workspace_.reveal_entity(id);
+      });
   workspace_shell_.show(WorkspaceId::Catalog);
   catalog_workspace_.signal_status_message().connect(
       [this](const Glib::ustring &message) { status_bar_.set_text(message); });
@@ -268,6 +280,8 @@ void MainWindow::refresh_workspace(WorkspaceId workspace) {
     writing_workspace_.refresh();
   else if (workspace == WorkspaceId::Graphs)
     graphs_workspace_.refresh();
+  else if (workspace == WorkspaceId::Cartography)
+    cartography_workspace_.refresh();
   if (std::getenv("INDE_PROFILE_WORKSPACES")) {
     const auto elapsed = std::chrono::duration<double, std::milli>(
         std::chrono::steady_clock::now() - started);
@@ -302,6 +316,8 @@ void MainWindow::show_workspace(WorkspaceId workspace) {
     status_bar_.set_text("Linha do tempo ficcional ativa (somente leitura)");
   else if (workspace == WorkspaceId::Catalog)
     status_bar_.set_text("Catálogo global de IPs e Obras ativo");
+  else if (workspace == WorkspaceId::Cartography)
+    status_bar_.set_text("Cartografia local · C-01 · esfera equiretangular");
   else
     status_bar_.set_text("Workspace editorial ativo");
   if (preserve_maximized)
@@ -329,6 +345,8 @@ void MainWindow::setup_actions() {
   add_action("show-editorial",
              [this] { show_workspace(WorkspaceId::Editorial); });
   add_action("show-graphs", [this] { show_workspace(WorkspaceId::Graphs); });
+  add_action("show-cartography",
+             [this] { show_workspace(WorkspaceId::Cartography); });
   add_action("proofread-current",
              [this] { proofreading_controller_.show_current_issue(); });
   add_action("manage-dictionaries",
@@ -370,6 +388,7 @@ void MainWindow::setup_menus() {
   navigate->append("Escrita", "win.show-writing");
   navigate->append("Editorial", "win.show-editorial");
   navigate->append("Gráficos", "win.show-graphs");
+  navigate->append("Cartografia", "win.show-cartography");
 
   const auto edit = Gio::Menu::create();
   edit->append("Desfazer edição", "win.writing-undo");
@@ -449,21 +468,22 @@ void MainWindow::create_project() {
 }
 
 void MainWindow::open_project() {
-  auto dialog = Gtk::FileDialog::create();
-  dialog->set_title("Abrir projeto INDE");
-  dialog->select_folder(
-      *this, [this, dialog](const Glib::RefPtr<Gio::AsyncResult> &result) {
-        try {
-          const auto folder = dialog->select_folder_finish(result);
-          if (folder)
-            open_project_at(folder->get_path());
-        } catch (const Gtk::DialogError &) {
-          // Cancelamento pelo usuário não é um erro do aplicativo.
-        } catch (const Glib::Error &error) {
-          const std::runtime_error wrapped(error.what());
-          show_error("Não foi possível selecionar o projeto", wrapped);
-        }
-      });
+  auto dialog = Gtk::FileChooserNative::create(
+      "Abrir projeto INDE", *this, Gtk::FileChooser::Action::SELECT_FOLDER,
+      "Abrir", "Cancelar");
+  dialog->signal_response().connect([this, dialog](int response) {
+    if (response != Gtk::ResponseType::ACCEPT)
+      return;
+    try {
+      const auto folder = dialog->get_file();
+      if (folder)
+        open_project_at(folder->get_path());
+    } catch (const Glib::Error &error) {
+      const std::runtime_error wrapped(error.what());
+      show_error("Não foi possível selecionar o projeto", wrapped);
+    }
+  });
+  dialog->show();
 }
 
 void MainWindow::open_project_at(const std::filesystem::path &path) {
@@ -529,6 +549,7 @@ void MainWindow::close_project() {
   planning_workspace_.reset();
   writing_workspace_.reset();
   graphs_workspace_.reset();
+  cartography_workspace_.reset();
   header_title_.set_text("INDE");
   header_subtitle_.set_text("Ambiente de desenvolvimento narrativo");
   header_subtitle_.set_visible(true);

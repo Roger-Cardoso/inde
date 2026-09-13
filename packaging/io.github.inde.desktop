@@ -5,6 +5,6 @@ Comment=Integrated Narrative Development Environment
 Exec=inde %f
 Icon=inde
 Terminal=false
-Categories=Office;TextEditor;GTK;
+Categories=Office;GTK;
 MimeType=application/x-inde-project;
 StartupWMClass=io.github.inde

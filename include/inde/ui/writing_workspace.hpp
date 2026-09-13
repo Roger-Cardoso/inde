@@ -101,6 +101,10 @@ private:
   void remove_entity_reference();
   void select_entity_reference(std::string id);
   void open_reference_entity();
+  void show_text_references(bool incoming = false,
+                            std::optional<std::string> anchor_id = std::nullopt,
+                            std::size_t offset = 0);
+  void add_text_reference();
 
   [[nodiscard]] project::Document capture_editor_state();
   void restore_editor_state(const project::Document &state);
@@ -210,6 +214,8 @@ private:
   Gtk::Button rename_anchor_button_{"Renomear"};
   Gtk::Button remove_anchor_button_{"Remover"};
   Gtk::ListBox anchors_list_;
+  Gtk::Button text_references_button_{"Referências textuais"};
+  Gtk::Button anchor_usages_button_{"Usos desta âncora"};
   Gtk::Separator references_separator_;
   Gtk::Label references_title_{"Entidades usadas"};
   Gtk::Box reference_actions_{Gtk::Orientation::HORIZONTAL, 4};

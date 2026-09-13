@@ -33,6 +33,16 @@ public:
   update_document(const project::Document &input);
   void delete_document(const std::string &id);
 
+  [[nodiscard]] persistence::WritingStore::TextReferencePage text_references(
+      const persistence::WritingStore::TextReferenceQuery &query) const;
+  [[nodiscard]] project::DocumentTextReference
+  add_text_reference(const std::string &source_document_id,
+                     const std::string &target_document_id,
+                     std::optional<std::string> target_anchor_id = std::nullopt,
+                     std::string notes = {});
+  void remove_text_reference(const std::string &source_document_id,
+                             const std::string &id);
+
 private:
   [[nodiscard]] const project::Project &require_project() const;
   void

@@ -101,6 +101,7 @@ ProjectService::save_as(const std::filesystem::path &path) {
 }
 
 void ProjectService::close() noexcept {
+  cartography_service_.clear_cache();
   session_.clear();
   clear_planning_context();
 }

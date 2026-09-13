@@ -47,6 +47,23 @@ struct DocumentEntityReference {
   std::string notes;
 };
 
+// Referência sem incorporação: identidade do alvo, nunca uma cópia do texto.
+struct DocumentTextReference {
+  std::string id;
+  std::string source_document_id;
+  std::string target_document_id;
+  std::optional<std::string> target_anchor_id;
+  std::string notes;
+  std::string created_at;
+};
+
+struct DocumentTextReferenceSummary {
+  DocumentTextReference reference;
+  std::string source_title;
+  std::string target_title;
+  std::optional<std::string> target_anchor_label;
+};
+
 enum class DocumentSearchMatch { None, Name, Content, NameAndContent };
 
 // A finalidade organiza o trabalho do autor sem confundir Documento com

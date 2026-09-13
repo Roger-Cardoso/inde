@@ -4,6 +4,7 @@
 #include "inde/application/proofreading_service.hpp"
 #include "inde/persistence/dictionary_store.hpp"
 #include "inde/persistence/enchant_spelling_provider.hpp"
+#include "inde/ui/cartography_workspace.hpp"
 #include "inde/ui/editorial_structure_workspace.hpp"
 #include "inde/ui/editorial_workspace.hpp"
 #include "inde/ui/graphs_workspace.hpp"
@@ -78,6 +79,7 @@ private:
   EditorialWorkspace catalog_workspace_{service_};
   WritingWorkspace writing_workspace_{service_};
   GraphsWorkspace graphs_workspace_{service_};
+  CartographyWorkspace cartography_workspace_{service_};
   EditorialStructureWorkspace editorial_workspace_{service_};
   Gtk::Label status_bar_{"Pronto"};
 };

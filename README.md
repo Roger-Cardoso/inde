@@ -26,11 +26,41 @@ A versão atual inclui:
 * âncoras e referências entre documentos e entidades;
 * pesquisa e filtros contextuais;
 * timeline ficcional consultiva;
+* Cartografia: planetas procedurais locais, prévia/aceite, câmera e camadas;
+* edição de relevo com prévia, aplicação, undo/redo e bloqueios autorais;
+* posições de Locais compartilhados, medição esférica e exportação SVG da vista;
 * revisão ortográfica pt-BR;
 * dicionários pessoais;
 * persistência local utilizando SQLite.
 
 Alguns recursos permanecem em desenvolvimento e podem sofrer alterações incompatíveis entre versões.
+
+### Cartografia (C-01 + C-02)
+
+Na aba **Cartografia**, crie um planeta, ajuste seed/água/relevo e gere uma
+prévia. Aceite para salvar ou descarte sem alterar o Projeto. Arraste o mapa,
+use a roda ou os botões de zoom e escolha uma camada. **Visual suave** usa o
+melhor LOD que cabe no orçamento e interpolação bilinear; **Visual raster**
+preserva a aparência das células quando ela for desejada. **Contorno de costa**
+realça somente a borda terra–água e pode ser desligado. Selecione um Local do
+Planejamento para definir coordenadas ou usar o modo de posicionamento por
+clique. O modo de medição calcula distância sobre a esfera, não uma rota.
+**Exportar SVG** salva a vista atual. A geração funciona offline e sem IA.
+
+Para editar o relevo, escolha **Elevar terreno**, **Rebaixar terreno** ou
+**Suavizar terreno**, ajuste raio/intensidade e clique no mapa. O clique cria
+uma prévia: use **Aplicar relevo** para persistir ou **Descartar prévia** para
+preservar o Projeto. Undo/redo de terreno cobre as últimas dez operações da
+sessão. **Bloquear área do pincel** protege uma região nomeada e persistente;
+não representa território nem permissão de acesso.
+
+O terreno tem quatro níveis, até 1024×512 amostras; zoom só revela dados
+existentes e não refina o planeta. Rios, biomas, importação de heightmap e
+territórios/rotas temporais ainda não estão presentes. O esquema atual é
+**v15**: faça cópia de seus Projetos antes de testar, e não abra cópias migradas
+com executáveis antigos. Um AppImage anteriormente gerado precisa ser
+reconstruído para incluir estas alterações. A validação humana de C-02
+permanece pendente.
 
 ## Plataforma
 
@@ -40,9 +70,9 @@ Dependências principais:
 
 * compilador com suporte a C++20;
 * CMake 3.22 ou superior;
-* GTK 4;
-* gtkmm 4;
-* SQLite 3;
+* GTK 4.8 ou superior;
+* gtkmm 4.8 ou superior;
+* SQLite 3 com módulo R-tree (`ENABLE_RTREE`);
 * libuuid;
 * Enchant 2;
 * dicionário Hunspell pt-BR.
@@ -101,6 +131,34 @@ Também é possível abrir diretamente um projeto:
 ```bash
 ./build/inde "/caminho/Projeto.inde"
 ```
+
+## AppImage para Linux x86_64
+
+As versões distribuídas em AppImage reúnem o executável, o runtime GTK 4 e a
+revisão ortográfica pt-BR num único arquivo. Depois de baixar o AppImage e o
+arquivo `.sha256` correspondente em
+[Releases](https://github.com/Roger-Cardoso/inde/releases):
+
+```bash
+sha256sum --check INDE-0.1.0-x86_64.AppImage.sha256
+chmod +x INDE-0.1.0-x86_64.AppImage
+./INDE-0.1.0-x86_64.AppImage
+```
+
+Um projeto também pode ser aberto diretamente:
+
+```bash
+./INDE-0.1.0-x86_64.AppImage "/caminho/Projeto.inde"
+```
+
+Se a distribuição não oferecer FUSE, use o modo de extração temporária:
+
+```bash
+APPIMAGE_EXTRACT_AND_RUN=1 ./INDE-0.1.0-x86_64.AppImage
+```
+
+A receita local, as dependências, o fluxo de publicação e a matriz de validação
+estão documentados em [`packaging/README.md`](packaging/README.md).
 
 ## Formato de projeto `.inde`
 
