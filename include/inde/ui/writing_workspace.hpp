@@ -101,6 +101,8 @@ private:
   void remove_entity_reference();
   void select_entity_reference(std::string id);
   void open_reference_entity();
+  void show_semantic_dictionary();
+  void show_linguistic_entities();
   void show_text_references(bool incoming = false,
                             std::optional<std::string> anchor_id = std::nullopt,
                             std::size_t offset = 0);
@@ -204,6 +206,13 @@ private:
   Gtk::Separator repeated_separator_;
   Gtk::Label repeated_title_{"Palavras recorrentes"};
   Gtk::Label repeated_words_;
+  Gtk::Separator linguistic_separator_;
+  Gtk::Label linguistic_title_{"Dicionário semântico"};
+  Gtk::Label linguistic_summary_{
+      "Consulta explícita e somente leitura; nenhuma interpretação é "
+      "escolhida automaticamente."};
+  Gtk::Button semantic_dictionary_button_{"Consultar palavra selecionada"};
+  Gtk::Button linguistic_entities_button_{"Explorar construções e frames"};
   Gtk::Separator paragraphs_separator_;
   Gtk::Label paragraphs_title_{"Parágrafos longos"};
   Gtk::ListBox long_paragraphs_list_;

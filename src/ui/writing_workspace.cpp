@@ -309,6 +309,14 @@ void WritingWorkspace::build_ui() {
   tools_panel_.append(repeated_separator_);
   tools_panel_.append(repeated_title_);
   tools_panel_.append(repeated_words_);
+  linguistic_title_.add_css_class("heading");
+  linguistic_title_.set_halign(Gtk::Align::START);
+  prepare_tool_label(linguistic_summary_);
+  tools_panel_.append(linguistic_separator_);
+  tools_panel_.append(linguistic_title_);
+  tools_panel_.append(linguistic_summary_);
+  tools_panel_.append(semantic_dictionary_button_);
+  tools_panel_.append(linguistic_entities_button_);
   paragraphs_title_.add_css_class("heading");
   paragraphs_title_.set_halign(Gtk::Align::START);
   long_paragraphs_list_.add_css_class("boxed-list");
@@ -463,6 +471,10 @@ void WritingWorkspace::build_ui() {
       [this] { apply_text_style(project::DocumentTextStyle::Quote); });
   clear_format_button_.signal_clicked().connect(
       sigc::mem_fun(*this, &WritingWorkspace::clear_text_formatting));
+  semantic_dictionary_button_.signal_clicked().connect(
+      sigc::mem_fun(*this, &WritingWorkspace::show_semantic_dictionary));
+  linguistic_entities_button_.signal_clicked().connect(
+      sigc::mem_fun(*this, &WritingWorkspace::show_linguistic_entities));
   add_anchor_button_.signal_clicked().connect(
       sigc::mem_fun(*this, &WritingWorkspace::add_anchor));
   rename_anchor_button_.signal_clicked().connect(
@@ -2000,6 +2012,186 @@ void WritingWorkspace::open_reference_entity() {
   } catch (const std::exception &error) {
     show_error("Não foi possível salvar antes de navegar", error);
   }
+}
+
+void WritingWorkspace::show_semantic_dictionary() {
+  auto *window = owner_window();
+  if (!window)
+    return;
+  auto *dialog =
+      new OverlayDialog("Dicionário semântico local", *window, true);
+  dialog->set_secondary_text(
+      "A consulta é acionada por você e não altera o Documento. Todas as "
+      "acepções encontradas são exibidas como alternativas; nenhuma é "
+      "selecionada ou vinculada automaticamente.");
+  dialog->add_button("Fechar", Gtk::ResponseType::CLOSE);
+  auto *body = dialog->get_content_area();
+  body->set_margin(16);
+
+  auto *query = Gtk::make_managed<Gtk::SearchEntry>();
+  query->set_placeholder_text("Palavra ou expressão exata");
+  query->set_max_length(256);
+  const auto buffer = editor_.get_buffer();
+  Gtk::TextBuffer::iterator begin;
+  Gtk::TextBuffer::iterator end;
+  if (buffer->get_selection_bounds(begin, end)) {
+    auto selected = buffer->get_text(begin, end, true).raw();
+    if (selected.size() <= 256 && selected.find('\n') == std::string::npos)
+      query->set_text(selected);
+  }
+  auto *consult = Gtk::make_managed<Gtk::Button>("Consultar alternativas");
+  consult->add_css_class("suggested-action");
+  auto *controls =
+      Gtk::make_managed<Gtk::Box>(Gtk::Orientation::HORIZONTAL, 8);
+  query->set_hexpand(true);
+  controls->append(*query);
+  controls->append(*consult);
+  body->append(*controls);
+
+  auto *status = Gtk::make_managed<Gtk::Label>();
+  prepare_tool_label(*status);
+  body->append(*status);
+  auto *results = Gtk::make_managed<Gtk::ListBox>();
+  results->set_selection_mode(Gtk::SelectionMode::NONE);
+  results->add_css_class("boxed-list");
+  auto *scroll = Gtk::make_managed<Gtk::ScrolledWindow>();
+  scroll->set_policy(Gtk::PolicyType::NEVER, Gtk::PolicyType::AUTOMATIC);
+  scroll->set_min_content_height(320);
+  scroll->set_child(*results);
+  body->append(*scroll);
+
+  const auto refresh = [this, query, status, results] {
+    clear_list(*results);
+    try {
+      const auto response =
+          service_.linguistics().query_lexicon(query->get_text().raw(), 50);
+      status->set_text(
+          response.total == 0
+              ? "Nenhuma acepção foi encontrada no catálogo local atual."
+              : "Exibindo " + std::to_string(response.candidates.size()) +
+                    " de " + std::to_string(response.total) +
+                    " alternativas. Sem vencedor automático; score semântico: " +
+                    response.score_semantics + ".");
+      for (const auto &candidate : response.candidates) {
+        auto *row =
+            Gtk::make_managed<Gtk::Box>(Gtk::Orientation::VERTICAL, 4);
+        row->set_margin(10);
+        auto *title = Gtk::make_managed<Gtk::Label>(
+            candidate.written + " — " + candidate.ptbr_pos + " / " +
+            candidate.upos);
+        title->set_halign(Gtk::Align::START);
+        title->set_xalign(0.0F);
+        title->add_css_class("heading");
+        row->append(*title);
+        auto *definition = Gtk::make_managed<Gtk::Label>(
+            candidate.definition.value_or(
+                "Definição não fornecida pela fonte para esta acepção."));
+        definition->set_halign(Gtk::Align::START);
+        definition->set_xalign(0.0F);
+        definition->set_wrap(true);
+        row->append(*definition);
+        auto *metadata = Gtk::make_managed<Gtk::Label>(
+            candidate.sense_id + " · POS da fonte: " + candidate.source_pos +
+            " · revisão: " + candidate.review_status);
+        prepare_tool_label(*metadata);
+        metadata->set_selectable(true);
+        row->append(*metadata);
+        results->append(*row);
+      }
+    } catch (const std::exception &error) {
+      status->set_text(std::string{"Consulta indisponível: "} + error.what() +
+                       ". Configure INDE_L06_CATALOG para o catálogo v0.6.");
+    }
+  };
+  consult->signal_clicked().connect(refresh);
+  query->signal_activate().connect(refresh);
+  const auto availability = service_.linguistics().status();
+  status->set_text(availability.lexical_message);
+  dialog->signal_response().connect([dialog](int) { dialog->hide(); });
+  dialog->present();
+}
+
+void WritingWorkspace::show_linguistic_entities() {
+  auto *window = owner_window();
+  if (!window)
+    return;
+  auto *dialog = new OverlayDialog("Construções e frames", *window, true);
+  dialog->set_secondary_text(
+      "Catálogo L-08 somente leitura. Estas entidades são fixtures sintéticas "
+      "derivadas e aceitas para uso interno; a lista não afirma que um padrão "
+      "ocorre no Documento aberto.");
+  dialog->add_button("Fechar", Gtk::ResponseType::CLOSE);
+  auto *body = dialog->get_content_area();
+  body->set_margin(16);
+  auto *search = Gtk::make_managed<Gtk::SearchEntry>();
+  search->set_placeholder_text("Filtrar por nome");
+  search->set_max_length(256);
+  auto *refresh_button = Gtk::make_managed<Gtk::Button>("Consultar catálogo");
+  refresh_button->add_css_class("suggested-action");
+  auto *controls =
+      Gtk::make_managed<Gtk::Box>(Gtk::Orientation::HORIZONTAL, 8);
+  search->set_hexpand(true);
+  controls->append(*search);
+  controls->append(*refresh_button);
+  body->append(*controls);
+  auto *status = Gtk::make_managed<Gtk::Label>();
+  prepare_tool_label(*status);
+  body->append(*status);
+  auto *results = Gtk::make_managed<Gtk::ListBox>();
+  results->set_selection_mode(Gtk::SelectionMode::NONE);
+  results->add_css_class("boxed-list");
+  auto *scroll = Gtk::make_managed<Gtk::ScrolledWindow>();
+  scroll->set_policy(Gtk::PolicyType::NEVER, Gtk::PolicyType::AUTOMATIC);
+  scroll->set_min_content_height(340);
+  scroll->set_child(*results);
+  body->append(*scroll);
+
+  const auto refresh = [this, search, status, results] {
+    clear_list(*results);
+    try {
+      const auto entities = service_.linguistics().linguistic_entities(
+          search->get_text().raw(), 50);
+      status->set_text(
+          entities.empty()
+              ? "Nenhuma entidade corresponde ao filtro no catálogo atual."
+              : std::to_string(entities.size()) +
+                    " entidades exibidas. Nenhum match textual foi executado.");
+      for (const auto &entity : entities) {
+        auto *row =
+            Gtk::make_managed<Gtk::Box>(Gtk::Orientation::VERTICAL, 4);
+        row->set_margin(10);
+        auto *title = Gtk::make_managed<Gtk::Label>(
+            project::display_name(entity.kind) + ": " + entity.name);
+        title->set_halign(Gtk::Align::START);
+        title->set_xalign(0.0F);
+        title->add_css_class("heading");
+        row->append(*title);
+        auto *description =
+            Gtk::make_managed<Gtk::Label>(entity.description);
+        description->set_halign(Gtk::Align::START);
+        description->set_xalign(0.0F);
+        description->set_wrap(true);
+        row->append(*description);
+        auto *metadata = Gtk::make_managed<Gtk::Label>(
+            entity.id + " · " + entity.subtype + " · " +
+            entity.epistemic_status + " · " + entity.review_status);
+        prepare_tool_label(*metadata);
+        metadata->set_selectable(true);
+        row->append(*metadata);
+        results->append(*row);
+      }
+    } catch (const std::exception &error) {
+      status->set_text(
+          std::string{"Catálogo indisponível: "} + error.what() +
+          ". Configure INDE_L08_CATALOG para o catálogo promovido v0.6.");
+    }
+  };
+  refresh_button->signal_clicked().connect(refresh);
+  search->signal_activate().connect(refresh);
+  const auto availability = service_.linguistics().status();
+  status->set_text(availability.constructions_message);
+  dialog->signal_response().connect([dialog](int) { dialog->hide(); });
+  dialog->present();
 }
 
 void WritingWorkspace::show_text_references(

@@ -23,6 +23,8 @@ A versão atual inclui:
 * estruturas narrativas e modelos associados a Obras;
 * Biblioteca de Documentos;
 * editor de texto formatado;
+* consulta explícita ao dicionário semântico local e navegação somente leitura
+  por construções/frames autorizados;
 * âncoras e referências entre documentos e entidades;
 * pesquisa e filtros contextuais;
 * timeline ficcional consultiva;
@@ -61,6 +63,28 @@ territórios/rotas temporais ainda não estão presentes. O esquema atual é
 com executáveis antigos. Um AppImage anteriormente gerado precisa ser
 reconstruído para incluir estas alterações. A validação humana de C-02
 permanece pendente.
+
+### Dicionário semântico no Editor (integração v0.7)
+
+No painel **Ferramentas** de um Documento, **Consultar palavra selecionada**
+abre a consulta lexical L-06 e apresenta todas as acepções encontradas sem
+escolher uma interpretação. **Explorar construções e frames** navega o catálogo
+L-08 promovido sem executar match sobre o texto. As duas operações são
+explícitas, locais, somente leitura e não criam binding ou alteram o Documento.
+
+Os catálogos não são incorporados ao repositório público. O aplicativo procura
+por padrão em `~/.local/share/inde/linguistic/` ou aceita caminhos explícitos:
+
+```bash
+export INDE_L06_CATALOG=/caminho/dictionary-l06-query.sqlite
+export INDE_L08_CATALOG=/caminho/dictionary-l08-promoted.sqlite
+./build/inde
+```
+
+Metadados incompatíveis, catálogo ausente, rede exigida ou indicação de
+binding automático fazem a integração falhar de forma segura. O contrato e os
+limites estão em
+[`docs/linguistic-editor-integration-v0.7.md`](docs/linguistic-editor-integration-v0.7.md).
 
 ## Plataforma
 

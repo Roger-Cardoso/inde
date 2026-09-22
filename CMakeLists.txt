@@ -21,6 +21,7 @@ add_library(inde_core
     src/project/narrative.cpp
     src/project/planning.cpp
     src/project/writing.cpp
+    src/project/linguistic.cpp
     src/project/cartography.cpp
     src/project/structure_model.cpp
     src/persistence/dictionary_store.cpp
@@ -40,6 +41,7 @@ add_library(inde_core
     src/persistence/sqlite_narrative_repository.cpp
     src/persistence/sqlite_planning_repository.cpp
     src/persistence/sqlite_writing_repository.cpp
+    src/persistence/sqlite_linguistic_catalog.cpp
     src/persistence/sqlite_cartography_repository.cpp
     src/application/project_service.cpp
     src/application/project_session.cpp
@@ -49,6 +51,7 @@ add_library(inde_core
     src/application/narrative_service.cpp
     src/application/planning_service.cpp
     src/application/writing_service.cpp
+    src/application/linguistic_service.cpp
     src/application/cartography_service.cpp
     src/application/proofreading_service.cpp
     src/application/timeline_projection.cpp
@@ -136,6 +139,14 @@ if(BUILD_TESTING)
     target_link_libraries(inde_cartography_tests PRIVATE inde_core)
     target_compile_options(inde_cartography_tests PRIVATE -UNDEBUG -Wall -Wextra -Wpedantic)
     add_test(NAME inde_cartography_tests COMMAND inde_cartography_tests)
+
+    add_executable(inde_linguistic_integration_tests
+        tests/linguistic_integration_tests.cpp)
+    target_link_libraries(inde_linguistic_integration_tests PRIVATE inde_core)
+    target_compile_options(inde_linguistic_integration_tests PRIVATE
+        -UNDEBUG -Wall -Wextra -Wpedantic)
+    add_test(NAME inde_linguistic_integration_tests
+        COMMAND inde_linguistic_integration_tests)
 
     add_executable(inde_narrative_benchmark tests/narrative_benchmark.cpp)
     target_link_libraries(inde_narrative_benchmark PRIVATE inde_core)

@@ -2,6 +2,7 @@
 
 #include "inde/application/cartography_service.hpp"
 #include "inde/application/catalog_service.hpp"
+#include "inde/application/linguistic_service.hpp"
 #include "inde/application/narrative_service.hpp"
 #include "inde/application/planning_service.hpp"
 #include "inde/application/project_session.hpp"
@@ -66,6 +67,12 @@ public:
   }
   [[nodiscard]] const WritingService &writing() const noexcept {
     return writing_service_;
+  }
+  [[nodiscard]] LinguisticService &linguistics() noexcept {
+    return linguistic_service_;
+  }
+  [[nodiscard]] const LinguisticService &linguistics() const noexcept {
+    return linguistic_service_;
   }
   // Estado de navegação descartável compartilhado por Planejamento e Gráficos.
   [[nodiscard]] const PlanningContext &planning_context() const noexcept {
@@ -141,6 +148,7 @@ private:
                                     narrative_repository_};
   WritingService writing_service_{session_, writing_repository_};
   CartographyService cartography_service_{session_, cartography_repository_};
+  LinguisticService linguistic_service_;
   PlanningContext planning_context_;
 };
 
