@@ -6,6 +6,8 @@ namespace inde::persistence {
 
 class SqliteNarrativeRepository final : public NarrativeStore {
 public:
+  void create_relation_from_text(const std::filesystem::path &,
+      const project::TextRelationCreation &) const override;
   void initialize(const std::filesystem::path &project_path) const override;
   [[nodiscard]] std::vector<project::EntityType>
   entity_types(const std::filesystem::path &project_path) const override;

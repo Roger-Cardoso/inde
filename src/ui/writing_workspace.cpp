@@ -5,6 +5,8 @@
 #include "inde/ui/overlay_dialog.hpp"
 
 #include "inde/project/manifest.hpp"
+#include "writing_workspace_util.hpp"
+#include "editor_diagnostics.hpp"
 
 #include <algorithm>
 #include <cmath>
@@ -13,26 +15,6 @@
 
 namespace inde::ui {
 namespace {
-
-constexpr std::size_t reading_speed = 200;
-
-// Content actions replace a modal without going through its response footer.
-// Release the old form after the clicked callback has finished using captures.
-void retire_text_reference_dialog(OverlayDialog *dialog) {
-  dialog->hide();
-  Glib::signal_idle().connect_once([dialog] { delete dialog; });
-}
-
-void prepare_tool_label(Gtk::Label &label) {
-  label.set_xalign(0.0F);
-  label.set_wrap(true);
-  label.add_css_class("dim-label");
-}
-
-void clear_list(Gtk::ListBox &list) {
-  while (auto *child = list.get_first_child())
-    list.remove(*child);
-}
 
 void constrain_combo_text(Gtk::ComboBoxText &combo, int characters) {
   for (auto *cell : combo.get_cells()) {
@@ -48,7 +30,12 @@ void constrain_combo_text(Gtk::ComboBoxText &combo, int characters) {
 } // namespace
 
 WritingWorkspace::WritingWorkspace(application::ProjectService &service)
-    : Gtk::Box(Gtk::Orientation::VERTICAL), service_(service) {
+    : Gtk::Box(Gtk::Orientation::VERTICAL), service_(service),
+      find_analysis_([](const application::TextAnalysisSnapshot &snapshot, std::stop_token stop) {
+        application::TextAnalysisResult result;
+        result.search = application::find_text(snapshot.text, *snapshot.search, stop);
+        return result;
+      }) {
   build_ui();
 }
 
@@ -61,7 +48,15 @@ void WritingWorkspace::build_ui() {
 
   page_stack_.set_hexpand(true);
   page_stack_.set_vexpand(true);
-  page_stack_.set_transition_type(Gtk::StackTransitionType::CROSSFADE);
+  page_stack_.set_transition_type(Gtk::StackTransitionType::NONE);
+  page_stack_.set_hhomogeneous(false);page_stack_.set_vhomogeneous(false);
+  composition_page_.signal_back().connect([this]{show_library();});
+  composition_page_.signal_open_document().connect([this](const std::string &id){open_document(id);});
+  composition_page_.signal_narrative_uses().connect([this]{show_narrative_uses(true);});
+  compositions_button_.signal_clicked().connect([this]{
+    try {flush_changes();close_inline_suggestions();composition_page_.refresh();page_stack_.set_visible_child("compositions");}
+    catch(const std::exception &e){show_error("Não foi possível abrir Composições",e);}
+  });
   append(page_stack_);
 
   library_heading_.set_hexpand(true);
@@ -83,6 +78,7 @@ void WritingWorkspace::build_ui() {
   set_accessible_label(library_filters_button_,
                        "Abrir pesquisa e filtros da Biblioteca");
   library_header_.append(library_filters_button_);
+  library_header_.append(compositions_button_);
   library_header_.append(new_group_button_);
   group_actions_button_.set_visible(false);
   library_header_.append(group_actions_button_);
@@ -137,10 +133,10 @@ void WritingWorkspace::build_ui() {
   set_accessible_label(search_, "Pesquisar Documentos");
   set_accessible_description(
       search_, "Filtra Documentos literalmente pelo nome ou pelo conteúdo.");
-  placement_filter_.append("all", "Todas as colocações editoriais");
+  placement_filter_.append("all", "Todas as posições no manuscrito");
   placement_filter_.set_active_id("all");
   constrain_combo_text(placement_filter_, 42);
-  set_accessible_label(placement_filter_, "Filtrar por unidade editorial");
+  set_accessible_label(placement_filter_, "Filtrar por elemento do manuscrito");
   group_filter_.append("all", "Todos os grupos");
   group_filter_.set_active_id("all");
   purpose_filter_.append("all", "Todas as finalidades");
@@ -155,7 +151,7 @@ void WritingWorkspace::build_ui() {
   purpose_filter_.set_active_id("all");
   perspective_filter_.set_placeholder_text("Perspectiva ou ponto de vista");
   entity_filter_ = Gtk::make_managed<IncrementalSelector>(
-      "Pesquisar entidade usada",
+      "Pesquisar elemento da história usada",
       [this](const std::string &search, std::size_t limit) {
         std::vector<IncrementalSelection> result;
         if (!service_.current())
@@ -167,7 +163,7 @@ void WritingWorkspace::build_ui() {
           result.push_back({entity.id, entity.name, entity.summary});
         return result;
       },
-      "Nenhuma entidade selecionada");
+      "Nenhum elemento selecionado");
   library_filters_panel_.set_margin(18);
   auto *filter_title = Gtk::make_managed<Gtk::Label>("Pesquisa e filtros");
   filter_title->set_halign(Gtk::Align::START);
@@ -206,38 +202,43 @@ void WritingWorkspace::build_ui() {
   title_entry_.set_placeholder_text("Nome do Documento");
   set_accessible_label(title_entry_, "Nome do Documento");
   editor_toolbar_.append(title_entry_);
-  placement_.append("none", "Sem colocação editorial");
+  placement_.append("none", "Sem posição no manuscrito");
   placement_.set_active_id("none");
-  constrain_combo_text(placement_, 38);
+  constrain_combo_text(placement_, 20);
   placement_.set_hexpand(false);
   placement_.set_tooltip_text(
-      "Situa o Documento sem transformar a unidade editorial no texto.");
+      "Situa o Documento sem transformar o elemento do manuscrito no texto.");
   set_accessible_label(placement_, "Colocação editorial do Documento");
-  editor_toolbar_.append(placement_);
+  document_menu_.append(placement_);
   open_placement_button_.set_sensitive(false);
   open_placement_button_.add_css_class("flat");
   open_placement_button_.set_tooltip_text(
       "Abrir o detalhe desta unidade no workspace Editorial");
   set_accessible_label(open_placement_button_,
-                       "Abrir unidade editorial do Documento");
-  editor_toolbar_.append(open_placement_button_);
-  editor_toolbar_.append(organization_button_);
-  editor_toolbar_.append(tools_button_);
+                       "Abrir elemento do manuscrito do Documento");
+  document_menu_.append(open_placement_button_);
+  document_menu_.append(organization_button_);
   save_button_.add_css_class("suggested-action");
   save_button_.set_sensitive(false);
-  editor_toolbar_.append(save_button_);
+  document_menu_.append(save_button_);
+  auto *export_button=Gtk::make_managed<Gtk::Button>("Exportar Documento…");
+  export_button->signal_clicked().connect([this] {document_popover_.popdown();export_document();});
+  document_menu_.append(*export_button);
+  document_menu_.append(recovery_editor_button_);
   delete_button_.add_css_class("flat");
   delete_button_.add_css_class("quiet-destructive");
-  editor_toolbar_.append(delete_button_);
+  document_menu_.append(delete_button_);
+  document_menu_.set_margin(12);
+  document_popover_.set_child(document_menu_);
+  document_menu_button_.set_icon_name("view-more-symbolic");
+  document_menu_button_.set_popover(document_popover_);
+  document_menu_button_.set_tooltip_text("Organização, salvamento e recuperação");
+  set_accessible_label(document_menu_button_, "Ações do Documento");
   editor_page_.append(editor_toolbar_);
 
   formatting_toolbar_.add_css_class("toolbar-surface");
   formatting_toolbar_.add_css_class("writing-format-toolbar");
-  for (auto *button :
-       {&undo_button_, &redo_button_, &bold_button_, &italic_button_,
-        &underline_button_, &strike_button_, &heading_button_,
-        &subheading_button_, &quote_button_, &clear_format_button_})
-    formatting_toolbar_.append(*button);
+  build_editor_controls();
   bold_button_.set_tooltip_text("Negrito na seleção");
   italic_button_.set_tooltip_text("Itálico na seleção");
   underline_button_.set_tooltip_text("Sublinhado na seleção");
@@ -245,7 +246,50 @@ void WritingWorkspace::build_ui() {
   heading_button_.set_tooltip_text("Título no parágrafo selecionado");
   subheading_button_.set_tooltip_text("Subtítulo no parágrafo selecionado");
   quote_button_.set_tooltip_text("Citação no parágrafo selecionado");
-  editor_page_.append(formatting_toolbar_);
+  build_clipboard_ui();
+  formatting_toolbar_.append(cut_button_);
+  build_search_ui();
+  formatting_toolbar_.append(consult_button_);
+  build_recovery_ui();
+  build_semantic_ui();
+  // Keep the same authoritative controls, presented on demand in compact rows.
+  std::vector<Gtk::Widget *> format_controls;
+  for (auto *child = formatting_toolbar_.get_first_child(); child;
+       child = child->get_next_sibling()) format_controls.push_back(child);
+  for (auto *child : format_controls) formatting_toolbar_.remove(*child);
+  formatting_toolbar_.set_orientation(Gtk::Orientation::VERTICAL);
+  formatting_toolbar_.set_spacing(8);
+  for (std::size_t i = 0; i < format_controls.size(); i += 5) {
+    auto *row = Gtk::make_managed<Gtk::Box>(Gtk::Orientation::HORIZONTAL, 6);
+    for (auto j = i; j < std::min(i + 5, format_controls.size()); ++j)
+      row->append(*format_controls[j]);
+    formatting_toolbar_.append(*row);
+  }
+  format_popover_.set_child(formatting_toolbar_);
+  format_menu_button_.set_label("Formatar");
+  format_menu_button_.set_popover(format_popover_);
+  set_accessible_label(format_menu_button_, "Abrir formatação");
+  contextual_toolbar_.set_orientation(Gtk::Orientation::VERTICAL);
+  auto *narrative_uses=Gtk::make_managed<Gtk::Button>("Planejamento deste texto…");
+  narrative_uses->signal_clicked().connect([this]{context_popover_.popdown();show_narrative_uses();});
+  contextual_toolbar_.append(*narrative_uses);
+  contextual_toolbar_.set_margin(8);
+  contextual_toolbar_.set_spacing(4);
+  context_menu_scroll_.set_child(contextual_toolbar_);
+  context_menu_scroll_.set_policy(Gtk::PolicyType::NEVER, Gtk::PolicyType::AUTOMATIC);
+  context_menu_scroll_.set_max_content_height(440);
+  context_menu_scroll_.set_propagate_natural_height(true);
+  context_popover_.set_child(context_menu_scroll_);
+  context_menu_button_.set_label("Ferramentas");
+  context_menu_button_.set_popover(context_popover_);
+  set_accessible_label(context_menu_button_, "Abrir ferramentas do texto");
+  for (auto *child = contextual_toolbar_.get_first_child(); child;
+       child = child->get_next_sibling())
+    if (auto *button = dynamic_cast<Gtk::Button *>(child))
+      button->signal_clicked().connect([this] { context_popover_.popdown(); });
+  editor_toolbar_.append(format_menu_button_);
+  editor_toolbar_.append(context_menu_button_);
+  editor_toolbar_.append(document_menu_button_);
 
   editor_.set_wrap_mode(Gtk::WrapMode::WORD_CHAR);
   editor_.set_left_margin(34);
@@ -273,7 +317,7 @@ void WritingWorkspace::build_ui() {
   editor_size_observer_.set_hexpand(true);
   editor_size_observer_.set_vexpand(true);
   editor_size_observer_.signal_resize().connect([this](int width, int) {
-    const int prose_margin = std::clamp((width - 1120) / 2, 34, 360);
+    const int prose_margin = std::max(24, (width - 820) / 2);
     editor_.set_left_margin(prose_margin);
     editor_.set_right_margin(prose_margin);
   });
@@ -291,6 +335,7 @@ void WritingWorkspace::build_ui() {
   stats_grid_.append(stats_characters_);
   stats_grid_.append(stats_structure_);
   stats_grid_.append(stats_reading_time_);
+  tools_panel_.append(tools_button_);
   tools_panel_.append(stats_title_);
   tools_panel_.append(stats_grid_);
   goal_title_.add_css_class("heading");
@@ -372,6 +417,7 @@ void WritingWorkspace::build_ui() {
 
   page_stack_.add(library_page_, "library");
   page_stack_.add(editor_page_, "editor");
+  page_stack_.add(composition_page_, "compositions");
   page_stack_.set_visible_child("library");
   build_formatting_tags();
 
@@ -415,7 +461,7 @@ void WritingWorkspace::build_ui() {
                                          placement != "none");
     placement_.set_tooltip_text(
         placement.empty() || placement == "none"
-            ? "Situa o Documento sem transformar a unidade editorial no texto."
+            ? "Situa o Documento sem transformar o elemento do manuscrito no texto."
             : placement_label(placement));
     mark_dirty();
   });
@@ -433,15 +479,65 @@ void WritingWorkspace::build_ui() {
     if (!placement.empty() && placement != "none")
       signal_editorial_source_requested_.emit(placement);
   });
-  editor_.get_buffer()->signal_changed().connect([this] {
+  const std::weak_ptr<int> buffer_lifetime = clipboard_lifetime_;
+  editor_.get_buffer()->signal_changed().connect([this, buffer_lifetime] {
+    if (buffer_lifetime.expired()) return;
+    const bool restoring = loading_editor_ || restoring_undo_;
+    EditorPhaseTimer measurement(restoring ? "buffer_restore_changed" : "signal_changed");
+    if (!restoring && editor_diagnostics_enabled() && !editor_frame_tick_) {
+      editor_change_started_ = std::chrono::steady_clock::now();
+      editor_frame_tick_ = editor_.add_tick_callback([this](const auto &) {
+        editor_diagnostic("change_to_frame_tick",
+                          std::chrono::steady_clock::now() - editor_change_started_);
+        editor_frame_tick_ = 0;
+        return false;
+      });
+    }
     mark_dirty();
     refresh_formatting_toolbar();
+    refresh_semantic_lenses();
+    schedule_inline_suggestions();
   });
+  build_ime_guard();
+  auto position_keys=Gtk::EventControllerKey::create();
+  position_keys->set_propagation_phase(Gtk::PropagationPhase::CAPTURE);
+  position_keys->signal_key_pressed().connect([this](guint,guint,Gdk::ModifierType) {position_restore_.disconnect();return false;},false);
+  editor_.add_controller(position_keys);
+  auto position_click=Gtk::GestureClick::create();
+  position_click->set_propagation_phase(Gtk::PropagationPhase::CAPTURE);
+  position_click->signal_pressed().connect([this](int,double,double) {position_restore_.disconnect();});
+  editor_.add_controller(position_click);
+  auto position_scroll=Gtk::EventControllerScroll::create();
+  position_scroll->set_flags(Gtk::EventControllerScroll::Flags::BOTH_AXES);
+  position_scroll->set_propagation_phase(Gtk::PropagationPhase::CAPTURE);
+  position_scroll->signal_scroll().connect([this](double,double) {
+    position_restore_.disconnect();return false;
+  },false);
+  editor_.add_controller(position_scroll);
   editor_.get_buffer()->signal_mark_set().connect(
-      [this](const Gtk::TextBuffer::iterator &,
+      [this, buffer_lifetime](const Gtk::TextBuffer::iterator &,
              const Glib::RefPtr<Gtk::TextMark> &) {
+        if (buffer_lifetime.expired()) return;
         refresh_formatting_toolbar();
+        schedule_inline_suggestions();
+        if (!loading_editor_ && !restoring_undo_ && current_document_) {
+          const auto buffer = editor_.get_buffer();
+          edit_session_.update_selection({
+              static_cast<std::size_t>(buffer->get_iter_at_mark(buffer->get_insert()).get_offset()),
+              static_cast<std::size_t>(buffer->get_iter_at_mark(buffer->get_selection_bound()).get_offset())});
+          schedule_position_save();
+        }
       });
+  editor_.get_buffer()->signal_insert().connect(
+      [this, buffer_lifetime](const Gtk::TextBuffer::iterator &position, const Glib::ustring &text, int) {
+        if (buffer_lifetime.expired()) return;
+        if (!loading_editor_ && !restoring_undo_) { semantic_before_edit(position.get_offset(),position.get_offset(),text.raw());edit_session_.note_mutation(); }
+      }, false);
+  editor_.get_buffer()->signal_erase().connect(
+      [this, buffer_lifetime](const Gtk::TextBuffer::iterator &start, const Gtk::TextBuffer::iterator &end) {
+        if (buffer_lifetime.expired()) return;
+        if (!loading_editor_ && !restoring_undo_) { semantic_before_edit(start.get_offset(),end.get_offset(),"");edit_session_.note_mutation(); }
+      }, false);
   goal_enabled_.signal_toggled().connect([this] {
     word_goal_.set_sensitive(goal_enabled_.get_active());
     mark_dirty();
@@ -527,29 +623,41 @@ void WritingWorkspace::build_formatting_tags() {
   quote->property_style() = Pango::Style::ITALIC;
   quote->property_left_margin() = 28;
   quote->property_indent() = 10;
+  for (auto style : {project::DocumentTextStyle::Heading2,project::DocumentTextStyle::Heading3,
+       project::DocumentTextStyle::Heading4,project::DocumentTextStyle::Heading5,project::DocumentTextStyle::Heading6}) {
+    auto tag=add(style,("inde-"+project::to_string(style)).c_str());
+    tag->property_weight()=static_cast<int>(Pango::Weight::BOLD);
+    tag->property_scale()=style==project::DocumentTextStyle::Heading2?1.4:style==project::DocumentTextStyle::Heading3?1.3:style==project::DocumentTextStyle::Heading4?1.2:style==project::DocumentTextStyle::Heading5?1.1:1.0;
+    tag->property_pixels_above_lines()=10; tag->property_pixels_below_lines()=6;
+  }
+  add(project::DocumentTextStyle::AlignLeft,"inde-align-left")->property_justification()=Gtk::Justification::LEFT;
+  add(project::DocumentTextStyle::AlignCenter,"inde-align-center")->property_justification()=Gtk::Justification::CENTER;
+  add(project::DocumentTextStyle::AlignRight,"inde-align-right")->property_justification()=Gtk::Justification::RIGHT;
+  add(project::DocumentTextStyle::AlignJustify,"inde-align-justify")->property_justification()=Gtk::Justification::FILL;
 }
 
 void WritingWorkspace::install_actions(Gtk::ApplicationWindow &window) {
-  window.add_action("create-document",
-                    sigc::mem_fun(*this, &WritingWorkspace::create_document));
-  window.add_action("save-document",
-                    sigc::mem_fun(*this, &WritingWorkspace::save_document));
-  window.add_action("writing-undo",
-                    sigc::mem_fun(*this, &WritingWorkspace::undo));
-  window.add_action("writing-redo",
-                    sigc::mem_fun(*this, &WritingWorkspace::redo));
-  window.add_action("writing-bold", [this] {
-    if (page_stack_.get_visible_child_name() == "editor")
-      apply_text_style(project::DocumentTextStyle::Bold);
-  });
-  window.add_action("writing-italic", [this] {
-    if (page_stack_.get_visible_child_name() == "editor")
-      apply_text_style(project::DocumentTextStyle::Italic);
-  });
-  window.add_action("writing-underline", [this] {
-    if (page_stack_.get_visible_child_name() == "editor")
-      apply_text_style(project::DocumentTextStyle::Underline);
-  });
+  const auto add=[this,&window](const char *name,std::function<void()> run,bool require_document=true) {
+    window.add_action(name,[this,&window,run=std::move(run),require_document] {
+      auto *host=find_modal_overlay(window);
+      if(!get_mapped() || ime_active_ || (host && host->has_dialog()) ||
+         (require_document && (!current_document_ || page_stack_.get_visible_child_name()!="editor")))return;
+      run();
+    });
+  };
+  add("writing-suggest",[this]{suggest_editorial_change();});
+  add("writing-export",[this]{export_document();});
+  add("writing-inline",[this]{show_inline_commands();});
+  add("writing-find",[this]{open_find(false);});
+  add("writing-replace",[this]{open_find(true);});
+  add("writing-tools",[this]{toggle_tools();});
+  add("create-document",[this]{create_document();},false);
+  add("save-document",[this]{save_document();});
+  add("writing-undo",[this]{undo();});
+  add("writing-redo",[this]{redo();});
+  add("writing-bold",[this]{apply_text_style(project::DocumentTextStyle::Bold);});
+  add("writing-italic",[this]{apply_text_style(project::DocumentTextStyle::Italic);});
+  add("writing-underline",[this]{apply_text_style(project::DocumentTextStyle::Underline);});
   new_document_button_.set_action_name("win.create-document");
   save_button_.set_action_name("win.save-document");
 }
@@ -573,6 +681,23 @@ void WritingWorkspace::refresh() {
 }
 
 void WritingWorkspace::reset() {
+  composition_page_.reset();
+  position_save_.disconnect();
+  position_restore_.disconnect();
+  close_inline_suggestions();
+  ime_commit_delivery_.disconnect();
+  ime_active_ = ime_commit_pending_ = false;
+  gtk_text_view_reset_im_context(editor_.gobj());
+  end_recovery();
+  save_delivery_.disconnect();
+  save_worker_.clear();
+  saved_document_.reset();
+  ++edit_epoch_; edit_revision_ = 0; save_submitted_ = false; save_error_.clear();
+  if (editor_frame_tick_) {
+    editor_.remove_tick_callback(editor_frame_tick_);
+    editor_frame_tick_ = 0;
+  }
+  invalidate_text_analysis();
   autosave_connection_.disconnect();
   analysis_connection_.disconnect();
   undo_group_connection_.disconnect();
@@ -585,17 +710,31 @@ void WritingWorkspace::reset() {
   goal_enabled_.set_active(false);
   word_goal_.set_value(1000);
   loading_editor_ = false;
-  dirty_ = false;
+  edit_session_.reset();
   current_document_.reset();
+  semantic_explorer_document_id_.clear();
+  // Visual tags are project-local caches, not a growing registry across a
+  // writer's long-lived sequence of projects. Author formatting is untouched.
+  for (const auto &[key,tag] : semantic_tags_) {
+    (void)key;
+    editor_.get_buffer()->get_tag_table()->remove(tag);
+  }
+  semantic_tags_.clear();
+  semantic_filter_ = {};
+  semantic_project_scope_ = false;
+  semantic_use_filter_ = {};
+  semantic_offset_ = 0;
+  while (auto *child = semantic_page_.get_first_child())
+    semantic_page_.remove(*child);
   documents_.clear();
   placement_options_.clear();
   placement_labels_.clear();
   document_groups_.clear();
   current_group_id_.reset();
   entity_references_.clear();
-  undo_stack_.clear();
-  redo_stack_.clear();
-  undo_baseline_.reset();
+  close_find();
+  find_query_.set_text("");
+  find_replacement_.set_text("");
   selected_anchor_id_.reset();
   selected_entity_reference_id_.reset();
   while (auto *child = document_list_.get_first_child())
@@ -611,2001 +750,30 @@ void WritingWorkspace::reset() {
   update_undo_actions();
 }
 
-persistence::DocumentQuery WritingWorkspace::library_query() const {
-  persistence::DocumentQuery query;
-  query.search = search_.get_text();
-  query.limit = 200;
-  const auto placement = placement_filter_.get_active_id().raw();
-  if (!placement.empty() && placement != "all")
-    query.editorial_node_id = placement;
-  if (entity_filter_)
-    query.entity_id = entity_filter_->selected_id();
-  if (current_group_id_)
-    query.group_id = current_group_id_;
-  else {
-    const auto group = group_filter_.get_active_id().raw();
-    if (!group.empty() && group != "all")
-      query.group_id = group;
-  }
-  const auto purpose = purpose_filter_.get_active_id().raw();
-  if (!purpose.empty() && purpose != "all")
-    query.purpose = project::document_purpose_from_string(purpose);
-  query.perspective = perspective_filter_.get_text();
-  query.revisions_only = revisions_filter_.get_active();
-  // Na raiz, grupos substituem visualmente seus filhos. Em pesquisas e
-  // filtros, porém, todos os Documentos voltam a ser encontráveis.
-  query.ungrouped_only = !current_group_id_ && query.search.empty() &&
-                         !query.editorial_node_id && !query.entity_id &&
-                         !query.group_id && !query.purpose &&
-                         query.perspective.empty() && !query.revisions_only;
-  return query;
-}
-
-void WritingWorkspace::refresh_library() {
-  if (!service_.current())
-    return;
-  const auto query = library_query();
-  document_groups_ = service_.writing().document_groups();
-  const auto active_group =
-      current_group_id_
-          ? std::find_if(document_groups_.begin(), document_groups_.end(),
-                         [&](const auto &value) {
-                           return value.id == *current_group_id_;
-                         })
-          : document_groups_.end();
-  if (current_group_id_ && active_group == document_groups_.end())
-    current_group_id_.reset();
-  library_title_.set_text(current_group_id_ &&
-                                  active_group != document_groups_.end()
-                              ? active_group->name
-                              : "Documentos");
-  leave_group_button_.set_visible(current_group_id_.has_value());
-  group_actions_button_.set_visible(current_group_id_.has_value());
-  group_actions_button_.set_sensitive(current_group_id_.has_value());
-  new_group_button_.set_visible(!current_group_id_.has_value());
-  documents_ = service_.writing().document_summaries(query);
-  auto total = service_.writing().document_count(query);
-  if (query.ungrouped_only) {
-    persistence::DocumentQuery all_documents;
-    all_documents.limit = 1;
-    total = service_.writing().document_count(all_documents);
-  }
-  auto summary = std::to_string(total) +
-                 (total == 1 ? " Documento" : " Documentos") +
-                 (query.search.empty() ? " no contexto" : " encontrados");
-  if (!query.ungrouped_only && total > documents_.size())
-    summary +=
-        " — mostrando os " + std::to_string(documents_.size()) + " primeiros";
-  library_summary_.set_text(summary);
-  std::vector<std::string> context;
-  if (!query.search.empty())
-    context.push_back("texto “" + query.search + "”");
-  if (query.editorial_node_id)
-    context.push_back(placement_label(query.editorial_node_id));
-  if (query.entity_id)
-    context.push_back("entidade " + entity_label(*query.entity_id));
-  if (query.group_id) {
-    const auto group = std::find_if(
-        document_groups_.begin(), document_groups_.end(),
-        [&](const auto &value) { return value.id == *query.group_id; });
-    context.push_back("grupo " + (group == document_groups_.end()
-                                      ? std::string{"indisponível"}
-                                      : group->name));
-  }
-  if (query.purpose)
-    context.push_back(project::display_name(*query.purpose));
-  if (!query.perspective.empty())
-    context.push_back("perspectiva “" + query.perspective + "”");
-  if (query.revisions_only)
-    context.push_back("somente revisões documentais");
-  std::string context_text = context.empty() ? "Todo o Projeto" : "Filtros: ";
-  for (std::size_t index = 0; index < context.size(); ++index) {
-    if (index != 0)
-      context_text += "  •  ";
-    context_text += context[index];
-  }
-  library_context_.set_text(context_text);
-
-  while (auto *child = document_list_.get_first_child())
-    document_list_.remove(*child);
-  const bool show_groups = !current_group_id_ && query.search.empty() &&
-                           !query.editorial_node_id && !query.entity_id &&
-                           !query.purpose && query.perspective.empty() &&
-                           !query.revisions_only;
-  if (show_groups) {
-    for (const auto &group : document_groups_) {
-      persistence::DocumentQuery count_query;
-      count_query.group_id = group.id;
-      const auto count = service_.writing().document_count(count_query);
-      auto *button = Gtk::make_managed<Gtk::Button>();
-      auto *content =
-          Gtk::make_managed<Gtk::Box>(Gtk::Orientation::VERTICAL, 7);
-      content->set_margin(14);
-      auto *kind = Gtk::make_managed<Gtk::Label>("GRUPO DE DOCUMENTOS");
-      kind->set_xalign(0.0F);
-      kind->add_css_class("accent-label");
-      auto *title = Gtk::make_managed<Gtk::Label>(group.name);
-      title->set_xalign(0.0F);
-      title->set_ellipsize(Pango::EllipsizeMode::END);
-      title->add_css_class("title-3");
-      auto *description = Gtk::make_managed<Gtk::Label>(
-          group.description.empty() ? "Abra para ver somente este conjunto."
-                                    : group.description);
-      description->set_xalign(0.0F);
-      description->set_wrap(true);
-      description->set_lines(2);
-      description->set_ellipsize(Pango::EllipsizeMode::END);
-      description->add_css_class("dim-label");
-      auto *details = Gtk::make_managed<Gtk::Label>(
-          std::to_string(count) + (count == 1 ? " Documento" : " Documentos"));
-      details->set_xalign(0.0F);
-      details->add_css_class("dim-label");
-      content->append(*kind);
-      content->append(*title);
-      content->append(*description);
-      content->append(*details);
-      button->set_child(*content);
-      button->set_size_request(270, 154);
-      button->set_hexpand(true);
-      button->set_halign(Gtk::Align::FILL);
-      button->set_valign(Gtk::Align::START);
-      button->add_css_class("content-card");
-      button->add_css_class("document-group-card");
-      button->signal_clicked().connect(
-          [this, id = group.id] { open_document_group(id); });
-      attach_context_menu(
-          *button,
-          {{"Abrir grupo", [this, id = group.id] { open_document_group(id); },
-            "folder-open-symbolic"},
-           {"Editar grupo",
-            [this, id = group.id] {
-              open_document_group(id);
-              edit_current_group();
-            },
-            "document-edit-symbolic"},
-           {"Remover grupo",
-            [this, id = group.id] {
-              open_document_group(id);
-              delete_current_group();
-            },
-            "user-trash-symbolic", true, true, true}});
-      document_list_.append(*button);
-    }
-  }
-  for (const auto &document : documents_) {
-    auto *button = Gtk::make_managed<Gtk::Button>();
-    auto *content = Gtk::make_managed<Gtk::Box>(Gtk::Orientation::VERTICAL, 6);
-    content->set_margin(12);
-    auto *title = Gtk::make_managed<Gtk::Label>(document.title);
-    title->set_xalign(0.0F);
-    title->set_ellipsize(Pango::EllipsizeMode::END);
-    title->set_max_width_chars(34);
-    title->add_css_class("heading");
-    auto *placement = Gtk::make_managed<Gtk::Label>(
-        placement_label(document.editorial_node_id));
-    placement->set_xalign(0.0F);
-    placement->set_ellipsize(Pango::EllipsizeMode::END);
-    placement->set_max_width_chars(34);
-    placement->add_css_class("dim-label");
-    auto *details = Gtk::make_managed<Gtk::Label>(
-        std::to_string(document.character_count) +
-        (document.character_count == 1 ? " caractere" : " caracteres") +
-        "  •  " + std::to_string(document.entity_reference_count) +
-        (document.entity_reference_count == 1 ? " entidade" : " entidades"));
-    details->set_xalign(0.0F);
-    details->add_css_class("dim-label");
-    content->append(*title);
-    auto *purpose = Gtk::make_managed<Gtk::Label>(
-        project::display_name(document.purpose) +
-        (document.perspective.empty() ? "" : "  •  " + document.perspective));
-    purpose->set_xalign(0.0F);
-    purpose->set_ellipsize(Pango::EllipsizeMode::END);
-    purpose->add_css_class("accent-label");
-    content->append(*purpose);
-    if (document.search_match != project::DocumentSearchMatch::None) {
-      auto *reason = Gtk::make_managed<Gtk::Label>(
-          "Encontrado por: " + search_match_label(document.search_match));
-      reason->set_xalign(0.0F);
-      reason->add_css_class("accent-label");
-      content->append(*reason);
-    }
-    content->append(*placement);
-    content->append(*details);
-    button->set_child(*content);
-    button->set_size_request(270, 154);
-    button->set_halign(Gtk::Align::FILL);
-    button->set_valign(Gtk::Align::START);
-    button->set_hexpand(true);
-    button->set_vexpand(false);
-    button->add_css_class("catalog-card");
-    auto tooltip =
-        document.title + "\n" + placement_label(document.editorial_node_id);
-    if (document.search_match != project::DocumentSearchMatch::None)
-      tooltip += "\nIncluído porque a busca corresponde ao " +
-                 search_match_label(document.search_match) + ".";
-    button->set_tooltip_text(tooltip);
-    button->signal_clicked().connect(
-        [this, id = document.id] { open_document(id); });
-    attach_context_menu(
-        *button,
-        {{"Abrir Documento", [this, id = document.id] { open_document(id); },
-          "go-next-symbolic"},
-         {"Remover Documento",
-          [this, id = document.id] {
-            open_document(id);
-            if (current_document_ && current_document_->id == id)
-              delete_document();
-          },
-          "user-trash-symbolic", true, true, true}});
-    document_list_.append(*button);
-  }
-  const bool empty =
-      documents_.empty() && (!show_groups || document_groups_.empty());
-  library_results_stack_.set_visible_child(empty ? "empty" : "results");
-  if (documents_.empty() &&
-      (!query.search.empty() || query.editorial_node_id || query.entity_id)) {
-    empty_title_.set_text("Nenhum Documento encontrado");
-    empty_message_.set_text(
-        "Ajuste a pesquisa ou limpe os filtros para voltar à Biblioteca.");
-  } else {
-    empty_title_.set_text("Comece a escrever");
-    empty_message_.set_text(
-        "Crie um Documento livre agora. Você pode situá-lo na estrutura "
-        "editorial quando isso for útil.");
-  }
-}
-
-void WritingWorkspace::refresh_library_filter_options() {
-  refreshing_library_controls_ = true;
-  const auto active = placement_filter_.get_active_id().raw();
-  placement_filter_.remove_all();
-  placement_filter_.append("all", "Todas as colocações editoriais");
-  for (const auto &[id, label] : placement_options_)
-    placement_filter_.append(id, label);
-  if (active.empty() || !placement_filter_.set_active_id(active))
-    placement_filter_.set_active_id("all");
-  const auto active_group = group_filter_.get_active_id().raw();
-  document_groups_ = service_.writing().document_groups();
-  group_filter_.remove_all();
-  group_filter_.append("all", "Todos os grupos");
-  for (const auto &group : document_groups_)
-    group_filter_.append(group.id, group.name);
-  if (active_group.empty() || !group_filter_.set_active_id(active_group))
-    group_filter_.set_active_id("all");
-  if (entity_filter_)
-    entity_filter_->refresh();
-  refreshing_library_controls_ = false;
-}
-
-void WritingWorkspace::create_document_group() {
-  auto *owner = owner_window();
-  if (!owner || !service_.current())
-    return;
-  auto *dialog = new OverlayDialog("Novo grupo de Documentos", *owner, true);
-  dialog->set_secondary_text("O grupo organiza a Biblioteca dentro do INDE; "
-                             "não cria uma pasta no disco.");
-  dialog->add_button("Cancelar", Gtk::ResponseType::CANCEL);
-  dialog->add_button("Criar grupo", Gtk::ResponseType::ACCEPT);
-  auto *form = Gtk::make_managed<Gtk::Box>(Gtk::Orientation::VERTICAL, 8);
-  auto *name = Gtk::make_managed<Gtk::Entry>();
-  auto *description = Gtk::make_managed<Gtk::Entry>();
-  name->set_placeholder_text("Nome do grupo");
-  description->set_placeholder_text("Descrição opcional");
-  form->set_margin(16);
-  append_labeled_form_field(*form, "Nome", *name, "Campo obrigatório.");
-  append_labeled_form_field(*form, "Descrição", *description);
-  dialog->get_content_area()->append(*form);
-  dialog->signal_response().connect(
-      [this, dialog, name, description](int response) {
-        if (response == Gtk::ResponseType::ACCEPT) {
-          try {
-            const auto group = service_.writing().create_document_group(
-                name->get_text(), description->get_text());
-            dialog->hide();
-            refresh_library_filter_options();
-            open_document_group(group.id);
-            return;
-          } catch (const std::exception &error) {
-            show_error("Não foi possível criar o grupo", error);
-          }
-        }
-        dialog->hide();
-      });
-  dialog->present();
-}
-
-void WritingWorkspace::edit_current_group() {
-  if (!current_group_id_)
-    return;
-  const auto group = service_.writing().document_group(*current_group_id_);
-  auto *owner = owner_window();
-  if (!group || !owner)
-    return;
-  auto original = *group;
-  auto *dialog = new OverlayDialog("Editar grupo de Documentos", *owner, true);
-  dialog->add_button("Cancelar", Gtk::ResponseType::CANCEL);
-  dialog->add_button("Salvar", Gtk::ResponseType::ACCEPT);
-  auto *form = Gtk::make_managed<Gtk::Box>(Gtk::Orientation::VERTICAL, 8);
-  auto *name = Gtk::make_managed<Gtk::Entry>();
-  auto *description = Gtk::make_managed<Gtk::Entry>();
-  name->set_text(original.name);
-  description->set_text(original.description);
-  form->set_margin(16);
-  append_labeled_form_field(*form, "Nome", *name, "Campo obrigatório.");
-  append_labeled_form_field(*form, "Descrição", *description);
-  dialog->get_content_area()->append(*form);
-  dialog->signal_response().connect([this, dialog, original, name,
-                                     description](int response) mutable {
-    if (response == Gtk::ResponseType::ACCEPT) {
-      try {
-        original.name = name->get_text();
-        original.description = description->get_text();
-        static_cast<void>(service_.writing().update_document_group(original));
-        refresh_library_filter_options();
-        refresh_library();
-      } catch (const std::exception &error) {
-        show_error("Não foi possível editar o grupo", error);
-      }
-    }
-    dialog->hide();
-  });
-  dialog->present();
-}
-
-void WritingWorkspace::delete_current_group() {
-  if (!current_group_id_)
-    return;
-  auto *owner = owner_window();
-  if (!owner)
-    return;
-  const auto id = *current_group_id_;
-  auto *dialog = new OverlayDialog(*owner, "Remover este grupo da Biblioteca?",
-                                   false, Gtk::MessageType::QUESTION,
-                                   Gtk::ButtonsType::NONE, true);
-  dialog->set_title("Remover grupo");
-  dialog->set_secondary_text(
-      "Os Documentos permanecem íntegros e voltam para a raiz da Biblioteca.");
-  dialog->add_button("Cancelar", Gtk::ResponseType::CANCEL);
-  dialog->add_button("Remover grupo", Gtk::ResponseType::REJECT);
-  dialog->signal_response().connect([this, dialog, id](int response) {
-    if (response == Gtk::ResponseType::REJECT) {
-      try {
-        service_.writing().delete_document_group(id);
-        current_group_id_.reset();
-        refresh_library_filter_options();
-        refresh_library();
-      } catch (const std::exception &error) {
-        show_error("Não foi possível remover o grupo", error);
-      }
-    }
-    dialog->hide();
-  });
-  dialog->present();
-}
-
-void WritingWorkspace::open_document_group(const std::string &id) {
-  current_group_id_ = id;
-  search_.set_text("");
-  group_filter_.set_active_id("all");
-  refresh_library();
-  library_scroll_.get_vadjustment()->set_value(0.0);
-  signal_status_message_.emit("Grupo documental aberto na Biblioteca");
-}
-
-void WritingWorkspace::leave_document_group() {
-  current_group_id_.reset();
-  refresh_library();
-  library_scroll_.get_vadjustment()->set_value(0.0);
-  new_group_button_.grab_focus();
-}
-
-void WritingWorkspace::toggle_library_filters() {
-  library_filters_visible_ = !library_filters_visible_;
-  set_overlay_revealer_open(library_filters_revealer_,
-                            library_filters_visible_);
-  library_filters_button_.set_label(
-      library_filters_visible_ ? "Fechar filtros" : "Pesquisa e filtros");
-  if (library_filters_visible_)
-    search_.grab_focus();
-}
-
-void WritingWorkspace::dismiss_library_filters() {
-  if (!library_filters_visible_)
-    return;
-  library_filters_visible_ = false;
-  set_overlay_revealer_open(library_filters_revealer_, false);
-  library_filters_button_.set_label("Pesquisa e filtros");
-  library_filters_button_.grab_focus();
-}
-
-void WritingWorkspace::clear_library_filters() {
-  search_.set_text("");
-  placement_filter_.set_active_id("all");
-  group_filter_.set_active_id("all");
-  purpose_filter_.set_active_id("all");
-  perspective_filter_.set_text("");
-  revisions_filter_.set_active(false);
-  if (entity_filter_)
-    entity_filter_->clear_selection();
-  refresh_library();
-}
-
-void WritingWorkspace::refresh_placement_options() {
-  placement_options_.clear();
-  placement_labels_.clear();
-  for (const auto &work : service_.catalog().works) {
-    const auto nodes = service_.structural_nodes_for_work(work.id);
-    const auto path_labels = project::structural_node_path_labels(nodes);
-    for (const auto &node : nodes) {
-      auto label = work.title + " — " + path_labels.at(node.id);
-      placement_options_.emplace_back(node.id, label);
-      placement_labels_.emplace(node.id, std::move(label));
-    }
-  }
-  const auto active = placement_.get_active_id().raw();
-  const bool previous_loading = loading_editor_;
-  loading_editor_ = true;
-  placement_.remove_all();
-  placement_.append("none", "Sem colocação editorial");
-  for (const auto &[id, label] : placement_options_)
-    placement_.append(id, label);
-  placement_.set_active_id(active.empty() ? "none" : active);
-  if (placement_.get_active_row_number() < 0)
-    placement_.set_active_id("none");
-  loading_editor_ = previous_loading;
-}
-
-void WritingWorkspace::show_library() {
-  try {
-    flush_changes();
-    current_document_.reset();
-    page_stack_.set_visible_child("library");
-    refresh_library();
-    library_filters_button_.grab_focus();
-    signal_status_message_.emit("Biblioteca de Documentos ativa");
-  } catch (const std::exception &error) {
-    show_error("Não foi possível salvar o Documento", error);
-  }
-}
-
-void WritingWorkspace::open_document(const std::string &id) {
-  try {
-    flush_changes();
-    const auto value = service_.writing().document(id);
-    if (!value)
-      throw std::runtime_error("Documento não encontrado");
-    current_document_ = value;
-    restore_editor_state(*value);
-    dirty_ = false;
-    undo_stack_.clear();
-    redo_stack_.clear();
-    undo_baseline_ = capture_editor_state();
-    update_editor_status();
-    update_undo_actions();
-    page_stack_.set_visible_child("editor");
-    editor_.grab_focus();
-    signal_status_message_.emit("Documento aberto para Escrita");
-  } catch (const std::exception &error) {
-    loading_editor_ = false;
-    show_error("Não foi possível abrir o Documento", error);
-  }
-}
-
-void WritingWorkspace::reveal_document(const std::string &id) {
-  open_document(id);
-}
-
-void WritingWorkspace::show_library_for_editorial_node(
-    const std::string &node_id) {
-  try {
-    flush_changes();
-    current_document_.reset();
-    current_group_id_.reset();
-    refresh_library_filter_options();
-    search_.set_text("");
-    if (entity_filter_)
-      entity_filter_->clear_selection();
-    if (!placement_filter_.set_active_id(node_id))
-      throw std::runtime_error("Unidade editorial não encontrada");
-    page_stack_.set_visible_child("library");
-    refresh_library();
-    signal_status_message_.emit("Biblioteca filtrada pela unidade editorial");
-  } catch (const std::exception &error) {
-    show_error("Não foi possível abrir a Biblioteca", error);
-  }
-}
-
-void WritingWorkspace::show_library_for_entity(const std::string &entity_id) {
-  try {
-    flush_changes();
-    current_document_.reset();
-    current_group_id_.reset();
-    search_.set_text("");
-    placement_filter_.set_active_id("all");
-    if (!entity_filter_)
-      throw std::runtime_error("Filtro de entidade indisponível");
-    entity_filter_->set_selected(entity_id, entity_label(entity_id));
-    page_stack_.set_visible_child("library");
-    refresh_library();
-    signal_status_message_.emit("Biblioteca filtrada pela entidade");
-  } catch (const std::exception &error) {
-    show_error("Não foi possível abrir a Biblioteca", error);
-  }
-}
-
-void WritingWorkspace::create_document() {
-  std::optional<std::string> placement;
-  const auto selected = placement_filter_.get_active_id().raw();
-  if (!selected.empty() && selected != "all")
-    placement = selected;
-  create_document_at(std::move(placement));
-}
-
-void WritingWorkspace::create_document_for_editorial_node(
-    const std::string &node_id) {
-  create_document_at(node_id);
-}
-
-void WritingWorkspace::create_document_at(
-    std::optional<std::string> editorial_node_id) {
-  auto *owner = owner_window();
-  if (!owner || !service_.current())
-    return;
-  auto *dialog = new OverlayDialog("Novo Documento", *owner, true);
-  dialog->set_secondary_text(
-      editorial_node_id
-          ? "O Documento será criado na unidade editorial selecionada."
-          : "O Documento nasce livre e pode receber colocação editorial no "
-            "editor.");
-  dialog->add_button("Cancelar", Gtk::ResponseType::CANCEL);
-  dialog->add_button("Criar e escrever", Gtk::ResponseType::ACCEPT);
-  auto *form = Gtk::make_managed<Gtk::Box>(Gtk::Orientation::VERTICAL, 8);
-  auto *title = Gtk::make_managed<Gtk::Entry>();
-  title->set_placeholder_text("Nome do Documento");
-  form->set_margin(16);
-  append_labeled_form_field(*form, "Nome", *title, "Campo obrigatório.");
-  dialog->get_content_area()->append(*form);
-  dialog->signal_response().connect(
-      [this, dialog, title,
-       editorial_node_id = std::move(editorial_node_id)](int response) {
-        if (response == Gtk::ResponseType::ACCEPT) {
-          try {
-            const auto created = service_.writing().create_document(
-                title->get_text(), editorial_node_id);
-            auto organized = created;
-            if (current_group_id_) {
-              organized.group_id = current_group_id_;
-              organized = service_.writing().update_document(organized);
-            }
-            dialog->hide();
-            refresh_library();
-            open_document(organized.id);
-            return;
-          } catch (const std::exception &error) {
-            show_error("Não foi possível criar o Documento", error);
-          }
-        }
-        dialog->hide();
-      });
-  dialog->present();
-}
-
-void WritingWorkspace::edit_document_organization() {
-  if (!current_document_)
-    return;
-  auto *owner = owner_window();
-  if (!owner)
-    return;
-  auto original = capture_editor_state();
-  auto *dialog = new OverlayDialog("Organização do Documento", *owner, true);
-  dialog->set_secondary_text(
-      "Finalidade, grupo, perspectiva e origem de revisão são metadados; o "
-      "texto e a colocação editorial permanecem independentes.");
-  dialog->add_button("Cancelar", Gtk::ResponseType::CANCEL);
-  dialog->add_button("Salvar organização", Gtk::ResponseType::ACCEPT);
-  auto *form = Gtk::make_managed<Gtk::Box>(Gtk::Orientation::VERTICAL, 10);
-  auto *purpose = Gtk::make_managed<Gtk::ComboBoxText>();
-  for (const auto value :
-       {project::DocumentPurpose::MainText,
-        project::DocumentPurpose::Annotation,
-        project::DocumentPurpose::Revision, project::DocumentPurpose::Outline,
-        project::DocumentPurpose::Research, project::DocumentPurpose::Reference,
-        project::DocumentPurpose::Other})
-    purpose->append(project::to_string(value), project::display_name(value));
-  purpose->set_active_id(project::to_string(original.purpose));
-  auto *group = Gtk::make_managed<Gtk::ComboBoxText>();
-  group->append("none", "Sem grupo — raiz da Biblioteca");
-  for (const auto &value : service_.writing().document_groups())
-    group->append(value.id, value.name);
-  group->set_active_id(original.group_id.value_or("none"));
-  auto *perspective = Gtk::make_managed<Gtk::Entry>();
-  perspective->set_text(original.perspective);
-  perspective->set_placeholder_text("Ex.: ponto de vista de Aurora");
-  auto *revision = Gtk::make_managed<Gtk::ComboBoxText>();
-  revision->append("none", "Não é revisão de outro Documento");
-  persistence::DocumentQuery query;
-  query.limit = 500;
-  for (const auto &value : service_.writing().document_summaries(query)) {
-    if (value.id != original.id)
-      revision->append(value.id, value.title);
-  }
-  revision->set_active_id(original.revision_of_id.value_or("none"));
-  auto *revision_label = Gtk::make_managed<Gtk::Entry>();
-  revision_label->set_text(original.revision_label);
-  revision_label->set_placeholder_text("Ex.: v2 — revisão de ritmo");
-  form->set_margin(16);
-  append_labeled_form_field(*form, "Finalidade", *purpose,
-                            "Classifica o uso principal deste Documento.");
-  append_labeled_form_field(
-      *form, "Grupo da Biblioteca", *group,
-      "Organização virtual, sem mover arquivos no disco.");
-  append_labeled_form_field(
-      *form, "Perspectiva", *perspective,
-      "Texto livre para busca e leitura por ponto de vista.");
-  append_labeled_form_field(
-      *form, "Revisão de", *revision,
-      "Origem documental explícita; não é uma versão editorial publicada.");
-  append_labeled_form_field(*form, "Rótulo da revisão", *revision_label);
-  dialog->get_content_area()->append(*form);
-  dialog->signal_response().connect([this, dialog, original, purpose, group,
-                                     perspective, revision,
-                                     revision_label](int response) mutable {
-    if (response == Gtk::ResponseType::ACCEPT) {
-      try {
-        original.purpose = project::document_purpose_from_string(
-            purpose->get_active_id().raw());
-        const auto group_id = group->get_active_id().raw();
-        original.group_id = group_id.empty() || group_id == "none"
-                                ? std::nullopt
-                                : std::optional<std::string>{group_id};
-        original.perspective = perspective->get_text();
-        const auto source_id = revision->get_active_id().raw();
-        original.revision_of_id = source_id.empty() || source_id == "none"
-                                      ? std::nullopt
-                                      : std::optional<std::string>{source_id};
-        original.revision_label = revision_label->get_text();
-        if (original.revision_of_id &&
-            original.purpose == project::DocumentPurpose::MainText)
-          original.purpose = project::DocumentPurpose::Revision;
-        current_document_ = service_.writing().update_document(original);
-        dirty_ = false;
-        refresh_library_filter_options();
-        signal_status_message_.emit("Organização documental salva");
-      } catch (const std::exception &error) {
-        show_error("Não foi possível organizar o Documento", error);
-      }
-    }
-    dialog->hide();
-  });
-  dialog->present();
-}
-
-void WritingWorkspace::flush_changes() {
+WritingWorkspace::~WritingWorkspace() {
+  close_inline_suggestions();inline_popover_.unparent();
+  // GtkTextView only knows how to remove anchored text children. Detach our
+  // custom popover before its dispose loop; controller disposal is too late.
+  if (editor_context_popover_ && editor_context_popover_->get_parent())
+    editor_context_popover_->unparent();
+  editor_context_popover_ = nullptr;
+  // GTK can emit mark/clipboard notifications while the containing Window
+  // unrealizes after our C++ toolbar members have already been destroyed.
+  // Invalidate callbacks before dismantling any member; never dereference this
+  // from a retained TextBuffer after this lifetime has ended.
+  clipboard_lifetime_.reset();
+  ime_commit_delivery_.disconnect();
+  recovery_maintenance_delivery_.disconnect();
+  end_recovery();
+  invalidate_clipboard();
+  save_delivery_.disconnect();
+  find_debounce_.disconnect();
+  find_delivery_.disconnect();
+  if (editor_frame_tick_)
+    editor_.remove_tick_callback(editor_frame_tick_);
   autosave_connection_.disconnect();
-  if (!dirty_ || !current_document_)
-    return;
-  commit_undo_group();
-  auto value = capture_editor_state();
-  current_document_ = service_.writing().update_document(value);
-  dirty_ = false;
-  undo_baseline_ = capture_editor_state();
-  update_editor_status();
-}
-
-void WritingWorkspace::save_document() {
-  if (!current_document_)
-    return;
-  try {
-    flush_changes();
-    signal_status_message_.emit("Documento salvo");
-  } catch (const std::exception &error) {
-    show_error("Não foi possível salvar o Documento", error);
-  }
-}
-
-void WritingWorkspace::delete_document() {
-  if (!current_document_)
-    return;
-  auto *owner = owner_window();
-  if (!owner)
-    return;
-  const auto id = current_document_->id;
-  const auto title = current_document_->title;
-  auto *dialog = new OverlayDialog(
-      *owner, "Remover permanentemente o Documento “" + title + "”?", false,
-      Gtk::MessageType::QUESTION, Gtk::ButtonsType::NONE, true);
-  dialog->set_title("Remover Documento");
-  dialog->set_secondary_text(
-      "O texto, sua formatação, âncoras e vínculos serão removidos. A unidade "
-      "editorial e as entidades permanecem intactas.");
-  dialog->add_button("Cancelar", Gtk::ResponseType::CANCEL);
-  dialog->add_button("Remover", Gtk::ResponseType::REJECT);
-  dialog->signal_response().connect([this, dialog, id](int response) {
-    if (response == Gtk::ResponseType::REJECT) {
-      try {
-        autosave_connection_.disconnect();
-        service_.writing().delete_document(id);
-        current_document_.reset();
-        dirty_ = false;
-        clear_anchor_marks();
-        entity_references_.clear();
-        page_stack_.set_visible_child("library");
-        refresh_library();
-        signal_status_message_.emit("Documento removido");
-      } catch (const std::exception &error) {
-        show_error("Não foi possível remover o Documento", error);
-      }
-    }
-    dialog->hide();
-  });
-  dialog->present();
-}
-
-Glib::RefPtr<Gtk::TextTag>
-WritingWorkspace::tag_for_style(project::DocumentTextStyle style) const {
-  const auto found =
-      std::find_if(formatting_tags_.begin(), formatting_tags_.end(),
-                   [&](const auto &entry) { return entry.first == style; });
-  if (found == formatting_tags_.end())
-    throw std::runtime_error("Estilo de formatação indisponível");
-  return found->second;
-}
-
-void WritingWorkspace::apply_text_style(project::DocumentTextStyle style) {
-  if (!current_document_)
-    return;
-  auto buffer = editor_.get_buffer();
-  Gtk::TextBuffer::iterator begin;
-  Gtk::TextBuffer::iterator end;
-  if (!buffer->get_selection_bounds(begin, end))
-    return;
-  const bool paragraph_style =
-      style == project::DocumentTextStyle::Heading ||
-      style == project::DocumentTextStyle::Subheading ||
-      style == project::DocumentTextStyle::Quote;
-  const auto tag = tag_for_style(style);
-  const bool was_active = begin.has_tag(tag);
-  if (paragraph_style) {
-    begin.set_line_offset(0);
-    if (!end.starts_line())
-      end.forward_to_line_end();
-    for (const auto paragraph : {project::DocumentTextStyle::Heading,
-                                 project::DocumentTextStyle::Subheading,
-                                 project::DocumentTextStyle::Quote})
-      buffer->remove_tag(tag_for_style(paragraph), begin, end);
-  }
-  if (was_active)
-    buffer->remove_tag(tag, begin, end);
-  else
-    buffer->apply_tag(tag, begin, end);
-  mark_dirty();
-  refresh_formatting_toolbar();
-}
-
-void WritingWorkspace::clear_text_formatting() {
-  if (!current_document_)
-    return;
-  auto buffer = editor_.get_buffer();
-  Gtk::TextBuffer::iterator begin;
-  Gtk::TextBuffer::iterator end;
-  if (!buffer->get_selection_bounds(begin, end))
-    return;
-  for (const auto &[style, tag] : formatting_tags_)
-    buffer->remove_tag(tag, begin, end);
-  mark_dirty();
-  refresh_formatting_toolbar();
-}
-
-bool WritingWorkspace::style_active_at_selection(
-    project::DocumentTextStyle style, bool &mixed) {
-  mixed = false;
-  if (!current_document_)
-    return false;
-  const auto buffer = editor_.get_buffer();
-  const auto tag = tag_for_style(style);
-  Gtk::TextBuffer::iterator begin;
-  Gtk::TextBuffer::iterator end;
-  if (!buffer->get_selection_bounds(begin, end)) {
-    auto cursor = buffer->get_iter_at_mark(buffer->get_insert());
-    if (cursor.has_tag(tag))
-      return true;
-    // Em uma fronteira de estilo, o cursor pertence visualmente ao trecho
-    // imediatamente anterior até que o autor digite algo novo.
-    auto previous = cursor;
-    return previous.backward_char() && previous.has_tag(tag);
-  }
-
-  bool has_active = false;
-  bool has_inactive = false;
-  auto cursor = begin;
-  while (cursor.compare(end) < 0) {
-    if (cursor.has_tag(tag))
-      has_active = true;
-    else
-      has_inactive = true;
-    if (has_active && has_inactive)
-      break;
-    auto next = cursor;
-    if (!next.forward_to_tag_toggle(tag) || next.compare(end) >= 0)
-      break;
-    cursor = next;
-  }
-  mixed = has_active && has_inactive;
-  return has_active && !has_inactive;
-}
-
-void WritingWorkspace::refresh_formatting_toolbar() {
-  const auto update = [this](Gtk::Button &button,
-                             project::DocumentTextStyle style,
-                             const char *description) {
-    bool mixed = false;
-    const bool active = style_active_at_selection(style, mixed);
-    button.remove_css_class("format-active");
-    button.remove_css_class("format-mixed");
-    if (active)
-      button.add_css_class("format-active");
-    else if (mixed)
-      button.add_css_class("format-mixed");
-    button.set_tooltip_text(
-        Glib::ustring(description) +
-        (active ? " — ativo neste trecho"
-                : mixed ? " — parcialmente ativo na seleção" : ""));
-  };
-  update(bold_button_, project::DocumentTextStyle::Bold, "Negrito na seleção");
-  update(italic_button_, project::DocumentTextStyle::Italic,
-         "Itálico na seleção");
-  update(underline_button_, project::DocumentTextStyle::Underline,
-         "Sublinhado na seleção");
-  update(strike_button_, project::DocumentTextStyle::Strikethrough,
-         "Tachado na seleção");
-  update(heading_button_, project::DocumentTextStyle::Heading,
-         "Título no parágrafo selecionado");
-  update(subheading_button_, project::DocumentTextStyle::Subheading,
-         "Subtítulo no parágrafo selecionado");
-  update(quote_button_, project::DocumentTextStyle::Quote,
-         "Citação no parágrafo selecionado");
-
-  bool any_format = false;
-  for (const auto &[style, tag] : formatting_tags_) {
-    bool mixed = false;
-    any_format = any_format || style_active_at_selection(style, mixed) || mixed;
-  }
-  clear_format_button_.remove_css_class("format-active");
-  if (any_format)
-    clear_format_button_.add_css_class("format-active");
-}
-
-std::vector<project::DocumentFormatSpan>
-WritingWorkspace::capture_formatting() {
-  std::vector<project::DocumentFormatSpan> result;
-  auto buffer = editor_.get_buffer();
-  const auto total = static_cast<std::size_t>(buffer->get_char_count());
-  for (const auto &[style, tag] : formatting_tags_) {
-    auto iterator = buffer->begin();
-    bool active = iterator.has_tag(tag);
-    std::size_t start = active ? 0 : total;
-    while (true) {
-      auto next = iterator;
-      if (!next.forward_to_tag_toggle(tag))
-        break;
-      const auto offset = static_cast<std::size_t>(next.get_offset());
-      if (active && start < offset)
-        result.push_back({style, start, offset});
-      else if (!active)
-        start = offset;
-      active = !active;
-      iterator = next;
-    }
-    if (active && start < total)
-      result.push_back({style, start, total});
-  }
-  std::sort(
-      result.begin(), result.end(), [](const auto &left, const auto &right) {
-        if (left.start_offset != right.start_offset)
-          return left.start_offset < right.start_offset;
-        if (left.end_offset != right.end_offset)
-          return left.end_offset < right.end_offset;
-        return project::to_string(left.style) < project::to_string(right.style);
-      });
-  return result;
-}
-
-void WritingWorkspace::restore_formatting(
-    const std::vector<project::DocumentFormatSpan> &formatting) {
-  auto buffer = editor_.get_buffer();
-  buffer->remove_all_tags(buffer->begin(), buffer->end());
-  const auto total = static_cast<std::size_t>(buffer->get_char_count());
-  for (const auto &span : formatting) {
-    if (span.start_offset >= span.end_offset || span.end_offset > total)
-      continue;
-    buffer->apply_tag(
-        tag_for_style(span.style),
-        buffer->get_iter_at_offset(static_cast<int>(span.start_offset)),
-        buffer->get_iter_at_offset(static_cast<int>(span.end_offset)));
-  }
-  refresh_formatting_toolbar();
-}
-
-void WritingWorkspace::toggle_tools() {
-  tools_visible_ = !tools_visible_;
-  set_overlay_revealer_open(tools_revealer_, tools_visible_);
-  tools_button_.set_label(tools_visible_ ? "Fechar ferramentas"
-                                         : "Ferramentas");
-  if (tools_visible_)
-    refresh_text_tools();
-}
-
-void WritingWorkspace::refresh_text_tools() {
-  current_statistics_ = project::analyze_document_text(
-      editor_.get_buffer()->get_text(), reading_speed, 120);
-  stats_words_.set_text(
-      std::to_string(current_statistics_.words) +
-      (current_statistics_.words == 1 ? " palavra" : " palavras"));
-  stats_characters_.set_text(
-      std::to_string(current_statistics_.characters_with_spaces) +
-      " caracteres com espaços  •  " +
-      std::to_string(current_statistics_.characters_without_spaces) +
-      " sem espaços");
-  stats_structure_.set_text(
-      std::to_string(current_statistics_.paragraphs) +
-      (current_statistics_.paragraphs == 1 ? " parágrafo" : " parágrafos") +
-      "  •  " + std::to_string(current_statistics_.sentences) +
-      (current_statistics_.sentences == 1 ? " frase" : " frases"));
-  stats_reading_time_.set_text(
-      current_statistics_.reading_minutes == 0
-          ? "Tempo de leitura: menos de 1 minuto (200 palavras/minuto)"
-          : "Tempo de leitura: cerca de " +
-                std::to_string(current_statistics_.reading_minutes) +
-                (current_statistics_.reading_minutes == 1 ? " minuto"
-                                                          : " minutos") +
-                " (200 palavras/minuto)");
-  word_count_.set_text(
-      std::to_string(current_statistics_.words) +
-      (current_statistics_.words == 1 ? " palavra" : " palavras"));
-  if (current_statistics_.repeated_words.empty()) {
-    repeated_words_.set_text("Nenhuma recorrência relevante nesta amostra.");
-  } else {
-    std::string text;
-    for (std::size_t index = 0;
-         index < current_statistics_.repeated_words.size(); ++index) {
-      if (index != 0)
-        text += "  •  ";
-      text += current_statistics_.repeated_words[index].word + " (" +
-              std::to_string(current_statistics_.repeated_words[index].count) +
-              ")";
-    }
-    repeated_words_.set_text(text);
-  }
-  refresh_long_paragraphs(current_statistics_.long_paragraphs);
-  update_goal_state();
-}
-
-void WritingWorkspace::update_goal_state() {
-  word_goal_.set_sensitive(goal_enabled_.get_active());
-  if (!goal_enabled_.get_active()) {
-    goal_progress_.set_fraction(0.0);
-    goal_progress_.set_text("Sem meta definida");
-    return;
-  }
-  const auto goal = static_cast<std::size_t>(word_goal_.get_value_as_int());
-  const auto fraction =
-      goal == 0 ? 0.0
-                : std::min(1.0, static_cast<double>(current_statistics_.words) /
-                                    static_cast<double>(goal));
-  goal_progress_.set_fraction(fraction);
-  goal_progress_.set_text(std::to_string(current_statistics_.words) + " / " +
-                          std::to_string(goal) + " palavras");
-}
-
-void WritingWorkspace::refresh_long_paragraphs(
-    const std::vector<project::LongParagraph> &paragraphs) {
-  clear_list(long_paragraphs_list_);
-  if (paragraphs.empty()) {
-    auto *empty = Gtk::make_managed<Gtk::Label>(
-        "Nenhum parágrafo com 120 palavras ou mais.");
-    prepare_tool_label(*empty);
-    empty->set_margin(8);
-    long_paragraphs_list_.append(*empty);
-    return;
-  }
-  for (const auto &paragraph : paragraphs) {
-    auto *button = Gtk::make_managed<Gtk::Button>(
-        "Parágrafo " + std::to_string(paragraph.paragraph_number) + " — " +
-        std::to_string(paragraph.word_count) + " palavras");
-    button->set_halign(Gtk::Align::FILL);
-    button->signal_clicked().connect([this, offset = paragraph.start_offset] {
-      navigate_to_offset(offset);
-    });
-    long_paragraphs_list_.append(*button);
-  }
-}
-
-void WritingWorkspace::navigate_to_offset(std::size_t offset) {
-  auto buffer = editor_.get_buffer();
-  const auto safe =
-      std::min(offset, static_cast<std::size_t>(buffer->get_char_count()));
-  auto iterator = buffer->get_iter_at_offset(static_cast<int>(safe));
-  buffer->place_cursor(iterator);
-  editor_.scroll_to(iterator, 0.2);
-  editor_.grab_focus();
-}
-
-void WritingWorkspace::clear_anchor_marks() {
-  auto buffer = editor_.get_buffer();
-  for (auto &anchor : anchor_marks_) {
-    if (anchor.start)
-      buffer->delete_mark(anchor.start);
-    if (anchor.end)
-      buffer->delete_mark(anchor.end);
-  }
-  anchor_marks_.clear();
-  selected_anchor_id_.reset();
-}
-
-void WritingWorkspace::restore_anchor_marks(
-    const std::vector<project::DocumentAnchor> &anchors) {
-  clear_anchor_marks();
-  auto buffer = editor_.get_buffer();
-  const auto total = static_cast<std::size_t>(buffer->get_char_count());
-  for (const auto &anchor : anchors) {
-    const auto start = std::min(anchor.start_offset, total);
-    const auto end = std::min(anchor.end_offset, total);
-    anchor_marks_.push_back(
-        {anchor.id, anchor.label,
-         buffer->create_mark(
-             "anchor-start-" + anchor.id,
-             buffer->get_iter_at_offset(static_cast<int>(start)), true),
-         buffer->create_mark("anchor-end-" + anchor.id,
-                             buffer->get_iter_at_offset(static_cast<int>(end)),
-                             false)});
-  }
-}
-
-std::vector<project::DocumentAnchor> WritingWorkspace::capture_anchors() {
-  std::vector<project::DocumentAnchor> result;
-  auto buffer = editor_.get_buffer();
-  for (const auto &anchor : anchor_marks_) {
-    const auto start = buffer->get_iter_at_mark(anchor.start).get_offset();
-    const auto end = buffer->get_iter_at_mark(anchor.end).get_offset();
-    result.push_back(
-        {anchor.id, anchor.label,
-         static_cast<std::size_t>(std::max(0, std::min(start, end))),
-         static_cast<std::size_t>(std::max(0, std::max(start, end)))});
-  }
-  std::sort(result.begin(), result.end(),
-            [](const auto &left, const auto &right) {
-              if (left.start_offset != right.start_offset)
-                return left.start_offset < right.start_offset;
-              return left.label < right.label;
-            });
-  return result;
-}
-
-void WritingWorkspace::refresh_anchor_list() {
-  clear_list(anchors_list_);
-  for (const auto &anchor : capture_anchors()) {
-    auto *button = Gtk::make_managed<Gtk::Button>(anchor.label);
-    button->set_halign(Gtk::Align::FILL);
-    button->set_tooltip_text(
-        anchor.start_offset == anchor.end_offset
-            ? "Posição " + std::to_string(anchor.start_offset)
-            : "Trecho " + std::to_string(anchor.start_offset) + "–" +
-                  std::to_string(anchor.end_offset));
-    button->signal_clicked().connect([this, id = anchor.id] {
-      select_anchor(id);
-      open_selected_anchor();
-    });
-    anchors_list_.append(*button);
-  }
-  if (anchor_marks_.empty()) {
-    auto *empty = Gtk::make_managed<Gtk::Label>(
-        "Selecione um trecho ou posicione o cursor para criar uma âncora.");
-    prepare_tool_label(*empty);
-    empty->set_margin(8);
-    anchors_list_.append(*empty);
-  }
-  const bool selected = selected_anchor_id_.has_value();
-  rename_anchor_button_.set_sensitive(selected);
-  remove_anchor_button_.set_sensitive(selected);
-  anchor_usages_button_.set_sensitive(selected);
-}
-
-void WritingWorkspace::select_anchor(std::string id) {
-  selected_anchor_id_ = std::move(id);
-  refresh_anchor_list();
-}
-
-void WritingWorkspace::open_selected_anchor() {
-  if (!selected_anchor_id_)
-    return;
-  const auto found = std::find_if(
-      anchor_marks_.begin(), anchor_marks_.end(),
-      [&](const auto &anchor) { return anchor.id == *selected_anchor_id_; });
-  if (found == anchor_marks_.end())
-    return;
-  auto buffer = editor_.get_buffer();
-  auto start = buffer->get_iter_at_mark(found->start);
-  auto end = buffer->get_iter_at_mark(found->end);
-  if (start.get_offset() == end.get_offset())
-    buffer->place_cursor(start);
-  else
-    buffer->select_range(start, end);
-  editor_.scroll_to(start, 0.2);
-  editor_.grab_focus();
-}
-
-void WritingWorkspace::add_anchor() {
-  if (!current_document_)
-    return;
-  auto *owner = owner_window();
-  if (!owner)
-    return;
-  auto buffer = editor_.get_buffer();
-  Gtk::TextBuffer::iterator start;
-  Gtk::TextBuffer::iterator end;
-  if (!buffer->get_selection_bounds(start, end)) {
-    start = buffer->get_iter_at_mark(buffer->get_insert());
-    end = start;
-  }
-  const auto start_offset = start.get_offset();
-  const auto end_offset = end.get_offset();
-  auto *dialog = new OverlayDialog("Nova âncora textual", *owner, true);
-  dialog->set_secondary_text(
-      start_offset == end_offset
-          ? "A âncora acompanhará esta posição durante a edição."
-          : "A âncora acompanhará o trecho selecionado durante a edição.");
-  dialog->add_button("Cancelar", Gtk::ResponseType::CANCEL);
-  dialog->add_button("Criar âncora", Gtk::ResponseType::ACCEPT);
-  auto *name = Gtk::make_managed<Gtk::Entry>();
-  name->set_placeholder_text("Nome da âncora");
-  name->set_margin(16);
-  dialog->get_content_area()->append(*name);
-  dialog->signal_response().connect(
-      [this, dialog, name, start_offset, end_offset](int response) {
-        if (response == Gtk::ResponseType::ACCEPT) {
-          try {
-            if (name->get_text().empty())
-              throw std::runtime_error("O nome da âncora é obrigatório");
-            const auto id = project::new_uuid();
-            auto buffer = editor_.get_buffer();
-            anchor_marks_.push_back(
-                {id, name->get_text(),
-                 buffer->create_mark("anchor-start-" + id,
-                                     buffer->get_iter_at_offset(start_offset),
-                                     true),
-                 buffer->create_mark("anchor-end-" + id,
-                                     buffer->get_iter_at_offset(end_offset),
-                                     false)});
-            selected_anchor_id_ = id;
-            refresh_anchor_list();
-            mark_dirty();
-          } catch (const std::exception &error) {
-            show_error("Não foi possível criar a âncora", error);
-          }
-        }
-        dialog->hide();
-      });
-  dialog->present();
-}
-
-void WritingWorkspace::rename_anchor() {
-  if (!selected_anchor_id_)
-    return;
-  auto found = std::find_if(
-      anchor_marks_.begin(), anchor_marks_.end(),
-      [&](const auto &anchor) { return anchor.id == *selected_anchor_id_; });
-  auto *owner = owner_window();
-  if (!owner || found == anchor_marks_.end())
-    return;
-  auto *dialog = new OverlayDialog("Renomear âncora", *owner, true);
-  dialog->add_button("Cancelar", Gtk::ResponseType::CANCEL);
-  dialog->add_button("Salvar", Gtk::ResponseType::ACCEPT);
-  auto *name = Gtk::make_managed<Gtk::Entry>();
-  name->set_text(found->label);
-  name->set_margin(16);
-  dialog->get_content_area()->append(*name);
-  const auto id = found->id;
-  dialog->signal_response().connect([this, dialog, name, id](int response) {
-    if (response == Gtk::ResponseType::ACCEPT) {
-      try {
-        if (name->get_text().empty())
-          throw std::runtime_error("O nome da âncora é obrigatório");
-        auto current =
-            std::find_if(anchor_marks_.begin(), anchor_marks_.end(),
-                         [&](const auto &anchor) { return anchor.id == id; });
-        if (current != anchor_marks_.end())
-          current->label = name->get_text();
-        refresh_anchor_list();
-        refresh_entity_references();
-        mark_dirty();
-      } catch (const std::exception &error) {
-        show_error("Não foi possível renomear a âncora", error);
-      }
-    }
-    dialog->hide();
-  });
-  dialog->present();
-}
-
-void WritingWorkspace::remove_anchor() {
-  if (!selected_anchor_id_)
-    return;
-  const auto id = *selected_anchor_id_;
-  try {
-    if (current_document_ &&
-        service_.writing()
-                .text_references({current_document_->id, true, id, 1, 0})
-                .total != 0)
-      throw std::runtime_error(
-          "Esta âncora é referenciada por outros Documentos. "
-          "Abra Usos desta âncora e desvincule as referências antes de "
-          "removê-la.");
-  } catch (const std::exception &error) {
-    show_error("Não foi possível remover a âncora", error);
-    return;
-  }
-  auto found =
-      std::find_if(anchor_marks_.begin(), anchor_marks_.end(),
-                   [&](const auto &anchor) { return anchor.id == id; });
-  if (found == anchor_marks_.end())
-    return;
-  auto buffer = editor_.get_buffer();
-  buffer->delete_mark(found->start);
-  buffer->delete_mark(found->end);
-  anchor_marks_.erase(found);
-  for (auto &reference : entity_references_) {
-    if (reference.anchor_id == id)
-      reference.anchor_id.reset();
-  }
-  selected_anchor_id_.reset();
-  refresh_anchor_list();
-  refresh_entity_references();
-  mark_dirty();
-}
-
-std::optional<std::string> WritingWorkspace::selected_anchor_label(
-    const std::optional<std::string> &id) const {
-  if (!id)
-    return std::nullopt;
-  const auto found =
-      std::find_if(anchor_marks_.begin(), anchor_marks_.end(),
-                   [&](const auto &anchor) { return anchor.id == *id; });
-  return found == anchor_marks_.end()
-             ? std::optional<std::string>{"Âncora indisponível"}
-             : std::optional<std::string>{found->label};
-}
-
-void WritingWorkspace::refresh_entity_references() {
-  clear_list(references_list_);
-  for (const auto &reference : entity_references_) {
-    auto label = entity_label(reference.entity_id);
-    if (const auto anchor = selected_anchor_label(reference.anchor_id))
-      label += " — em “" + *anchor + "”";
-    else
-      label += " — Documento inteiro";
-    auto *button = Gtk::make_managed<Gtk::Button>(label);
-    button->set_halign(Gtk::Align::FILL);
-    button->set_tooltip_text(reference.notes.empty()
-                                 ? "Referência explícita criada pelo usuário"
-                                 : reference.notes);
-    button->signal_clicked().connect(
-        [this, id = reference.id] { select_entity_reference(id); });
-    references_list_.append(*button);
-  }
-  if (entity_references_.empty()) {
-    auto *empty = Gtk::make_managed<Gtk::Label>(
-        "Nenhuma entidade foi vinculada explicitamente ao Documento.");
-    prepare_tool_label(*empty);
-    empty->set_margin(8);
-    references_list_.append(*empty);
-  }
-  const bool selected = selected_entity_reference_id_.has_value();
-  open_reference_button_.set_sensitive(selected);
-  remove_reference_button_.set_sensitive(selected);
-}
-
-void WritingWorkspace::select_entity_reference(std::string id) {
-  selected_entity_reference_id_ = std::move(id);
-  refresh_entity_references();
-}
-
-void WritingWorkspace::add_entity_reference() {
-  if (!current_document_)
-    return;
-  auto *owner = owner_window();
-  if (!owner)
-    return;
-  auto *dialog =
-      new OverlayDialog("Vincular entidade ao Documento", *owner, true);
-  dialog->set_secondary_text(
-      "O vínculo é explícito e não altera o texto nem os dados da entidade.");
-  dialog->add_button("Cancelar", Gtk::ResponseType::CANCEL);
-  dialog->add_button("Vincular", Gtk::ResponseType::ACCEPT);
-  auto *form = Gtk::make_managed<Gtk::Box>(Gtk::Orientation::VERTICAL, 8);
-  auto *entity = Gtk::make_managed<IncrementalSelector>(
-      "Pesquisar entidade",
-      [this](const std::string &search, std::size_t limit) {
-        std::vector<IncrementalSelection> result;
-        persistence::EntityQuery query;
-        query.search = search;
-        query.limit = std::min(limit, std::size_t{50});
-        for (const auto &value : service_.narrative().entities(query))
-          result.push_back({value.id, value.name, value.summary});
-        return result;
-      });
-  auto *anchor = Gtk::make_managed<Gtk::ComboBoxText>();
-  anchor->append("none", "Documento inteiro");
-  for (const auto &value : capture_anchors())
-    anchor->append(value.id, value.label);
-  anchor->set_active_id(selected_anchor_id_.value_or("none"));
-  auto *notes = Gtk::make_managed<Gtk::Entry>();
-  notes->set_placeholder_text("Nota opcional sobre o uso");
-  form->set_margin(16);
-  append_labeled_form_field(*form, "Entidade", *entity,
-                            "Pesquise e escolha uma entidade narrativa.");
-  append_labeled_form_field(
-      *form, "Âncora textual", *anchor,
-      "Use Documento inteiro quando não houver trecho específico.");
-  append_labeled_form_field(*form, "Nota", *notes);
-  dialog->get_content_area()->append(*form);
-  dialog->signal_response().connect([this, dialog, entity, anchor,
-                                     notes](int response) {
-    if (response == Gtk::ResponseType::ACCEPT) {
-      try {
-        if (!entity->selected_id())
-          throw std::runtime_error("Escolha uma entidade para vincular");
-        const auto anchor_id = anchor->get_active_id().raw();
-        project::DocumentEntityReference reference{
-            project::new_uuid(), *entity->selected_id(),
-            anchor_id.empty() || anchor_id == "none"
-                ? std::nullopt
-                : std::optional<std::string>{anchor_id},
-            notes->get_text()};
-        const auto duplicate =
-            std::find_if(entity_references_.begin(), entity_references_.end(),
-                         [&](const auto &existing) {
-                           return existing.entity_id == reference.entity_id &&
-                                  existing.anchor_id == reference.anchor_id;
-                         });
-        if (duplicate != entity_references_.end())
-          throw std::runtime_error(
-              "A entidade já está vinculada ao mesmo contexto");
-        entity_references_.push_back(reference);
-        selected_entity_reference_id_ = reference.id;
-        refresh_entity_references();
-        mark_dirty();
-      } catch (const std::exception &error) {
-        show_error("Não foi possível vincular a entidade", error);
-      }
-    }
-    dialog->hide();
-  });
-  dialog->present();
-}
-
-void WritingWorkspace::remove_entity_reference() {
-  if (!selected_entity_reference_id_)
-    return;
-  const auto id = *selected_entity_reference_id_;
-  entity_references_.erase(
-      std::remove_if(entity_references_.begin(), entity_references_.end(),
-                     [&](const auto &reference) { return reference.id == id; }),
-      entity_references_.end());
-  selected_entity_reference_id_.reset();
-  refresh_entity_references();
-  mark_dirty();
-}
-
-void WritingWorkspace::open_reference_entity() {
-  if (!selected_entity_reference_id_)
-    return;
-  const auto found =
-      std::find_if(entity_references_.begin(), entity_references_.end(),
-                   [&](const auto &reference) {
-                     return reference.id == *selected_entity_reference_id_;
-                   });
-  if (found == entity_references_.end())
-    return;
-  try {
-    flush_changes();
-    signal_entity_source_requested_.emit(found->entity_id);
-  } catch (const std::exception &error) {
-    show_error("Não foi possível salvar antes de navegar", error);
-  }
-}
-
-void WritingWorkspace::show_semantic_dictionary() {
-  auto *window = owner_window();
-  if (!window)
-    return;
-  auto *dialog =
-      new OverlayDialog("Dicionário semântico local", *window, true);
-  dialog->set_secondary_text(
-      "A consulta é acionada por você e não altera o Documento. Todas as "
-      "acepções encontradas são exibidas como alternativas; nenhuma é "
-      "selecionada ou vinculada automaticamente.");
-  dialog->add_button("Fechar", Gtk::ResponseType::CLOSE);
-  auto *body = dialog->get_content_area();
-  body->set_margin(16);
-
-  auto *query = Gtk::make_managed<Gtk::SearchEntry>();
-  query->set_placeholder_text("Palavra ou expressão exata");
-  query->set_max_length(256);
-  const auto buffer = editor_.get_buffer();
-  Gtk::TextBuffer::iterator begin;
-  Gtk::TextBuffer::iterator end;
-  if (buffer->get_selection_bounds(begin, end)) {
-    auto selected = buffer->get_text(begin, end, true).raw();
-    if (selected.size() <= 256 && selected.find('\n') == std::string::npos)
-      query->set_text(selected);
-  }
-  auto *consult = Gtk::make_managed<Gtk::Button>("Consultar alternativas");
-  consult->add_css_class("suggested-action");
-  auto *controls =
-      Gtk::make_managed<Gtk::Box>(Gtk::Orientation::HORIZONTAL, 8);
-  query->set_hexpand(true);
-  controls->append(*query);
-  controls->append(*consult);
-  body->append(*controls);
-
-  auto *status = Gtk::make_managed<Gtk::Label>();
-  prepare_tool_label(*status);
-  body->append(*status);
-  auto *results = Gtk::make_managed<Gtk::ListBox>();
-  results->set_selection_mode(Gtk::SelectionMode::NONE);
-  results->add_css_class("boxed-list");
-  auto *scroll = Gtk::make_managed<Gtk::ScrolledWindow>();
-  scroll->set_policy(Gtk::PolicyType::NEVER, Gtk::PolicyType::AUTOMATIC);
-  scroll->set_min_content_height(320);
-  scroll->set_child(*results);
-  body->append(*scroll);
-
-  const auto refresh = [this, query, status, results] {
-    clear_list(*results);
-    try {
-      const auto response =
-          service_.linguistics().query_lexicon(query->get_text().raw(), 50);
-      status->set_text(
-          response.total == 0
-              ? "Nenhuma acepção foi encontrada no catálogo local atual."
-              : "Exibindo " + std::to_string(response.candidates.size()) +
-                    " de " + std::to_string(response.total) +
-                    " alternativas. Sem vencedor automático; score semântico: " +
-                    response.score_semantics + ".");
-      for (const auto &candidate : response.candidates) {
-        auto *row =
-            Gtk::make_managed<Gtk::Box>(Gtk::Orientation::VERTICAL, 4);
-        row->set_margin(10);
-        auto *title = Gtk::make_managed<Gtk::Label>(
-            candidate.written + " — " + candidate.ptbr_pos + " / " +
-            candidate.upos);
-        title->set_halign(Gtk::Align::START);
-        title->set_xalign(0.0F);
-        title->add_css_class("heading");
-        row->append(*title);
-        auto *definition = Gtk::make_managed<Gtk::Label>(
-            candidate.definition.value_or(
-                "Definição não fornecida pela fonte para esta acepção."));
-        definition->set_halign(Gtk::Align::START);
-        definition->set_xalign(0.0F);
-        definition->set_wrap(true);
-        row->append(*definition);
-        auto *metadata = Gtk::make_managed<Gtk::Label>(
-            candidate.sense_id + " · POS da fonte: " + candidate.source_pos +
-            " · revisão: " + candidate.review_status);
-        prepare_tool_label(*metadata);
-        metadata->set_selectable(true);
-        row->append(*metadata);
-        results->append(*row);
-      }
-    } catch (const std::exception &error) {
-      status->set_text(std::string{"Consulta indisponível: "} + error.what() +
-                       ". Configure INDE_L06_CATALOG para o catálogo v0.6.");
-    }
-  };
-  consult->signal_clicked().connect(refresh);
-  query->signal_activate().connect(refresh);
-  const auto availability = service_.linguistics().status();
-  status->set_text(availability.lexical_message);
-  dialog->signal_response().connect([dialog](int) { dialog->hide(); });
-  dialog->present();
-}
-
-void WritingWorkspace::show_linguistic_entities() {
-  auto *window = owner_window();
-  if (!window)
-    return;
-  auto *dialog = new OverlayDialog("Construções e frames", *window, true);
-  dialog->set_secondary_text(
-      "Catálogo L-08 somente leitura. Estas entidades são fixtures sintéticas "
-      "derivadas e aceitas para uso interno; a lista não afirma que um padrão "
-      "ocorre no Documento aberto.");
-  dialog->add_button("Fechar", Gtk::ResponseType::CLOSE);
-  auto *body = dialog->get_content_area();
-  body->set_margin(16);
-  auto *search = Gtk::make_managed<Gtk::SearchEntry>();
-  search->set_placeholder_text("Filtrar por nome");
-  search->set_max_length(256);
-  auto *refresh_button = Gtk::make_managed<Gtk::Button>("Consultar catálogo");
-  refresh_button->add_css_class("suggested-action");
-  auto *controls =
-      Gtk::make_managed<Gtk::Box>(Gtk::Orientation::HORIZONTAL, 8);
-  search->set_hexpand(true);
-  controls->append(*search);
-  controls->append(*refresh_button);
-  body->append(*controls);
-  auto *status = Gtk::make_managed<Gtk::Label>();
-  prepare_tool_label(*status);
-  body->append(*status);
-  auto *results = Gtk::make_managed<Gtk::ListBox>();
-  results->set_selection_mode(Gtk::SelectionMode::NONE);
-  results->add_css_class("boxed-list");
-  auto *scroll = Gtk::make_managed<Gtk::ScrolledWindow>();
-  scroll->set_policy(Gtk::PolicyType::NEVER, Gtk::PolicyType::AUTOMATIC);
-  scroll->set_min_content_height(340);
-  scroll->set_child(*results);
-  body->append(*scroll);
-
-  const auto refresh = [this, search, status, results] {
-    clear_list(*results);
-    try {
-      const auto entities = service_.linguistics().linguistic_entities(
-          search->get_text().raw(), 50);
-      status->set_text(
-          entities.empty()
-              ? "Nenhuma entidade corresponde ao filtro no catálogo atual."
-              : std::to_string(entities.size()) +
-                    " entidades exibidas. Nenhum match textual foi executado.");
-      for (const auto &entity : entities) {
-        auto *row =
-            Gtk::make_managed<Gtk::Box>(Gtk::Orientation::VERTICAL, 4);
-        row->set_margin(10);
-        auto *title = Gtk::make_managed<Gtk::Label>(
-            project::display_name(entity.kind) + ": " + entity.name);
-        title->set_halign(Gtk::Align::START);
-        title->set_xalign(0.0F);
-        title->add_css_class("heading");
-        row->append(*title);
-        auto *description =
-            Gtk::make_managed<Gtk::Label>(entity.description);
-        description->set_halign(Gtk::Align::START);
-        description->set_xalign(0.0F);
-        description->set_wrap(true);
-        row->append(*description);
-        auto *metadata = Gtk::make_managed<Gtk::Label>(
-            entity.id + " · " + entity.subtype + " · " +
-            entity.epistemic_status + " · " + entity.review_status);
-        prepare_tool_label(*metadata);
-        metadata->set_selectable(true);
-        row->append(*metadata);
-        results->append(*row);
-      }
-    } catch (const std::exception &error) {
-      status->set_text(
-          std::string{"Catálogo indisponível: "} + error.what() +
-          ". Configure INDE_L08_CATALOG para o catálogo promovido v0.6.");
-    }
-  };
-  refresh_button->signal_clicked().connect(refresh);
-  search->signal_activate().connect(refresh);
-  const auto availability = service_.linguistics().status();
-  status->set_text(availability.constructions_message);
-  dialog->signal_response().connect([dialog](int) { dialog->hide(); });
-  dialog->present();
-}
-
-void WritingWorkspace::show_text_references(
-    bool incoming, std::optional<std::string> anchor_id, std::size_t offset) {
-  if (!current_document_ || !owner_window())
-    return;
-  try {
-    flush_changes();
-    const auto page = service_.writing().text_references(
-        {current_document_->id, incoming, anchor_id, 50, offset});
-    auto *dialog = new OverlayDialog(anchor_id ? "Usos desta âncora"
-                                               : "Referências textuais",
-                                     *owner_window(), true);
-    dialog->set_secondary_text(
-        current_document_->title + " — " +
-        (incoming ? "Documentos que referenciam esta fonte."
-                  : "Fontes referenciadas por este Documento.") +
-        " O vínculo não incorpora nem copia o texto. Alterações de vínculo são "
-        "salvas imediatamente.");
-    dialog->add_button("Fechar", Gtk::ResponseType::CLOSE);
-    auto *body = dialog->get_content_area();
-    body->set_margin(16);
-    auto *modes = Gtk::make_managed<Gtk::Box>(Gtk::Orientation::HORIZONTAL, 8);
-    auto *out = Gtk::make_managed<Gtk::Button>("Referências deste Documento");
-    auto *in = Gtk::make_managed<Gtk::Button>("Usos deste Documento");
-    out->signal_clicked().connect([this, dialog] {
-      retire_text_reference_dialog(dialog);
-      show_text_references(false);
-    });
-    in->signal_clicked().connect([this, dialog] {
-      retire_text_reference_dialog(dialog);
-      show_text_references(true);
-    });
-    modes->append(*out);
-    modes->append(*in);
-    body->append(*modes);
-    if (!incoming) {
-      auto *add =
-          Gtk::make_managed<Gtk::Button>("Referenciar Documento ou âncora");
-      add->signal_clicked().connect([this, dialog] {
-        retire_text_reference_dialog(dialog);
-        add_text_reference();
-      });
-      body->append(*add);
-    }
-    auto *summary = Gtk::make_managed<Gtk::Label>(
-        page.total == 0
-            ? "Nenhuma referência explícita neste contexto."
-            : "Exibindo " +
-                  std::to_string(page.items.empty() ? 0 : offset + 1) + "–" +
-                  std::to_string(offset + page.items.size()) + " de " +
-                  std::to_string(page.total) + " referências.");
-    prepare_tool_label(*summary);
-    body->append(*summary);
-    for (const auto &item : page.items) {
-      auto *row = Gtk::make_managed<Gtk::Box>(Gtk::Orientation::VERTICAL, 4);
-      auto *label = Gtk::make_managed<Gtk::Label>(
-          item.source_title + " → " + item.target_title + " — " +
-          item.target_anchor_label.value_or("Documento inteiro"));
-      prepare_tool_label(*label);
-      row->append(*label);
-      if (!item.reference.notes.empty()) {
-        auto *note = Gtk::make_managed<Gtk::Label>(item.reference.notes);
-        prepare_tool_label(*note);
-        row->append(*note);
-      }
-      auto *actions =
-          Gtk::make_managed<Gtk::Box>(Gtk::Orientation::HORIZONTAL, 8);
-      auto *open = Gtk::make_managed<Gtk::Button>(
-          incoming ? "Abrir Documento que usa" : "Abrir fonte");
-      open->signal_clicked().connect([this, dialog, item, incoming] {
-        retire_text_reference_dialog(dialog);
-        const auto id = incoming ? item.reference.source_document_id
-                                 : item.reference.target_document_id;
-        open_document(id);
-        if (!incoming && item.reference.target_anchor_id && current_document_ &&
-            current_document_->id == id) {
-          select_anchor(*item.reference.target_anchor_id);
-          open_selected_anchor();
-        }
-        if (tools_visible_)
-          toggle_tools();
-      });
-      auto *remove = Gtk::make_managed<Gtk::Button>("Desvincular");
-      remove->signal_clicked().connect(
-          [this, dialog, item, incoming, anchor_id] {
-            retire_text_reference_dialog(dialog);
-            auto *confirm = new OverlayDialog("Desvincular referência textual",
-                                              *owner_window(), true);
-            confirm->set_secondary_text(
-                item.source_title + " → " + item.target_title + " — " +
-                item.target_anchor_label.value_or("Documento inteiro") +
-                ". O conteúdo de ambos os Documentos será preservado.");
-            confirm->add_button("Cancelar", Gtk::ResponseType::CANCEL);
-            confirm->add_button("Desvincular", Gtk::ResponseType::ACCEPT);
-            confirm->signal_response().connect(
-                [this, confirm, item, incoming, anchor_id](int response) {
-                  confirm->hide();
-                  try {
-                    if (response == Gtk::ResponseType::ACCEPT)
-                      service_.writing().remove_text_reference(
-                          item.reference.source_document_id, item.reference.id);
-                    show_text_references(incoming, anchor_id);
-                  } catch (const std::exception &error) {
-                    show_error("Não foi possível desvincular", error);
-                  }
-                });
-            confirm->present();
-          });
-      actions->append(*open);
-      actions->append(*remove);
-      row->append(*actions);
-      row->set_margin_bottom(12);
-      body->append(*row);
-    }
-    auto *pages = Gtk::make_managed<Gtk::Box>(Gtk::Orientation::HORIZONTAL, 8);
-    auto *previous = Gtk::make_managed<Gtk::Button>("Anterior");
-    previous->set_sensitive(offset != 0);
-    previous->signal_clicked().connect([this, dialog, incoming, anchor_id,
-                                        offset] {
-      retire_text_reference_dialog(dialog);
-      show_text_references(incoming, anchor_id, offset >= 50 ? offset - 50 : 0);
-    });
-    auto *next = Gtk::make_managed<Gtk::Button>("Próxima");
-    next->set_sensitive(offset + page.items.size() < page.total);
-    next->signal_clicked().connect([this, dialog, incoming, anchor_id, offset] {
-      retire_text_reference_dialog(dialog);
-      show_text_references(incoming, anchor_id, offset + 50);
-    });
-    pages->append(*previous);
-    pages->append(*next);
-    body->append(*pages);
-    dialog->signal_response().connect([dialog](int) { dialog->hide(); });
-    dialog->present();
-  } catch (const std::exception &error) {
-    show_error("Não foi possível consultar referências textuais", error);
-  }
-}
-
-void WritingWorkspace::add_text_reference() {
-  if (!current_document_ || !owner_window())
-    return;
-  const auto source_id = current_document_->id;
-  auto *dialog = new OverlayDialog("Referenciar Documento ou âncora",
-                                   *owner_window(), true);
-  dialog->set_secondary_text(
-      "Escolha uma fonte. A referência preserva a identidade e abre o texto "
-      "atual, sem incorporá-lo.");
-  dialog->add_button("Cancelar", Gtk::ResponseType::CANCEL);
-  dialog->add_button("Referenciar", Gtk::ResponseType::ACCEPT);
-  auto *body = dialog->get_content_area();
-  body->set_margin(16);
-  auto *document = Gtk::make_managed<IncrementalSelector>(
-      "Pesquisar Documento de destino",
-      [this, source_id](const std::string &search, std::size_t limit) {
-        persistence::DocumentQuery query;
-        query.search = search;
-        query.limit = std::min(limit, std::size_t{50});
-        std::vector<IncrementalSelection> result;
-        for (const auto &item : service_.writing().document_summaries(query))
-          if (item.id != source_id)
-            result.push_back({item.id, item.title, "Documento do Projeto"});
-        return result;
-      });
-  auto *anchor = Gtk::make_managed<Gtk::ComboBoxText>();
-  auto *target_error = Gtk::make_managed<Gtk::Label>();
-  prepare_tool_label(*target_error);
-  target_error->set_visible(false);
-  anchor->append("none", "Documento inteiro");
-  anchor->set_active_id("none");
-  document->signal_selection_changed().connect([this, document, anchor,
-                                                target_error] {
-    target_error->set_visible(false);
-    anchor->remove_all();
-    anchor->append("none", "Documento inteiro");
-    anchor->set_active_id("none");
-    try {
-      if (document->selected_id()) {
-        const auto target =
-            service_.writing().document(*document->selected_id());
-        if (!target)
-          throw std::runtime_error("Documento de destino indisponível");
-        for (const auto &item : target->anchors)
-          anchor->append(item.id, item.label);
-      }
-    } catch (const std::exception &error) {
-      target_error->set_text(
-          std::string{"Não foi possível carregar as âncoras: "} + error.what());
-      target_error->set_visible(true);
-    }
-  });
-  auto *notes = Gtk::make_managed<Gtk::Entry>();
-  notes->set_max_length(4096);
-  append_labeled_form_field(*body, "Documento de destino", *document);
-  append_labeled_form_field(*body, "Destino no texto", *anchor);
-  body->append(*target_error);
-  append_labeled_form_field(*body, "Nota opcional", *notes);
-  dialog->signal_response().connect(
-      [this, dialog, document, anchor, notes, source_id](int response) {
-        if (response == Gtk::ResponseType::ACCEPT) {
-          try {
-            if (!document->selected_id())
-              throw std::runtime_error("Escolha um Documento de destino");
-            const auto id = anchor->get_active_id().raw();
-            static_cast<void>(service_.writing().add_text_reference(
-                source_id, *document->selected_id(),
-                id.empty() || id == "none" ? std::nullopt
-                                           : std::optional<std::string>{id},
-                notes->get_text()));
-          } catch (const std::exception &error) {
-            dialog->hide();
-            show_error("Não foi possível criar a referência textual", error);
-            return;
-          }
-        }
-        dialog->hide();
-        show_text_references();
-      });
-  dialog->present();
-}
-
-project::Document WritingWorkspace::capture_editor_state() {
-  if (!current_document_)
-    throw std::runtime_error("Nenhum Documento está aberto");
-  auto value = *current_document_;
-  value.title = title_entry_.get_text();
-  value.content = editor_.get_buffer()->get_text();
-  const auto placement = placement_.get_active_id().raw();
-  value.editorial_node_id = placement.empty() || placement == "none"
-                                ? std::nullopt
-                                : std::optional<std::string>{placement};
-  value.word_goal = goal_enabled_.get_active()
-                        ? std::optional<std::size_t>{static_cast<std::size_t>(
-                              word_goal_.get_value_as_int())}
-                        : std::nullopt;
-  value.formatting = capture_formatting();
-  value.anchors = capture_anchors();
-  value.entity_references = entity_references_;
-  return value;
-}
-
-void WritingWorkspace::restore_editor_state(const project::Document &state) {
-  loading_editor_ = true;
-  restoring_undo_ = true;
-  title_entry_.set_text(state.title);
-  editor_.get_buffer()->set_text(state.content);
-  if (!placement_.set_active_id(
-          state.editorial_node_id ? *state.editorial_node_id : "none"))
-    placement_.set_active_id("none");
-  const auto placement = placement_.get_active_id().raw();
-  open_placement_button_.set_sensitive(!placement.empty() &&
-                                       placement != "none");
-  goal_enabled_.set_active(state.word_goal.has_value());
-  word_goal_.set_value(
-      static_cast<double>(state.word_goal.value_or(std::size_t{1000})));
-  restore_formatting(state.formatting);
-  restore_anchor_marks(state.anchors);
-  entity_references_ = state.entity_references;
-  selected_anchor_id_.reset();
-  selected_entity_reference_id_.reset();
-  restoring_undo_ = false;
-  loading_editor_ = false;
-  refresh_anchor_list();
-  refresh_entity_references();
-  refresh_text_tools();
-}
-
-void WritingWorkspace::mark_dirty() {
-  if (loading_editor_ || restoring_undo_ || !current_document_)
-    return;
-  dirty_ = true;
-  // Qualquer mutação nova cria um ramo de edição e invalida o refazer antes
-  // mesmo de o grupo de digitação ser consolidado.
-  redo_stack_.clear();
-  update_editor_status();
   undo_group_connection_.disconnect();
-  undo_group_connection_ = Glib::signal_timeout().connect(
-      [this] {
-        commit_undo_group();
-        return false;
-      },
-      650);
-  analysis_connection_.disconnect();
-  analysis_connection_ = Glib::signal_timeout().connect(
-      [this] {
-        refresh_text_tools();
-        refresh_anchor_list();
-        return false;
-      },
-      260);
-  update_undo_actions();
-  schedule_autosave();
-}
-
-void WritingWorkspace::schedule_autosave() {
-  autosave_connection_.disconnect();
-  autosave_connection_ = Glib::signal_timeout().connect(
-      [this] {
-        save_document();
-        return false;
-      },
-      900);
-}
-
-void WritingWorkspace::commit_undo_group() {
-  const bool group_pending = undo_group_connection_.connected();
-  undo_group_connection_.disconnect();
-  if (!group_pending || !undo_baseline_ || !current_document_)
-    return;
-  undo_stack_.push_back(*undo_baseline_);
-  const auto maximum = editor_.get_buffer()->get_text().size() > 2 * 1024 * 1024
-                           ? std::size_t{10}
-                           : std::size_t{50};
-  if (undo_stack_.size() > maximum)
-    undo_stack_.erase(undo_stack_.begin(),
-                      undo_stack_.begin() + static_cast<std::ptrdiff_t>(
-                                                undo_stack_.size() - maximum));
-  undo_baseline_ = capture_editor_state();
-  redo_stack_.clear();
-  update_undo_actions();
-}
-
-void WritingWorkspace::undo() {
-  if (!current_document_ || page_stack_.get_visible_child_name() != "editor")
-    return;
-  commit_undo_group();
-  if (undo_stack_.empty())
-    return;
-  auto current = capture_editor_state();
-  auto target = undo_stack_.back();
-  undo_stack_.pop_back();
-  redo_stack_.push_back(std::move(current));
-  restore_editor_state(target);
-  undo_baseline_ = capture_editor_state();
-  dirty_ = true;
-  update_editor_status();
-  update_undo_actions();
-  schedule_autosave();
-}
-
-void WritingWorkspace::redo() {
-  if (!current_document_ || page_stack_.get_visible_child_name() != "editor" ||
-      redo_stack_.empty())
-    return;
-  undo_group_connection_.disconnect();
-  auto current = capture_editor_state();
-  auto target = redo_stack_.back();
-  redo_stack_.pop_back();
-  undo_stack_.push_back(std::move(current));
-  restore_editor_state(target);
-  undo_baseline_ = capture_editor_state();
-  dirty_ = true;
-  update_editor_status();
-  update_undo_actions();
-  schedule_autosave();
-}
-
-void WritingWorkspace::update_undo_actions() {
-  undo_button_.set_sensitive(!undo_stack_.empty() ||
-                             undo_group_connection_.connected());
-  redo_button_.set_sensitive(!redo_stack_.empty());
-}
-
-void WritingWorkspace::update_editor_status() {
-  editor_status_.set_text(
-      dirty_ ? "Alterações pendentes — salvamento automático" : "Salvo");
-  save_button_.set_sensitive(dirty_);
-  update_undo_actions();
-}
-
-Gtk::Window *WritingWorkspace::owner_window() {
-  return dynamic_cast<Gtk::Window *>(get_root());
-}
-
-void WritingWorkspace::show_error(const Glib::ustring &title,
-                                  const std::exception &error) {
-  auto *owner = owner_window();
-  if (!owner)
-    return;
-  auto *dialog =
-      new OverlayDialog(*owner, error.what(), false, Gtk::MessageType::ERROR,
-                        Gtk::ButtonsType::CLOSE, true);
-  dialog->set_title(title);
-  dialog->signal_response().connect([dialog](int) { dialog->hide(); });
-  dialog->show();
-}
-
-std::string WritingWorkspace::placement_label(
-    const std::optional<std::string> &node_id) const {
-  if (!node_id)
-    return "Documento livre";
-  const auto found = placement_labels_.find(*node_id);
-  return found == placement_labels_.end() ? "Colocação editorial indisponível"
-                                          : found->second;
-}
-
-std::string WritingWorkspace::entity_label(const std::string &entity_id) const {
-  const auto entity = service_.narrative().entity(entity_id);
-  return entity ? entity->name : "Entidade indisponível";
-}
-
-std::string
-WritingWorkspace::search_match_label(project::DocumentSearchMatch match) {
-  switch (match) {
-  case project::DocumentSearchMatch::Name:
-    return "Nome";
-  case project::DocumentSearchMatch::Content:
-    return "Conteúdo";
-  case project::DocumentSearchMatch::NameAndContent:
-    return "Nome e conteúdo";
-  case project::DocumentSearchMatch::None:
-    return "";
-  }
-  return "";
+  invalidate_text_analysis();
 }
 
 } // namespace inde::ui

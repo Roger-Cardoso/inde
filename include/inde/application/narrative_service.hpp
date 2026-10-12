@@ -12,6 +12,7 @@ namespace inde::application {
 
 class NarrativeService {
 public:
+  [[nodiscard]] project::NarrativeRelation create_relation_from_text(project::TextRelationCreation);
   NarrativeService(ProjectSession &session, persistence::NarrativeStore &store,
                    persistence::PlanningStore &planning_store)
       : session_(session), store_(store), planning_store_(planning_store) {}
@@ -26,6 +27,7 @@ public:
   [[nodiscard]] std::vector<project::RelationType> relation_types() const;
   [[nodiscard]] std::vector<project::NarrativeRelation>
   relations(const persistence::RelationQuery &query = {}) const;
+  [[nodiscard]] std::optional<project::NarrativeRelation> relation(const std::string &id) const;
   [[nodiscard]] std::vector<project::EntityWorkScope>
   work_scopes(const persistence::EntityWorkScopeQuery &query = {}) const;
   [[nodiscard]] std::vector<project::EditorialEntityReference>

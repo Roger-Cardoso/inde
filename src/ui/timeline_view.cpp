@@ -1,4 +1,5 @@
 #include "inde/ui/timeline_view.hpp"
+#include "inde/ui/application_theme.hpp"
 
 #include <algorithm>
 #include <chrono>
@@ -28,7 +29,11 @@ void configure_font(const Cairo::RefPtr<Cairo::Context> &context, double size) {
 
 void draw_text(const Cairo::RefPtr<Cairo::Context> &context,
                const std::string &text, double x, double y, double size,
-               double red = 0.86, double green = 0.88, double blue = 0.91) {
+               double red = -1.0, double green = -1.0, double blue = -1.0) {
+  if (red < 0) {
+    const bool dark = application_theme_is_dark();
+    red = dark ? 0.91 : 0.09; green = dark ? 0.94 : 0.13; blue = dark ? 0.98 : 0.18;
+  }
   configure_font(context, size);
   set_color(context, red, green, blue);
   context->move_to(x, y);
@@ -38,8 +43,12 @@ void draw_text(const Cairo::RefPtr<Cairo::Context> &context,
 void draw_centered_text(const Cairo::RefPtr<Cairo::Context> &context,
                         const std::string &text, double center_x, double y,
                         double size, double minimum_x, double maximum_x,
-                        double red = 0.86, double green = 0.88,
-                        double blue = 0.91) {
+                        double red = -1.0, double green = -1.0,
+                        double blue = -1.0) {
+  if (red < 0) {
+    const bool dark = application_theme_is_dark();
+    red = dark ? 0.91 : 0.09; green = dark ? 0.94 : 0.13; blue = dark ? 0.98 : 0.18;
+  }
   configure_font(context, size);
   const auto visible = elide(text);
   Cairo::TextExtents extents;
@@ -55,6 +64,9 @@ void draw_centered_text(const Cairo::RefPtr<Cairo::Context> &context,
 } // namespace
 
 TimelineView::TimelineView() {
+  set_focusable(true);
+  set_tooltip_text("Setas selecionam acontecimentos; Home/End vão aos extremos visuais. Enter consulta o item. Esta projeção não reordena a narrativa.");
+  signal_application_theme_changed().connect(sigc::track_object([this] { queue_draw(); }, *this));
   set_hexpand(true);
   set_vexpand(true);
   set_content_width(640);
@@ -65,6 +77,30 @@ TimelineView::TimelineView() {
   click_->signal_pressed().connect(
       [this](int, double x, double y) { select_at(x, y); });
   add_controller(click_);
+  auto keys=Gtk::EventControllerKey::create();
+  keys->signal_key_pressed().connect([this](guint key,guint,Gdk::ModifierType mods) {
+    if(static_cast<unsigned>(mods)&(GDK_CONTROL_MASK|GDK_SHIFT_MASK|GDK_ALT_MASK|GDK_SUPER_MASK|GDK_META_MASK|GDK_HYPER_MASK))return false;
+    if(layout_.items.empty())return false;
+    auto found=std::find_if(layout_.items.begin(),layout_.items.end(),[this](const auto &i) {return is_selected(i.kind,i.id);});
+    auto index=found==layout_.items.end() ? 0 : static_cast<int>(found-layout_.items.begin());
+    if(key==GDK_KEY_Left || key==GDK_KEY_Up)index=std::max(0,index-1);
+    else if(key==GDK_KEY_Right || key==GDK_KEY_Down)index=std::min(static_cast<int>(layout_.items.size())-1,index+1);
+    else if(key==GDK_KEY_Home)index=0;
+    else if(key==GDK_KEY_End)index=static_cast<int>(layout_.items.size())-1;
+    else if(key!=GDK_KEY_Return && key!=GDK_KEY_KP_Enter)return false;
+    const auto &item=layout_.items[static_cast<std::size_t>(index)];
+    select_item(item.kind,item.id);
+    for(auto *parent=get_parent();parent;parent=parent->get_parent())if(auto *scroll=dynamic_cast<Gtk::ScrolledWindow *>(parent)) {
+      const auto reveal=[](const Glib::RefPtr<Gtk::Adjustment> &a,double start,double size) {
+        double value=a->get_value();
+        if(start<value)value=start;else if(start+size>value+a->get_page_size())value=start+size-a->get_page_size();
+        a->set_value(std::clamp(value,a->get_lower(),std::max(a->get_lower(),a->get_upper()-a->get_page_size())));
+      };
+      reveal(scroll->get_hadjustment(),item.x,item.width);reveal(scroll->get_vadjustment(),item.y,item.height);break;
+    }
+    signal_item_selected_.emit(item.kind,item.id);return true;
+  },false);
+  add_controller(keys);
 }
 
 void TimelineView::set_snapshot(application::TimelineSnapshot snapshot) {
@@ -119,7 +155,9 @@ void TimelineView::draw(const Cairo::RefPtr<Cairo::Context> &context, int width,
             std::chrono::steady_clock::now() - started)
             .count());
   };
-  set_color(context, 0.105, 0.115, 0.13);
+  Gdk::RGBA background;
+  get_style_context()->lookup_color("inde_paper", background);
+  set_color(context, background.get_red(), background.get_green(), background.get_blue());
   context->paint();
   if (!snapshot_) {
     report_paint();
@@ -197,7 +235,7 @@ void TimelineView::draw(const Cairo::RefPtr<Cairo::Context> &context, int width,
   if (snapshot_->points.empty()) {
     const auto message_y =
         std::max(90.0, static_cast<double>(height) / 2.0);
-    draw_text(context, "Este eixo ainda não possui pontos.", 48.0, message_y,
+    draw_text(context, "Esta linha do tempo ainda não possui pontos.", 48.0, message_y,
               15.0);
     draw_text(context, "Crie pontos no Planejamento.", 48.0,
               message_y + 24.0, 13.0, 0.66, 0.69, 0.74);

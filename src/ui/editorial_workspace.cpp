@@ -1,7 +1,11 @@
+#include "inde/ui/author_diagnostics.hpp"
 #include "inde/ui/editorial_workspace.hpp"
+#include "inde/ui/project_operations.hpp"
 #include "inde/ui/accessibility.hpp"
 #include "inde/ui/context_menu.hpp"
 #include "inde/ui/overlay_dialog.hpp"
+#include "inde/ui/work_setup.hpp"
+#include "inde/ui/catalog_vocabulary.hpp"
 
 #include <algorithm>
 #include <filesystem>
@@ -95,12 +99,22 @@ void EditorialWorkspace::build_ui() {
   catalog_header_.append(filters_button_);
   catalog_content_.append(catalog_header_);
   filters_panel_.set_margin(14);
-  catalog_search_.set_placeholder_text("Pesquisar IPs e Obras");
-  set_accessible_label(catalog_search_, "Pesquisar IPs e Obras");
+  catalog_search_.set_placeholder_text("Pesquisar universos e obras");
+  set_accessible_label(catalog_search_, "Pesquisar universos e obras");
   set_accessible_description(
       catalog_search_,
-      "Filtra propriedades intelectuais e obras exibidas neste catálogo.");
+      "Filtro universos e obras exibidas neste catálogo.");
   filters_panel_.append(catalog_search_);
+  group_vocabulary_.append("universe", "Universo — ficção");
+  group_vocabulary_.append("collection", "Conjunto de obras — não ficção");
+  group_vocabulary_.set_active_id(author::nonfiction_groups() ? "collection" : "universe");
+  append_labeled_form_field(filters_panel_, "Como chamar o agrupamento de obras", group_vocabulary_,
+      "Preferência da interface. Não renomeia obras nem altera vínculos ou arquivos.");
+  group_vocabulary_.signal_changed().connect([this] {
+    set_ui_preference("vocabulary", "work-group", group_vocabulary_.get_active_id().raw());
+    refresh();
+    signal_vocabulary_changed_.emit();
+  });
   auto *filter_actions =
       Gtk::make_managed<Gtk::Box>(Gtk::Orientation::HORIZONTAL, 6);
   apply_filters_button_.add_css_class("suggested-action");
@@ -144,22 +158,22 @@ void EditorialWorkspace::build_ui() {
   work_toolbar_.append(add_work_button_);
   work_toolbar_.append(work_actions_button_);
   configure_overflow_button(ip_actions_button_,
-                            {{"Editar propriedade intelectual",
+                            {{"Editar agrupamento",
                               [this] {
                                 if (selected_ip_id_)
                                   edit_intellectual_property(*selected_ip_id_);
                               },
                               "document-edit-symbolic"},
-                             {"Remover propriedade intelectual",
+                             {"Excluir agrupamento",
                               [this] {
                                 if (selected_ip_id_)
                                   delete_intellectual_property(
                                       *selected_ip_id_);
                               },
                               "user-trash-symbolic", true, true, true}},
-                            "Ações da propriedade intelectual selecionada");
+                            "Ações do agrupamento selecionado");
   configure_overflow_button(work_actions_button_,
-                            {{"Abrir estrutura editorial",
+                            {{"Abrir organização do manuscrito",
                               [this] {
                                 if (selected_work_id_)
                                   select_work_structure(*selected_work_id_);
@@ -171,7 +185,7 @@ void EditorialWorkspace::build_ui() {
                                   edit_work(*selected_work_id_);
                               },
                               "document-edit-symbolic"},
-                             {"Remover obra",
+                             {"Excluir obra",
                               [this] {
                                 if (selected_work_id_)
                                   delete_work(*selected_work_id_);
@@ -262,6 +276,12 @@ void EditorialWorkspace::install_actions(Gtk::ApplicationWindow &window) {
 }
 
 void EditorialWorkspace::refresh() {
+  catalog_title_.set_text(author::catalog_name());
+  ip_title_.set_text(author::group_name(true, true));
+  add_ip_button_.set_label("Novo " + author::group_name());
+  catalog_search_.set_placeholder_text("Pesquisar " + author::group_name(true) + " e obras");
+  set_accessible_label(catalog_search_, "Pesquisar " + author::group_name(true) + " e obras");
+  set_accessible_description(catalog_search_, "Filtra os agrupamentos e as obras exibidos neste catálogo.");
   const auto *current = service_.current();
   if (!current) {
     reset();
@@ -271,9 +291,7 @@ void EditorialWorkspace::refresh() {
   const auto &catalog = service_.catalog();
   project_details_.set_text(
       std::to_string(catalog.intellectual_properties.size()) +
-      (catalog.intellectual_properties.size() == 1
-           ? " propriedade intelectual"
-           : " propriedades intelectuais") +
+      " " + author::group_name(catalog.intellectual_properties.size() != 1) +
       "  •  " + std::to_string(catalog.works.size()) +
       (catalog.works.size() == 1 ? " obra" : " obras") + "  •  Projeto INDE v" +
       std::to_string(current->manifest().format_version));
@@ -315,7 +333,7 @@ void EditorialWorkspace::show_error(const Glib::ustring &title,
   if (!owner)
     return;
   auto *dialog =
-      new OverlayDialog(*owner, error.what(), false, Gtk::MessageType::ERROR,
+      new OverlayDialog(*owner, author::diagnostic(error.what()), false, Gtk::MessageType::ERROR,
                         Gtk::ButtonsType::CLOSE, true);
   dialog->set_title(title);
   dialog->signal_response().connect([dialog](int) { dialog->hide(); });
@@ -355,7 +373,7 @@ void EditorialWorkspace::refresh_catalog() {
                                       : "available-action");
     button.add_css_class(available ? "available-action" : "unavailable-action");
   };
-  set_available(add_work_button_, !catalog.intellectual_properties.empty());
+  set_available(add_work_button_, service_.current()!=nullptr);
   const auto search = catalog_search_.get_text().lowercase().raw();
   const auto matches_search = [&search](const std::string &text) {
     return search.empty() ||
@@ -388,7 +406,7 @@ void EditorialWorkspace::refresh_catalog() {
     button->set_child(*card);
     button->set_tooltip_text(
         ip.title + "\n" +
-        (ip.description.empty() ? "Propriedade intelectual" : ip.description));
+        (ip.description.empty() ? author::group_name(false, true) : ip.description));
     button->set_halign(Gtk::Align::START);
     button->set_valign(Gtk::Align::START);
     button->set_hexpand(false);
@@ -461,7 +479,7 @@ void EditorialWorkspace::refresh_catalog() {
     button->set_child(*card);
     button->set_tooltip_text(
         work.title + "\n" +
-        (work.synopsis.empty() ? "Abrir estrutura editorial" : work.synopsis));
+        (work.synopsis.empty() ? "Abrir organização do manuscrito" : work.synopsis));
     button->set_halign(Gtk::Align::START);
     button->set_valign(Gtk::Align::START);
     button->set_hexpand(false);
@@ -474,7 +492,7 @@ void EditorialWorkspace::refresh_catalog() {
     button->signal_clicked().connect(
         [this, id = work.id] { select_work_structure(id); });
     attach_context_menu(*button,
-                        {{"Abrir estrutura editorial",
+                        {{"Abrir organização do manuscrito",
                           [this, id = work.id] { select_work_structure(id); },
                           "go-next-symbolic"},
                          {"Editar", [this, id = work.id] { edit_work(id); },
@@ -490,15 +508,14 @@ void EditorialWorkspace::refresh_catalog() {
   }
   ip_empty_.set_text(
       search.empty()
-          ? "Nenhuma propriedade intelectual ainda. Crie a primeira para "
-            "organizar suas obras."
-          : "Nenhuma propriedade intelectual corresponde à pesquisa.");
+          ? "Nenhum " + author::group_name() + " ainda. Crie o primeiro para organizar suas obras."
+          : "Nenhum " + author::group_name() + " corresponde à pesquisa.");
   ip_empty_.set_visible(ip_card_index == 0);
   work_empty_.set_text(
       catalog.intellectual_properties.empty()
-          ? "Crie uma propriedade intelectual antes de adicionar uma obra."
+          ? "Use Nova obra para criar a obra e seu " + author::group_name() + " juntos."
           : (search.empty()
-                 ? "Nenhuma obra cadastrada nesta propriedade intelectual."
+                 ? "Nenhuma obra cadastrada neste " + author::group_name() + "."
                  : "Nenhuma obra corresponde à pesquisa neste contexto."));
   work_empty_.set_visible(work_card_index == 0);
   set_available(edit_ip_button_, selected_ip_id_.has_value());
@@ -511,7 +528,7 @@ void EditorialWorkspace::refresh_catalog() {
 
 void EditorialWorkspace::create_intellectual_property() {
   auto *dialog =
-      new OverlayDialog("Nova propriedade intelectual", *owner_window(), true);
+      new OverlayDialog("Novo " + author::group_name(), *owner_window(), true);
   dialog->add_button("Cancelar", Gtk::ResponseType::CANCEL);
   dialog->add_button("Criar", Gtk::ResponseType::ACCEPT);
   auto *form = Gtk::make_managed<Gtk::Box>(Gtk::Orientation::VERTICAL, 8);
@@ -524,7 +541,7 @@ void EditorialWorkspace::create_intellectual_property() {
   auto *cover = Gtk::make_managed<Gtk::Entry>();
   cover->set_placeholder_text("Caminho da capa (opcional)");
   form->set_margin(16);
-  append_labeled_form_field(*form, "Título da propriedade", *title,
+  append_labeled_form_field(*form, "Nome do " + author::group_name(), *title,
                             "Campo obrigatório.");
   append_labeled_form_field(*form, "Subtítulo", *subtitle);
   append_labeled_form_field(*form, "Descrição", *description);
@@ -541,7 +558,9 @@ void EditorialWorkspace::create_intellectual_property() {
             cover->get_text());
         refresh_catalog();
       } catch (const std::exception &error) {
-        show_error("Não foi possível criar a propriedade intelectual", error);
+        dialog->set_secondary_text(author::diagnostic(error.what()));
+        dialog->keep_open_on_response();
+        return;
       }
     }
     dialog->hide();
@@ -550,59 +569,11 @@ void EditorialWorkspace::create_intellectual_property() {
 }
 
 void EditorialWorkspace::create_work() {
-  const auto &catalog = service_.catalog();
-  if (catalog.intellectual_properties.empty())
-    return;
-  auto *dialog = new OverlayDialog("Nova obra", *owner_window(), true);
-  dialog->add_button("Cancelar", Gtk::ResponseType::CANCEL);
-  dialog->add_button("Criar", Gtk::ResponseType::ACCEPT);
-  auto *form = Gtk::make_managed<Gtk::Box>(Gtk::Orientation::VERTICAL, 8);
-  auto *ip = Gtk::make_managed<Gtk::ComboBoxText>();
-  for (const auto &value : catalog.intellectual_properties)
-    ip->append(value.id, value.title);
-  ip->set_active(0);
-  auto *title = Gtk::make_managed<Gtk::Entry>();
-  title->set_placeholder_text("Título (obrigatório)");
-  auto *subtitle = Gtk::make_managed<Gtk::Entry>();
-  subtitle->set_placeholder_text("Subtítulo");
-  auto *synopsis = Gtk::make_managed<Gtk::Entry>();
-  synopsis->set_placeholder_text("Sinopse");
-  auto *language = Gtk::make_managed<Gtk::Entry>();
-  language->set_text("pt-BR");
-  auto *status = Gtk::make_managed<Gtk::ComboBoxText>();
-  status->append("Planejamento");
-  status->append("Em escrita");
-  status->append("Revisão");
-  status->append("Concluída");
-  status->set_active(0);
-  form->set_margin(16);
-  append_labeled_form_field(*form, "Propriedade intelectual", *ip,
-                            "Define a IP à qual a obra pertence.");
-  append_labeled_form_field(*form, "Título da obra", *title,
-                            "Campo obrigatório.");
-  append_labeled_form_field(*form, "Subtítulo", *subtitle);
-  append_labeled_form_field(*form, "Sinopse", *synopsis);
-  append_labeled_form_field(*form, "Idioma", *language,
-                            "Código de idioma da obra.");
-  append_labeled_form_field(*form, "Situação editorial", *status);
-  dialog->get_content_area()->append(*form);
-  dialog->signal_response().connect([this, dialog, ip, title, subtitle,
-                                     synopsis, language, status](int response) {
-    if (response == Gtk::ResponseType::ACCEPT) {
-      try {
-        service_.create_work(ip->get_active_id(), title->get_text(),
-                             subtitle->get_text(), synopsis->get_text(),
-                             language->get_text(), status->get_active_text());
-        refresh_catalog();
-      } catch (const std::exception &error) {
-        show_error("Não foi possível criar a obra", error);
-      }
-    }
-    dialog->hide();
-  });
-  dialog->present();
+  if (auto *owner=owner_window())
+    show_work_setup(*owner,service_,[this](const std::string &id) {
+      selected_work_id_=id;refresh_catalog();
+    });
 }
-
 void EditorialWorkspace::edit_intellectual_property(std::string id) {
   const auto &values = service_.catalog().intellectual_properties;
   const auto found =
@@ -611,7 +582,7 @@ void EditorialWorkspace::edit_intellectual_property(std::string id) {
   if (found == values.end())
     return;
   auto original = *found;
-  auto *dialog = new OverlayDialog("Editar propriedade intelectual",
+  auto *dialog = new OverlayDialog("Editar " + author::group_name(),
                                    *owner_window(), true);
   dialog->add_button("Cancelar", Gtk::ResponseType::CANCEL);
   dialog->add_button("Salvar", Gtk::ResponseType::ACCEPT);
@@ -626,7 +597,7 @@ void EditorialWorkspace::edit_intellectual_property(std::string id) {
   cover->set_text(original.cover_path);
   cover->set_placeholder_text("Caminho da capa (opcional)");
   form->set_margin(16);
-  append_labeled_form_field(*form, "Título da propriedade", *title,
+  append_labeled_form_field(*form, "Nome do " + author::group_name(), *title,
                             "Campo obrigatório.");
   append_labeled_form_field(*form, "Subtítulo", *subtitle);
   append_labeled_form_field(*form, "Descrição", *description);
@@ -643,7 +614,9 @@ void EditorialWorkspace::edit_intellectual_property(std::string id) {
         service_.update_intellectual_property(original);
         refresh_catalog();
       } catch (const std::exception &error) {
-        show_error("Não foi possível editar a propriedade intelectual", error);
+        dialog->set_secondary_text(author::diagnostic(error.what()));
+        dialog->keep_open_on_response();
+        return;
       }
     }
     dialog->hide();
@@ -707,44 +680,13 @@ void EditorialWorkspace::edit_work(std::string id) {
 }
 
 void EditorialWorkspace::delete_intellectual_property(std::string id) {
-  auto *dialog = new OverlayDialog(
-      *owner_window(), "Remover esta propriedade intelectual?", false,
-      Gtk::MessageType::QUESTION, Gtk::ButtonsType::YES_NO, true);
-  dialog->set_secondary_text("A operação não pode ser desfeita. IPs com obras "
-                             "vinculadas são protegidas.");
-  dialog->signal_response().connect([this, dialog,
-                                     id = std::move(id)](int response) {
-    if (response == Gtk::ResponseType::YES) {
-      try {
-        service_.delete_intellectual_property(id);
-        refresh_catalog();
-      } catch (const std::exception &error) {
-        show_error("Não foi possível remover a propriedade intelectual", error);
-      }
-    }
-    dialog->hide();
-  });
-  dialog->present();
+  if(auto *owner=owner_window())
+    confirm_project_removal(*owner,service_,project::RemovalKind::IntellectualProperty,id,[this]{refresh_catalog();});
 }
 
 void EditorialWorkspace::delete_work(std::string id) {
-  auto *dialog = new OverlayDialog(*owner_window(), "Remover esta obra?", false,
-                                   Gtk::MessageType::QUESTION,
-                                   Gtk::ButtonsType::YES_NO, true);
-  dialog->set_secondary_text("A operação não pode ser desfeita.");
-  dialog->signal_response().connect(
-      [this, dialog, id = std::move(id)](int response) {
-        if (response == Gtk::ResponseType::YES) {
-          try {
-            service_.delete_work(id);
-            refresh_catalog();
-          } catch (const std::exception &error) {
-            show_error("Não foi possível remover a obra", error);
-          }
-        }
-        dialog->hide();
-      });
-  dialog->present();
+  if(auto *owner=owner_window())
+    confirm_project_removal(*owner,service_,project::RemovalKind::Work,id,[this]{refresh_catalog();});
 }
 
 void EditorialWorkspace::select_work_structure(std::string work_id) {

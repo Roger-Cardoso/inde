@@ -1,4 +1,5 @@
 #include "inde/application/planning_service.hpp"
+#include <glib.h>
 
 #include "inde/project/manifest.hpp"
 #include "inde/project/narrative.hpp"
@@ -400,15 +401,15 @@ PlanningService::explore_entities(const PlanningContext &input) const {
     std::string text_reason;
     if (!context.search.empty()) {
       auto visible_search = context.search;
-      if (visible_search.size() > 48)
-        visible_search = visible_search.substr(0, 45) + "...";
+      if (g_utf8_strlen(visible_search.c_str(),visible_search.size()) > 48)
+        visible_search = visible_search.substr(0,g_utf8_offset_to_pointer(visible_search.c_str(),45)-visible_search.c_str()) + "...";
       const bool name_matches = contains_search_text(entity.name, context.search);
       const bool summary_matches =
           contains_search_text(entity.summary, context.search);
       text_reason = "texto “" + visible_search + "” em " +
                     (name_matches && summary_matches
                          ? "nome e resumo"
-                         : name_matches ? "nome" : "resumo");
+                         : name_matches ? "nome" : summary_matches ? "resumo" : "nome alternativo");
     }
     std::string type_reason;
     if (!context.entity_type_ids.empty()) {

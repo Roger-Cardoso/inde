@@ -396,7 +396,7 @@ void SqlitePlanningRepository::save(
   project::validate(value);
   auto db = open_database(path);
   const auto owner = project_id(db);
-  SqliteTransaction tx(db);
+  SqliteTransaction tx(db, "Tempo e ocorrências");
   const bool updating = exists(db, "fictional_time_axes", value.id);
   auto statement = db.prepare(
       "INSERT INTO "
@@ -424,7 +424,7 @@ void SqlitePlanningRepository::save(
   project::validate(value);
   auto db = open_database(path);
   const auto owner = project_id(db);
-  SqliteTransaction tx(db);
+  SqliteTransaction tx(db, "Tempo e ocorrências");
   const bool updating = exists(db, "fictional_time_points", value.id);
   auto statement =
       db.prepare("INSERT INTO "
@@ -455,7 +455,7 @@ void SqlitePlanningRepository::save(
   project::validate(value);
   auto db = open_database(path);
   const auto owner = project_id(db);
-  SqliteTransaction tx(db);
+  SqliteTransaction tx(db, "Tempo e ocorrências");
   const bool updating = exists(db, "event_occurrences", value.id);
   auto statement =
       db.prepare("INSERT INTO "
@@ -485,7 +485,7 @@ void SqlitePlanningRepository::save(
   project::validate(value);
   auto db = open_database(path);
   const auto owner = project_id(db);
-  SqliteTransaction tx(db);
+  SqliteTransaction tx(db, "Tempo e ocorrências");
   const bool updating = exists(db, "event_participations", value.id);
   auto statement = db.prepare(
       "INSERT INTO "
@@ -516,7 +516,7 @@ void SqlitePlanningRepository::save(
   project::validate(value);
   auto db = open_database(path);
   const auto owner = project_id(db);
-  SqliteTransaction tx(db);
+  SqliteTransaction tx(db, "Tempo e ocorrências");
   const bool updating = exists(db, "entity_presences", value.id);
   auto statement = db.prepare(
       "INSERT INTO entity_presences(id,project_id,entity_id,location_entity_id,"
@@ -550,7 +550,7 @@ void SqlitePlanningRepository::remove_time_axis(
     const std::filesystem::path &path, const std::string &id) const {
   auto db = open_database(path);
   const auto owner = project_id(db);
-  SqliteTransaction tx(db);
+  SqliteTransaction tx(db, "Tempo e ocorrências");
   auto statement =
       db.prepare("DELETE FROM fictional_time_axes WHERE project_id=? AND id=?");
   statement.bind(1, owner);
@@ -564,7 +564,7 @@ void SqlitePlanningRepository::remove_time_point(
     const std::filesystem::path &path, const std::string &id) const {
   auto db = open_database(path);
   const auto owner = project_id(db);
-  SqliteTransaction tx(db);
+  SqliteTransaction tx(db, "Tempo e ocorrências");
   auto statement = db.prepare(
       "DELETE FROM fictional_time_points WHERE project_id=? AND id=?");
   statement.bind(1, owner);
@@ -578,7 +578,7 @@ void SqlitePlanningRepository::remove_event_occurrence(
     const std::filesystem::path &path, const std::string &id) const {
   auto db = open_database(path);
   const auto owner = project_id(db);
-  SqliteTransaction tx(db);
+  SqliteTransaction tx(db, "Tempo e ocorrências");
   auto statement =
       db.prepare("DELETE FROM event_occurrences WHERE project_id=? AND id=?");
   statement.bind(1, owner);
@@ -592,7 +592,7 @@ void SqlitePlanningRepository::remove_event_participation(
     const std::filesystem::path &path, const std::string &id) const {
   auto db = open_database(path);
   const auto owner = project_id(db);
-  SqliteTransaction tx(db);
+  SqliteTransaction tx(db, "Tempo e ocorrências");
   auto statement = db.prepare(
       "DELETE FROM event_participations WHERE project_id=? AND id=?");
   statement.bind(1, owner);
@@ -607,7 +607,7 @@ void SqlitePlanningRepository::remove_presence(
     const std::filesystem::path &path, const std::string &id) const {
   auto db = open_database(path);
   const auto owner = project_id(db);
-  SqliteTransaction tx(db);
+  SqliteTransaction tx(db, "Tempo e ocorrências");
   auto statement =
       db.prepare("DELETE FROM entity_presences WHERE project_id=? AND id=?");
   statement.bind(1, owner);

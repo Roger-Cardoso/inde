@@ -6,6 +6,7 @@
 #include <thread>
 
 namespace inde::ui {
+class KeyboardCommands;
 class CartographyWorkspace final : public Gtk::Box {
 public:
   explicit CartographyWorkspace(application::ProjectService &);
@@ -13,6 +14,9 @@ public:
   void refresh();
   void reset();
   void reveal_entity(const std::string &);
+  void reveal_removal_use(const project::RemovalUse &);
+  void install_keyboard(KeyboardCommands &);
+  void coordinate_action(bool measure);
   sigc::signal<void(const std::string &)> &signal_entity_source_requested() {
     return entity_source_;
   }
@@ -65,6 +69,7 @@ private:
   Gtk::Box toolbar_{Gtk::Orientation::HORIZONTAL, 8};
   Gtk::ComboBoxText planets_combo_;
   Gtk::Button new_button_{"Criar planeta"}, export_button_{"Exportar SVG"};
+  Gtk::Button delete_map_{"Excluir mapa…"};
   Gtk::Box preview_bar_{Gtk::Orientation::HORIZONTAL, 8};
   Gtk::Label preview_label_;
   Gtk::Button accept_button_{"Aceitar prévia"},
@@ -82,7 +87,7 @@ private:
   IncrementalSelector *local_selector_{};
   Gtk::Button locate_{"Encontrar no planeta"}, place_{"Definir coordenadas"},
       open_{"Abrir no Planejamento"}, remove_{"Remover posição"};
-  Gtk::Frame terrain_frame_{"Editar relevo · C-02"};
+  Gtk::Frame terrain_frame_{"Editar relevo"};
   Gtk::Box terrain_box_{Gtk::Orientation::VERTICAL, 6};
   Gtk::Label terrain_help_;
   Gtk::SpinButton terrain_radius_, terrain_strength_;

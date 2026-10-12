@@ -10,15 +10,16 @@ namespace inde::ui {
 struct ContextMenuAction {
   Glib::ustring label;
   std::function<void()> activate;
-  Glib::ustring icon_name;
+  Glib::ustring icon_name{};
   bool enabled{true};
   bool destructive{false};
   bool separator_before{false};
+  std::function<bool()> available{}; // Evaluated at opening, not at construction.
 };
 
 // Instala um menu acessível por clique secundário sobre o alvo. O mesmo modelo
 // pode ser usado por um MenuButton de overflow para acesso por teclado/toque.
-void attach_context_menu(Gtk::Widget &target,
+Gtk::Popover *attach_context_menu(Gtk::Widget &target,
                          std::vector<ContextMenuAction> actions);
 Gtk::Popover *create_action_popover(std::vector<ContextMenuAction> actions);
 void configure_overflow_button(Gtk::MenuButton &button,

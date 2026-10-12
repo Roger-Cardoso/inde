@@ -5,12 +5,30 @@
 #include "inde/project/dictionary.hpp"
 
 #include <cstddef>
+#include <memory>
+#include <stop_token>
 #include <string>
 #include <unordered_map>
 #include <unordered_set>
 #include <vector>
 
 namespace inde::application {
+
+// Cache and spelling provider belong to one analyzer/thread. The vocabulary
+// snapshot is immutable and can be replaced without reading a store in a worker.
+class ProofreadingAnalyzer {
+public:
+  explicit ProofreadingAnalyzer(SpellingProvider &spelling) : spelling_(spelling) {}
+  [[nodiscard]] std::vector<project::TextIssue>
+  analyze(const std::string &text,
+          const std::unordered_set<std::string> &custom_words,
+          std::size_t maximum_issues = 500,
+          std::stop_token cancellation = {}) const;
+  void clear_cache() { spelling_cache_.clear(); }
+private:
+  SpellingProvider &spelling_;
+  mutable std::unordered_map<std::string, bool> spelling_cache_;
+};
 
 class ProofreadingService {
 public:
@@ -29,6 +47,8 @@ public:
 
   [[nodiscard]] std::vector<project::TextIssue>
   analyze(const std::string &text, std::size_t maximum_issues = 500) const;
+  [[nodiscard]] std::shared_ptr<const std::unordered_set<std::string>>
+  vocabulary_snapshot() const noexcept { return custom_words_; }
   [[nodiscard]] bool spelling_available() const noexcept;
   [[nodiscard]] std::string provider_description() const;
   [[nodiscard]] const std::string &storage_error() const noexcept;
@@ -36,13 +56,12 @@ public:
 private:
   void persist();
   void rebuild_custom_words();
-  [[nodiscard]] bool custom_word(const std::string &word) const;
 
   persistence::DictionaryStore &store_;
   SpellingProvider &spelling_;
   std::vector<project::LexicalDictionary> dictionaries_;
-  std::unordered_set<std::string> custom_words_;
-  mutable std::unordered_map<std::string, bool> spelling_cache_;
+  std::shared_ptr<const std::unordered_set<std::string>> custom_words_;
+  ProofreadingAnalyzer analyzer_;
   std::string storage_error_;
 };
 

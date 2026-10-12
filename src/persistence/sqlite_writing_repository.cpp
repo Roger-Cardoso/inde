@@ -1,9 +1,18 @@
 #include "inde/persistence/sqlite_writing_repository.hpp"
+#include "inde/persistence/project_operation_store.hpp"
+#include "editor_interaction_store.hpp"
+#include "calendar_codec.hpp"
+#include "../application/temporal_extent_codec.hpp"
+#include <glib.h>
+#include "text_entity_usage.hpp"
+#include "inde/persistence/inline_command_codec.hpp"
 
 #include "inde/persistence/project_database_repository.hpp"
 #include "inde/persistence/schema_migrator.hpp"
 #include "inde/persistence/sqlite_database.hpp"
 #include "inde/project/manifest.hpp"
+#include "inde/project/document_state.hpp"
+#include "inde/persistence/semantic_store.hpp"
 
 #include <limits>
 #include <stdexcept>
@@ -81,7 +90,7 @@ std::string where_clause(const DocumentQuery &query) {
   if (query.editorial_node_id)
     sql += " AND d.editorial_node_id = ?";
   if (query.entity_id)
-    sql += " AND EXISTS (SELECT 1 FROM document_entity_references reference "
+    sql += " AND EXISTS (SELECT 1 FROM " + text_entity_usage_sql() + " reference "
            "WHERE reference.project_id = d.project_id "
            "AND reference.document_id = d.id AND reference.entity_id = ?)";
   if (query.group_id)
@@ -136,6 +145,8 @@ project::Document read_document(SqliteStatement &statement) {
       project::DocumentPurpose::MainText,
       std::nullopt,
       {},
+      {},
+      {},
       {}};
   if (!statement.column_is_null(6)) {
     const auto goal = statement.column_integer(6);
@@ -159,8 +170,11 @@ project::Document read_document(SqliteStatement &statement) {
 
 void load_document_layers(SqliteDatabase &database, const std::string &owner,
                           project::Document &value) {
+  auto commands=database.prepare("SELECT inline_commands FROM documents WHERE project_id=? AND id=?");
+  commands.bind(1,owner); commands.bind(2,value.id);
+  if(commands.step()) value.inline_commands=decode_inline_commands(commands.column_text(0));
   auto formatting = database.prepare(
-      "SELECT style, start_offset, end_offset FROM document_format_spans "
+      "SELECT style, start_offset, end_offset, value FROM document_format_spans "
       "WHERE project_id = ? AND document_id = ? "
       "ORDER BY start_offset, end_offset, style");
   formatting.bind(1, owner);
@@ -172,7 +186,7 @@ void load_document_layers(SqliteDatabase &database, const std::string &owner,
       throw std::runtime_error("Intervalo de formatação negativo no banco");
     value.formatting.push_back(
         {project::document_text_style_from_string(formatting.column_text(0)),
-         static_cast<std::size_t>(start), static_cast<std::size_t>(end)});
+         static_cast<std::size_t>(start), static_cast<std::size_t>(end), formatting.column_text(3)});
   }
 
   auto anchors = database.prepare(
@@ -205,6 +219,7 @@ void load_document_layers(SqliteDatabase &database, const std::string &owner,
              : std::optional<std::string>{references.column_text(2)},
          references.column_text(3)});
   }
+  load_semantic_layers(database, owner, value);
   project::validate(value);
 }
 
@@ -403,7 +418,7 @@ SqliteWritingRepository::document_summaries(
       "SELECT d.id, d.editorial_node_id, d.title, length(d.content), "
       "d.created_at, d.updated_at, "
       "(SELECT count(DISTINCT reference.entity_id) "
-      " FROM document_entity_references reference "
+      " FROM " + text_entity_usage_sql() + " reference "
       " WHERE reference.project_id = d.project_id "
       " AND reference.document_id = d.id), " +
       matches +
@@ -469,6 +484,10 @@ SqliteWritingRepository::document(const std::filesystem::path &project_path,
                                   const std::string &id) const {
   auto database = open_database(project_path);
   const auto owner = project_id(database);
+  return load_in_transaction(database, owner, id);
+}
+std::optional<project::Document> SqliteWritingRepository::load_in_transaction(
+    SqliteDatabase &database, const std::string &owner, const std::string &id) {
   auto statement = database.prepare(
       "SELECT id, editorial_node_id, title, content, created_at, updated_at, "
       "word_goal, group_id, purpose, revision_of_id, revision_label, "
@@ -540,7 +559,7 @@ void SqliteWritingRepository::save_group(
   project::validate(value);
   auto database = open_database(project_path);
   const auto owner = project_id(database);
-  SqliteTransaction transaction(database);
+  SqliteTransaction transaction(database, "Salvar grupo de Documentos");
   auto statement = database.prepare(
       "INSERT INTO document_groups(id, project_id, name, description, "
       "created_at, updated_at) "
@@ -564,7 +583,7 @@ void SqliteWritingRepository::remove_group(
     const std::filesystem::path &project_path, const std::string &id) const {
   auto database = open_database(project_path);
   const auto owner = project_id(database);
-  SqliteTransaction transaction(database);
+  SqliteTransaction transaction(database, "Remover grupo de Documentos");
   auto statement = database.prepare(
       "DELETE FROM document_groups WHERE project_id = ? AND id = ?");
   statement.bind(1, owner);
@@ -578,9 +597,55 @@ void SqliteWritingRepository::remove_group(
 
 void SqliteWritingRepository::save(const std::filesystem::path &project_path,
                                    const project::Document &value) const {
+  save_checked(project_path, value, nullptr, {});
+}
+
+void SqliteWritingRepository::save_if_unchanged(const std::filesystem::path &path,
+    const project::Document &value, const project::Document &expected,
+    const std::string &owner) const {
+  save_checked(path, value, &expected, owner);
+}
+
+void SqliteWritingRepository::save_text_entity(const std::filesystem::path &path,
+    const project::Document &value,const project::Document &expected,
+    const std::string &owner,const project::TextEntityCreation &plan) const {
+  project::validate(plan,value);
+  save_checked(path,value,&expected,owner,&plan);
+}
+
+void SqliteWritingRepository::save_text_date(const std::filesystem::path &path,
+    const project::Document &value, const project::Document &expected,
+    const std::string &owner, const project::TextDateCreation &plan) const {
+  save_checked(path, value, &expected, owner, nullptr, nullptr, &plan);
+}
+
+void SqliteWritingRepository::save_checked(const std::filesystem::path &project_path,
+    const project::Document &value, const project::Document *expected,
+    const std::string &expected_owner, const project::TextEntityCreation *plan,
+    const CompositionOutputGuard *composition,
+    const project::TextDateCreation *date_plan, const std::string &label,
+    const std::function<void(SqliteDatabase &)> &context) const {
   project::validate(value);
   auto database = open_database(project_path);
   const auto owner = project_id(database);
+  SqliteTransaction transaction(database);
+  if (!label.empty()) transaction.record_project_operation(label);
+  if (context) {
+    if (owner != expected_owner) throw std::runtime_error("Projeto mudou antes da operação textual");
+    context(database);
+  }
+  if (expected) {
+    if (owner != expected_owner || value.id != expected->id)
+      throw std::runtime_error("A identidade do Projeto/Documento mudou antes do salvamento");
+    auto select = database.prepare("SELECT id, editorial_node_id, title, content, created_at, updated_at, word_goal, "
+        "group_id, purpose, revision_of_id, revision_label, perspective FROM documents WHERE project_id = ? AND id = ?");
+    select.bind(1, owner); select.bind(2, value.id);
+    if (!select.step()) throw std::runtime_error("Documento removido; o autosave não pode recriá-lo");
+    auto current = read_document(select);
+    load_document_layers(database, owner, current);
+    if (!project::same_document_state(current, *expected))
+      throw std::runtime_error("Conflito: o Documento foi alterado fora desta sessão. O texto local foi preservado");
+  }
   auto exists = database.prepare(
       "SELECT count(*) FROM documents WHERE project_id = ? AND id = ?");
   exists.bind(1, owner);
@@ -589,7 +654,67 @@ void SqliteWritingRepository::save(const std::filesystem::path &project_path,
     throw std::runtime_error("Não foi possível verificar o Documento");
   const bool updating = exists.column_integer(0) == 1;
 
-  SqliteTransaction transaction(database);
+  if (composition) {
+    auto c=database.prepare("SELECT revision,sha256 FROM compositions WHERE id=? AND project_id=?");
+    c.bind(1,composition->composition_id);c.bind(2,owner);
+    if (updating || composition->project_id!=owner || !c.step() || c.column_integer(0)!=composition->revision || c.column_text(1)!=composition->sha256 ||
+        composition_checksum(composition->recipe)!=composition->sha256)
+      throw std::runtime_error("Composição mudou ou alvo já existe; prepare novamente a saída");
+  }
+
+  if (!label.empty()) { /* context already records the whole operation */ }
+  else if (plan) transaction.record_project_operation("Criar entidade a partir do texto");
+  else if (!updating) transaction.record_project_operation("Criar Documento");
+  else {
+    auto placement=database.prepare("SELECT editorial_node_id,group_id,purpose,revision_of_id,revision_label FROM documents WHERE id=? AND project_id=?");
+    placement.bind(1,value.id);placement.bind(2,owner);
+    if(!placement.step())throw std::runtime_error("Documento ausente");
+    auto optional=[&](int c)->std::optional<std::string>{return placement.column_is_null(c)?std::nullopt:std::optional(placement.column_text(c));};
+    if(optional(0)!=value.editorial_node_id || optional(1)!=value.group_id || placement.column_text(2)!=project::to_string(value.purpose) ||
+        optional(3)!=value.revision_of_id || placement.column_text(4)!=value.revision_label)
+      transaction.record_project_operation("Organizar Documento");
+  }
+  if (plan) insert_text_entity(database,owner,*plan);
+  if (date_plan) {
+    if (SchemaMigrator{}.current_version(database) != current_database_schema_version)
+      throw std::runtime_error("Schema temporal incompatível; reabra o Projeto");
+    const auto &r = date_plan->reference;
+    project::validate(date_plan->calendar, r);
+    if (!expected || !g_uuid_string_is_valid(r.id.c_str()) ||
+        !g_uuid_string_is_valid(r.token.c_str()) || r.calendar_id != date_plan->calendar.id)
+      throw std::runtime_error("Identidade temporal inválida");
+    auto cal = database.prepare("SELECT name,payload,sha256,length(CAST(payload AS BLOB)) FROM fictional_calendars WHERE project_id=? AND id=?");
+    cal.bind(1, owner); cal.bind(2, r.calendar_id);
+    if (!cal.step() || cal.column_integer(3) > 16384 || cal.column_text(0) != date_plan->calendar.name ||
+        calendar_codec::decode(cal.column_text(1), cal.column_text(2)) != date_plan->calendar)
+      throw std::runtime_error("O calendário mudou; reabra a criação temporal");
+    auto axis = database.prepare("SELECT id FROM fictional_time_axes WHERE project_id=? AND id=?");
+    axis.bind(1, owner); axis.bind(2, r.axis_id);
+    if (!axis.step()) throw std::runtime_error("Eixo temporal ausente neste Projeto");
+    std::size_t uses{};
+    for (const auto &a : value.semantics.annotations)
+      for (const auto &b : a.dates) if (b.reference_id == r.id) ++uses;
+    for (const auto &a : expected->semantics.annotations)
+      for (const auto &b : a.dates) if (b.reference_id == r.id)
+        throw std::runtime_error("A referência deve ser nova");
+    if (uses != 1) throw std::runtime_error("Criação exige um único vínculo textual explícito");
+    auto count = database.prepare("SELECT count(*) FROM temporal_references WHERE project_id=? AND axis_id=?");
+    count.bind(1, owner); count.bind(2, r.axis_id); count.step();
+    if (count.column_integer(0) >= 500) throw std::runtime_error("Máximo de 500 referências neste eixo");
+    transaction.record_project_operation("Criar data e vincular trecho");
+    json::Value::Array units;
+    for (auto n : r.clock) units.emplace_back(n);
+    auto q = database.prepare("INSERT INTO temporal_references(id,project_id,axis_id,calendar_id,label,year,month,day,clock,note,token) VALUES(?,?,?,?,?,?,?,?,?,?,?)");
+    q.bind(1,r.id); q.bind(2,owner); q.bind(3,r.axis_id); q.bind(4,r.calendar_id);
+    q.bind(5,r.label); q.bind(6,r.year);
+    if(r.month) q.bind(7,*r.month); else q.bind_null(7);
+    if(r.day) q.bind(8,*r.day); else q.bind_null(8);
+    q.bind(9,json::serialize(units,false)); q.bind(10,r.note); q.bind(11,r.token); q.run();
+    auto ext = database.prepare("INSERT INTO temporal_reference_extents(reference_id,project_id,payload) VALUES(?,?,?)");
+    ext.bind(1,r.id); ext.bind(2,owner);
+    ext.bind(3,application::temporal_extent_codec::encode(r)); ext.run();
+  }
+
   auto statement = database.prepare(
       "INSERT INTO documents(id, project_id, editorial_node_id, title, "
       "content, created_at, updated_at, word_goal, group_id, purpose, "
@@ -630,6 +755,8 @@ void SqliteWritingRepository::save(const std::filesystem::path &project_path,
   statement.run();
   if (database.changes() != 1)
     throw std::runtime_error("Não foi possível salvar o Documento");
+  auto commands=database.prepare("UPDATE documents SET inline_commands=? WHERE project_id=? AND id=?");
+  commands.bind(1,encode_inline_commands(value.inline_commands)); commands.bind(2,owner); commands.bind(3,value.id); commands.run();
 
   for (const char *table : {"document_entity_references", "document_anchors",
                             "document_format_spans"}) {
@@ -642,13 +769,14 @@ void SqliteWritingRepository::save(const std::filesystem::path &project_path,
 
   auto format = database.prepare(
       "INSERT INTO document_format_spans(project_id, document_id, style, "
-      "start_offset, end_offset) VALUES (?, ?, ?, ?, ?)");
+      "start_offset, end_offset, value) VALUES (?, ?, ?, ?, ?, ?)");
   for (const auto &span : value.formatting) {
     format.bind(1, owner);
     format.bind(2, value.id);
     format.bind(3, project::to_string(span.style));
     format.bind(4, checked_size(span.start_offset, "Início da formatação"));
     format.bind(5, checked_size(span.end_offset, "Fim da formatação"));
+    format.bind(6, span.value);
     format.run();
     format.reset();
   }
@@ -684,6 +812,11 @@ void SqliteWritingRepository::save(const std::filesystem::path &project_path,
     reference.reset();
   }
 
+  save_semantic_layers(database, owner, value);
+  if (composition) {
+    auto q=database.prepare("INSERT INTO composition_outputs(document_id,project_id,composition_id,source_revision,source_sha256,recipe) VALUES(?,?,?,?,?,?)");
+    q.bind(1,value.id);q.bind(2,owner);q.bind(3,composition->composition_id);q.bind(4,composition->revision);q.bind(5,composition->sha256);q.bind(6,composition->recipe);q.run();
+  }
   record_change(database, owner,
                 updating ? "update_document" : "create_document");
   transaction.commit();
@@ -693,7 +826,8 @@ void SqliteWritingRepository::remove(const std::filesystem::path &project_path,
                                      const std::string &id) const {
   auto database = open_database(project_path);
   const auto owner = project_id(database);
-  SqliteTransaction transaction(database);
+  SqliteTransaction transaction(database, "Remover Documento");
+  validate_project_removal(database,project::RemovalKind::Document,id);
   auto statement =
       database.prepare("DELETE FROM documents WHERE project_id = ? AND id = ?");
   statement.bind(1, owner);
@@ -703,6 +837,18 @@ void SqliteWritingRepository::remove(const std::filesystem::path &project_path,
     throw std::runtime_error("Documento não encontrado");
   record_change(database, owner, "delete_document");
   transaction.commit();
+}
+
+void SqliteWritingRepository::save_composition_output(const std::filesystem::path &path,
+    const project::Document &value,const CompositionOutputGuard &guard) const {
+  save_checked(path,value,nullptr,guard.project_id,nullptr,&guard);
+}
+void SqliteWritingRepository::save_with_context(const std::filesystem::path &path,
+    const project::Document &value, const project::Document *expected,
+    const std::string &owner, const std::string &label,
+    const std::function<void(SqliteDatabase &)> &context) const {
+  if (label.empty() || !context) throw std::runtime_error("Contexto transacional ausente");
+  save_checked(path,value,expected,owner,nullptr,nullptr,nullptr,label,context);
 }
 
 } // namespace inde::persistence

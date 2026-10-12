@@ -2,6 +2,7 @@
 
 #include <cstdint>
 #include <filesystem>
+#include <memory>
 #include <span>
 #include <stdexcept>
 #include <string>
@@ -12,6 +13,8 @@ struct sqlite3;
 struct sqlite3_stmt;
 
 namespace inde::persistence {
+class OperationCapture;
+class ProjectOperationStore;
 
 class SqliteError final : public std::runtime_error {
 public:
@@ -76,6 +79,8 @@ public:
 
 private:
   friend class SqliteTransaction;
+  friend class OperationCapture;
+  friend class ProjectOperationStore;
 
   [[noreturn]] void throw_error(std::string_view operation, int code) const;
   sqlite3 *database_{nullptr};
@@ -86,6 +91,7 @@ public:
   enum class Mode { Immediate, Deferred };
   explicit SqliteTransaction(SqliteDatabase &database,
                              Mode mode = Mode::Immediate);
+  SqliteTransaction(SqliteDatabase &database, std::string operation_label);
   ~SqliteTransaction();
 
   SqliteTransaction(const SqliteTransaction &) = delete;
@@ -95,11 +101,13 @@ public:
 
   void commit();
   void rollback();
+  void record_project_operation(std::string label, bool compensation=false);
   [[nodiscard]] bool active() const noexcept { return active_; }
 
 private:
   SqliteDatabase *database_;
   bool active_{true};
+  std::unique_ptr<OperationCapture> operation_;
 };
 
 } // namespace inde::persistence

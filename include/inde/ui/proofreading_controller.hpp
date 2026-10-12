@@ -8,6 +8,8 @@
 
 namespace inde::ui {
 
+struct ProofreadingViewAnalysis;
+
 class ProofreadingController {
 public:
   explicit ProofreadingController(application::ProofreadingService &service);
@@ -26,6 +28,7 @@ private:
   void refresh_entry(Gtk::Entry &entry);
   void refresh_text_view(Gtk::TextView &view);
   void remember_focus(Gtk::Widget *widget);
+  Gtk::Widget *focused_widget() const;
   void show_issue_popover(Gtk::Widget &widget, const project::TextIssue *issue,
                           double x = 0.0, double y = 0.0);
   void close_popover();
@@ -34,8 +37,10 @@ private:
 
   application::ProofreadingService &service_;
   Gtk::Widget *root_{};
-  Gtk::Widget *focused_{};
+  mutable GWeakRef focused_{};
   std::unique_ptr<Gtk::Popover> popover_;
+  std::shared_ptr<int> lifetime_{std::make_shared<int>(0)};
+  std::vector<std::weak_ptr<ProofreadingViewAnalysis>> view_analyses_;
 };
 
 } // namespace inde::ui

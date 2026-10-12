@@ -28,9 +28,12 @@ struct WordToken {
   std::size_t past_unit{};
 };
 
-std::vector<Utf8Unit> decode_utf8(const std::string &text) {
+std::vector<Utf8Unit> decode_utf8(const std::string &text,
+                                  std::stop_token cancellation = {}) {
   std::vector<Utf8Unit> result;
   for (std::size_t byte = 0, character = 0; byte < text.size(); ++character) {
+    if ((character & 4095U) == 0 && cancellation.stop_requested())
+      return {};
     const auto first = static_cast<unsigned char>(text[byte]);
     char32_t value = first;
     std::size_t count = 1;
@@ -157,9 +160,12 @@ std::string trim_ascii(std::string value) {
 }
 
 std::vector<WordToken> words(const std::string &text,
-                             const std::vector<Utf8Unit> &units) {
+                             const std::vector<Utf8Unit> &units,
+                             std::stop_token cancellation = {}) {
   std::vector<WordToken> result;
   for (std::size_t index = 0; index < units.size();) {
+    if (cancellation.stop_requested())
+      return {};
     if (!is_letter(units[index].value)) {
       ++index;
       continue;
@@ -235,7 +241,7 @@ bool valid_personal_word(const std::string &word) {
 
 ProofreadingService::ProofreadingService(persistence::DictionaryStore &store,
                                          SpellingProvider &spelling)
-    : store_(store), spelling_(spelling) {
+    : store_(store), spelling_(spelling), analyzer_(spelling) {
   dictionaries_.push_back({system_dictionary_id,
                            "Português (Brasil)",
                            "pt-BR",
@@ -416,10 +422,19 @@ void ProofreadingService::add_to_personal_dictionary(std::string word) {
 std::vector<project::TextIssue>
 ProofreadingService::analyze(const std::string &text,
                              std::size_t maximum_issues) const {
+  return analyzer_.analyze(text, *custom_words_, maximum_issues);
+}
+
+std::vector<project::TextIssue>
+ProofreadingAnalyzer::analyze(
+    const std::string &text, const std::unordered_set<std::string> &custom_words,
+    std::size_t maximum_issues, std::stop_token cancellation) const {
   if (maximum_issues == 0 || text.empty())
     return {};
-  const auto units = decode_utf8(text);
-  const auto tokens = words(text, units);
+  const auto units = decode_utf8(text, cancellation);
+  const auto tokens = words(text, units, cancellation);
+  if (cancellation.stop_requested())
+    return {};
   std::vector<project::TextIssue> issues;
   const auto append = [&](project::TextIssue issue) {
     if (issues.size() < maximum_issues)
@@ -428,6 +443,8 @@ ProofreadingService::analyze(const std::string &text,
 
   for (std::size_t index = 0;
        index < units.size() && issues.size() < maximum_issues;) {
+    if (cancellation.stop_requested())
+      return {};
     if (units[index].value != U' ') {
       ++index;
       continue;
@@ -458,6 +475,8 @@ ProofreadingService::analyze(const std::string &text,
 
   for (std::size_t index = 1;
        index < tokens.size() && issues.size() < maximum_issues; ++index) {
+    if (cancellation.stop_requested())
+      return {};
     const auto &previous = tokens[index - 1];
     const auto &current = tokens[index];
     if (fold(previous.text) != fold(current.text))
@@ -481,6 +500,8 @@ ProofreadingService::analyze(const std::string &text,
   bool sentence_start = true;
   for (std::size_t index = 0;
        index < units.size() && issues.size() < maximum_issues; ++index) {
+    if (cancellation.stop_requested())
+      return {};
     const auto value = units[index].value;
     if (sentence_start && is_letter(value)) {
       if (is_lower(value)) {
@@ -517,6 +538,8 @@ ProofreadingService::analyze(const std::string &text,
 
   for (std::size_t index = 0;
        index + 1 < units.size() && issues.size() < maximum_issues; ++index) {
+    if (cancellation.stop_requested())
+      return {};
     const auto value = units[index].value;
     if ((value != U',' && value != U';' && value != U':') ||
         !is_letter(units[index + 1].value))
@@ -535,9 +558,11 @@ ProofreadingService::analyze(const std::string &text,
 
   if (spelling_.available()) {
     for (const auto &word : tokens) {
+      if (cancellation.stop_requested())
+        return {};
       if (issues.size() >= maximum_issues)
         break;
-      if (is_all_caps_abbreviation(word, units) || custom_word(word.text))
+      if (is_all_caps_abbreviation(word, units) || custom_words.contains(fold(word.text)))
         continue;
       const auto key = fold(word.text);
       auto cached = spelling_cache_.find(key);
@@ -579,19 +604,16 @@ void ProofreadingService::persist() {
 }
 
 void ProofreadingService::rebuild_custom_words() {
-  custom_words_.clear();
+  auto words = std::make_shared<std::unordered_set<std::string>>();
   for (const auto &dictionary : dictionaries_) {
     if (dictionary.category != project::DictionaryCategory::User ||
         !dictionary.enabled)
       continue;
     for (const auto &word : dictionary.words)
-      custom_words_.insert(fold(word));
+      words->insert(fold(word));
   }
-  spelling_cache_.clear();
-}
-
-bool ProofreadingService::custom_word(const std::string &word) const {
-  return custom_words_.contains(fold(word));
+  custom_words_ = std::move(words);
+  analyzer_.clear_cache();
 }
 
 } // namespace inde::application

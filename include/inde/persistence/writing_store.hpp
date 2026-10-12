@@ -1,10 +1,13 @@
 #pragma once
 
 #include "inde/project/writing.hpp"
+#include "inde/project/editor_interaction.hpp"
+#include "inde/project/worldbuilding.hpp"
 
 #include <cstddef>
 #include <filesystem>
 #include <optional>
+#include <stdexcept>
 #include <string>
 #include <vector>
 
@@ -75,8 +78,22 @@ public:
                             const std::string &id) const = 0;
   virtual void save(const std::filesystem::path &project_path,
                     const project::Document &value) const = 0;
+  virtual void save_if_unchanged(const std::filesystem::path &,
+      const project::Document &, const project::Document &, const std::string &) const {
+    throw std::runtime_error("Este repositório não oferece gravação otimista de Documento");
+  }
   virtual void remove(const std::filesystem::path &project_path,
                       const std::string &id) const = 0;
+  virtual void save_text_entity(const std::filesystem::path &,
+      const project::Document &,const project::Document &,const std::string &,
+      const project::TextEntityCreation &) const {
+    throw std::runtime_error("O repositório não oferece criação textual atômica");
+  }
+  virtual void save_text_date(const std::filesystem::path &,
+      const project::Document &, const project::Document &, const std::string &,
+      const project::TextDateCreation &) const {
+    throw std::runtime_error("O repositório não oferece criação temporal atômica");
+  }
 };
 
 } // namespace inde::persistence

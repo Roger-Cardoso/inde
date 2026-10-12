@@ -1,4 +1,5 @@
 #include "inde/persistence/sqlite_structural_repository.hpp"
+#include "inde/persistence/project_operation_store.hpp"
 
 #include "inde/persistence/project_database_repository.hpp"
 #include "inde/persistence/sqlite_database.hpp"
@@ -121,7 +122,7 @@ void SqliteStructuralRepository::save_type(
     const project::StructuralElementType &value) const {
   project::validate(value);
   auto database = open_database(project_path);
-  SqliteTransaction transaction(database);
+  SqliteTransaction transaction(database, "Organização editorial");
   const auto project_id = database.query_text("SELECT id FROM projects");
   auto statement = database.prepare(
       "INSERT INTO structural_element_types "
@@ -153,7 +154,7 @@ void SqliteStructuralRepository::save_type(
 void SqliteStructuralRepository::remove_type(
     const std::filesystem::path &project_path, const std::string &id) const {
   auto database = open_database(project_path);
-  SqliteTransaction transaction(database);
+  SqliteTransaction transaction(database, "Organização editorial");
   auto statement =
       database.prepare("DELETE FROM structural_element_types WHERE id = ?");
   statement.bind(1, id);
@@ -177,7 +178,7 @@ void SqliteStructuralRepository::save_many(
   if (values.empty())
     return;
   auto database = open_database(project_path);
-  SqliteTransaction transaction(database);
+  SqliteTransaction transaction(database, "Organização editorial");
   auto statement = node_upsert(database);
   for (const auto &value : values) {
     auto persisted = value;
@@ -199,7 +200,7 @@ void SqliteStructuralRepository::save_many(
 void SqliteStructuralRepository::remove(
     const std::filesystem::path &project_path, const std::string &id) const {
   auto database = open_database(project_path);
-  SqliteTransaction transaction(database);
+  SqliteTransaction transaction(database, "Organização editorial");
   auto statement = database.prepare("DELETE FROM editorial_nodes WHERE id = ?");
   statement.bind(1, id);
   statement.run();
@@ -214,7 +215,7 @@ std::string SqliteStructuralRepository::move_to_trash(
   if (ids.empty())
     throw std::runtime_error("Nenhum elemento estrutural foi selecionado");
   auto database = open_database(project_path);
-  SqliteTransaction transaction(database);
+  SqliteTransaction transaction(database, "Organização editorial");
   const auto operation_id = project::new_uuid();
   auto operation = database.prepare(
       "INSERT INTO editorial_trash_operations(id, created_at) VALUES (?, ?)");
@@ -254,8 +255,19 @@ std::string SqliteStructuralRepository::move_to_trash(
 
 bool SqliteStructuralRepository::restore_latest_trash(
     const std::filesystem::path &project_path) const {
+  std::string recorded;
+  {
+    auto db=open_database(project_path);
+    auto lookup=db.prepare("SELECT o.id FROM editorial_trash_operations t JOIN project_operations o ON o.trash_operation_id=t.id WHERE o.project_id=(SELECT id FROM projects) AND t.sequence=(SELECT MAX(sequence) FROM editorial_trash_operations) LIMIT 1");
+    if(lookup.step())recorded=lookup.column_text(0);
+  }
+  if(!recorded.empty()){
+    ProjectOperationStore store;const auto preview=store.preview_reversal(project_path,recorded);
+    if(!preview.allowed)throw std::runtime_error(preview.blocked_reason);
+    store.execute(project_path,preview);return true;
+  }
   auto database = open_database(project_path);
-  SqliteTransaction transaction(database);
+  SqliteTransaction transaction(database, "Organização editorial");
   auto latest = database.prepare("SELECT id FROM editorial_trash_operations "
                                  "ORDER BY sequence DESC LIMIT 1");
   if (!latest.step()) {

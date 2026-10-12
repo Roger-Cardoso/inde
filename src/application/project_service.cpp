@@ -1,4 +1,5 @@
 #include "inde/application/project_service.hpp"
+#include "inde/application/project_operation_error.hpp"
 
 #include <filesystem>
 #include <stdexcept>
@@ -118,6 +119,33 @@ const project::Catalog &ProjectService::catalog() const noexcept {
   return session_.catalog();
 }
 
+std::vector<project::ProjectOperation> ProjectService::project_operations(std::size_t offset)const {
+  if(!current())throw std::runtime_error("Nenhum Projeto aberto");
+  return persistence::ProjectOperationStore{}.list(current()->path(),offset);
+}
+project::OperationPreview ProjectService::removal_impact(project::RemovalKind kind,const std::string &id)const {
+  if(!current())throw std::runtime_error("Nenhum Projeto aberto");
+  return persistence::ProjectOperationStore{}.preview_removal(current()->path(),kind,id);
+}
+project::OperationPreview ProjectService::reversal_impact(const std::string &id)const {
+  if(!current())throw std::runtime_error("Nenhum Projeto aberto");
+  return persistence::ProjectOperationStore{}.preview_reversal(current()->path(),id);
+}
+void ProjectService::confirm_project_operation(const project::OperationPreview &preview) {
+  if(!current())throw std::runtime_error("Nenhum Projeto aberto");
+  const auto path=current()->path();persistence::ProjectOperationStore{}.execute(path,preview);
+  // Refresh authorial caches from the database, not from a stale JSON/session.
+  try {
+    auto catalog=catalog_repository_.load(path);
+    auto nodes=structural_repository_.load(path);
+    session_.catalog()=std::move(catalog);session_.structural_nodes()=std::move(nodes);
+    cartography_service_.clear_cache();clear_planning_context();
+  } catch(const std::exception &e) {
+    session_.clear();
+    throw ProjectOperationCommittedError(std::string("Operação confirmada no banco, mas a sessão não pôde ser atualizada. Reabra o Projeto: ")+e.what());
+  }
+}
+
 const project::IntellectualProperty &
 ProjectService::create_intellectual_property(std::string title,
                                              std::string subtitle,
@@ -150,6 +178,33 @@ ProjectService::create_work(std::string intellectual_property_id,
 
 void ProjectService::update_work(const project::Work &value) {
   catalog_service_.update_work(value);
+}
+
+project::Work ProjectService::start_work(std::string title, std::string existing_universe_id,
+                                        std::string new_universe_title) {
+  if (!current()) throw std::runtime_error("Abra um Projeto antes de criar a Obra.");
+  auto trim = [](std::string &v) {
+    const auto first=v.find_first_not_of(" \t\n\r"),last=v.find_last_not_of(" \t\n\r");
+    v=first==std::string::npos ? "" : v.substr(first,last-first+1);
+  };
+  trim(title); trim(new_universe_title);
+  if (title.empty()) throw std::runtime_error("Informe o título da Obra.");
+  const auto now=project::utc_now();
+  std::optional<project::IntellectualProperty> universe;
+  if (existing_universe_id.empty()) {
+    if (new_universe_title.empty()) throw std::runtime_error("Informe o nome do universo / Propriedade Intelectual.");
+    universe=project::IntellectualProperty{project::new_uuid(),std::move(new_universe_title),"","","",now,now};
+    existing_universe_id=universe->id;
+  }
+  project::Work work{project::new_uuid(),std::move(existing_universe_id),std::move(title),"","","pt-BR","Planejamento",now,now};
+  // Validate and allocate the new cached catalogue before committing. A
+  // post-commit reload failure must not invite the user to create it twice.
+  auto catalog=catalog_repository_.load(current()->path());
+  if(universe)catalog.intellectual_properties.push_back(*universe);
+  catalog.works.push_back(work);
+  catalog_repository_.create_work_context(current()->path(),work,universe);
+  session_.catalog()=std::move(catalog);
+  return work;
 }
 
 void ProjectService::delete_work(const std::string &id) {

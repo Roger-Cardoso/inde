@@ -1,23 +1,18 @@
 #include "inde/ui/main_window.hpp"
+#include "ui/rendering_policy.hpp"
+#include "ui/theme_compatibility.hpp"
 
 #include <gtkmm/application.h>
 #include <filesystem>
 #include <optional>
 
 int main(int argc, char* argv[]) {
+    inde::ui::configure_gtk_theme_base();
+    inde::ui::configure_rendering_backend();
     auto application = Gtk::Application::create("io.github.inde", Gio::Application::Flags::NON_UNIQUE);
     Gtk::Window::set_default_icon_name("inde");
-    application->set_accel_for_action("win.new-project", "<Primary>n");
-    application->set_accel_for_action("win.open-project", "<Primary>o");
-    application->set_accel_for_action("win.save-project", "<Primary>s");
-    application->set_accel_for_action("win.save-project-as", "<Primary><Shift>s");
-    application->set_accel_for_action("win.close-project", "<Primary>w");
-    application->set_accel_for_action("win.writing-undo", "<Primary>z");
-    application->set_accel_for_action("win.writing-redo", "<Primary><Shift>z");
-    application->set_accel_for_action("win.writing-bold", "<Primary>b");
-    application->set_accel_for_action("win.writing-italic", "<Primary>i");
-    application->set_accel_for_action("win.writing-underline", "<Primary>u");
-    application->set_accel_for_action("win.proofread-current", "F7");
+    // Routing belongs to the owning window and its focused context. Global
+    // win.writing-* accelerators used to edit a hidden document behind forms.
     std::optional<std::filesystem::path> initial_project;
     if (argc > 1) initial_project = std::filesystem::path(argv[1]);
     const int application_argc = initial_project ? 1 : argc;

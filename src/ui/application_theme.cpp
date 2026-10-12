@@ -1,468 +1,219 @@
 #include "inde/ui/application_theme.hpp"
-
+#include "inde/ui/ui_preferences.hpp"
+#include "theme_compatibility.hpp"
 #include <gtkmm.h>
-
+#include <array>
+#include <string>
 namespace inde::ui {
-
+namespace {
+Glib::RefPtr<Gtk::CssProvider> provider;
+ThemeMode mode = ThemeMode::System;
+bool dark = false, system_dark = false, system_preference = false, applying = false;
+sigc::signal<void()> changed;
+// Shared foreground/background pairs cover nested GTK labels and popovers.
+std::string colors(bool use_dark) {
+  const std::array<const char *, 17> light{
+      "#f5f6f8", "#ffffff", "#eceff3", "#ffffff", "#18212e", "#526174",
+      "#6a7788", "#c9d1dc", "#205abe", "#ffffff", "#e8effb", "#174b9e",
+      "#b12d3c", "#fcecee", "#176447", "#e5f3eb", "#7d8999"};
+  const std::array<const char *, 17> night{
+      "#15191f", "#1e242c", "#2a323d", "#1a2028", "#e7edf5", "#b1bdcc",
+      "#91a0b2", "#49576a", "#85b4ff", "#102344", "#263d5a", "#c2dbff",
+      "#ff9ba5", "#3c252e", "#a2dfbf", "#213d32", "#69798d"};
+  const std::array<const char *, 17> names{
+      "bg", "surface", "hover", "paper", "fg", "muted", "disabled", "border",
+      "accent", "on_accent", "accent_soft", "accent_fg", "danger", "danger_bg",
+      "success", "success_bg", "control_border"};
+  std::string css;
+  for (std::size_t i = 0; i < names.size(); ++i)
+    css += std::string("@define-color inde_") + names[i] + " " +
+           (use_dark ? night[i] : light[i]) + ";\n";
+  return css;
+}
+constexpr auto component_css = R"css(
+window.inde-window .calendar-picker { padding: 6px; }
+window.inde-window button.calendar-day { background: transparent; border-color: transparent;
+  border-radius: 6px; padding: 4px; min-height: 28px; }
+window.inde-window button.calendar-day:hover { background: @inde_hover; }
+window.inde-window button.calendar-day.calendar-in-range { background: @inde_accent_soft; color: @inde_accent_fg; }
+window.inde-window button.calendar-day.calendar-selected { background: @inde_accent; color: @inde_on_accent;
+  border-color: @inde_accent; font-weight: 700; }
+window.inde-window button.calendar-day.calendar-marked { text-decoration-line: underline; }
+window.inde-window button.calendar-day.calendar-cut { border-bottom: 2px solid @inde_accent; }
+window.inde-window .calendar-weekday { color: @inde_muted; font-size: 0.85em; }
+window.inde-window { background: @inde_bg; color: @inde_fg; }
+window.inde-window label, window.inde-window image { color: inherit; }
+window.inde-window .dim-label, window.inde-window .page-subtitle,
+window.inde-window .context-summary, window.inde-window .modal-secondary {
+  color: @inde_muted; opacity: 1;
+}
+headerbar.inde-header { min-height: 44px; padding: 0 12px; background: @inde_surface;
+  color: @inde_fg; border-bottom: 1px solid @inde_border; box-shadow: none; }
+.header-title { color: @inde_fg; font-weight: 600; }
+.header-subtitle { color: @inde_muted; font-size: 0.85em; }
+.page-title, .section-title { color: @inde_fg; font-weight: 600; }
+window.inde-window button { background: @inde_surface; color: @inde_fg;
+  background-image: none; border: 1px solid @inde_control_border; border-radius: 8px;
+  box-shadow: none; padding: 6px 10px; min-height: 22px; text-shadow: none; }
+window.inde-window button:hover { background: @inde_hover; }
+window.inde-window button.header-action, window.inde-window button.flat,
+window.inde-window button.context-menu-item { background: transparent;
+  border-color: transparent; box-shadow: none; }
+window.inde-window button.header-action:hover, window.inde-window button.flat:hover,
+window.inde-window button.context-menu-item:hover { background: @inde_hover; }
+window.inde-window button:disabled { color: @inde_disabled; background: @inde_bg;
+  border-color: @inde_border; opacity: 1; }
+window.inde-window button:disabled label, window.inde-window button:disabled image {
+  color: @inde_disabled; opacity: 1; }
+window.inde-window button.suggested-action { background: @inde_accent;
+  color: @inde_on_accent; border-color: @inde_accent; }
+window.inde-window button.suggested-action:hover { background: shade(@inde_accent, 0.94); }
+window.inde-window button.suggested-action:disabled { background: @inde_hover;
+  color: @inde_disabled; border-color: @inde_border; }
+window.inde-window button.destructive-action, window.inde-window button.quiet-destructive {
+  color: @inde_danger; }
+window.inde-window button.destructive-action:hover,
+window.inde-window button.quiet-destructive:hover { background: @inde_danger_bg; }
+window.inde-window entry, window.inde-window searchentry,
+window.inde-window spinbutton, window.inde-window dropdown {
+  background: @inde_paper; color: @inde_fg; caret-color: @inde_fg;
+  border: 1px solid @inde_control_border; border-radius: 7px; box-shadow: none; min-height: 30px; }
+window.inde-window entry:disabled { color: @inde_disabled; background: @inde_bg; }
+window.inde-window entry placeholder { color: @inde_muted; }
+window.inde-window textview, window.inde-window textview text {
+  background: @inde_paper; color: @inde_fg; caret-color: @inde_fg; }
+window.inde-window textview selection, window.inde-window entry selection {
+  background: @inde_accent; color: @inde_on_accent; }
+window.inde-window check, window.inde-window radio { background: @inde_paper;
+  border-color: @inde_control_border; color: @inde_on_accent; }
+window.inde-window check:checked, window.inde-window radio:checked {
+  background: @inde_accent; border-color: @inde_accent; }
+window.inde-window button:focus-visible, window.inde-window entry:focus,
+window.inde-window searchentry:focus, window.inde-window combobox:focus,
+window.inde-window listview:focus, window.inde-window flowboxchild:focus,
+window.inde-window expander:focus-visible { outline: 2px solid @inde_accent;
+  outline-offset: 2px; }
+window.inde-window list, window.inde-window listview { background: transparent; color: @inde_fg; }
+window.inde-window row { color: @inde_fg; border-radius: 6px; }
+window.inde-window row:hover { background: @inde_hover; }
+window.inde-window row:selected { background: @inde_accent_soft; color: @inde_accent_fg; }
+window.inde-window separator { background: @inde_border; min-height: 1px; min-width: 1px; }
+window.inde-window notebook, window.inde-window notebook > stack {
+  background: @inde_surface; color: @inde_fg; border-color: @inde_border; }
+window.inde-window scrolledwindow { background: transparent; border-color: @inde_border; }
+window.inde-window viewport { background: @inde_surface; color: @inde_fg; }
+window.inde-window frame > border { border-color: @inde_border; }
+window.inde-window notebook > header { background: @inde_surface; color: @inde_fg; border-color: @inde_border; }
+window.inde-window notebook > header tab { color: @inde_muted; }
+window.inde-window notebook > header tab:checked { color: @inde_accent_fg; border-bottom-color: @inde_accent; }
+window.inde-window progressbar trough { background: @inde_hover; }
+window.inde-window progressbar progress { background: @inde_accent; }
+window.inde-window scrollbar slider { background: @inde_disabled; }
+window.inde-window tooltip { background: @inde_surface; color: @inde_fg; }
+popover > contents { background: @inde_surface; color: @inde_fg;
+  border: 1px solid @inde_border; border-radius: 10px; box-shadow: 0 4px 18px alpha(black, 0.12); }
+popover.context-menu { background: transparent; border: none; box-shadow: none; padding: 0; }
+popover.context-menu > contents { box-shadow: none; margin: 0; padding: 0; }
+popover.context-menu viewport { background: transparent; }
+popover label, popover modelbutton { color: @inde_fg; }
+popover modelbutton:hover { background: @inde_hover; }
+popover modelbutton:disabled { color: @inde_disabled; }
+.workspace-switcher { padding: 6px 12px; }
+window.inde-window .workspace-switcher button { min-width: 76px; background: transparent;
+  border-color: transparent; color: @inde_muted; }
+window.inde-window .workspace-switcher button:checked { background: @inde_accent_soft;
+  color: @inde_accent_fg; font-weight: 600; }
+.workspace-page { padding: 2px; }
+.comparison-selection-bar { background: @inde_surface; color: @inde_fg; border: 1px solid @inde_border; border-radius: 10px; padding: 12px; box-shadow: 0 4px 12px alpha(black, 0.18); }
+.toolbar-surface, .timeline-toolbar { background: @inde_surface; color: @inde_fg;
+  border: 1px solid @inde_border; border-radius: 10px; padding: 8px; }
+.tool-section, .content-card, .placeholder-card { background: @inde_surface;
+  color: @inde_fg; border: 1px solid @inde_border; border-radius: 10px; padding: 14px; }
+.tool-section .heading { color: @inde_muted; font-weight: 600; }
+button.entity-card, button.catalog-card, button.document-group-card {
+  background: @inde_surface; color: @inde_fg; border: 1px solid @inde_border; border-radius: 10px; }
+button.entity-card label, button.catalog-card label, button.document-group-card label { color: @inde_fg; }
+button.entity-card label.dim-label, button.catalog-card label.dim-label,
+button.document-group-card label.dim-label { color: @inde_muted; opacity: 1; }
+button.entity-card:hover, button.catalog-card:hover, button.document-group-card:hover { background: @inde_hover; }
+button.catalog-card.selected-card, .content-card.accent-card {
+  background: @inde_accent_soft; color: @inde_accent_fg; border-color: @inde_accent; }
+.catalog-cover, .catalog-cover-placeholder, .editorial-profile-cover { background: @inde_hover; border-radius: 8px; }
+.catalog-cover-placeholder image { color: @inde_muted; }
+.writing-paper { background: @inde_paper; border-color: @inde_border; border-radius: 10px; }
+textview.writing-editor, textview.writing-editor > text { background: @inde_paper;
+  color: @inde_fg; caret-color: @inde_fg; font-family: serif; font-size: 12pt; }
+textview.writing-editor text selection { background: @inde_accent_soft; color: @inde_accent_fg; }
+.writing-format-toolbar { padding: 8px; }
+.writing-format-toolbar button.format-active { background: @inde_accent;
+  color: @inde_on_accent; border-color: @inde_accent; }
+.writing-format-toolbar button.format-mixed { background: @inde_accent_soft;
+  color: @inde_accent_fg; border-color: @inde_accent; }
+.writing-tools-sheet, .inspector-surface { background: @inde_surface;
+  color: @inde_fg; border: 1px solid @inde_border; border-radius: 10px; }
+.filter-sheet, .modal-card { background: @inde_surface; color: @inde_fg;
+  border: 1px solid @inde_border; border-radius: 12px; box-shadow: 0 8px 28px alpha(black, 0.16); }
+.modal-scrim { background: alpha(black, 0.38); }
+.modal-header { padding: 16px 20px; border-bottom: 1px solid @inde_border; }
+.modal-body { padding: 4px 8px; }
+.modal-footer { padding: 14px 20px; border-top: 1px solid @inde_border; }
+button.filter-toggle { color: @inde_fg; }
+button.filter-toggle.filter-enabled { background: @inde_success_bg; color: @inde_success; }
+button.filter-toggle.filter-disabled { background: @inde_bg; color: @inde_muted; }
+.detail-toolbar { padding: 4px 0 8px; border-bottom: 1px solid @inde_border; }
+.detail-content { padding: 2px 6px 20px; }
+.boxed-list > row { margin: 2px 0; }
+.status-bar { padding: 3px 12px; color: @inde_muted; font-size: 0.85em; }
+.review-row { padding: 14px; }
+.review-kind { color: @inde_accent_fg; font-weight: 600; }
+.workshop-summary, .workshop-acknowledge { color: @inde_fg; background: @inde_surface; padding: 8px; }
+entry.proofreading-spelling-error { box-shadow: inset 0 -2px @inde_danger; }
+entry.proofreading-grammar-error { border-bottom-color: @inde_accent; }
+)css";
+void apply() {
+  applying = true;
+  dark = mode == ThemeMode::Dark || (mode == ThemeMode::System && system_dark);
+  // The app palette must not write back to GTK's system preference: theme
+  // notifications can be deferred, feeding our own setting back into System.
+  provider->load_from_data(colors(dark) + component_css);
+  applying = false;
+  changed.emit();
+}
+}
 void install_application_theme() {
-  static const auto provider = Gtk::CssProvider::create();
-  static bool installed = false;
-  if (installed)
-    return;
-
-  provider->load_from_data(R"css(
-window.inde-window {
-  background: #10141b;
-  color: #e8edf5;
-}
-
-headerbar.inde-header {
-  min-height: 58px;
-  padding: 0 10px;
-  background: #151a22;
-  border-bottom: 1px solid #2a3240;
-  box-shadow: none;
-}
-
-.header-title {
-  color: #f6f8fb;
-  font-weight: 800;
-  font-size: 1.04em;
-}
-
-.header-subtitle {
-  color: #8f9bad;
-  font-size: 0.82em;
-}
-
-.app-menubar {
-  min-height: 32px;
-  padding: 0 8px;
-  background: #131821;
-  border-bottom: 1px solid #252e3a;
-}
-
-.app-menubar > item {
-  padding: 5px 10px;
-  border-radius: 6px;
-}
-
-.app-menubar > item:hover {
-  background: #242c38;
-}
-
-.inde-header .title {
-  font-weight: 700;
-}
-
-button {
-  border-radius: 8px;
-  padding: 7px 12px;
-  min-height: 18px;
-}
-
-button.header-action {
-  background: transparent;
-  border-color: transparent;
-  box-shadow: none;
-}
-
-button.header-action:hover {
-  background: #242b36;
-}
-
-/* O tema do sistema pode suavizar ou ocultar o foco. Este anel atende teclado
- * e baixa visão sem depender de hover e cobre os controles interativos usados
- * pelo shell, cards, listas, formulários e menus. */
-window.inde-window button:focus,
-window.inde-window entry:focus,
-window.inde-window searchentry:focus,
-window.inde-window combobox:focus,
-window.inde-window listview:focus,
-window.inde-window flowboxchild:focus,
-window.inde-window expander:focus {
-  outline: 2px solid #86b4ff;
-  outline-offset: 2px;
-}
-
-.modal-scrim {
-  background: rgba(6, 9, 14, 0.76);
-}
-
-.modal-card {
-  background: #191f29;
-  border: 1px solid #3a4658;
-  border-radius: 16px;
-  box-shadow: 0 22px 64px rgba(0,0,0,0.58);
-}
-
-.modal-header {
-  padding: 20px 22px 16px 22px;
-  border-bottom: 1px solid #2d3745;
-}
-
-.modal-secondary {
-  color: #a6b1c1;
-  line-height: 1.25;
-}
-
-.modal-body {
-  padding: 4px 8px;
-}
-
-.modal-footer {
-  padding: 14px 22px 18px 22px;
-  border-top: 1px solid #2d3745;
-}
-
-.context-menu {
-  background: #1b222d;
-  border: 1px solid #394658;
-  border-radius: 10px;
-  box-shadow: 0 10px 28px rgba(0,0,0,0.46);
-}
-
-button.context-menu-item {
-  min-width: 190px;
-  background: transparent;
-  border-color: transparent;
-  box-shadow: none;
-}
-
-button.context-menu-item:hover {
-  background: #293444;
-}
-
-button.context-menu-item.destructive-action {
-  color: #ff9e9e;
-}
-
-button.destructive-action:disabled {
-  background: #302328;
-  border-color: #463138;
-  color: #796b70;
-}
-
-button.unavailable-action {
-  background: #252a33;
-  border-color: #303846;
-  color: #6f7783;
-}
-
-.workspace-switcher {
-  padding: 4px;
-  margin: 4px 16px 0 16px;
-  background: #171c24;
-  border: 1px solid #2a3240;
-  border-radius: 12px;
-}
-
-.workspace-switcher button {
-  min-width: 108px;
-  background: transparent;
-  border-color: transparent;
-  box-shadow: none;
-  color: #aeb8c7;
-}
-
-.workspace-switcher button:hover {
-  background: #222a35;
-  color: #f4f7fb;
-}
-
-.workspace-switcher button:checked {
-  background: #315fba;
-  color: #ffffff;
-  font-weight: 700;
-}
-
-.workspace-page {
-  padding: 4px;
-}
-
-.page-title {
-  color: #f6f8fb;
-  font-weight: 800;
-}
-
-.page-subtitle {
-  color: #98a4b5;
-}
-
-.toolbar-surface,
-.tool-section {
-  background: #171d26;
-  border: 1px solid #2d3746;
-  border-radius: 12px;
-  box-shadow: 0 1px 2px rgba(0,0,0,0.22);
-}
-
-.tool-section {
-  padding: 10px 12px;
-}
-
-.tool-section .heading {
-  color: #9daabd;
-  font-size: 0.88em;
-  font-weight: 700;
-}
-
-/* A barra não depende apenas do clique: ela espelha o estilo sob o cursor ou
- * na seleção para que a leitura da formatação seja imediata durante a escrita. */
-.writing-format-toolbar button.format-active {
-  background: #315f9d;
-  border-color: #78a8ed;
-  color: #ffffff;
-  box-shadow: inset 0 0 0 1px rgba(222, 238, 255, 0.18);
-}
-
-.writing-format-toolbar button.format-mixed {
-  background: #263d5a;
-  border-color: #5e83b5;
-  color: #dceaff;
-}
-
-.filter-sheet {
-  background: #1a202a;
-  border: 1px solid #3b495e;
-  border-radius: 14px;
-  box-shadow: 0 12px 32px rgba(0,0,0,0.44);
-}
-
-.content-card {
-  background: #171c24;
-  border: 1px solid #2b3441;
-  border-radius: 12px;
-  padding: 14px;
-}
-
-.content-card.accent-card {
-  background: #182233;
-  border-color: #355786;
-}
-
-button.entity-card,
-button.catalog-card {
-  background: #181e27;
-  border: 1px solid #2d3746;
-  border-radius: 12px;
-  box-shadow: 0 1px 2px rgba(0,0,0,0.22);
-}
-
-button.entity-card:hover,
-button.catalog-card:hover {
-  background: #202938;
-  border-color: #5576a9;
-}
-
-button.entity-card:focus,
-button.catalog-card:focus {
-  outline: 2px solid #6f9de8;
-  outline-offset: 2px;
-}
-
-button.catalog-card.selected-card {
-  background: #203a66;
-  border-color: #6e9de8;
-}
-
-.catalog-cover,
-.catalog-cover-placeholder {
-  background: #222b37;
-  border-right: 1px solid #354255;
-  border-radius: 10px 0 0 10px;
-}
-
-.catalog-cover-placeholder image {
-  color: #738198;
-}
-
-.editorial-profile-cover {
-  background: linear-gradient(135deg, #24446f, #18283f 58%, #332d59);
-  border-radius: 11px 11px 0 0;
-}
-
-.editorial-profile-cover + picture,
-picture.catalog-cover {
-  border-radius: 11px 11px 0 0;
-}
-
-button.floating-action {
-  background: rgba(14, 19, 27, 0.88);
-  border: 1px solid rgba(163, 184, 216, 0.5);
-  border-radius: 999px;
-  box-shadow: 0 5px 18px rgba(0,0,0,0.38);
-}
-
-button.document-group-card {
-  background: #1c2633;
-  border-color: #3b5776;
-  border-radius: 14px;
-}
-
-button.document-group-card:hover {
-  background: #243449;
-  border-color: #6590c4;
-}
-
-.writing-library {
-  padding-top: 2px;
-}
-
-.writing-toolbar {
-  padding: 10px 12px;
-}
-
-.writing-format-toolbar {
-  padding: 7px 10px;
-}
-
-.writing-format-toolbar button {
-  min-width: 34px;
-}
-
-.writing-paper {
-  background: #131820;
-  border-color: #354152;
-  border-radius: 14px;
-}
-
-.writing-tools-sheet {
-  background: #181f29;
-  border-left: 1px solid #3a4759;
-  border-radius: 14px 0 0 14px;
-  box-shadow: -12px 0 30px rgba(0,0,0,0.38);
-}
-
-textview.writing-editor,
-textview.writing-editor > text {
-  background: #131820;
-  color: #edf1f7;
-  caret-color: #9dc1ff;
-  font-family: serif;
-  font-size: 1.08em;
-}
-
-textview.writing-editor selection,
-textview.writing-editor > text selection {
-  background: #315fba;
-  color: #ffffff;
-}
-
-button.quiet-destructive {
-  background: transparent;
-  border-color: transparent;
-  color: #e7a0a0;
-  box-shadow: none;
-}
-
-button.quiet-destructive:hover {
-  background: #33242a;
-  color: #ffb2b2;
-}
-
-button.filter-toggle {
-  background: #202733;
-  border-color: #364254;
-  color: #aeb8c7;
-}
-
-button.filter-toggle.filter-enabled {
-  background: #214f43;
-  border-color: #4f9a7d;
-  color: #effff8;
-  font-weight: 700;
-}
-
-button.filter-toggle.filter-disabled {
-  background: #252a33;
-  border-color: #46505f;
-  color: #b1bac7;
-  font-weight: 600;
-}
-
-.section-title {
-  color: #f0f3f8;
-  font-weight: 750;
-}
-
-.context-summary {
-  color: #9faabc;
-  padding: 2px 4px;
-}
-
-.detail-toolbar {
-  padding: 4px 0 8px 0;
-  border-bottom: 1px solid #2a3240;
-}
-
-.detail-content {
-  padding: 2px 6px 20px 6px;
-}
-
-.boxed-list {
-  background: transparent;
-}
-
-.boxed-list > row {
-  margin: 2px 0;
-  border-radius: 8px;
-}
-
-.boxed-list > row button {
-  border-radius: 8px;
-  padding: 9px 12px;
-}
-
-.status-bar {
-  min-height: 24px;
-  padding: 3px 12px;
-  color: #8f9bad;
-  background: #12171e;
-  border-top: 1px solid #252d39;
-  font-size: 0.88em;
-}
-
-.timeline-toolbar {
-  background: #171d26;
-  border: 1px solid #2d3746;
-  border-radius: 12px;
-  padding: 8px;
-}
-
-.inspector-surface {
-  background: #151a22;
-  border-left: 1px solid #2d3746;
-  padding: 14px;
-}
-
-.placeholder-card {
-  background: #171d26;
-  border: 1px solid #2d3746;
-  border-radius: 16px;
-  padding: 28px;
-  box-shadow: 0 6px 20px rgba(0,0,0,0.24);
-}
-
-entry.proofreading-spelling-error {
-  box-shadow: inset 0 -2px #e25562;
-}
-
-entry.proofreading-grammar-error {
-  border-bottom-color: #d08a31;
-}
-
-entry.proofreading-spelling-error.proofreading-grammar-error {
-  box-shadow: inset 0 -2px #e25562, inset 0 -4px #d08a31;
-}
-  )css");
-
+  if (provider) return;
   const auto display = Gdk::Display::get_default();
-  if (display) {
-    Gtk::StyleContext::add_provider_for_display(
-        display, provider, GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
-    installed = true;
+  if (!display) return;
+  if (auto settings = Gtk::Settings::get_default()) {
+    system_preference = settings->property_gtk_application_prefer_dark_theme().get_value();
+    system_dark = system_preference;
+    const auto theme = settings->property_gtk_theme_name().get_value();
+    system_dark = system_dark || theme_name_is_dark(theme.raw());
+    settings->property_gtk_theme_name().signal_changed().connect([settings] {
+      if (applying) return;
+      system_dark = system_preference || theme_name_is_dark(settings->property_gtk_theme_name().get_value().raw());
+      if (provider && mode == ThemeMode::System) apply();
+    });
+    settings->property_gtk_application_prefer_dark_theme().signal_changed().connect([settings] {
+      if (applying) return;
+      system_preference = settings->property_gtk_application_prefer_dark_theme().get_value();
+      system_dark = system_preference || theme_name_is_dark(settings->property_gtk_theme_name().get_value().raw());
+      if (provider && mode == ThemeMode::System) apply();
+    });
   }
+  const auto saved = ui_preference("appearance", "theme", "system");
+  mode = saved == "dark" ? ThemeMode::Dark : saved == "light" ? ThemeMode::Light : ThemeMode::System;
+  provider = Gtk::CssProvider::create();
+  Gtk::StyleContext::add_provider_for_display(display, provider, GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
+  apply();
 }
-
-} // namespace inde::ui
+void set_application_theme(ThemeMode value) {
+  install_application_theme();
+  mode = value;
+  set_ui_preference("appearance", "theme", value == ThemeMode::Dark ? "dark" : value == ThemeMode::Light ? "light" : "system");
+  if (provider) apply();
+}
+ThemeMode application_theme() noexcept { return mode; }
+bool application_theme_is_dark() noexcept { return dark; }
+sigc::signal<void()> &signal_application_theme_changed() { return changed; }
+}

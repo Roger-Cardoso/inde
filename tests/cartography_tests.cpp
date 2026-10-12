@@ -1,3 +1,4 @@
+#include "schema17_downgrade.hpp"
 #include "inde/application/project_service.hpp"
 #include "inde/persistence/schema_migrator.hpp"
 #include "inde/persistence/sqlite_database.hpp"
@@ -214,6 +215,8 @@ void persistence_and_scene(const geo::GeneratedPlanet &g) {
   service.close();
   {
     persistence::SqliteDatabase db(db_path);
+    downgrade_schema17_for_fixture(db);
+    db.execute("DROP TABLE semantic_annotation_relations;DROP TABLE semantic_entity_bindings;DROP TABLE semantic_annotations;DROP TABLE document_semantics;DROP TABLE semantic_type_definitions;DELETE FROM schema_migrations WHERE version=16;");
     db.execute("DROP TABLE cartographic_terrain_locks;ALTER TABLE "
                "cartographic_planets DROP COLUMN terrain_revision;DELETE FROM "
                "schema_migrations WHERE version=15;");
@@ -448,6 +451,9 @@ void persistence_and_scene(const geo::GeneratedPlanet &g) {
   assert(!service.cartography().position(p.planet_id, p.entity_id));
   service.cartography().change_position(p.planet_id, p.entity_id, {},
                                         current); // undo
+  rejects([&]{service.narrative().delete_entity(local.id);});
+  assert(service.cartography().position(p.planet_id,p.entity_id)==current);
+  service.cartography().change_position(p.planet_id,p.entity_id,current,{});
   service.narrative().delete_entity(local.id);
   assert(!service.cartography().position(p.planet_id, p.entity_id));
   service.close();
@@ -470,7 +476,7 @@ void persistence_and_scene(const geo::GeneratedPlanet &g) {
   });
   {
     persistence::SqliteDatabase db(db_path);
-    db.execute("INSERT INTO schema_migrations VALUES(16,'future');");
+    db.execute("INSERT INTO schema_migrations VALUES(999,'future');");
   }
   service.close();
   rejects([&] { service.open(path); });

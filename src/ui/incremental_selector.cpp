@@ -1,3 +1,4 @@
+#include "inde/ui/author_diagnostics.hpp"
 #include "inde/ui/incremental_selector.hpp"
 #include "inde/ui/accessibility.hpp"
 
@@ -62,7 +63,7 @@ void IncrementalSelector::refresh_results() {
         Gtk::make_managed<Gtk::Label>("Não foi possível carregar as opções");
     failure->set_xalign(0.0F);
     failure->set_wrap(true);
-    failure->set_tooltip_text(error.what());
+    failure->set_tooltip_text(author::diagnostic(error.what()));
     failure->add_css_class("dim-label");
     results_.append(*failure);
     return;

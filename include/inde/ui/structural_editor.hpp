@@ -1,6 +1,7 @@
 #pragma once
 
 #include "inde/application/project_service.hpp"
+#include "inde/ui/view_state.hpp"
 
 #include <gtkmm.h>
 #include <optional>
@@ -9,6 +10,7 @@
 #include <vector>
 
 namespace inde::ui {
+class KeyboardCommands;
 
 class StructuralNodeItem final : public Glib::Object {
 public:
@@ -31,10 +33,13 @@ public:
   void install_actions(Gtk::ApplicationWindow &window);
   void set_work(std::optional<std::string> work_id);
   void refresh();
+  void install_keyboard(KeyboardCommands &);
   void reset();
   void show_structure();
   void reveal_node(const std::string &node_id);
   void toggle_inspector();
+  [[nodiscard]] ViewState capture_view();
+  void restore_view(const ViewState &);
   [[nodiscard]] sigc::signal<void(const Glib::ustring &)> &
   signal_status_message() {
     return signal_status_message_;
@@ -91,15 +96,15 @@ private:
   Gtk::Box detail_page_{Gtk::Orientation::VERTICAL, 12};
   Gtk::Box detail_header_{Gtk::Orientation::HORIZONTAL, 8};
   Gtk::Button back_to_structure_button_{"← Voltar à estrutura"};
-  Gtk::Label detail_hint_{"Detalhe da unidade editorial"};
+  Gtk::Label detail_hint_{"Detalhe do elemento do manuscrito"};
   Gtk::Stack structure_stack_;
   Gtk::Box empty_structure_{Gtk::Orientation::VERTICAL, 8};
-  Gtk::Label empty_structure_title_{"Estrutura editorial"};
+  Gtk::Label empty_structure_title_{"Organização do manuscrito"};
   Gtk::Label empty_structure_hint_{
-      "Crie e selecione uma Obra para organizar sua estrutura editorial."};
+      "Crie e selecione uma Obra para organizar sua organização do manuscrito."};
   Gtk::Box structure_panel_{Gtk::Orientation::VERTICAL, 8};
   Gtk::Box structure_header_{Gtk::Orientation::HORIZONTAL, 8};
-  Gtk::Label structure_title_{"Estrutura editorial"};
+  Gtk::Label structure_title_{"Organização do manuscrito"};
   Gtk::Label structure_hint_{"Selecione uma obra"};
   Gtk::Button filters_button_{"Filtros"};
   Gtk::Label structure_filter_summary_;
@@ -112,21 +117,26 @@ private:
   Gtk::ComboBoxText structural_type_filter_;
   Gtk::Label status_filter_label_{"Status editorial"};
   Gtk::ComboBoxText status_filter_;
-  Gtk::Label entity_type_facets_label_{"Entidades apresentadas"};
+  Gtk::Label entity_type_facets_label_{"Elementos da história apresentadas"};
   Gtk::ScrolledWindow entity_type_facets_scroll_;
   Gtk::Box entity_type_facets_{Gtk::Orientation::VERTICAL, 2};
   Gtk::Button clear_filters_button_{"Limpar filtros"};
   Gtk::Button apply_filters_button_{"Ver estrutura"};
   Gtk::ScrolledWindow structure_toolbar_scroll_;
   Gtk::FlowBox structure_toolbar_;
+  Gtk::Box organization_toolbar_{Gtk::Orientation::HORIZONTAL, 6};
+  Gtk::MenuButton organization_button_;
+  Gtk::Popover organization_popover_;
+  Gtk::ScrolledWindow organization_scroll_;
+  Gtk::Box organization_options_{Gtk::Orientation::VERTICAL, 10};
   Gtk::Box filter_section_{Gtk::Orientation::VERTICAL, 4};
   Gtk::Label filter_section_title_{"Pesquisa e filtros"};
   Gtk::Box filter_actions_{Gtk::Orientation::HORIZONTAL, 4};
   Gtk::Box crud_section_{Gtk::Orientation::VERTICAL, 4};
   Gtk::Label crud_section_title_{"Elementos"};
   Gtk::Box crud_actions_{Gtk::Orientation::HORIZONTAL, 4};
-  Gtk::Button add_root_button_{"Novo elemento raiz"};
-  Gtk::Button structure_add_child_button_{"Novo filho"};
+  Gtk::Button add_root_button_{"Adicionar no nível principal"};
+  Gtk::Button structure_add_child_button_{"Adicionar dentro do selecionado"};
   Gtk::Button structure_edit_button_{"Editar"};
   Gtk::Button structure_duplicate_button_{"Duplicar"};
   Gtk::Button structure_remove_button_{"Remover"};
@@ -144,14 +154,14 @@ private:
   Gtk::Button structure_up_button_{"Mover para cima"};
   Gtk::Button structure_down_button_{"Mover para baixo"};
   Gtk::Box template_section_{Gtk::Orientation::VERTICAL, 4};
-  Gtk::Label template_section_title_{"Templates"};
+  Gtk::Label template_section_title_{"Modelos"};
   Gtk::Box template_actions_{Gtk::Orientation::HORIZONTAL, 4};
   Gtk::ComboBoxText structure_template_combo_;
-  Gtk::Button structure_template_button_{"Aplicar template"};
+  Gtk::Button structure_template_button_{"Aplicar modelo"};
   Gtk::Box recovery_section_{Gtk::Orientation::VERTICAL, 4};
   Gtk::Label recovery_section_title_{"Recuperação"};
   Gtk::Box recovery_actions_{Gtk::Orientation::HORIZONTAL, 4};
-  Gtk::Button structure_restore_button_{"Desfazer exclusão"};
+  Gtk::Button structure_restore_button_{"Histórico / restauração…"};
   Gtk::ScrolledWindow structure_scroll_;
   Gtk::ListView structure_list_;
   Gtk::Box inspector_panel_{Gtk::Orientation::VERTICAL, 10};
@@ -161,6 +171,7 @@ private:
   Gtk::Overlay inspector_profile_overlay_;
   Gtk::Box inspector_summary_{Gtk::Orientation::VERTICAL, 8};
   Gtk::Overlay inspector_cover_overlay_;
+  Gtk::Expander inspector_cover_section_{"Imagem da obra"};
   Gtk::Box inspector_cover_banner_{Gtk::Orientation::VERTICAL};
   Gtk::Picture inspector_cover_;
   Gtk::Box inspector_identity_panel_{Gtk::Orientation::VERTICAL, 6};
@@ -172,8 +183,9 @@ private:
   Gtk::MenuButton inspector_actions_button_;
   Gtk::Separator reference_separator_;
   Gtk::Frame direct_references_surface_;
+  Gtk::Expander direct_references_section_{"Elementos da história apresentadas nesta unidade"};
   Gtk::Box direct_references_panel_{Gtk::Orientation::VERTICAL, 8};
-  Gtk::Label reference_title_{"Entidades apresentadas"};
+  Gtk::Label reference_title_{"Elementos da história apresentadas"};
   Gtk::Box reference_toolbar_{Gtk::Orientation::HORIZONTAL, 4};
   Gtk::Button reference_add_button_{"Adicionar"};
   Gtk::Button reference_edit_button_{"Editar"};
@@ -181,9 +193,10 @@ private:
   Gtk::MenuButton reference_actions_button_;
   Gtk::ListBox reference_list_;
   Gtk::Frame inherited_references_surface_;
+  Gtk::Expander inherited_references_section_{"Elementos da história das unidades internas"};
   Gtk::Box inherited_references_panel_{Gtk::Orientation::VERTICAL, 8};
   Gtk::Label inherited_references_title_{
-      "Entidades herdadas de elementos filhos"};
+      "Elementos da história apresentados nas partes internas"};
   Gtk::Label inherited_references_hint_{
       "Cada referência indica o elemento em que foi apresentada."};
   Gtk::ListBox inherited_references_list_;

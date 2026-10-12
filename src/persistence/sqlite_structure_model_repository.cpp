@@ -414,7 +414,7 @@ void SqliteStructureModelRepository::save_model_bundle(
   for (const auto &link : links)
     project::validate(link);
   auto db = open_database(path);
-  SqliteTransaction tx(db);
+  SqliteTransaction tx(db, "Estruturas do Projeto");
   const auto pid = db.query_text("SELECT id FROM projects");
   auto s = db.prepare(
       "INSERT INTO "
@@ -475,7 +475,7 @@ void SqliteStructureModelRepository::save_model_bundle(
 void SqliteStructureModelRepository::remove_model(
     const std::filesystem::path &p, const std::string &id) const {
   auto db = open_database(p);
-  SqliteTransaction tx(db);
+  SqliteTransaction tx(db, "Estruturas do Projeto");
   auto s = db.prepare("DELETE FROM structure_models WHERE id=?");
   s.bind(1, id);
   s.run();
@@ -518,7 +518,7 @@ void SqliteStructureModelRepository::save_editorial_structure_bundle(
     const std::filesystem::path &p, const project::EditorialStructure &value,
     const std::vector<project::StructuralNode> &nodes) const {
   auto db = open_database(p);
-  SqliteTransaction tx(db);
+  SqliteTransaction tx(db, "Estruturas do Projeto");
   const auto pid = db.query_text("SELECT id FROM projects");
   insert_editorial_structure(db, pid, value);
   auto s = db.prepare(
@@ -557,8 +557,19 @@ void SqliteStructureModelRepository::save_narrative_structure_bundle(
     const std::vector<project::NarrativeUnitEntity> &entities,
     const std::vector<project::NarrativeLink> &links) const {
   auto db = open_database(p);
-  SqliteTransaction tx(db);
+  SqliteTransaction tx(db, "Estruturas do Projeto");
   const auto pid = db.query_text("SELECT id FROM projects");
+  // This legacy bundle does not yet transfer these authorial contexts. Refuse
+  // inside the writing transaction, including changes after the UI preview.
+  if(value.derived_from_id) {
+    auto context=db.prepare("SELECT (SELECT count(*) FROM temporal_attachments WHERE unit_id IN(SELECT id FROM narrative_units WHERE structure_id=?) OR line_id IN(SELECT id FROM narrative_lines WHERE structure_id=?)) + (SELECT count(*) FROM narrative_role_assignments WHERE structure_id=?) + (SELECT count(*) FROM narrative_unit_contexts WHERE unit_id IN(SELECT id FROM narrative_units WHERE structure_id=?)) + (SELECT count(*) FROM narrative_realizations WHERE unit_id IN(SELECT id FROM narrative_units WHERE structure_id=?)) + (SELECT count(*) FROM narrative_unit_relations WHERE unit_id IN(SELECT id FROM narrative_units WHERE structure_id=?))");
+    for(int i=1;i<=6;++i)context.bind(i,*value.derived_from_id);
+    auto extra=db.prepare("SELECT (SELECT count(*) FROM narrative_text_targets WHERE unit_id IN(SELECT id FROM narrative_units WHERE structure_id=?1)) + (SELECT count(*) FROM narrative_unit_presence_intents WHERE unit_id IN(SELECT id FROM narrative_units WHERE structure_id=?1))");
+    extra.bind(1,*value.derived_from_id);extra.step();
+    if(extra.column_integer(0)>0)throw std::runtime_error("Use a derivação completa do construtor para preservar trechos, ocorrências e presenças planejadas. O caminho legado não transporta esse contexto.");
+    if(context.step() && context.column_integer(0)>0)
+      throw std::runtime_error("Esta estrutura tem datas, papéis ou contexto integrado. A derivação completa será entregue no próximo bloco; duplicar agora perderia esses dados. A origem foi preservada.");
+  }
   insert_narrative_structure(db, pid, value);
   for (const auto &v : lines)
     insert_line(db, pid, v);
@@ -577,7 +588,7 @@ void SqliteStructureModelRepository::activate_editorial(
     const std::filesystem::path &p, const std::string &work,
     const std::string &id) const {
   auto db = open_database(p);
-  SqliteTransaction tx(db);
+  SqliteTransaction tx(db, "Estruturas do Projeto");
   auto clear =
       db.prepare("UPDATE editorial_structures SET is_active=0,updated_at=? "
                  "WHERE work_id=? AND is_active=1");
@@ -597,7 +608,7 @@ void SqliteStructureModelRepository::activate_narrative(
     const std::filesystem::path &p, const std::string &work,
     const std::string &id) const {
   auto db = open_database(p);
-  SqliteTransaction tx(db);
+  SqliteTransaction tx(db, "Estruturas do Projeto");
   auto clear =
       db.prepare("UPDATE narrative_structures SET is_active=0,updated_at=? "
                  "WHERE work_id=? AND is_active=1");
@@ -627,7 +638,7 @@ SqliteStructureModelRepository::document_count(const std::filesystem::path &p,
 void SqliteStructureModelRepository::remove_editorial_structure(
     const std::filesystem::path &p, const std::string &id) const {
   auto db = open_database(p);
-  SqliteTransaction tx(db);
+  SqliteTransaction tx(db, "Estruturas do Projeto");
   auto nodes = db.prepare(
       "DELETE FROM editorial_nodes WHERE structure_id=? AND EXISTS (SELECT 1 "
       "FROM editorial_structures s WHERE s.id=? AND s.is_active=0)");
@@ -644,7 +655,7 @@ void SqliteStructureModelRepository::remove_editorial_structure(
 void SqliteStructureModelRepository::remove_narrative_structure(
     const std::filesystem::path &p, const std::string &id) const {
   auto db = open_database(p);
-  SqliteTransaction tx(db);
+  SqliteTransaction tx(db, "Estruturas do Projeto");
   auto s =
       db.prepare("DELETE FROM narrative_structures WHERE id=? AND is_active=0");
   s.bind(1, id);
@@ -752,21 +763,21 @@ SqliteStructureModelRepository::links(const std::filesystem::path &p,
 void SqliteStructureModelRepository::save(
     const std::filesystem::path &p, const project::NarrativeLine &v) const {
   auto db = open_database(p);
-  SqliteTransaction tx(db);
+  SqliteTransaction tx(db, "Estruturas do Projeto");
   insert_line(db, db.query_text("SELECT id FROM projects"), v);
   tx.commit();
 }
 void SqliteStructureModelRepository::save(
     const std::filesystem::path &p, const project::NarrativeUnit &v) const {
   auto db = open_database(p);
-  SqliteTransaction tx(db);
+  SqliteTransaction tx(db, "Estruturas do Projeto");
   insert_unit(db, db.query_text("SELECT id FROM projects"), v);
   tx.commit();
 }
 void SqliteStructureModelRepository::save(
     const std::filesystem::path &p, const project::NarrativeUnitLine &v) const {
   auto db = open_database(p);
-  SqliteTransaction tx(db);
+  SqliteTransaction tx(db, "Estruturas do Projeto");
   insert_membership(db, db.query_text("SELECT id FROM projects"), v);
   tx.commit();
 }
@@ -774,21 +785,21 @@ void SqliteStructureModelRepository::save(
     const std::filesystem::path &p,
     const project::NarrativeUnitEntity &v) const {
   auto db = open_database(p);
-  SqliteTransaction tx(db);
+  SqliteTransaction tx(db, "Estruturas do Projeto");
   insert_unit_entity(db, db.query_text("SELECT id FROM projects"), v);
   tx.commit();
 }
 void SqliteStructureModelRepository::save(
     const std::filesystem::path &p, const project::NarrativeLink &v) const {
   auto db = open_database(p);
-  SqliteTransaction tx(db);
+  SqliteTransaction tx(db, "Estruturas do Projeto");
   insert_link(db, db.query_text("SELECT id FROM projects"), v);
   tx.commit();
 }
 void SqliteStructureModelRepository::remove_line(const std::filesystem::path &p,
                                                  const std::string &id) const {
   auto db = open_database(p);
-  SqliteTransaction tx(db);
+  SqliteTransaction tx(db, "Estruturas do Projeto");
   auto s = db.prepare("DELETE FROM narrative_lines WHERE id=?");
   s.bind(1, id);
   s.run();
@@ -798,7 +809,7 @@ void SqliteStructureModelRepository::remove_line(const std::filesystem::path &p,
 void SqliteStructureModelRepository::remove_unit(const std::filesystem::path &p,
                                                  const std::string &id) const {
   auto db = open_database(p);
-  SqliteTransaction tx(db);
+  SqliteTransaction tx(db, "Estruturas do Projeto");
   auto s = db.prepare("DELETE FROM narrative_units WHERE id=?");
   s.bind(1, id);
   s.run();
@@ -809,7 +820,7 @@ void SqliteStructureModelRepository::remove_unit_line(
     const std::filesystem::path &p, const std::string &u,
     const std::string &l) const {
   auto db = open_database(p);
-  SqliteTransaction tx(db);
+  SqliteTransaction tx(db, "Estruturas do Projeto");
   auto s = db.prepare(
       "DELETE FROM narrative_unit_lines WHERE unit_id=? AND line_id=?");
   s.bind(1, u);
@@ -822,7 +833,7 @@ void SqliteStructureModelRepository::remove_unit_entity(
     const std::filesystem::path &p, const std::string &u, const std::string &e,
     const std::string &r) const {
   auto db = open_database(p);
-  SqliteTransaction tx(db);
+  SqliteTransaction tx(db, "Estruturas do Projeto");
   auto s = db.prepare("DELETE FROM narrative_unit_entities WHERE unit_id=? AND "
                       "entity_id=? AND role=?");
   s.bind(1, u);
@@ -835,7 +846,7 @@ void SqliteStructureModelRepository::remove_unit_entity(
 void SqliteStructureModelRepository::remove_link(const std::filesystem::path &p,
                                                  const std::string &id) const {
   auto db = open_database(p);
-  SqliteTransaction tx(db);
+  SqliteTransaction tx(db, "Estruturas do Projeto");
   auto s = db.prepare("DELETE FROM narrative_links WHERE id=?");
   s.bind(1, id);
   s.run();
@@ -892,7 +903,7 @@ void SqliteStructureModelRepository::save(
     const std::filesystem::path &p, const project::NarrativeRole &v) const {
   project::validate(v);
   auto db = open_database(p);
-  SqliteTransaction tx(db);
+  SqliteTransaction tx(db, "Estruturas do Projeto");
   auto s = db.prepare(
       "INSERT INTO "
       "narrative_roles(id,project_id,name,description,is_builtin,created_at,"
@@ -914,7 +925,7 @@ void SqliteStructureModelRepository::save(
     const project::NarrativeRoleAssignment &v) const {
   project::validate(v);
   auto db = open_database(p);
-  SqliteTransaction tx(db);
+  SqliteTransaction tx(db, "Estruturas do Projeto");
   auto s = db.prepare(
       "INSERT INTO "
       "narrative_role_assignments(id,project_id,role_id,entity_id,work_id,"
@@ -939,7 +950,7 @@ void SqliteStructureModelRepository::save(
 void SqliteStructureModelRepository::remove_role(const std::filesystem::path &p,
                                                  const std::string &id) const {
   auto db = open_database(p);
-  SqliteTransaction tx(db);
+  SqliteTransaction tx(db, "Estruturas do Projeto");
   auto s =
       db.prepare("DELETE FROM narrative_roles WHERE id=? AND is_builtin=0");
   s.bind(1, id);
@@ -950,7 +961,7 @@ void SqliteStructureModelRepository::remove_role(const std::filesystem::path &p,
 void SqliteStructureModelRepository::remove_role_assignment(
     const std::filesystem::path &p, const std::string &id) const {
   auto db = open_database(p);
-  SqliteTransaction tx(db);
+  SqliteTransaction tx(db, "Estruturas do Projeto");
   auto s = db.prepare("DELETE FROM narrative_role_assignments WHERE id=?");
   s.bind(1, id);
   s.run();

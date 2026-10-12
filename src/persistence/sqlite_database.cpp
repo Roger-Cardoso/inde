@@ -1,4 +1,5 @@
 #include "inde/persistence/sqlite_database.hpp"
+#include "inde/persistence/project_operation_store.hpp"
 
 #include <sqlite3.h>
 
@@ -294,12 +295,22 @@ SqliteTransaction::~SqliteTransaction() {
   }
 }
 
+SqliteTransaction::SqliteTransaction(SqliteDatabase &database, std::string label)
+    : SqliteTransaction(database) { record_project_operation(std::move(label)); }
+
+void SqliteTransaction::record_project_operation(std::string label, bool compensation) {
+  if (!active_ || operation_) throw std::logic_error("Captura de operação inválida");
+  operation_ = std::make_unique<OperationCapture>(*database_, std::move(label), compensation);
+}
+
 void SqliteTransaction::commit() {
   if (!active_) {
     throw std::logic_error("A transação SQLite já foi encerrada");
   }
+  if (operation_) operation_->persist();
   database_->execute("COMMIT");
   active_ = false;
+  operation_.reset();
 }
 
 void SqliteTransaction::rollback() {

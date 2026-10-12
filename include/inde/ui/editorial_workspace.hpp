@@ -6,6 +6,7 @@
 #include <optional>
 
 namespace inde::ui {
+class KeyboardCommands;
 
 class EditorialWorkspace final : public Gtk::Box {
 public:
@@ -13,7 +14,9 @@ public:
 
   void install_actions(Gtk::ApplicationWindow &window);
   void refresh();
+  void install_keyboard(KeyboardCommands &);
   void reset();
+  void reveal_work_for_edit(const std::string &id) { edit_work(id); }
   void toggle_navigation();
   void toggle_inspector();
   [[nodiscard]] sigc::signal<void(const Glib::ustring &)> &
@@ -22,6 +25,7 @@ public:
   }
   [[nodiscard]] sigc::signal<void(const std::string &)> &
   signal_open_work_requested() { return signal_open_work_requested_; }
+  sigc::signal<void()> &signal_vocabulary_changed() { return signal_vocabulary_changed_; }
 
 private:
   void build_ui();
@@ -41,12 +45,13 @@ private:
   Gtk::ScrolledWindow catalog_scroll_;
   Gtk::Box catalog_content_{Gtk::Orientation::VERTICAL, 16};
   Gtk::Box catalog_header_{Gtk::Orientation::HORIZONTAL, 8};
-  Gtk::Label catalog_title_{"Catálogo do projeto"};
+  Gtk::Label catalog_title_{"Obras e universos"};
   Gtk::Button filters_button_{"Filtros"};
   Gtk::Revealer filters_revealer_;
   Gtk::Frame filters_surface_;
   Gtk::Box filters_panel_{Gtk::Orientation::VERTICAL, 8};
   Gtk::SearchEntry catalog_search_;
+  Gtk::ComboBoxText group_vocabulary_;
   Gtk::Button clear_filters_button_{"Limpar filtros"};
   Gtk::Button apply_filters_button_{"Ver catálogo"};
   Gtk::Box navigation_panel_{Gtk::Orientation::VERTICAL, 10};
@@ -54,11 +59,11 @@ private:
   Gtk::Label project_details_;
   Gtk::Box ip_panel_{Gtk::Orientation::VERTICAL, 8};
   Gtk::Box work_panel_{Gtk::Orientation::VERTICAL, 8};
-  Gtk::Label ip_title_{"Propriedades intelectuais"};
+  Gtk::Label ip_title_{"Universos"};
   Gtk::Label work_title_{"Obras"};
   Gtk::Label ip_empty_;
   Gtk::Label work_empty_;
-  Gtk::Button add_ip_button_{"Nova propriedade intelectual"};
+  Gtk::Button add_ip_button_{"Novo universo"};
   Gtk::Button add_work_button_{"Nova obra"};
   Gtk::MenuButton ip_actions_button_;
   Gtk::MenuButton work_actions_button_;
@@ -75,6 +80,7 @@ private:
   bool filters_visible_{};
   sigc::signal<void(const Glib::ustring &)> signal_status_message_;
   sigc::signal<void(const std::string &)> signal_open_work_requested_;
+  sigc::signal<void()> signal_vocabulary_changed_;
 };
 
 } // namespace inde::ui

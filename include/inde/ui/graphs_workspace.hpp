@@ -54,8 +54,8 @@ private:
 
   application::ProjectService &service_;
   Gtk::Box header_{Gtk::Orientation::HORIZONTAL, 10};
-  Gtk::Label title_{"Linha do tempo ficcional"};
-  Gtk::Label axis_label_{"Eixo:"};
+  Gtk::Label title_{"Cronologia"};
+  Gtk::Label axis_label_{"Linha do tempo:"};
   Gtk::ComboBoxText axis_combo_;
   Gtk::Button refresh_button_{"Atualizar"};
   Gtk::Box context_controls_{Gtk::Orientation::HORIZONTAL, 8};
@@ -68,7 +68,7 @@ private:
   Gtk::ComboBoxText end_point_combo_;
   Gtk::Button clear_window_button_{"Limpar período"};
   Gtk::Button clear_context_button_{"Limpar contexto"};
-  Gtk::Label lens_label_{"Lente:"};
+  Gtk::Label lens_label_{"Visualização:"};
   Gtk::ComboBoxText lens_combo_;
   Gtk::Box controls_{Gtk::Orientation::HORIZONTAL, 8};
   Gtk::ScrolledWindow controls_scroll_;
@@ -97,7 +97,7 @@ private:
   Gtk::ListBox agenda_list_;
   Gtk::ScrolledWindow inspector_scroll_;
   Gtk::Box inspector_{Gtk::Orientation::VERTICAL, 10};
-  Gtk::Label inspector_title_{"Inspetor temporal"};
+  Gtk::Label inspector_title_{"Detalhes na cronologia"};
   Gtk::Label inspector_kind_;
   Gtk::Label inspector_name_;
   Gtk::Label inspector_position_;

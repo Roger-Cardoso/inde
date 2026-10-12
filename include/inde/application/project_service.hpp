@@ -1,9 +1,12 @@
 #pragma once
 
 #include "inde/application/cartography_service.hpp"
+#include "inde/application/composition_service.hpp"
+#include "inde/application/worldbuilding_service.hpp"
 #include "inde/application/catalog_service.hpp"
 #include "inde/application/linguistic_service.hpp"
 #include "inde/application/narrative_service.hpp"
+#include "inde/application/narrative_builder.hpp"
 #include "inde/application/planning_service.hpp"
 #include "inde/application/project_session.hpp"
 #include "inde/application/structural_service.hpp"
@@ -20,6 +23,7 @@
 #include "inde/persistence/sqlite_structural_repository.hpp"
 #include "inde/persistence/sqlite_structure_model_repository.hpp"
 #include "inde/persistence/sqlite_writing_repository.hpp"
+#include "inde/persistence/project_operation_store.hpp"
 
 #include <utility>
 #include <vector>
@@ -29,6 +33,12 @@ namespace inde::application {
 class ProjectService {
 public:
   ProjectService();
+  [[nodiscard]] NarrativeBuilder &builder() noexcept { return narrative_builder_; }
+  [[nodiscard]] const NarrativeBuilder &builder() const noexcept { return narrative_builder_; }
+  [[nodiscard]] WorldbuildingService &worldbuilding() noexcept { return worldbuilding_service_; }
+  [[nodiscard]] const WorldbuildingService &worldbuilding() const noexcept { return worldbuilding_service_; }
+  [[nodiscard]] CompositionService &compositions() noexcept { return composition_service_; }
+  [[nodiscard]] const CompositionService &compositions() const noexcept { return composition_service_; }
 
   const project::Project &create(const std::filesystem::path &path,
                                  const std::string &name);
@@ -40,6 +50,10 @@ public:
   [[nodiscard]] const project::Project *current() const noexcept;
   [[nodiscard]] std::vector<std::filesystem::path> recent_projects() const;
   [[nodiscard]] const project::Catalog &catalog() const noexcept;
+  [[nodiscard]] std::vector<project::ProjectOperation> project_operations(std::size_t offset=0) const;
+  [[nodiscard]] project::OperationPreview removal_impact(project::RemovalKind,const std::string &) const;
+  [[nodiscard]] project::OperationPreview reversal_impact(const std::string &) const;
+  void confirm_project_operation(const project::OperationPreview &);
   [[nodiscard]] NarrativeService &narrative() noexcept {
     return narrative_service_;
   }
@@ -93,6 +107,9 @@ public:
                                    std::string synopsis, std::string language,
                                    std::string status);
   void update_work(const project::Work &value);
+  // Explicit first-use command. No seed content or automatic narrative/editorial.
+  project::Work start_work(std::string title, std::string existing_universe_id = {},
+                           std::string new_universe_title = {});
   void delete_work(const std::string &id);
   [[nodiscard]] std::vector<project::StructuralNode>
   structural_nodes_for_work(const std::string &work_id) const;
@@ -137,6 +154,9 @@ private:
   persistence::SqliteWritingRepository writing_repository_;
   persistence::SqliteCartographyRepository cartography_repository_;
   ProjectSession session_;
+  NarrativeBuilder narrative_builder_{session_};
+  WorldbuildingService worldbuilding_service_{session_};
+  CompositionService composition_service_{session_};
   CatalogService catalog_service_{session_, catalog_repository_};
   StructuralService structural_service_{session_, structural_repository_,
                                         structure_model_repository_};

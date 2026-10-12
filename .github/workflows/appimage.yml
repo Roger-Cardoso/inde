@@ -13,7 +13,7 @@ jobs:
   appimage-x86_64:
     runs-on: ubuntu-24.04
     container:
-      image: debian:12-slim
+      image: ubuntu:24.04
     timeout-minutes: 45
     defaults:
       run:
@@ -39,6 +39,7 @@ jobs:
             libgirepository1.0-dev \
             libgtkmm-4.0-dev \
             libhunspell-dev \
+            libicu-dev \
             librsvg2-dev \
             libsqlite3-dev \
             imagemagick \
@@ -63,7 +64,7 @@ jobs:
       - name: Smoke-test the AppImage with the Atlas fixture
         run: |
           smoke_root="$(mktemp -d)"
-          cp -a "examples/Atlas de Véspera — Projeto Integral.inde" \
+          build-appimage/cmake/inde_demo_project_generator \
             "$smoke_root/Atlas AppImage.inde"
           set +e
           xvfb-run --auto-servernum env \

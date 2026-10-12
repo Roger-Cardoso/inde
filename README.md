@@ -1,292 +1,128 @@
 # INDE — Integrated Narrative Development Environment
 
-O **INDE** é um aplicativo desktop nativo para Linux voltado ao desenvolvimento, planejamento, organização e escrita de projetos narrativos.
+O INDE é uma oficina narrativa local para Linux, desenvolvida em C++20, GTK4
+e SQLite. Reúne escrita, planejamento, organização do manuscrito, revisão,
+tempo ficcional, cartografia e produção de saídas.
 
-O programa reúne em um mesmo ambiente informações editoriais, elementos narrativos, documentos, relações e referências temporais, mantendo os dados do projeto armazenados localmente.
+Este repositório contém o snapshot da reforma aceito pelo usuário em
+**12 de outubro de 2026**, com **schema 28**. O programa continua em
+desenvolvimento; a publicação não significa que toda a reforma esteja concluída.
 
-O INDE está atualmente em desenvolvimento.
+## Começar sem burocracia
 
-## Principais recursos
+Crie um Projeto e um Documento livre para começar a escrever. Não é necessário
+cadastrar previamente uma Obra ou um Universo. Recursos que dependem desses
+contextos oferecem criação e orientação contextual, sem associar o texto
+silenciosamente.
 
-A versão atual inclui:
+A interface utiliza ferramentas progressivas, paleta de comandos e temas
+claro, escuro e sistema. O laboratório de blocos é um executável separado.
 
-* criação, abertura, salvamento e cópia de projetos `.inde`;
-* catálogo de Propriedades Intelectuais e Obras;
-* estrutura editorial hierárquica;
-* gerenciamento de entidades narrativas;
-* tipos de entidades personalizados;
-* relações entre entidades;
-* planejamento temporal ficcional;
-* acontecimentos e participantes;
-* presença e localização de entidades;
-* vínculos entre entidades narrativas e estruturas editoriais;
-* estruturas narrativas e modelos associados a Obras;
-* Biblioteca de Documentos;
-* editor de texto formatado;
-* consulta explícita ao dicionário semântico local e navegação somente leitura
-  por construções/frames autorizados;
-* âncoras e referências entre documentos e entidades;
-* pesquisa e filtros contextuais;
-* timeline ficcional consultiva;
-* Cartografia: planetas procedurais locais, prévia/aceite, câmera e camadas;
-* edição de relevo com prévia, aplicação, undo/redo e bloqueios autorais;
-* posições de Locais compartilhados, medição esférica e exportação SVG da vista;
-* revisão ortográfica pt-BR;
-* dicionários pessoais;
-* persistência local utilizando SQLite.
+## Áreas de trabalho
 
-Alguns recursos permanecem em desenvolvimento e podem sofrer alterações incompatíveis entre versões.
+- **Escrever:** documentos formatados, busca/substituição, comentários,
+  marcações, tempo e perspectiva por trecho, consulta explícita ao dicionário,
+  vínculos e sugestões confirmados pelo autor.
+- **Planejar:** planos e modelos narrativos, linhas, unidades, personagens,
+  elementos, relações e realização textual conectados, com alternativas e
+  avisos consultivos de continuidade.
+- **Revisar:** sugestões explícitas, decisões e comparação de versões.
+- **Manuscrito e Montagens:** organização editorial e composição persistente,
+  com rascunhos, versões, usos vivos/fixados e revisão de impacto.
+- **Cronologia:** sistemas de tempo, calendários históricos/atuais/fictícios,
+  relógios, adoções/sucessões e seleção gráfica adequada ao calendário escolhido.
+- **Mapas:** geração e edição de terreno com prévia, locais, câmera, medição
+  esférica e exportação de vista.
+- **Catálogo e Projeto:** organização, espaços de trabalho salvos, histórico
+  de operações e auxiliar de exclusão que indica onde um item é usado.
+- **Produção:** saídas DOCX, EPUB, PDF, HTML e TXT, com escolha explícita das
+  fontes e relatório de omissões, perdas e hashes.
 
-### Cartografia (C-01 + C-02)
+Ordem narrativa, cronológica, de escrita e de apresentação editorial são
+representações distintas. O programa não transforma uma delas na outra nem
+escolhe automaticamente interpretações, vínculos semânticos ou conteúdo final.
 
-Na aba **Cartografia**, crie um planeta, ajuste seed/água/relevo e gere uma
-prévia. Aceite para salvar ou descarte sem alterar o Projeto. Arraste o mapa,
-use a roda ou os botões de zoom e escolha uma camada. **Visual suave** usa o
-melhor LOD que cabe no orçamento e interpolação bilinear; **Visual raster**
-preserva a aparência das células quando ela for desejada. **Contorno de costa**
-realça somente a borda terra–água e pode ser desligado. Selecione um Local do
-Planejamento para definir coordenadas ou usar o modo de posicionamento por
-clique. O modo de medição calcula distância sobre a esfera, não uma rota.
-**Exportar SVG** salva a vista atual. A geração funciona offline e sem IA.
+## Teclado
 
-Para editar o relevo, escolha **Elevar terreno**, **Rebaixar terreno** ou
-**Suavizar terreno**, ajuste raio/intensidade e clique no mapa. O clique cria
-uma prévia: use **Aplicar relevo** para persistir ou **Descartar prévia** para
-preservar o Projeto. Undo/redo de terreno cobre as últimas dez operações da
-sessão. **Bloquear área do pincel** protege uma região nomeada e persistente;
-não representa território nem permissão de acesso.
+| Combinação | Ação |
+|---|---|
+| Ctrl + Shift + P | Paleta de comandos |
+| F1 | Ajuda contextual |
+| Ctrl + F1 | Consulta e personalização de atalhos |
+| Ctrl + 1 até Ctrl + 7 | Áreas principais |
+| Ctrl + Shift + 8 | Montagens |
+| Ctrl + Shift + 9 | Espaços de trabalho salvos |
+| Ctrl + Shift + N | Documento livre |
+| F6 / Shift + F6 | Navegação por regiões |
+| Ctrl + Shift + D | Dicionário para o termo selecionado |
+| Ctrl + Shift + K | Comandos inline |
+| Ctrl + W / Ctrl + Shift + W | Sair da vista / fechar o projeto |
 
-O terreno tem quatro níveis, até 1024×512 amostras; zoom só revela dados
-existentes e não refina o planeta. Rios, biomas, importação de heightmap e
-territórios/rotas temporais ainda não estão presentes. O esquema atual é
-**v15**: faça cópia de seus Projetos antes de testar, e não abra cópias migradas
-com executáveis antigos. Um AppImage anteriormente gerado precisa ser
-reconstruído para incluir estas alterações. A validação humana de C-02
-permanece pendente.
+Há 208 comandos explícitos no principal e 37 no laboratório; não são todos
+atalhos globais. Campos de texto, IME, menus e modais têm prioridade contextual.
+As preferências de teclado pertencem ao perfil, não ao banco do Projeto.
+Consulte [contrato de teclado](docs/keyboard-workflow-2026-10-12.md).
 
-### Dicionário semântico no Editor (integração v0.7)
+## Compilar
 
-No painel **Ferramentas** de um Documento, **Consultar palavra selecionada**
-abre a consulta lexical L-06 e apresenta todas as acepções encontradas sem
-escolher uma interpretação. **Explorar construções e frames** navega o catálogo
-L-08 promovido sem executar match sobre o texto. As duas operações são
-explícitas, locais, somente leitura e não criam binding ou alteram o Documento.
-
-Os catálogos não são incorporados ao repositório público. O aplicativo procura
-por padrão em `~/.local/share/inde/linguistic/` ou aceita caminhos explícitos:
+Dependências: CMake 3.22+, compilador C++20, GTKmm 4.8+, GLib, UUID, SQLite com
+ENABLE_SESSION e ENABLE_PREUPDATE_HOOK, Pango/Cairo e ICU 74+. A revisão
+ortográfica utiliza Enchant/Hunspell e dicionário pt-BR. Um ambiente compatível
+é Ubuntu 24.04; as bibliotecas de outros sistemas devem satisfazer os mínimos.
 
 ```bash
-export INDE_L06_CATALOG=/caminho/dictionary-l06-query.sqlite
-export INDE_L08_CATALOG=/caminho/dictionary-l08-promoted.sqlite
+sudo apt-get install build-essential cmake ninja-build pkg-config \
+  libgtkmm-4.0-dev libsqlite3-dev uuid-dev libicu-dev libhunspell-dev \
+  libenchant-2-2 hunspell-pt-br xauth xvfb
+cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Release -DBUILD_TESTING=ON
+cmake --build build --parallel 2
+ctest --test-dir build --output-on-failure
 ./build/inde
 ```
 
-Metadados incompatíveis, catálogo ausente, rede exigida ou indicação de
-binding automático fazem a integração falhar de forma segura. O contrato e os
-limites estão em
-[`docs/linguistic-editor-integration-v0.7.md`](docs/linguistic-editor-integration-v0.7.md).
-
-## Plataforma
-
-O INDE é desenvolvido atualmente para ambientes Linux.
-
-Dependências principais:
-
-* compilador com suporte a C++20;
-* CMake 3.22 ou superior;
-* GTK 4.8 ou superior;
-* gtkmm 4.8 ou superior;
-* SQLite 3 com módulo R-tree (`ENABLE_RTREE`);
-* libuuid;
-* Enchant 2;
-* dicionário Hunspell pt-BR.
-
-### Ubuntu / Linux Lite
+Para produzir um projeto demonstrativo sintético em uma pasta nova:
 
 ```bash
-sudo apt update
-
-sudo apt install -y \
-  build-essential \
-  cmake \
-  ninja-build \
-  libgtkmm-4.0-dev \
-  uuid-dev \
-  libsqlite3-dev \
-  libenchant-2-2 \
-  hunspell-pt-br
+./build/inde_demo_project_generator "/caminho/novo/Atlas.inde"
+./build/inde "/caminho/novo/Atlas.inde"
 ```
 
-## Compilação
+Não use um projeto autoral como alvo de geradores ou testes. Não foram incluídos
+bancos de projetos na publicação. Catálogos linguísticos externos precisam ser
+fornecidos explicitamente e ser compatíveis; sua ausência não autoriza o
+programa a inventar resultados. Eles não são distribuídos neste snapshot.
 
-Clone o repositório:
+## Verificação e limites
 
-```bash
-git clone https://github.com/Roger-Cardoso/inde.git
-cd inde
-```
+O candidato aprovado passou por 35/35 testes CTest, 3.334 casos de política de
+teclado e 16 cenários GTK em Projeto vazio/Atlas e temas claro/escuro, além de
+regressões selecionadas, startups limitados e inspeção visual.
 
-Configure o projeto:
+Debug e ASan/UBSan são **focais**, não instrumentação integral da aplicação;
+LSan estava desativado. Esses ensaios não certificam teclado ABNT2 físico,
+IME real, Wayland, leitor de tela, HiDPI ou sessões longas. O aceite humano é
+um registro separado, não uma ampliação artificial da cobertura dos testes.
+Veja [identidade, publicação e evidências](docs/publication-2026-10-12.md).
 
-```bash
-cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Release
-```
+A receita AppImage permanece em `packaging/`, mas este snapshot de código
+**não declara um novo AppImage testado nem uma release binária certificada**.
+O workflow de empacotamento é acionado manualmente ou por tags de versão;
+compilação/testes têm workflow próprio. A versão CMake histórica 0.1.0 não
+substitui a identidade do commit e do corte datado.
 
-Compile:
+## Documentação e histórico
 
-```bash
-cmake --build build
-```
+[Contexto atual](docs/PROJECT-CONTEXT.md) identifica o estado vigente.
+Os contratos datados em `docs/` preservam as etapas anteriores, seus schemas,
+evidências e limites no momento de emissão. Uma pendência histórica pode ter
+sido sucedida por um aceite posterior; não reescrevemos esse passado.
+O [README anterior](docs/README-historico-2026-10-04.md) é uma fonte histórica,
+não uma descrição atual da interface.
 
-Execute os testes:
-
-```bash
-ctest --test-dir build --output-on-failure
-```
-
-Execute o programa:
-
-```bash
-./build/inde
-```
-
-Também é possível abrir diretamente um projeto:
-
-```bash
-./build/inde "/caminho/Projeto.inde"
-```
-
-## AppImage para Linux x86_64
-
-As versões distribuídas em AppImage reúnem o executável, o runtime GTK 4 e a
-revisão ortográfica pt-BR num único arquivo. Depois de baixar o AppImage e o
-arquivo `.sha256` correspondente em
-[Releases](https://github.com/Roger-Cardoso/inde/releases):
-
-```bash
-sha256sum --check INDE-0.1.0-x86_64.AppImage.sha256
-chmod +x INDE-0.1.0-x86_64.AppImage
-./INDE-0.1.0-x86_64.AppImage
-```
-
-Um projeto também pode ser aberto diretamente:
-
-```bash
-./INDE-0.1.0-x86_64.AppImage "/caminho/Projeto.inde"
-```
-
-Se a distribuição não oferecer FUSE, use o modo de extração temporária:
-
-```bash
-APPIMAGE_EXTRACT_AND_RUN=1 ./INDE-0.1.0-x86_64.AppImage
-```
-
-A receita local, as dependências, o fluxo de publicação e a matriz de validação
-estão documentados em [`packaging/README.md`](packaging/README.md).
-
-## Formato de projeto `.inde`
-
-Um projeto INDE é armazenado como um diretório-contêiner com extensão `.inde`.
-
-Estrutura básica:
-
-```text
-Projeto.inde/
-├── manifest.json
-├── assets/
-├── data/
-│   └── project.sqlite3
-└── documents/
-```
-
-O `manifest.json` contém informações fundamentais do projeto.
-
-O banco `project.sqlite3` é a principal fonte operacional dos dados estruturados nas versões atuais do formato.
-
-A estrutura em diretório permite que o projeto permaneça autocontido e possa ser copiado ou armazenado como uma unidade.
-
-## Arquitetura
-
-O código é organizado principalmente em quatro áreas:
-
-```text
-include/inde/ + src/
-├── project/       domínio e estruturas fundamentais
-├── application/   serviços e casos de uso
-├── persistence/   armazenamento e SQLite
-└── ui/            interface gráfica GTK
-```
-
-A lógica central do programa é mantida separada da interface gráfica sempre que possível, permitindo que operações de domínio e persistência sejam testadas sem inicializar GTK.
-
-## Persistência
-
-A persistência principal utiliza SQLite.
-
-O projeto implementa, entre outros mecanismos:
-
-* chaves estrangeiras;
-* migração versionada de esquema;
-* transações;
-* rollback de operações;
-* statements preparados;
-* validações de integridade;
-* identificadores persistentes;
-* operações de cópia de projeto com nova identidade.
-
-O formato do banco pode evoluir enquanto o programa estiver em desenvolvimento.
-
-## Testes e benchmarks
-
-O projeto possui uma suíte de testes para o núcleo e programas auxiliares de benchmark.
-
-Após a compilação:
-
-```bash
-ctest --test-dir build --output-on-failure
-```
-
-Alguns executáveis adicionais podem ser gerados quando `BUILD_TESTING` está habilitado, incluindo benchmarks relacionados ao planejamento narrativo, timeline, escrita, workspace e revisão textual.
-
-## Projetos de demonstração
-
-O diretório `examples/` contém projetos sintéticos criados especificamente para demonstração e testes do INDE.
-
-Eles não contêm obras literárias de terceiros.
-
-Um exemplo pode ser aberto diretamente:
-
-```bash
-./build/inde "examples/Atlas de Véspera — Projeto Integral.inde"
-```
-
-## Dados do usuário
-
-O INDE funciona localmente e os projetos permanecem armazenados no computador do usuário.
-
-O programa não depende de uma conta online para utilizar o formato de projeto e seus recursos locais atuais.
-
-Recomenda-se manter cópias de segurança regulares de projetos importantes.
+Conversas integrais, material autoral e o acervo cronológico privado permanecem
+locais por decisão do usuário e não são parte deste repositório público.
 
 ## Licença
 
-O código original do INDE é distribuído sob a **INDE Non-Commercial Educational License 1.0**.
-
-Consulte:
-
-* `LICENSE`
-* `THIRD_PARTY_NOTICES.md`
-
-A licença permite determinados usos pessoais, estudantis, educacionais e não comerciais do código, conforme seus termos.
-
-Obras, textos, documentos e demais conteúdos produzidos pelos usuários utilizando uma versão autorizada do INDE permanecem propriedade de seus respectivos autores. A licença do programa não reivindica propriedade ou royalties sobre esses conteúdos.
-
-Componentes de terceiros utilizados pelo projeto permanecem sujeitos às suas próprias licenças.
-
-## Autor
-
-**Roger Cardoso**
-
-INDE — Integrated Narrative Development Environment
-
-https://github.com/Roger-Cardoso/inde
+Consulte [LICENSE](LICENSE) e [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
+A publicação não altera a licença existente nem relicencia materiais de terceiros.

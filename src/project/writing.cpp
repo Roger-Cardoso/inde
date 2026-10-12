@@ -35,6 +35,18 @@ std::string to_string(DocumentTextStyle value) {
     return "subheading";
   case DocumentTextStyle::Quote:
     return "quote";
+  case DocumentTextStyle::Heading2: return "heading2";
+  case DocumentTextStyle::Heading3: return "heading3";
+  case DocumentTextStyle::Heading4: return "heading4";
+  case DocumentTextStyle::Heading5: return "heading5";
+  case DocumentTextStyle::Heading6: return "heading6";
+  case DocumentTextStyle::AlignLeft: return "align-left";
+  case DocumentTextStyle::AlignCenter: return "align-center";
+  case DocumentTextStyle::AlignRight: return "align-right";
+  case DocumentTextStyle::AlignJustify: return "align-justify";
+  case DocumentTextStyle::FontFamily: return "font-family";
+  case DocumentTextStyle::FontSize: return "font-size";
+  case DocumentTextStyle::Foreground: return "foreground";
   }
   throw std::runtime_error("Estilo textual desconhecido");
 }
@@ -54,6 +66,12 @@ DocumentTextStyle document_text_style_from_string(const std::string &value) {
     return DocumentTextStyle::Subheading;
   if (value == "quote")
     return DocumentTextStyle::Quote;
+  for (auto style : {DocumentTextStyle::Heading2, DocumentTextStyle::Heading3,
+       DocumentTextStyle::Heading4, DocumentTextStyle::Heading5, DocumentTextStyle::Heading6,
+       DocumentTextStyle::AlignLeft, DocumentTextStyle::AlignCenter, DocumentTextStyle::AlignRight,
+       DocumentTextStyle::AlignJustify, DocumentTextStyle::FontFamily, DocumentTextStyle::FontSize,
+       DocumentTextStyle::Foreground})
+    if (value == to_string(style)) return style;
   throw std::runtime_error("Estilo textual de Documento inválido");
 }
 
@@ -126,14 +144,20 @@ std::size_t utf8_character_count(const std::string &text) {
 
 DocumentTextStatistics analyze_document_text(const std::string &text,
                                              std::size_t words_per_minute,
-                                             std::size_t long_paragraph_words) {
+                                             std::size_t long_paragraph_words,
+                                             std::stop_token cancellation) {
   if (words_per_minute == 0)
     throw std::runtime_error("A velocidade de leitura precisa ser positiva");
   if (long_paragraph_words == 0)
     throw std::runtime_error("O limite de parágrafo precisa ser positivo");
 
   DocumentTextStatistics result;
-  result.characters_with_spaces = utf8_character_count(text);
+  for (std::size_t byte = 0; byte < text.size(); ++byte) {
+    if ((byte & 4095U) == 0 && cancellation.stop_requested())
+      return {};
+    if ((static_cast<unsigned char>(text[byte]) & 0xC0U) != 0x80U)
+      ++result.characters_with_spaces;
+  }
   std::unordered_map<std::string, std::size_t> frequencies;
   const std::unordered_set<std::string> ignored{
       "a",  "as",  "o",    "os",  "e",   "de",  "da", "das", "do", "dos", "em",
@@ -175,6 +199,8 @@ DocumentTextStatistics analyze_document_text(const std::string &text,
   };
 
   for (std::size_t index = 0; index < text.size();) {
+    if ((character_offset & 4095U) == 0 && cancellation.stop_requested())
+      return {};
     const unsigned char character = static_cast<unsigned char>(text[index]);
     std::size_t bytes = 1;
     if ((character & 0xE0U) == 0xC0U)
@@ -216,6 +242,8 @@ DocumentTextStatistics analyze_document_text(const std::string &text,
         (result.words + words_per_minute - 1) / words_per_minute;
 
   for (const auto &[word, count] : frequencies) {
+    if (cancellation.stop_requested())
+      return {};
     if (count >= 3)
       result.repeated_words.push_back({word, count});
   }
@@ -261,11 +289,12 @@ void validate(const Document &value) {
   if (value.formatting.size() > 10000)
     throw std::runtime_error("O Documento excede 10 mil intervalos formatados");
   for (const auto &span : value.formatting) {
-    static_cast<void>(to_string(span.style));
+    validate_format_span(span);
     if (span.start_offset >= span.end_offset ||
         span.end_offset > character_count)
       throw std::runtime_error("Intervalo de formatação inválido");
   }
+  validate_inline_commands(value.inline_commands);
 
   if (value.anchors.size() > 2000)
     throw std::runtime_error("O Documento excede 2 mil âncoras");
@@ -300,6 +329,7 @@ void validate(const Document &value) {
       throw std::runtime_error(
           "A entidade já está vinculada ao mesmo contexto do Documento");
   }
+  validate_semantic_structure(value);
 }
 
 void validate(const DocumentGroup &value) {

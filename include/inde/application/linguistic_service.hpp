@@ -21,6 +21,11 @@ public:
     return catalog_.query_lexicon(text, limit);
   }
 
+  [[nodiscard]] project::LexicalQueryResult
+  query_quarantine(const std::string &text, std::size_t limit = 50) const {
+    return catalog_.query_quarantine(text, limit);
+  }
+
   [[nodiscard]] std::vector<project::LinguisticEntitySummary>
   linguistic_entities(const std::string &search = {},
                       std::size_t limit = 50) const {

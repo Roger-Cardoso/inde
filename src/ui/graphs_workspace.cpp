@@ -1,3 +1,4 @@
+#include "inde/ui/author_diagnostics.hpp"
 #include "inde/ui/graphs_workspace.hpp"
 #include "inde/ui/accessibility.hpp"
 
@@ -50,7 +51,7 @@ void GraphsWorkspace::build_ui() {
   set_vexpand(true);
   set_margin(16);
   add_css_class("workspace-page");
-  title_.set_text("Visualizações temporais");
+  title_.set_text("Cronologia");
   title_.add_css_class("title-1");
   title_.add_css_class("page-title");
   title_.set_hexpand(true);
@@ -58,7 +59,7 @@ void GraphsWorkspace::build_ui() {
   header_.append(title_);
   header_.append(axis_label_);
   axis_combo_.set_size_request(230, -1);
-  set_accessible_label(axis_combo_, "Eixo ficcional");
+  set_accessible_label(axis_combo_, "Linha do tempo ficcional");
   header_.append(axis_combo_);
   header_.append(refresh_button_);
   header_.add_css_class("timeline-toolbar");
@@ -76,7 +77,7 @@ void GraphsWorkspace::build_ui() {
   lens_combo_.set_size_request(130, -1);
   set_accessible_label(work_combo_, "Obra no contexto");
   set_accessible_label(window_combo_, "Janela temporal");
-  set_accessible_label(lens_combo_, "Lente de visualização");
+  set_accessible_label(lens_combo_, "Modo de visualização");
   context_controls_.append(work_label_);
   context_controls_.append(work_combo_);
   context_controls_.append(window_label_);
@@ -95,10 +96,10 @@ void GraphsWorkspace::build_ui() {
   context_controls_scroll_.add_css_class("timeline-toolbar");
   append(context_controls_scroll_);
 
-  search_.set_placeholder_text("Filtrar entidade, local ou descrição");
+  search_.set_placeholder_text("Filtrar elemento da história, local ou descrição");
   set_accessible_label(search_, "Filtrar linha do tempo");
   set_accessible_description(
-      search_, "Filtra entidade, local ou descrição na visualização temporal.");
+      search_, "Filtra elementos da história, lugares ou descrições na visualização temporal.");
   search_.set_hexpand(true);
   events_filter_.set_active(true);
   presences_filter_.set_active(true);
@@ -119,6 +120,7 @@ void GraphsWorkspace::build_ui() {
   paint_metric_.set_width_chars(16);
   paint_metric_.set_xalign(1.0F);
   controls_.append(paint_metric_);
+  paint_metric_.set_visible(std::getenv("INDE_PROFILE_WORKSPACES") != nullptr);
   controls_scroll_.set_child(controls_);
   controls_scroll_.set_policy(Gtk::PolicyType::AUTOMATIC,
                               Gtk::PolicyType::NEVER);
@@ -353,7 +355,7 @@ void GraphsWorkspace::refresh_context_controls() {
     work_combo_.set_active_id("all");
 
   window_combo_.remove_all();
-  window_combo_.append("all", "Eixo inteiro");
+  window_combo_.append("all", "Linha do tempo inteira");
   window_combo_.append("point", "Um ponto");
   window_combo_.append("range", "Período fechado");
   if (context.fictional_time_point_id)
@@ -460,10 +462,9 @@ void GraphsWorkspace::refresh_snapshot() {
     view_snapshot_.reset();
     snapshot_.reset();
     timeline_.clear();
-    state_.set_text("Crie um eixo e pontos temporais no Planejamento para "
-                    "iniciar esta projeção.");
+    state_.set_text("Crie uma linha do tempo e marcos na linha do tempo no Planejamento para iniciar esta projeção.");
     update_lens();
-    signal_status_message_.emit("Linha do tempo sem eixo temporal");
+    signal_status_message_.emit("Linha do tempo sem linha do tempo");
     return;
   }
   try {
@@ -472,6 +473,13 @@ void GraphsWorkspace::refresh_snapshot() {
         service_.planning().temporal_view_context(service_.planning_context());
     context.limit = query_limit_;
     view_snapshot_ = service_.planning().temporal_view(context);
+    // Calendar labels belong to this read model, never to canonical point text.
+    if(service_.worldbuilding().binding(axis_id)) {
+      std::vector<project::FictionalTimePoint> points;
+      for(const auto &p:view_snapshot_->timeline.points)points.push_back({p.id,axis_id,p.ordinal,{},{},{},{}});
+      const auto dates=service_.worldbuilding().point_dates(points);
+      for(auto &p:view_snapshot_->timeline.points)p.label=dates.at(p.id)+" — "+p.label;
+    }
     apply_filters();
   } catch (const std::exception &error) {
     show_failure(error);
@@ -493,7 +501,7 @@ void GraphsWorkspace::apply_filters() {
   update_lens();
 
   if (snapshot_->points.empty())
-    state_.set_text("Este recorte não possui pontos temporais.");
+    state_.set_text("Este recorte não possui marcos na linha do tempo.");
   else if (view_snapshot_->matching.events == 0 &&
            view_snapshot_->matching.presences == 0)
     state_.set_text("Nenhum fato temporal corresponde ao recorte atual.");
@@ -506,7 +514,7 @@ void GraphsWorkspace::apply_filters() {
     state_.set_text("");
 
   signal_status_message_.emit(
-      "Recorte temporal: " + std::to_string(snapshot_->points.size()) +
+      "Período mostrado: " + std::to_string(snapshot_->points.size()) +
       " pontos, " + std::to_string(snapshot_->events.size()) + " de " +
       std::to_string(view_snapshot_->matching.events) + " acontecimentos e " +
       std::to_string(snapshot_->presences.size()) + " de " +
@@ -532,7 +540,7 @@ void GraphsWorkspace::update_lens() {
 void GraphsWorkspace::update_situation() {
   clear_list(situation_list_);
   if (!snapshot_ || !view_snapshot_) {
-    situation_context_.set_text("Escolha um eixo ficcional para ver a situação.");
+    situation_context_.set_text("Escolha uma linha do tempo ficcional para ver a situação.");
     situation_state_.set_text("");
     return;
   }
@@ -556,12 +564,12 @@ void GraphsWorkspace::update_situation() {
   if (!point && !snapshot_->points.empty())
     point = snapshot_->points.front();
   if (!point) {
-    situation_context_.set_text("Este recorte não contém ponto temporal.");
+    situation_context_.set_text("Este recorte não contém marco na linha do tempo.");
     situation_state_.set_text("");
     return;
   }
 
-  situation_context_.set_text("Eixo: " + snapshot_->axis.name + " — " +
+  situation_context_.set_text("Linha do tempo: " + snapshot_->axis.name + " — " +
                               point->label + " (ordem " +
                               std::to_string(point->ordinal) + ")");
   situation_state_.set_text(point->description.empty()
@@ -605,20 +613,18 @@ void GraphsWorkspace::update_situation() {
 void GraphsWorkspace::update_agenda() {
   clear_list(agenda_list_);
   if (!snapshot_) {
-    agenda_context_.set_text("Escolha um eixo ficcional para ver a agenda.");
+    agenda_context_.set_text("Escolha uma linha do tempo ficcional para ver a agenda.");
     return;
   }
   if (snapshot_->points.empty()) {
-    agenda_context_.set_text("Itens ordenados pelo tempo ficcional; a agenda "
-                             "não afirma uma ordem editorial de publicação.");
-    append_row(agenda_list_, "Este recorte não possui pontos temporais.");
+    agenda_context_.set_text("Itens ordenados pelo tempo da história; a agenda não afirma uma ordem editorial de publicação.");
+    append_row(agenda_list_, "Este recorte não possui marcos na linha do tempo.");
     return;
   }
   const auto entries = application::build_temporal_agenda(*snapshot_);
   const auto visible_count = std::min(entries.size(), agenda_row_limit_);
   std::string context =
-      "Itens ordenados pelo tempo ficcional; a agenda não afirma uma ordem "
-      "editorial de publicação.";
+      "Itens ordenados pelo tempo da história; a agenda não afirma uma ordem editorial de publicação.";
   if (entries.size() > visible_count)
     context += " Mostrando os primeiros " + std::to_string(visible_count) +
                " de " + std::to_string(entries.size()) +
@@ -687,11 +693,11 @@ void GraphsWorkspace::show_selection(application::TimelineVisualKind kind,
     if (found == snapshot_->points.end())
       return;
     selected_source_point_id_ = found->id;
-    inspector_kind_.set_text("Ponto temporal");
+    inspector_kind_.set_text("Marco na linha do tempo");
     inspector_name_.set_text(found->label);
     inspector_position_.set_text("Ordinal: " + std::to_string(found->ordinal));
     inspector_description_.set_text(found->description);
-    inspector_reason_.set_text("Ponto de contexto no eixo ficcional.");
+    inspector_reason_.set_text("Ponto de contexto na linha do tempo ficcional.");
     open_source_button_.set_label("Abrir ponto no Planejamento");
     open_source_button_.set_sensitive(true);
   } else if (kind == application::TimelineVisualKind::Event) {
@@ -719,7 +725,7 @@ void GraphsWorkspace::show_selection(application::TimelineVisualKind kind,
           reason += ", ";
         const auto participant = service_.narrative().entity(
             participants[index].participant_entity_id);
-        reason += (participant ? participant->name : "Entidade ausente") +
+        reason += (participant ? participant->name : "Elemento da história ausente") +
                   (participants[index].role.empty()
                        ? ""
                        : " (" + participants[index].role + ")");
@@ -747,7 +753,7 @@ void GraphsWorkspace::show_selection(application::TimelineVisualKind kind,
         "Sujeito de presença: " + found->entity_name +
         "\nLocal de presença: " + found->location_name +
         "\nIncluída porque: " + found->inclusion_reason);
-    open_source_button_.set_label("Abrir entidade no Planejamento");
+    open_source_button_.set_label("Abrir elemento da história no Planejamento");
     open_source_button_.set_sensitive(true);
   }
   update_situation();
@@ -777,7 +783,7 @@ void GraphsWorkspace::show_failure(const std::exception &error) {
   reset_inspector();
   update_lens();
   state_.set_text("Não foi possível montar a projeção: " +
-                  std::string(error.what()));
+                  std::string(author::diagnostic(error.what())));
   signal_status_message_.emit("Falha ao atualizar a linha do tempo");
 }
 
@@ -795,7 +801,7 @@ void GraphsWorkspace::reset() {
   lens_combo_.remove_all();
   work_combo_.append("all", "Todo o Projeto");
   work_combo_.set_active_id("all");
-  window_combo_.append("all", "Eixo inteiro");
+  window_combo_.append("all", "Linha do tempo inteira");
   window_combo_.append("point", "Um ponto");
   window_combo_.append("range", "Período fechado");
   window_combo_.set_active_id("all");

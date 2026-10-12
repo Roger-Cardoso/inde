@@ -150,7 +150,19 @@ private:
         top->append(*enabled);
         auto *remove = Gtk::make_managed<Gtk::Button>("Remover");
         remove->add_css_class("destructive-action");
-        remove->signal_clicked().connect([this, id = dictionary.id] {
+        auto *confirm=Gtk::make_managed<Gtk::Button>("Confirmar remoção do dicionário");
+        auto *cancel=Gtk::make_managed<Gtk::Button>("Manter dicionário");
+        auto *confirmation=Gtk::make_managed<Gtk::Box>(Gtk::Orientation::HORIZONTAL,6);
+        confirmation->set_visible(false);
+        confirm->add_css_class("destructive-action"); confirm->set_visible(false);cancel->set_visible(false);
+        confirmation->append(*confirm);confirmation->append(*cancel);row->append(*confirmation);
+        remove->signal_clicked().connect([remove,confirm,cancel,confirmation] {
+          remove->set_visible(false);confirmation->set_visible(true);confirm->set_visible(true);cancel->set_visible(true);cancel->grab_focus();
+        });
+        cancel->signal_clicked().connect([remove,confirm,cancel,confirmation] {
+          confirmation->set_visible(false);confirm->set_visible(false);cancel->set_visible(false);remove->set_visible(true);remove->grab_focus();
+        });
+        confirm->signal_clicked().connect([this, id = dictionary.id] {
           try {
             service_.remove_dictionary(id);
             controller_.refresh_all();

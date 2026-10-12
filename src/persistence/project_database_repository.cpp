@@ -125,6 +125,13 @@ void ProjectDatabaseRepository::replace_project_identity(
                             "document_anchors",
                             "document_entity_references",
                             "document_text_references",
+                            "semantic_type_definitions",
+                            "document_semantics",
+                            "semantic_annotations",
+                            "semantic_entity_bindings",
+                            "semantic_annotation_relations",
+                            "semantic_fictional_time_bindings",
+                            "semantic_date_bindings",
                             "cartographic_planets",
                             "cartographic_positions",
                             "cartographic_terrain_locks",
@@ -137,10 +144,22 @@ void ProjectDatabaseRepository::replace_project_identity(
                             "narrative_units",
                             "narrative_unit_lines",
                             "narrative_unit_entities",
+                            "narrative_unit_contexts",
+                            "narrative_realizations",
+                            "narrative_unit_relations",
+                            "narrative_branch_provenance",
+                            "narrative_dependency_scopes",
+                            "narrative_text_targets",
+                            "narrative_text_decisions",
+                            "narrative_continuity_exceptions",
+                            "narrative_unit_presence_intents",
                             "narrative_links",
                             "narrative_roles",
                             "narrative_role_assignments",
-                            "change_log"}) {
+                            "change_log",
+                            "project_operations", "compositions", "composition_outputs",
+                            "entity_aliases", "fictional_calendars", "axis_calendars",
+                            "calendar_revisions", "calendar_adoptions", "temporal_references", "temporal_attachments", "temporal_reference_extents"}) {
     auto move_narrative = database.prepare("UPDATE " + std::string(table) +
                                            " SET project_id = ? "
                                            "WHERE project_id = ?");

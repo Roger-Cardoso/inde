@@ -1,7 +1,9 @@
 #pragma once
 
 #include "inde/application/project_session.hpp"
+#include "inde/application/document_save_coordinator.hpp"
 #include "inde/persistence/writing_store.hpp"
+#include "inde/persistence/semantic_store.hpp"
 
 namespace inde::application {
 
@@ -31,7 +33,23 @@ public:
                   std::optional<std::string> editorial_node_id = std::nullopt);
   [[nodiscard]] project::Document
   update_document(const project::Document &input);
+  [[nodiscard]] project::Document create_editorial_revision(const project::Document &expected, const std::string &label);
+  [[nodiscard]] project::Document create_recovery_document(const project::Document &);
+  [[nodiscard]] project::Document update_document_if_unchanged(
+      const project::Document &, const project::Document &expected);
+  [[nodiscard]] DocumentSaveSnapshot save_snapshot(project::Document document,
+      project::Document expected, std::uint64_t epoch, std::uint64_t revision) const;
   void delete_document(const std::string &id);
+  [[nodiscard]] project::Document create_entity_from_text(const project::Document &,
+      const project::Document &expected,const project::TextEntityCreation &);
+  [[nodiscard]] project::Document create_date_from_text(const project::Document &,
+      const project::Document &expected, const project::TextDateCreation &);
+  [[nodiscard]] std::vector<project::AnnotationTypeDefinition> semantic_types() const;
+  void register_semantic_type(const project::AnnotationTypeDefinition&);
+  void register_semantic_type_json(const std::string&);
+  void validate_semantic_document(const project::Document&) const;
+  [[nodiscard]] persistence::SemanticUsePage semantic_uses(const persistence::SemanticUseQuery& = {}) const;
+  [[nodiscard]] persistence::SemanticRelationPage semantic_relations(const persistence::SemanticRelationQuery&) const;
 
   [[nodiscard]] persistence::WritingStore::TextReferencePage text_references(
       const persistence::WritingStore::TextReferenceQuery &query) const;
@@ -44,6 +62,8 @@ public:
                              const std::string &id);
 
 private:
+  [[nodiscard]] project::Document update_document_checked(const project::Document &,
+                                                         const project::Document *expected);
   [[nodiscard]] const project::Project &require_project() const;
   void
   validate_placement(const std::optional<std::string> &editorial_node_id) const;

@@ -15,6 +15,7 @@ void set_overlay_revealer_open(Gtk::Revealer &revealer, bool open);
 struct OverlayDialogButton {
   Glib::ustring label;
   int response{Gtk::ResponseType::NONE};
+  bool shortcut_safe{};
 };
 
 // Camada modal única da janela principal. Ela mantém os formulários dentro da
@@ -22,6 +23,7 @@ struct OverlayDialogButton {
 class ModalOverlayHost final : public Gtk::Overlay {
 public:
   ModalOverlayHost();
+  ~ModalOverlayHost() override;
 
   void set_content(Gtk::Widget &content);
   std::uint64_t present_dialog(const Glib::ustring &title,
@@ -31,8 +33,10 @@ public:
                                const sigc::slot<void(int)> &response);
   void dismiss_dialog(std::uint64_t token);
   bool has_dialog() const noexcept;
+  sigc::signal<void(bool)> &signal_active_changed(){return active_changed_;}
 
 private:
+  void size_allocate_vfunc(int width, int height, int baseline) override;
   void respond(int response, std::uint64_t token);
   void clear_dialog();
   bool focus_next_control(bool reverse);
@@ -54,6 +58,9 @@ private:
   sigc::slot<void(int)> response_;
   std::uint64_t generation_{0};
   std::uint64_t active_token_{0};
+  GWeakRef return_focus_{};
+  int primary_response_{Gtk::ResponseType::NONE};
+  sigc::signal<void(bool)> active_changed_;
 };
 
 ModalOverlayHost *find_modal_overlay(Gtk::Window &owner);
@@ -70,6 +77,7 @@ public:
   ~OverlayDialog();
 
   void add_button(const Glib::ustring &label, int response);
+  void allow_primary_shortcut();
   Gtk::Box *get_content_area();
   sigc::signal<void(int)> &signal_response();
   void set_title(const Glib::ustring &title);
@@ -77,6 +85,9 @@ public:
   void present();
   void show();
   void hide();
+  // Validation failed: retain the draft and re-present after the emitting
+  // footer finishes, instead of disposing the controls inside their signal.
+  void keep_open_on_response() { keep_open_ = true; }
 
 private:
   Gtk::Window &owner_;
@@ -86,6 +97,7 @@ private:
   std::vector<OverlayDialogButton> buttons_;
   sigc::signal<void(int)> response_signal_;
   std::uint64_t token_{0};
+  bool keep_open_{};
 };
 
 } // namespace inde::ui

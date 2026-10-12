@@ -1,4 +1,5 @@
 #include "inde/application/structure_model_service.hpp"
+#include "inde/application/narrative_builder.hpp"
 
 #include "inde/project/manifest.hpp"
 
@@ -405,66 +406,8 @@ project::NarrativeStructure StructureModelService::instantiate_narrative(
 project::NarrativeStructure
 StructureModelService::duplicate_narrative(const std::string &source_id,
                                            std::string name, bool derived) {
-  std::optional<project::NarrativeStructure> source;
-  for (const auto &work : session_.catalog().works)
-    for (const auto &v : narrative_structures(work.id))
-      if (v.id == source_id)
-        source = v;
-  if (!source)
-    throw std::runtime_error("Estrutura narrativa de origem não encontrada");
-  const auto now = project::utc_now();
-  project::NarrativeStructure copy{
-      project::new_uuid(),
-      source->work_id,
-      trim(std::move(name)),
-      source->description,
-      source->model_id,
-      source->id,
-      derived ? project::StructureCreationKind::Derived
-              : project::StructureCreationKind::Duplicated,
-      false,
-      now,
-      now};
-  auto old_lines = lines(source_id);
-  auto old_units = units(source_id);
-  auto old_members = unit_lines(source_id);
-  auto old_entities = unit_entities(source_id);
-  auto old_links = links(source_id);
-  std::unordered_map<std::string, std::string> line_ids, unit_ids;
-  for (auto &line : old_lines) {
-    const auto old = line.id;
-    line.id = project::new_uuid();
-    line.structure_id = copy.id;
-    line.created_at = now;
-    line.updated_at = now;
-    line_ids.emplace(old, line.id);
-  }
-  for (auto &unit : old_units) {
-    const auto old = unit.id;
-    unit.id = project::new_uuid();
-    unit.structure_id = copy.id;
-    unit.created_at = now;
-    unit.updated_at = now;
-    unit_ids.emplace(old, unit.id);
-  }
-  for (auto &m : old_members) {
-    m.unit_id = unit_ids.at(m.unit_id);
-    m.line_id = line_ids.at(m.line_id);
-  }
-  for (auto &e : old_entities)
-    e.unit_id = unit_ids.at(e.unit_id);
-  for (auto &link : old_links) {
-    link.id = project::new_uuid();
-    link.structure_id = copy.id;
-    link.source_unit_id = unit_ids.at(link.source_unit_id);
-    link.target_unit_id = unit_ids.at(link.target_unit_id);
-    link.created_at = now;
-    link.updated_at = now;
-  }
-  store_.save_narrative_structure_bundle(require_project().path(), copy,
-                                         old_lines, old_units, old_members,
-                                         old_entities, old_links);
-  return copy;
+  NarrativeBuilder builder(session_);
+  return builder.derive(builder.snapshot(source_id),trim(std::move(name)),derived);
 }
 
 project::StructureModel StructureModelService::capture_narrative_model(

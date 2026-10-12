@@ -1,6 +1,8 @@
 #include "inde/application/writing_service.hpp"
+#include <glib.h>
 
 #include "inde/project/manifest.hpp"
+#include "inde/project/document_state.hpp"
 
 #include <algorithm>
 #include <stdexcept>
@@ -147,6 +149,8 @@ WritingService::create_document(std::string title,
                           project::DocumentPurpose::MainText,
                           std::nullopt,
                           {},
+                          {},
+                          {},
                           {}};
   project::validate(value);
   validate_organization(value);
@@ -157,6 +161,40 @@ WritingService::create_document(std::string title,
 
 project::Document
 WritingService::update_document(const project::Document &input) {
+  return update_document_checked(input, nullptr);
+}
+project::Document WritingService::create_recovery_document(const project::Document &source) {
+  const auto &owner=require_project();
+  project::Document copy; copy.id=project::new_uuid(); copy.title="Resgate — "+source.title;
+  copy.content=source.content; copy.formatting=source.formatting; copy.word_goal=source.word_goal;
+  copy.inline_commands=source.inline_commands;
+  copy.perspective=source.perspective; copy.created_at=copy.updated_at=project::utc_now();
+  project::validate(copy); store_.save(owner.path(),copy); return copy;
+}
+project::Document WritingService::create_editorial_revision(const project::Document &expected,const std::string &label) {
+  const auto &owner=require_project();const auto source=document(expected.id);
+  if(!source || !project::same_document_state(*source,expected))throw std::runtime_error("A fonte mudou; reabra a criação da revisão");
+  if(label.find_first_not_of(" \t\r\n")==std::string::npos || label.size()>256 ||
+     label.find('\0')!=std::string::npos || !g_utf8_validate(label.data(),label.size(),nullptr))
+    throw std::runtime_error("Informe uma identificação curta e válida para a revisão");
+  project::Document copy;copy.id=project::new_uuid();copy.title="Revisão — "+expected.title;
+  copy.content=expected.content;copy.formatting=expected.formatting;copy.word_goal=expected.word_goal;
+  copy.inline_commands=expected.inline_commands;copy.perspective=expected.perspective;
+  copy.group_id=expected.group_id;copy.editorial_node_id=expected.editorial_node_id;
+  copy.purpose=project::DocumentPurpose::Revision;copy.revision_of_id=expected.id;copy.revision_label=label;
+  copy.created_at=copy.updated_at=project::utc_now();project::validate(copy);validate_organization(copy);
+  store_.save(owner.path(),copy);return copy;
+}
+project::Document WritingService::update_document_if_unchanged(const project::Document &input,
+    const project::Document &expected) {
+  return update_document_checked(input, &expected);
+}
+DocumentSaveSnapshot WritingService::save_snapshot(project::Document document,
+    project::Document expected, std::uint64_t epoch, std::uint64_t revision) const {
+  return {require_project(), session_.structural_nodes(), std::move(document), std::move(expected), epoch, revision, {}, 0, 0, 0};
+}
+project::Document WritingService::update_document_checked(const project::Document &input,
+    const project::Document *expected) {
   const auto &active = require_project();
   const auto current = store_.document(active.path(), input.id);
   if (!current)
@@ -179,7 +217,8 @@ WritingService::update_document(const project::Document &input) {
                                "” é referenciada por outro Documento. "
                                "Desvincule seus usos antes de removê-la.");
   }
-  store_.save(active.path(), value);
+  if (expected) store_.save_if_unchanged(active.path(), value, *expected, active.manifest().project_id);
+  else store_.save(active.path(), value);
   return value;
 }
 

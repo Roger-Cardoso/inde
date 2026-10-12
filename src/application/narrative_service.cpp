@@ -33,6 +33,9 @@ std::optional<project::NarrativeEntity>
 NarrativeService::entity(const std::string &id) const {
   return store_.entity(require_project().path(), id);
 }
+std::optional<project::NarrativeRelation> NarrativeService::relation(const std::string &id) const {
+  return store_.relation(require_project().path(), id);
+}
 
 std::vector<project::RelationType> NarrativeService::relation_types() const {
   return store_.relation_types(require_project().path());

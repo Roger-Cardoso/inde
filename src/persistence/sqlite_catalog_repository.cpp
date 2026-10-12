@@ -2,6 +2,7 @@
 
 #include "inde/persistence/project_database_repository.hpp"
 #include "inde/persistence/sqlite_database.hpp"
+#include "inde/persistence/project_operation_store.hpp"
 
 #include <stdexcept>
 
@@ -65,7 +66,7 @@ void SqliteCatalogRepository::save(
     const project::IntellectualProperty &value) const {
   project::validate(value);
   auto database = open_database(project_path);
-  SqliteTransaction transaction(database);
+  SqliteTransaction transaction(database, "Obras e universos");
   auto statement = database.prepare(
       "INSERT INTO intellectual_properties "
       "(id, project_id, title, subtitle, description, cover_path, created_at, "
@@ -89,7 +90,7 @@ void SqliteCatalogRepository::save(const std::filesystem::path &project_path,
                                    const project::Work &value) const {
   project::validate(value);
   auto database = open_database(project_path);
-  SqliteTransaction transaction(database);
+  SqliteTransaction transaction(database, "Obras e universos");
   auto statement = database.prepare(
       "INSERT INTO works "
       "(id, intellectual_property_id, title, subtitle, synopsis, language, "
@@ -112,10 +113,38 @@ void SqliteCatalogRepository::save(const std::filesystem::path &project_path,
   transaction.commit();
 }
 
+void SqliteCatalogRepository::create_work_context(
+    const std::filesystem::path &path, const project::Work &work,
+    const std::optional<project::IntellectualProperty> &universe) const {
+  project::validate(work);
+  if (universe) {
+    project::validate(*universe);
+    if (work.intellectual_property_id != universe->id)
+      throw std::runtime_error("Universo e Obra não correspondem.");
+  }
+  auto db=open_database(path);
+  SqliteTransaction transaction(db,"Começar Obra e universo");
+  const auto owner=project_id(db);
+  if (universe) {
+    auto q=db.prepare("INSERT INTO intellectual_properties(id,project_id,title,subtitle,description,cover_path,created_at,updated_at) VALUES(?,?,?,?,?,?,?,?)");
+    q.bind(1,universe->id);q.bind(2,owner);q.bind(3,universe->title);q.bind(4,universe->subtitle);
+    q.bind(5,universe->description);q.bind(6,universe->cover_path);q.bind(7,universe->created_at);q.bind(8,universe->updated_at);q.run();
+  } else {
+    auto q=db.prepare("SELECT 1 FROM intellectual_properties WHERE id=? AND project_id=?");
+    q.bind(1,work.intellectual_property_id);q.bind(2,owner);
+    if (!q.step()) throw std::runtime_error("O universo escolhido não existe neste Projeto. Selecione outro ou crie um novo.");
+  }
+  auto q=db.prepare("INSERT INTO works(id,intellectual_property_id,title,subtitle,synopsis,language,status,created_at,updated_at) VALUES(?,?,?,?,?,?,?,?,?)");
+  q.bind(1,work.id);q.bind(2,work.intellectual_property_id);q.bind(3,work.title);q.bind(4,work.subtitle);
+  q.bind(5,work.synopsis);q.bind(6,work.language);q.bind(7,work.status);q.bind(8,work.created_at);q.bind(9,work.updated_at);q.run();
+  transaction.commit();
+}
+
 void SqliteCatalogRepository::remove_intellectual_property(
     const std::filesystem::path &project_path, const std::string &id) const {
   auto database = open_database(project_path);
-  SqliteTransaction transaction(database);
+  SqliteTransaction transaction(database, "Obras e universos");
+  validate_project_removal(database,project::RemovalKind::IntellectualProperty,id);
   auto statement =
       database.prepare("DELETE FROM intellectual_properties WHERE id = ?");
   statement.bind(1, id);
@@ -128,7 +157,8 @@ void SqliteCatalogRepository::remove_intellectual_property(
 void SqliteCatalogRepository::remove_work(
     const std::filesystem::path &project_path, const std::string &id) const {
   auto database = open_database(project_path);
-  SqliteTransaction transaction(database);
+  SqliteTransaction transaction(database, "Obras e universos");
+  validate_project_removal(database,project::RemovalKind::Work,id);
   auto statement = database.prepare("DELETE FROM works WHERE id = ?");
   statement.bind(1, id);
   statement.run();

@@ -1,4 +1,7 @@
 #pragma once
+#include "inde/project/text_semantics.hpp"
+
+#include <stop_token>
 
 #include <cstddef>
 #include <optional>
@@ -15,6 +18,9 @@ enum class DocumentTextStyle {
   Heading,
   Subheading,
   Quote,
+  Heading2, Heading3, Heading4, Heading5, Heading6,
+  AlignLeft, AlignCenter, AlignRight, AlignJustify,
+  FontFamily, FontSize, Foreground,
 };
 
 [[nodiscard]] std::string to_string(DocumentTextStyle value);
@@ -27,7 +33,18 @@ struct DocumentFormatSpan {
   DocumentTextStyle style{DocumentTextStyle::Bold};
   std::size_t start_offset{};
   std::size_t end_offset{};
+  std::string value{};
 };
+
+[[nodiscard]] bool paragraph_style(DocumentTextStyle style);
+void validate_format_span(const DocumentFormatSpan &span);
+
+// Literal author templates. Never evaluated as code or fictional facts.
+struct DocumentInlineCommand {
+  std::string prefix, keyword, label, content;
+  bool operator==(const DocumentInlineCommand &) const = default;
+};
+void validate_inline_commands(const std::vector<DocumentInlineCommand> &);
 
 // Uma âncora nomeia uma posição ou um intervalo do Documento. A identidade
 // permite que outras camadas a referenciem sem copiar o trecho textual.
@@ -119,7 +136,8 @@ struct DocumentTextStatistics {
 [[nodiscard]] DocumentTextStatistics
 analyze_document_text(const std::string &text,
                       std::size_t words_per_minute = 200,
-                      std::size_t long_paragraph_words = 120);
+                      std::size_t long_paragraph_words = 120,
+                      std::stop_token cancellation = {});
 
 // Documento textual possui identidade própria. A colocação editorial é um
 // vínculo opcional e nunca contém ou substitui o texto.
@@ -139,6 +157,8 @@ struct Document {
   std::optional<std::string> revision_of_id;
   std::string revision_label;
   std::string perspective;
+  DocumentSemantics semantics;
+  std::vector<DocumentInlineCommand> inline_commands;
 };
 
 // Projeção leve para Biblioteca. O corpo completo só é materializado quando

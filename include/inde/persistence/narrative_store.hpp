@@ -1,6 +1,8 @@
 #pragma once
 
 #include "inde/project/narrative.hpp"
+#include "inde/project/editor_interaction.hpp"
+#include <stdexcept>
 
 #include <cstddef>
 #include <filesystem>
@@ -64,6 +66,10 @@ struct EditorialReferenceQuery {
 class NarrativeStore {
 public:
   virtual ~NarrativeStore() = default;
+  virtual void create_relation_from_text(const std::filesystem::path &,
+      const project::TextRelationCreation &) const {
+    throw std::runtime_error("O repositório não oferece criação contextual de relação");
+  }
 
   virtual void initialize(const std::filesystem::path &project_path) const = 0;
   [[nodiscard]] virtual std::vector<project::EntityType>
