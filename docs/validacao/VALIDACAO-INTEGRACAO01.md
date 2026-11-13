@@ -117,7 +117,7 @@ O3+LTO, sem PGO. Não houve treinamento representativo do aplicativo completo.
 
 ## Demonstração, pacote e limites
 
-`bash Abrir-demo-integrada.sh` abre amostra própria, com alternativas/perfil,
+`bash scripts/demos/Abrir-demo-integrada.sh` abre amostra própria, com alternativas/perfil,
 reuso em duas composições, possibilidades locais e catálogo explícito. As demos
 anteriores continuam disponíveis. O roteiro está em `ROTEIRO-INTEGRACAO.md`.
 O ZIP de fontes inclui os dois arquivos-base, a fonte integrada, scripts, leitor,

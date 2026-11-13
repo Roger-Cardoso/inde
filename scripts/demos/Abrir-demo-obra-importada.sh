@@ -1,6 +1,6 @@
 #!/usr/bin/env sh
 set -eu
-PASTA_OBRA=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
+PASTA_OBRA=$(CDPATH= cd -- "$(dirname -- "$0")/../.." && pwd)
 if [ ! -x "$PASTA_OBRA/build-nativo/inde-especial" ]; then
   sh "$PASTA_OBRA/Preparar-INDE-especial.sh"
 fi

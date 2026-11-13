@@ -5,7 +5,7 @@ COMIC-02, 02/11/2026.
 ## Abrir
 
 ```sh
-bash Abrir-demo-comic.sh
+bash scripts/demos/Abrir-demo-comic.sh
 ```
 
 O lançador compila incrementalmente, prepara uma amostra sintética em `demo-comic-workspace/` quando necessário e abre diretamente o espaço Comic. A amostra anterior em `demo-comic/` permanece preservada. Para trabalhar em um Projeto existente, use Abrir no próprio INDE e escolha Criar → Comic.

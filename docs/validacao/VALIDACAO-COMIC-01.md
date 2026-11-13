@@ -68,7 +68,7 @@ Não foi executado motor nativo de tradução. Marcação de idioma e permissão
 bash Preparar-INDE-especial.sh
 python3 -m unittest discover -s tests -v
 python3 verificar_base.py
-bash Abrir-demo-comic.sh
+bash scripts/demos/Abrir-demo-comic.sh
 ```
 
 Para o teste C++ isolado, forneça uma pasta que ainda não exista:

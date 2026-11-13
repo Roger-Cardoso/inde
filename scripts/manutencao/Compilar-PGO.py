@@ -10,7 +10,7 @@ import json
 from pathlib import Path
 import subprocess
 
-BASE = Path(__file__).resolve().parent
+BASE = Path(__file__).resolve().parents[2]
 
 
 def fingerprint():

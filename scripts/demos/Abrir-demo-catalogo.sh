@@ -1,6 +1,6 @@
 #!/usr/bin/env sh
 set -eu
-PASTA_CATALOGO=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
+PASTA_CATALOGO=$(CDPATH= cd -- "$(dirname -- "$0")/../.." && pwd)
 if [ ! -x "$PASTA_CATALOGO/build-nativo/inde-especial" ] || [ ! -x "$PASTA_CATALOGO/build-nativo/inde_web_bridge" ]; then
   sh "$PASTA_CATALOGO/Preparar-INDE-especial.sh"
 fi

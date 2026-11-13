@@ -1,6 +1,6 @@
 # Disponibilidade no laboratório 0.6
 
-Este roteiro descreve o fluxo simples PUB-03A, mantido. Para uma Obra com vários capítulos e identidades públicas verificadas, use `Abrir-demo-obra-importada.sh` e `ROTEIRO-OBRA-IMPORTADA.md`. O bloqueio citado abaixo continua aplicável à importação simples sem mapa, inclusive aos Projetos 0.5 já criados.
+Este roteiro descreve o fluxo simples PUB-03A, mantido. Para uma Obra com vários capítulos e identidades públicas verificadas, use `scripts/demos/Abrir-demo-obra-importada.sh` e `ROTEIRO-OBRA-IMPORTADA.md`. O bloqueio citado abaixo continua aplicável à importação simples sem mapa, inclusive aos Projetos 0.5 já criados.
 
 ---
 
@@ -11,7 +11,7 @@ Esta é uma implementação real, com janela GTK e criação pelos serviços do 
 ## Demo utilizável
 
 ```sh
-bash Abrir-demo-importacao.sh
+bash scripts/demos/Abrir-demo-importacao.sh
 ```
 
 1. A janela mostra dois arquivos fictícios. O HTML aplicado diz “Ainda havia tempo”; a autoria salva diz “Ainda há tempo”. Confira texto e recursos associados em ambos os lados.
@@ -26,7 +26,7 @@ O recibo `data/importacao-literature.json` registra as fontes, seus SHA-256, a e
 ## Conferir um par escolhido
 
 ```sh
-bash Revisar-importacao.sh "/caminho/capitulo-aplicado.html" "/caminho/autoria-salva.narrproj"
+bash scripts/importacao/Revisar-importacao.sh "/caminho/capitulo-aplicado.html" "/caminho/autoria-salva.narrproj"
 ```
 
 O comando cria outra conferência e apenas abre a revisão. Ele não converte o acervo automaticamente nem decide entre backups/lixeira/exportações. As fontes originais permanecem em seus lugares; a comparação guarda cópias e exige que os originais continuem inalterados até a conversão. Depois de criado, o Projeto não precisa dos arquivos originais para ser aberto no INDE.

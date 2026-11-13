@@ -38,7 +38,7 @@ bash Preparar-INDE-especial.sh
 python3 -m unittest discover -s tests -v
 python3 verificar_base.py
 python3 tests/verificar_workspace_comic.py /tmp/inde-comic-verificacao-nova
-bash Abrir-demo-comic.sh
+bash scripts/demos/Abrir-demo-comic.sh
 ```
 
 A pasta de verificação GTK deve ser nova. Ela recebe apenas fixtures sintéticas, logs e capturas. O teste gráfico exige uma sessão gráfica; o teste de prévia precisa abrir uma porta local.

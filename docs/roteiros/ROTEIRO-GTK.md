@@ -43,4 +43,4 @@ Os comandos de escrita continuam sendo os do INDE. Esta integração não acresc
 
 A leitura da configuração não cria automaticamente o banco da extensão. Preparar guarda um retrato privado; gerar não implanta. Uso simultâneo em vários processos, sessões prolongadas, outros sistemas e instalador com runtime incorporado ainda não foram validados. O laboratório exige Linux com as dependências da base e Python 3.12+. Leia `README.md` para compilar sem depender do workspace original.
 
-O catálogo múltiplo tem uma amostra própria: `bash Abrir-demo-catalogo.sh`. A entrega 0.4 lê a extensão antiga sem alterá-la e faz a migração com cópia de recuperação na primeira gravação.
+O catálogo múltiplo tem uma amostra própria: `bash scripts/demos/Abrir-demo-catalogo.sh`. A entrega 0.4 lê a extensão antiga sem alterá-la e faz a migração com cópia de recuperação na primeira gravação.

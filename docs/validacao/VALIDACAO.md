@@ -193,7 +193,7 @@ Conferência funcional pela interface local em `127.0.0.1`, sem autenticação o
 
 Capturas: `evidencias/criador-de-site.jpg`, `evidencias/leitor-semantico.jpg` e `evidencias/consulta-verbete.jpg`. São evidências da demo local, sem manuscritos reais. O leitor testado é o componente Literature, alimentado pela nova projeção; não é integração com uma sessão C++.
 
-Os servidores de conferência e suas abas foram encerrados após o teste. O script `Abrir-demo.sh` inicia uma nova sessão com os projetos conservados.
+Os servidores de conferência e suas abas foram encerrados após o teste. O script `scripts/demos/Abrir-demo.sh` inicia uma nova sessão com os projetos conservados.
 
 ## Proveniência e preservação
 

@@ -1,6 +1,6 @@
 #!/usr/bin/env sh
 set -eu
-PASTA_IMPORTACAO=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
+PASTA_IMPORTACAO=$(CDPATH= cd -- "$(dirname -- "$0")/../.." && pwd)
 if [ ! -x "$PASTA_IMPORTACAO/build-nativo/inde-especial" ]; then
   sh "$PASTA_IMPORTACAO/Preparar-INDE-especial.sh"
 fi

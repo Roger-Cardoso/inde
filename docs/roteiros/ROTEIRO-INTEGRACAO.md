@@ -1,6 +1,6 @@
 # Demonstração integrada · INT-01
 
-Abra `bash Abrir-demo-integrada.sh`. O lançador cria uma amostra sintética uma
+Abra `bash scripts/demos/Abrir-demo-integrada.sh`. O lançador cria uma amostra sintética uma
 vez, com perfil próprio, e conserva as edições feitas na demonstração. Não abre
 obra autoral. Outro computador exige as dependências e o preparo documentados.
 
@@ -17,7 +17,7 @@ obra autoral. Outro computador exige as dependências e o preparo documentados.
    Prepare e abra a prévia. Ela inclui CORPO INTEGRAL mesmo quando o perfil do
    editor o oculta. ALTERNATIVA PRIVADA INT01 permanece no Projeto, fora da saída.
 5. Volte à Escrita, desfaça uma edição e reabra o Projeto para conferir conservação.
-   Para Comic, use também `Abrir-demo-comic.sh`, cuja amostra continua separada.
+   Para Comic, use também `scripts/demos/Abrir-demo-comic.sh`, cuja amostra continua separada.
 6. Em Revisar, use uma Obra sintética com pendências depois dos primeiros 50
    Documentos. O filtro deve trazer essas pendências à primeira página de resultados.
 

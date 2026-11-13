@@ -1,6 +1,6 @@
 #!/usr/bin/env sh
 set -eu
-PASTA_COMIC=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
+PASTA_COMIC=$(CDPATH= cd -- "$(dirname -- "$0")/../.." && pwd)
 # Rebuilds incrementally, including the new GTK page; no network or package install.
 sh "$PASTA_COMIC/Preparar-INDE-especial.sh"
 if [ ! -d "$PASTA_COMIC/demo-comic-workspace/Publicacao.inde" ]; then

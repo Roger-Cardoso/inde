@@ -50,7 +50,7 @@ O binário local passou de 17,367,432 para 13,232,256 bytes (16.56 → 12.62 MiB
 
 O ensaio `tests/verificar_pgo.py` passou com o módulo CMake final e o código real de busca Unicode: rejeição de USE sem dados, GENERATE, execução com gravação de dois perfis e recompilação USE com LTO, mantendo o resultado. Os avisos de perfil ausente ou incompatível permanecem ativos.
 
-O binário regular está em O3 + LTO, sem PGO. `Compilar-PGO.py` disponibiliza o treinamento completo em uma pasta própria e verifica fontes, compilador e destino entre fases. A sessão sintética da busca não é treinamento representativo do INDE inteiro.
+O binário regular está em O3 + LTO, sem PGO. `scripts/manutencao/Compilar-PGO.py` disponibiliza o treinamento completo em uma pasta própria e verifica fontes, compilador e destino entre fases. A sessão sintética da busca não é treinamento representativo do INDE inteiro.
 
 Os benchmarks de serviços não medem fluidez da interface, latência de digitação ou produtividade do escritor. Os percursos gráficos são regressões técnicas, sem substituir aceite humano e uso prolongado. Não houve publicação, envio ao GitHub ou migração de projetos autorais.
 

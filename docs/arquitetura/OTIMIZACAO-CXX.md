@@ -82,11 +82,11 @@ PGO é opcional e separado da compilação regular. O fluxo GCC usa a mesma past
 nas duas fases e impede misturar fontes ou compiladores diferentes:
 
 ```sh
-python3 Compilar-PGO.py gerar --pasta /tmp/inde-pgo-treino
+python3 scripts/manutencao/Compilar-PGO.py gerar --pasta /tmp/inde-pgo-treino
 python3 ambiente.py --perfil /tmp/inde-perfil-pgo --recursos . \
   /tmp/inde-pgo-treino/inde-especial
 # Exercite o programa e feche normalmente para gravar os perfis.
-python3 Compilar-PGO.py usar --pasta /tmp/inde-pgo-treino
+python3 scripts/manutencao/Compilar-PGO.py usar --pasta /tmp/inde-pgo-treino
 ```
 
 Escolha uma pasta nova no primeiro comando. O treinamento deve incluir escrita,

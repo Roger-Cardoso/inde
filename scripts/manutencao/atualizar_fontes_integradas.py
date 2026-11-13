@@ -4,11 +4,11 @@ import json
 from pathlib import Path
 import tarfile
 
-BASE = Path(__file__).resolve().parent
+BASE = Path(__file__).resolve().parents[2]
 
 
 def freeze():
-    record = BASE / 'INTEGRACAO-INDE.json'
+    record = BASE / 'metadata/INTEGRACAO-INDE.json'
     identity = json.loads(record.read_text())
     original = BASE / identity['arquivo_original']
     if hashlib.sha256(original.read_bytes()).hexdigest() != identity['sha256_original']:

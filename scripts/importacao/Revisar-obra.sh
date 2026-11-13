@@ -1,6 +1,6 @@
 #!/usr/bin/env sh
 set -eu
-PASTA_OBRA=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
+PASTA_OBRA=$(CDPATH= cd -- "$(dirname -- "$0")/../.." && pwd)
 if [ "$#" -ne 1 ]; then
   echo 'Uso: bash Revisar-obra.sh /caminho/obra-literature.json' >&2
   exit 2

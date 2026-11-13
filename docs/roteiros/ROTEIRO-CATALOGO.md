@@ -3,7 +3,7 @@
 Abra a amostra independente:
 
 ```sh
-bash Abrir-demo-catalogo.sh
+bash scripts/demos/Abrir-demo-catalogo.sh
 ```
 
 A primeira abertura cria `demo-catalogo/Publicacao.inde` e um perfil próprio. A amostra anterior e seus cadastros ficam preservados. O Projeto novo contém “A estação das marés”, “O observatório das estrelas” e “Arquivo de bordo”. As duas primeiras estão no catálogo; a terceira está desmarcada. Mara é a mesma entidade nativa nas duas Obras selecionadas.

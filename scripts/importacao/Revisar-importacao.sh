@@ -1,6 +1,6 @@
 #!/usr/bin/env sh
 set -eu
-PASTA_REVISAO=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
+PASTA_REVISAO=$(CDPATH= cd -- "$(dirname -- "$0")/../.." && pwd)
 if [ "$#" -ne 2 ]; then
   echo 'Uso: bash Revisar-importacao.sh CAPITULO_APLICADO.html AUTORIA_SALVA.narrproj' >&2
   exit 2

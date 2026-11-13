@@ -9,7 +9,7 @@ BASE = Path(__file__).resolve().parent
 
 
 def accepted_archive():
-    identity = json.loads((BASE / 'BASE-INDE.json').read_text())
+    identity = json.loads((BASE / 'metadata/BASE-INDE.json').read_text())
     archive = BASE / identity['arquivo_fonte_local']
     checksum = hashlib.sha256(archive.read_bytes()).hexdigest()
     if checksum != identity['arquivo_fonte_sha256']:
@@ -47,7 +47,7 @@ def verify():
 
 def verify_integrated(extract_source=False):
     """Validate the packaged integrated source independently of its old location."""
-    identity = json.loads((BASE / 'INTEGRACAO-INDE.json').read_text())
+    identity = json.loads((BASE / 'metadata/INTEGRACAO-INDE.json').read_text())
     archive = BASE / identity['arquivo_integrado']
     checksum = hashlib.sha256(archive.read_bytes()).hexdigest()
     if checksum != identity['sha256_integrado']:

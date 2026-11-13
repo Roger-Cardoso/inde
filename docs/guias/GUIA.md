@@ -4,15 +4,15 @@ INT-01 integra a base autoral schema 37 do candidato P03c com Publicação, cat�
 importação e o espaço Comic do especial. O perfil de otimização OPT-CXX-01 da 0.9
 é aplicado à compilação ampliada. Compilação estrita, 47 testes CTest, 87 testes
 Python, migração sintética e percursos GTK passaram. O fechamento e seus limites
-estão em [VALIDACAO-INTEGRACAO01.md](VALIDACAO-INTEGRACAO01.md).
+estão em [VALIDACAO-INTEGRACAO01.md](../validacao/VALIDACAO-INTEGRACAO01.md).
 
 ```sh
-bash Abrir-demo-integrada.sh
+bash scripts/demos/Abrir-demo-integrada.sh
 ```
 
 A amostra contém alternativas no mesmo Documento, perfil de trabalho, vínculo
 textual e reuso de um acontecimento em duas composições. O
-[roteiro integrado](ROTEIRO-INTEGRACAO.md) cobre planejamento visual, editor e
+[roteiro integrado](../roteiros/ROTEIRO-INTEGRACAO.md) cobre planejamento visual, editor e
 publicação. As demos anteriores continuam disponíveis em seus lançadores.
 
 A autoria usa schema 37; Publicação continua schema 3 e Comic, schema 1. A base 28
@@ -30,7 +30,7 @@ Também foi incorporada a correção da fila de revisão: filtrar antes de compl
 as páginas de resultados, consultando lotes limitados e permitindo cancelamento.
 Pendências ficam antes de itens já decididos, sem apagar seu histórico.
 
-O [contrato de integração](INTEGRACAO-01.md) delimita o aproveitamento. Layouts
+O [contrato de integração](../arquitetura/INTEGRACAO-01.md) delimita o aproveitamento. Layouts
 próprios completos, nomenclatura final das alternativas e integração compartilhada
 P04 continuam pendentes; o P03c não é apresentado como resolução desses trabalhos.
 As direções de estados globais, economia, plantas e cartografia ampliada continuam
@@ -41,19 +41,19 @@ presumido. Os relatos 0.9 e anteriores abaixo são históricos.
 
 # Histórico preservado · 0.9
 
-OPT-CXX-01: o INDE usa compilação estrita C++20 com `-Wall -Wextra -Wpedantic -Wconversion -Werror`, `-O3` e LTO em Release. Inclui reduções de alocações e cópias na busca, corretor, produção e Comic. O [guia de otimização](OTIMIZACAO-CXX.md) explica as alterações, a compilação e o fluxo opcional de PGO. A [validação](VALIDACAO-OPT-CXX-01.md) distingue os testes e as medições de serviços isolados do desempenho da interface.
+OPT-CXX-01: o INDE usa compilação estrita C++20 com `-Wall -Wextra -Wpedantic -Wconversion -Werror`, `-O3` e LTO em Release. Inclui reduções de alocações e cópias na busca, corretor, produção e Comic. O [guia de otimização](../arquitetura/OTIMIZACAO-CXX.md) explica as alterações, a compilação e o fluxo opcional de PGO. A [validação](../validacao/VALIDACAO-OPT-CXX-01.md) distingue os testes e as medições de serviços isolados do desempenho da interface.
 
 COMIC-02, 02/11/2026: a produção de comics passa a ocupar um **espaço de trabalho nativo**, acessível por **Criar → Comic**. A barra principal fica **Criar, Planejar, Revisar, Manuscrito, Cronologia, Mapas e Obras**. Criar oferece Escrita e Comic.
 
 ```sh
-bash Abrir-demo-comic.sh
+bash scripts/demos/Abrir-demo-comic.sh
 ```
 
 A demonstração abre diretamente em Comic. O espaço tem biblioteca e sequência à esquerda, composição central com zoom e redimensionamento, e inspetor de Elemento/Quadro/Obra. Desfazer/Refazer pertence à composição. Alternar de espaço conserva o rascunho; o fechamento/troca do Projeto protege alterações pendentes.
 
 A configuração e a geração de publicação existentes são aproveitadas. O editor foi retirado do painel geral de Publicação. Os modelos persistentes continuam compatíveis com os comics da versão 0.7.
 
-O [roteiro](ROTEIRO-COMIC.md) explica o uso. O [contrato COMIC-02](CONTRATO-COMIC-02.md) define a arquitetura atual, o que foi integrado e os recursos restantes para equivalência integral com o estúdio 0.4. A [validação](VALIDACAO-COMIC-02.md) registra os testes e limites.
+O [roteiro](../roteiros/ROTEIRO-COMIC.md) explica o uso. O [contrato COMIC-02](../arquitetura/CONTRATO-COMIC-02.md) define a arquitetura atual, o que foi integrado e os recursos restantes para equivalência integral com o estúdio 0.4. A [validação](../validacao/VALIDACAO-COMIC-02.md) registra os testes e limites.
 
 Modelo, persistência, edição e geração do HTML são C++20/GTK4. O leitor usa HTML/CSS/JavaScript. Materialização, ZIP e prévia reutilizam o mecanismo Python já existente. O banco autoral permanece schema 28, a publicação schema 3 e comics schema 1. O estúdio Python 0.4 não é executado pelo INDE.
 
@@ -64,22 +64,22 @@ Entrega PUB-03B, 31/10/2026: importação de vários capítulos comparados para 
 ## Experimentar a Obra importada
 
 ```sh
-bash Abrir-demo-obra-importada.sh
+bash scripts/demos/Abrir-demo-obra-importada.sh
 ```
 
 Compare e escolha a fonte de cada capítulo, informe destino novo e use **Criar Projeto e Edição → Abrir no INDE**. No aplicativo completo, use **Publicação → Catálogo do Site → Preparar Site → Abrir prévia**. A demo contém dois capítulos fictícios, com URLs 7 e 11 e próxima reserva em 18; a mesma Personagem nativa é compartilhada entre eles. A geração continua derivada dos Documentos do INDE.
 
-O [roteiro da Obra importada](ROTEIRO-OBRA-IMPORTADA.md) explica a demo, o manifesto explícito de entrada e o comando `Revisar-obra.sh`. O mapa pertence à Edição e não troca os IDs internos do INDE. Progresso/posição armazenados anteriormente no navegador também dependem da mesma origem; mudar domínio/porta não transfere esses dados automaticamente. Identificadores de discussão são preservados; serviços remotos permanecem desativados.
+O [roteiro da Obra importada](../roteiros/ROTEIRO-OBRA-IMPORTADA.md) explica a demo, o manifesto explícito de entrada e o comando `scripts/importacao/Revisar-obra.sh`. O mapa pertence à Edição e não troca os IDs internos do INDE. Progresso/posição armazenados anteriormente no navegador também dependem da mesma origem; mudar domínio/porta não transfere esses dados automaticamente. Identificadores de discussão são preservados; serviços remotos permanecem desativados.
 
 Este corte aceita capítulos planos e o subconjunto semântico declarado. O acervo autoral existente não foi convertido; seleção assistida, hierarquias e tradutores adicionais continuam pendentes. Produções vinculadas usam protocolo versão 2 para impedir que um gerador anterior ignore seus IDs públicos.
 
 ## Experimentar a importação comparada
 
 ```sh
-bash Abrir-demo-importacao.sh
+bash scripts/demos/Abrir-demo-importacao.sh
 ```
 
-A janela GTK mostra duas fontes fictícias divergentes e seus recursos. Escolha explicitamente a origem, informe a nova Obra/destino e use **Criar Projeto importado → Abrir no INDE**. O [roteiro da importação](ROTEIRO-IMPORTACAO.md) documenta o subconjunto aceito e o comando para conferir um par de arquivos escolhido. Fontes com recursos sem tradutor são bloqueadas; nada foi importado automaticamente do acervo autoral.
+A janela GTK mostra duas fontes fictícias divergentes e seus recursos. Escolha explicitamente a origem, informe a nova Obra/destino e use **Criar Projeto importado → Abrir no INDE**. O [roteiro da importação](../roteiros/ROTEIRO-IMPORTACAO.md) documenta o subconjunto aceito e o comando para conferir um par de arquivos escolhido. Fontes com recursos sem tradutor são bloqueadas; nada foi importado automaticamente do acervo autoral.
 
 O fluxo simples do PUB-03A cria uma Obra de um capítulo e registra os remapeamentos, sem contrato público. Para múltiplos capítulos e identidades públicas, use a demo do PUB-03B acima. Preparar publicação da Obra importada é bloqueado até essa reconciliação. Essa limitação não afeta as Obras nativas já usadas nas demos.
 
@@ -92,10 +92,10 @@ Feche a janela antiga e reabra pelo lançador para carregar estas correções. A
 ## Experimentar o catálogo múltiplo
 
 ```sh
-bash Abrir-demo-catalogo.sh
+bash scripts/demos/Abrir-demo-catalogo.sh
 ```
 
-A amostra própria contém três Obras fictícias e publica somente as duas escolhidas. Abra **Publicação → Catálogo do Site**, use **Subir/Descer**, **Salvar catálogo**, **Preparar Site** e **Abrir prévia**. O [roteiro do catálogo](ROTEIRO-CATALOGO.md) também cobre exclusão da seleção, biblioteca vazia, recuperação e abertura de projetos da versão anterior.
+A amostra própria contém três Obras fictícias e publica somente as duas escolhidas. Abra **Publicação → Catálogo do Site**, use **Subir/Descer**, **Salvar catálogo**, **Preparar Site** e **Abrir prévia**. O [roteiro do catálogo](../roteiros/ROTEIRO-CATALOGO.md) também cobre exclusão da seleção, biblioteca vazia, recuperação e abertura de projetos da versão anterior.
 
 Uma Edição pode ser retirada depois de removida do catálogo. Restaurá-la conserva sua identidade e reservas, sem reincluí-la automaticamente. Reordenar Obras conserva os endereços públicos e o progresso associado às identidades. O mesmo personagem nativo pode aparecer em várias Obras com a mesma identidade; definições incompatíveis para esse ID são recusadas. Fontes de Projetos diferentes não são fundidas pelo gerador.
 
@@ -107,7 +107,7 @@ O preparo guarda o conjunto escolhido e suas revisões; a saída inteira só é 
 bash Abrir-INDE-especial.sh
 ```
 
-O workspace já contém o binário Linux compilado. A primeira abertura cria somente a amostra sintética em `demo-nativa/`, com perfil isolado. Use **Publicação** no cabeçalho para criar Site e Edição. O [roteiro GTK](ROTEIRO-GTK.md) explica cadastro, seleção, geração, prévia, retirada e restauração. Para começar com um Projeto vazio, use `bash Abrir-INDE-especial.sh --vazio`.
+O workspace já contém o binário Linux compilado. A primeira abertura cria somente a amostra sintética em `demo-nativa/`, com perfil isolado. Use **Publicação** no cabeçalho para criar Site e Edição. O [roteiro GTK](../roteiros/ROTEIRO-GTK.md) explica cadastro, seleção, geração, prévia, retirada e restauração. Para começar com um Projeto vazio, use `bash Abrir-INDE-especial.sh --vazio`.
 
 Em outra instalação compatível, `bash Preparar-INDE-especial.sh` verifica a fonte congelada e compila o aplicativo especial, a ponte e os testes. O script não instala dependências nem usa a rede. Python e bibliotecas nativas ainda precisam estar presentes. A aplicação web de leitura está incluída; não é necessário possuir outro checkout do Literature.
 
@@ -118,7 +118,7 @@ O painel não abre sobre texto pendente e não pede ao editor que salve implicit
 ## Interface web do laboratório anterior
 
 ```sh
-bash Abrir-demo.sh
+bash scripts/demos/Abrir-demo.sh
 ```
 
 O comando abre o navegador no servidor local. Pode ser chamado pelo caminho completo de qualquer pasta. Requer Python 3.12 ou superior. Os projetos existentes da demo continuam em `dados/`; a abertura não os reescreve. O botão **Criar demo pelo núcleo INDE** está disponível quando a ponte foi compilada.
@@ -126,7 +126,7 @@ O comando abre o navegador no servidor local. Pode ser chamado pelo caminho comp
 Para escolher porta e diretório de dados:
 
 ```sh
-bash Abrir-demo.sh --sem-navegador --porta 8770 --dados /caminho/para/dados
+bash scripts/demos/Abrir-demo.sh --sem-navegador --porta 8770 --dados /caminho/para/dados
 ```
 
 Somente loopback `127.0.0.1` é atendido. Cada prévia serve exclusivamente sua edição pública. Encerre com Ctrl+C. Use um único servidor por diretório de dados.

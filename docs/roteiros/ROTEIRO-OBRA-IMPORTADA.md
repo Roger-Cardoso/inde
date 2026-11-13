@@ -5,7 +5,7 @@ A demo usa a interface GTK e os serviços reais do INDE schema 28. Cria um Proje
 ## Experimentar
 
 ```sh
-bash Abrir-demo-obra-importada.sh
+bash scripts/demos/Abrir-demo-obra-importada.sh
 ```
 
 1. Selecione o capítulo no topo. A demo contém **A chegada**, com URL número **7**, e **O retorno**, com número **11**. A ordem de leitura vem da lista declarada, independentemente dos números.
@@ -36,7 +36,7 @@ O leitor usa os IDs de Obra/capítulo em progresso, posição e retomada. O cál
 ## Conferir fontes escolhidas
 
 ```sh
-bash Revisar-obra.sh "/caminho/obra-literature.json"
+bash scripts/importacao/Revisar-obra.sh "/caminho/obra-literature.json"
 ```
 
 O manifesto de entrada é um contrato do importador 0.6, preenchido a partir das fontes escolhidas. Ele não é apresentado como um formato de exportação que já exista no Gerenciador. A versão atual não varre automaticamente diretórios, backups ou lixeira e não deduz uma biblioteca inteira. Os caminhos abaixo são relativos ao manifesto:

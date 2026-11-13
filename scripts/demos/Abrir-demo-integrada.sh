@@ -1,6 +1,6 @@
 #!/usr/bin/env sh
 set -eu
-PASTA_INTEGRADA=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
+PASTA_INTEGRADA=$(CDPATH= cd -- "$(dirname -- "$0")/../.." && pwd)
 if [ ! -x "$PASTA_INTEGRADA/build-nativo/inde_integration_tests" ]; then
   sh "$PASTA_INTEGRADA/Preparar-INDE-especial.sh"
 fi
