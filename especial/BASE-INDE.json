@@ -1,0 +1,29 @@
+{
+  "produto": "INDE",
+  "versao": "0.1.0",
+  "schema": 28,
+  "corte_aceito": "2026-10-12",
+  "empacotamento": "2026-10-13",
+  "commit": "89b47f27e83d76e1ef61a46cb6c29b8c75c305c4",
+  "branch": "publicacao-2026-10-12",
+  "status_no_inicio": "",
+  "verificado_em": "2026-10-31",
+  "fonte": "INDE-Acervo-2026-10-12/publicacao/inde",
+  "contratos_inspecionados": {
+    "include/inde/project/catalog.hpp": "461b1cea464ee13fb058d0f269832ee127f3ed150a14b8143f389d75985e09fb",
+    "include/inde/project/writing.hpp": "86bf6674fc05fef63ff204e9b3c316db793823995f4808f90ab28376dc2d03ef",
+    "include/inde/project/text_semantics.hpp": "8f9fa620a286b894f021d7ad87a9e2aaa1fe6d07f7c29d14a71ab962a8b15d08",
+    "include/inde/project/structural_node.hpp": "2ca5591abdded6b2f06ce2e1bdac74caf421d2fcc7cfa62364c2fafe93b953af",
+    "include/inde/project/narrative.hpp": "d1392313089684ec4eb768943152e1c29c763350ec337046ea6d2f983284437f",
+    "include/inde/project/structure_model.hpp": "93686a31fd24e5f4cb9ea44bd8ff715b2264633f045a4a2c8c59053122c90ad7",
+    "include/inde/application/work_production.hpp": "98e4c662392bd15bf4c1a245526a4f8d64d9b3103648eeeba7a8f492eeeedc27",
+    "src/application/document_export.cpp": "23ccf1a071d107eab80f7964f7279098e18f560716fe66cc5187784b7008eb14",
+    "src/application/work_production.cpp": "6376813821611429b8f54a0b80e1ff5e08f95266a685190e2297176512991591",
+    "src/project/semantic_registry.cpp": "22f666dd2baab00e838af8c4228a6c0d32bad375144d64f0a882dab32edd0ea4"
+  },
+  "arquivo_fonte_local": "fontes/inde-schema28-89b47f27.tar.gz",
+  "arquivo_fonte_sha256": "3d6bee4c60dbecc602a56881b1957f90b55798dbc711c9c290701e2ad8a6e97e",
+  "archive_incluido_no_zip_da_demo": true,
+  "integracao_cpp_ativa": true,
+  "integracao": "servicos nativos, sessao GTK integrada e importacao comparada parcial; fonte base preservada"
+}

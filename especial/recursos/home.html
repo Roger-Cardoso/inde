@@ -1,0 +1,19 @@
+<!doctype html>
+<html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>__INDE_NOME__</title><meta name="description" content="__INDE_DESCRICAO__">
+<link rel="stylesheet" href="../css-global/global.css"><link rel="icon" href="../assets/imagens/marca.svg">
+</head><body class="page-home">
+<a class="skip-link" href="#biblioteca">Ir para a biblioteca</a>
+<nav class="navbar" aria-label="Navegação principal"><a class="logo" href="./">__INDE_NOME__</a><a href="#biblioteca">Biblioteca</a></nav>
+<main><section class="home-hero"><div><span class="eyebrow">Uma biblioteca de histórias</span><h1 id="nome-site">__INDE_NOME__</h1></div><div><p class="hero-description">__INDE_DESCRICAO__</p><p>Por __INDE_AUTOR__</p></div></section>
+<section id="biblioteca"><div class="section-heading"><h2 class="titulo-secao">Encontre sua próxima leitura</h2><label>Buscar obras <input class="input-busca-local" id="busca" type="search" placeholder="Título, tema ou sinopse"></label></div><div id="obras" class="grid-obras" aria-live="polite">Abrindo biblioteca…</div></section></main>
+<footer class="site-footer"><span class="footer-brand">__INDE_NOME__</span><span>Por __INDE_AUTOR__</span><a href="../privacidade.html">Leitura e privacidade</a></footer>
+<script>
+let obras=[];const area=document.getElementById('obras');
+function element(tag,text,cls){const el=document.createElement(tag);if(text!==undefined)el.textContent=text;if(cls)el.className=cls;return el;}
+function render(){area.replaceChildren();const query=document.getElementById('busca').value.toLocaleLowerCase('pt-BR');const filtered=obras.filter(o=>[o.titulo,o.sinopse,...(o.temas||[])].join(' ').toLocaleLowerCase('pt-BR').includes(query));
+if(!filtered.length){area.append(element('p',obras.length?'Nenhuma obra corresponde à busca.':'Esta biblioteca ainda não possui obras públicas.','loading-text'));return;}
+for(const o of filtered){const card=element('article',undefined,'cartao-obra'),row=element('div',undefined,'linha-principal-obra'),cover=element('div',undefined,'coluna-capa'),img=element('img');img.src=o.capa_url;img.alt='Capa de '+o.titulo;img.className='capa-miniatura';cover.append(img);const info=element('div',undefined,'info-texto-obra');info.append(element('span','Publicação seriada','work-kicker'),element('h3',o.titulo,'nome-obra'),element('p',o.autor),element('p',o.sinopse));const action=element('div',undefined,'acao-obra');action.append(element('span',o.total_capitulos+' capítulos · '+o.total_palavras+' palavras'));const a=element('a','Explorar a obra →','botao-primario');a.href=o.url_publica;action.append(a);info.append(action);row.append(cover,info);card.append(row);area.append(card);}}
+document.getElementById('busca').addEventListener('input',render);
+fetch('../catalogo.json').then(r=>{if(!r.ok)throw Error();return r.json();}).then(data=>{obras=data;render();}).catch(()=>{area.textContent='Não foi possível abrir a biblioteca. Confira se a geração está completa.';});
+</script></body></html>

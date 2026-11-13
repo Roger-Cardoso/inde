@@ -1,0 +1,7 @@
+__pycache__/
+build-*/
+dados/
+demo-*/
+perfil-*/
+fontes/inde-schema28/
+fontes/inde-integrado-schema37/

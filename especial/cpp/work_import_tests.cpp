@@ -1,0 +1,17 @@
+#include "publication_service.hpp"
+#include <fstream>
+#include <iostream>
+using namespace inde;using namespace inde::publication;namespace fs=std::filesystem;
+namespace {void check(bool ok,const char *message){if(!ok)throw std::runtime_error(message);}std::string read(const fs::path &p){std::ifstream f(p,std::ios::binary);return {std::istreambuf_iterator<char>(f),{}};}void write(const fs::path &p,const std::string &s){std::ofstream f(p);f<<s;f.close();check(bool(f),"Falha ao escrever a evidência");}template<class F>void rejects(F f){bool fail=false;try{f();}catch(const std::exception &){fail=true;}check(fail,"Operação incompatível foi aceita");}}
+int main(int argc,char **argv){try{
+ check(argc==2,"Use um Projeto fictício importado");const fs::path path=argv[1];const auto receipt=persistence::json::parse(read(path/"data/importacao-literature.json"));application::ProjectService source;source.open(path);Service pub(source);auto site=pub.site(receipt.at("site_id").as_string());auto edition=pub.edition(receipt.at("edition_id").as_string());
+ const auto before=hash(read(path/"data/project.sqlite3"));check(!edition.public_identity.is_null(),"Mapa público ausente");const auto identity=persistence::json::serialize(edition.public_identity,false);check(edition.next_number==18,"Contador reservado não foi preservado");
+ auto prepared=pub.prepare_catalog(site.id,site.revision);check(pub.is_current(prepared),"Preparação importada obsoleta");write(path.parent_path()/"original-para-gerar.json",prepared.payload);
+ rejects([&]{pub.bind_literature_identity(edition.id,edition.revision,edition.public_identity);});auto bad=edition;bad.slug="troca-de-rota";rejects([&]{pub.update_edition(bad,edition.revision);});
+ auto changed=edition;changed.title+=" revisada";changed.public_identity=V{};edition=pub.update_edition(changed,edition.revision);check(persistence::json::serialize(edition.public_identity,false)==identity,"Salvar formulário apagou identidades");check(!pub.is_current(prepared),"Revisão não invalidou geração");
+ site=pub.update_catalog(site.id,site.revision,{});edition=pub.remove_edition(edition.id,edition.revision);edition=pub.restore_edition(edition.id,edition.revision);check(persistence::json::serialize(edition.public_identity,false)==identity,"Restauração perdeu mapa");site=pub.update_catalog(site.id,site.revision,{edition.id});
+ check(hash(read(path/"data/project.sqlite3"))==before,"Operações de publicação alteraram o banco autoral");
+ const auto node=source.create_structural_node(edition.work_id,{},project::StructuralNodeType::Chapter,"Depois da importação");auto doc=source.writing().create_document("Novo capítulo",node.id);doc.content="Um texto novo, escrito no INDE.";doc=source.writing().update_document(doc);edition.choices[node.id].documents.push_back(doc.id);edition=pub.update_edition(edition,edition.revision);check(edition.public_numbers.at(doc.id)==18 && edition.next_number==19,"O número de um capítulo novo reutilizou uma reserva antiga");
+ prepared=pub.prepare_catalog(site.id,site.revision);write(path.parent_path()/"com-novo-capitulo.json",prepared.payload);source.save();source.close();source.open(path);check(persistence::json::serialize(pub.edition(edition.id).public_identity,false)==identity,"Reabertura perdeu identidades");
+ std::cout<<"PUB-03B: vínculo, reservas 7/11/18, revisão, retirada/restauração, reabertura e banco autoral preservado nas operações de publicação OK\n";return 0;
+}catch(const std::exception &e){std::cerr<<e.what()<<'\n';return 1;}}

@@ -1,0 +1,8 @@
+.reacoes-literature{margin:2rem 0;padding:1.25rem;border:1px solid color-mix(in srgb,currentColor 20%,transparent);border-radius:.7rem;font-family:Verdana,sans-serif;font-size:.85rem;line-height:1.6}
+.reacoes-literature h2{margin:0 0 .8rem;font:1.3rem Georgia,serif}
+.reacoes-botoes{display:flex;flex-wrap:wrap;gap:.75rem}
+.reacoes-literature button{padding:.7rem 1rem;border:1px solid currentColor;border-radius:.45rem;background:transparent;color:inherit;font:inherit;cursor:pointer;min-height:44px}
+.reacoes-literature button[aria-pressed=true]{background:color-mix(in srgb,currentColor 15%,transparent);box-shadow:inset 0 0 0 2px currentColor;font-weight:bold}
+.reacoes-literature button:disabled{opacity:.55;cursor:default}.reacoes-literature :focus-visible{outline:2px solid currentColor;outline-offset:4px}
+.reacoes-nota{font-size:.76rem;opacity:.8}.reacoes-atualizar{font-size:.75rem!important}.reacoes-literature [hidden]{display:none!important}
+@media(max-width:500px){.reacoes-literature{padding:1rem}.reacoes-botoes button{flex:1}}

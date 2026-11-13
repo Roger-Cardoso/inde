@@ -1,0 +1,23 @@
+# Abertura do catálogo e prévia — 31/10/2026
+
+O log fornecido pelo usuário foi confrontado com os lançadores, o gerenciador de subprocessos e o ambiente deste computador. As correções estão no laboratório 0.5; processos que já estavam abertos precisam ser encerrados pelo usuário e reabertos pelo lançador atualizado.
+
+| Mensagem ou comportamento | Diagnóstico e tratamento |
+| --- | --- |
+| `Renderer compatibility: Cairo for Intel 8086:0102` | Informação da política já existente no INDE aceito. O backend Cairo é escolhido para essa GPU Intel antiga. Essa política foi mantida; uma escolha explícita de `GSK_RENDERER` continua prevalecendo. |
+| `No IM module matching GTK_IM_MODULE=ibus found` | O desktop solicita IBus, mas a instalação local não apresenta o módulo externo GTK4 correspondente. O lançador deixa o GTK escolher seu contexto quando esse override não tem módulo externo detectável; não força a mesma escolha no navegador. Outro método solicitado ou módulo IBus externo encontrado é preservado. Módulos embutidos podem continuar sendo escolhidos pelo próprio GTK. O percurso real foi retestado sem o aviso. |
+| Vários endereços `127.0.0.1` ao clicar na prévia | Cada clique antes encerrava/recriava o servidor. Agora a mesma geração reutiliza processo, porta e recibo. Uma geração nova recebe seu próprio servidor e pode mudar de porta. Duas aberturas pela interface real conservaram PID, porta e recibo. |
+| Navegador recebendo o perfil do INDE | Defeito confirmado no fluxo: `XDG_CONFIG_HOME` do perfil isolado era herdado pelo navegador. O lançador registra apenas as variáveis de desktop afetadas; a abertura restaura seus valores e sua ausência originais. O Chromium considera `XDG_CONFIG_HOME` na escolha do diretório de perfil. A correção evita que o perfil isolado do INDE determine o perfil do navegador. Perfis antigos não foram removidos. |
+| `Abrindo em uma sessão de navegador existente` | É uma mensagem do abridor/navegador; isoladamente não prova falha do Site. |
+| `libva ... iHD ... init failed` | Erro da inicialização de vídeo acelerado do navegador. A lista de plataformas do Intel Media Driver começa em gerações posteriores à GPU Sandy Bridge deste computador; isso sustenta a hipótese de driver inadequado para essa GPU. Não foi feita mudança de driver, configuração global de vídeo ou flags do navegador. A causa exata de cada processo do log não foi reproduzida. |
+| `Fontconfig ... Cannot load default config file` | Falha externa ao gerador, ainda sem causa exata confirmada. O arquivo `/etc/fonts/fonts.conf` existe no host inspecionado. Restaurar o ambiente do desktop elimina a herança das variáveis monitoradas, mas não permite afirmar que todo erro de Fontconfig esteja resolvido. |
+| `zygote ... Pipe quebrado`, `mojo ... Message ... rejected` | Mensagens internas do Chromium. O log fornecido não basta para atribuir cada ocorrência ao perfil, GPU ou processo. O projeto não desativa o sandbox nem encerra sessões do navegador para ocultá-las. |
+| `Created TensorFlow Lite XNNPACK delegate for CPU` | Mensagem de componente do navegador; não é um recibo de erro do INDE ou da edição pública. |
+
+A saída do abridor e do navegador fica em `outputs/web/ID-DA-GERACAO/navegador.log`, ao lado da pasta pública `site/`. O painel informa o caminho. O arquivo fica fora do ZIP público e é criado com permissão restrita ao proprietário. A URL continua sendo impressa; erro de abertura orienta abrir o endereço manualmente. Não se considera ausência de ruído no terminal prova de correção de vídeo ou fontes.
+
+O registro privado `previa-servidor.json` fica fora da raiz pública. A reabertura verifica um identificador aleatório e o hash do recibo em uma rota local, sem usar proxies HTTP do ambiente. O servidor continua limitado a loopback e aos arquivos do recibo. Encerrar o painel encerra apenas o servidor que ele criou; a sessão do navegador permanece independente.
+
+Validação: teste HTTP com abridor simulado, restauração de ambiente, log de erro retido, encerramento/remoção do controle; duas aberturas pela janela GTK; 55 testes de núcleo; capturas dos próprios widgets. Os percursos não alteraram os dados já usados pelo usuário. O log de navegador real fornecido permanece evidência externa; não se afirma que todos os seus avisos desapareceram.
+
+Fontes primárias consultadas: [Chromium: diretório de dados e variáveis de ambiente](https://chromium.googlesource.com/chromium/src.git/+/HEAD/docs/user_data_dir.md), [GTK: configuração de método de entrada](https://docs.gtk.org/gtk4/property.Settings.gtk-im-module.html), [Intel Media Driver: plataformas suportadas](https://github.com/intel/media-driver/blob/master/README.md).

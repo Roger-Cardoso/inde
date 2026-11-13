@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Leitor — __INDE_NOME__</title>
+    <style>
+        /* =========================================
+               VARIÁVEIS DE DESIGN UNIFICADAS
+        ========================================= */
+        :root {
+            --bg: #0b0c10;
+            --card: #11151c;
+            --accent: #66fcf1;
+            --accent-glow: rgba(102, 252, 241, 0.4);
+            --text: #c5c6c7;
+            --text-light: #ffffff;
+            --border: #1f2833;
+        } 
+
+        body.light {
+            --bg: #f0f2f5;
+            --card: #ffffff;
+            --accent: #0b8a80;
+            --accent-glow: rgba(11, 138, 128, 0.2);
+            --text: #4a4a4a;
+            --text-light: #1a1a1a;
+            --border: #d1d9e0;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            transition: background 0.3s, color 0.3s;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            margin: 0;
+            overflow: hidden;
+        }
+
+        /* --- BARRA SUPERIOR --- */
+        .top-bar {
+            background-color: var(--card);
+            border-bottom: 1px solid var(--border);
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: relative;
+            flex: 0 0 auto;
+            height: 60px;
+        } 
+
+        .btn-voltar { color: #a0a0a0; text-decoration: none; font-size: 0.9rem; font-weight: 500; transition: color 0.2s;}
+        .btn-voltar:hover { color: var(--accent); }
+        
+        .titulo-capitulo-nav { color: var(--accent); font-weight: bold; margin: 0; font-size: 1.1rem; }
+        
+        .progress-container { position: absolute; bottom: 0; left: 0; width: 100%; height: 3px; background: transparent; }
+        .progress-bar { height: 100%; width: 0%; background: var(--accent); box-shadow: 0 0 10px var(--accent-glow); transition: width 0.1s linear; }
+
+        /* --- MENU DE CONFIGURAÇÕES --- */
+        .menu-trigger { cursor: pointer; background: none; border: none; color: var(--text); font-size: 1.5rem; transition: color 0.2s;}
+        .menu-trigger:hover { color: var(--accent); }
+        .settings-menu {
+            background: var(--card); border: 1px solid var(--border); color: var(--text);
+            position: fixed; top: 70px; right: 20px; padding: 20px; border-radius: 8px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5); z-index: 200; display: none;
+        }
+        .settings-menu.active { display: block; animation: fadeIn 0.2s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+        
+        .setting-group { margin-bottom: 15px; }
+        .setting-group label { display: block; font-size: 0.85rem; color: #a0a0a0; margin-bottom: 8px; }
+        .btn-group { display: flex; gap: 10px; }
+        .btn-config {
+            background-color: transparent; color: var(--text); border: 1px solid var(--border);
+            padding: 6px 12px; border-radius: 4px; cursor: pointer; transition: 0.2s;
+        }
+        .btn-config:hover { border-color: var(--accent); color: var(--text-light); }
+
+        /* --- ÁREA DE LEITURA --- */
+        .container-leitura {
+            flex: 1;
+            overflow-y: auto;
+            padding: 40px 20px;
+            scroll-behavior: smooth;
+        }
+        .leitura-wrapper {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .titulo-interno { color: var(--text-light); text-align: center; margin-bottom: 30px; font-size: 2rem;}
+        .info-leitura { text-align: center; font-size: 0.85rem; color: #777; margin-bottom: 40px; }
+
+        #content-area { min-height: 50vh; line-height: 1.8; }
+        #content-area p { margin-bottom: 25px; text-align: justify; }
+
+        /* --- NAVEGAÇÃO INFERIOR --- */
+        .bottom-nav {
+            flex: 0 0 auto;
+            background: var(--card);
+            border-top: 1px solid var(--border);
+            padding: 15px 20px;
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+        }
+
+        .btn-nav {
+            background-color: transparent; color: var(--text); border: 1px solid var(--border);
+            padding: 10px 20px; border-radius: 6px; text-decoration: none; font-weight: bold; transition: 0.2s;
+        }
+        .btn-nav:hover:not(.disabled) { border-color: var(--accent); color: var(--accent); }
+        .btn-nav.disabled { opacity: 0.3; pointer-events: none; cursor: default; }
+        
+        /* ESTADO DE CARREGAMENTO */
+        .loading { text-align: center; color: #a0a0a0; padding: 50px; font-style: italic; }
+    </style>
+    <link rel="stylesheet" href="../css-global/leitor.css?v=20261030-identidades">
+    <link rel="icon" type="image/svg+xml" href="../assets/imagens/marca.svg">
+    <meta name="theme-color" content="#0c1216">
+    <link rel="stylesheet" href="../css-global/guia-cenas.css">
+    <link rel="stylesheet" href="../css-global/comentarios.css?v=20261030-comentarios2">
+    <link rel="stylesheet" href="../css-global/reacoes.css?v=20261030-1">
+</head>
+<body>
+
+    <header class="top-bar">
+        <a href="index-obra.html" data-link-obra class="btn-voltar"><span class="reader-brand">__INDE_NOME__<span>.</span></span><span class="reader-back">← Índice da obra</span></a>
+        <h3 class="titulo-capitulo-nav" id="top-title">Carregando...</h3>
+        
+        <button id="voltar-guia" class="btn-config" hidden>Guia de cenas</button>
+        <button id="abrir-sumario" class="menu-trigger" aria-label="Abrir sumário" aria-expanded="false" aria-controls="sumario">☰</button>
+        <button id="abrir-preferencias" class="menu-trigger" aria-label="Preferências de leitura" aria-expanded="false" aria-controls="settings-menu">Aa</button>
+        <button id="sair-foco" class="btn-config" hidden>Sair do foco</button>
+        <div class="progress-container">
+            <div id="progress-bar" class="progress-bar"></div>
+        </div>
+    </header>
+
+    <main class="container-leitura" id="scroll-area" tabindex="0" aria-label="Texto do capítulo">
+        <div class="leitura-wrapper">
+            <h1 class="titulo-interno" id="main-title">Preparando capítulo...</h1>
+            <div class="info-leitura" id="tempo-leitura"></div>
+            
+            <div id="guia-leitura"></div>
+            <p id="aviso-navegacao" role="status" hidden></p>
+            <div id="content-area">
+                <div class="loading">Injetando texto na página...</div>
+            </div>
+            <div id="contexto-capitulo"></div>
+            <nav class="navegacao-final" aria-label="Capítulos próximos"><a id="fim-prev"></a><a id="fim-next"></a></nav>
+            <section id="reacoes" aria-label="Reações ao capítulo" hidden></section>
+            <section id="comentarios" aria-label="Comentários do capítulo" hidden></section>
+        </div>
+    </main>
+
+    <footer class="bottom-nav">
+        <button disabled type="button" id="btn-concluir" class="btn-config">Concluir capítulo</button>
+        <a href="#" id="btn-prev" class="btn-nav disabled">← Anterior</a>
+        <a href="#" id="btn-next" class="btn-nav disabled">Próximo →</a>
+    </footer>
+
+    <button id="abrir-auxilios" class="atalho-auxilios" type="button" aria-controls="settings-menu" aria-expanded="false">Auxílios <span aria-hidden="true">✦</span></button>
+
+    <div id="painel-fundo" class="painel-fundo" hidden></div>
+    <aside id="sumario" class="painel-leitura painel-sumario" hidden aria-label="Sumário da obra">
+        <div class="painel-cabecalho"><h2>Sumário</h2><button id="fechar-sumario" aria-label="Fechar sumário">×</button></div>
+        <p id="sumario-obra"></p><input id="busca-sumario" type="search" placeholder="Buscar capítulo, saga, volume..." aria-label="Buscar no sumário">
+        <nav id="sumario-lista" aria-label="Capítulos da obra"></nav><a href="index-obra.html" data-link-obra class="voltar-obra">← Voltar à obra</a>
+    </aside>
+    <aside id="settings-menu" class="painel-leitura painel-preferencias" hidden aria-label="Preferências de leitura">
+        <div class="painel-cabecalho"><h2>Sua leitura</h2><button id="fechar-preferencias" aria-label="Fechar preferências">×</button></div>
+        <div id="auxilios-leitura"></div>
+        <label>Tema<select id="pref-tema" aria-label="Tema"><option value="dark">__INDE_NOME__ escuro</option><option value="light">Papel claro</option><option value="sepia">Sépia</option><option value="contrast">Alto contraste</option></select></label>
+        <label>Tamanho do texto <output id="valor-tamanho">19 px</output><input aria-label="Tamanho do texto" id="pref-tamanho" type="range" min="14" max="32" step="1"></label>
+        <details><summary>Ajustes de conforto</summary>
+            <label>Tipografia<select id="pref-fonte"><option value="literaria">Literária · Georgia</option><option value="classica">Clássica · Palatino</option><option value="moderna">Sem serifa · Verdana</option></select></label>
+            <label>Largura da coluna<select id="pref-largura"><option value="560">Estreita</option><option value="700">Confortável</option><option value="900">Ampla</option></select></label>
+            <label>Entrelinhas<input id="pref-entrelinha" type="range" min="1.4" max="2.4" step="0.05"></label>
+            <label>Espaço entre parágrafos<input id="pref-paragrafo" type="range" min="0.6" max="2.4" step="0.1"></label>
+            <label class="opcao"><input id="pref-recuo" type="checkbox">Recuo de parágrafo</label>
+        </details>
+        <label class="opcao"><input id="pref-ampliada" type="checkbox">Ampliar controles</label>
+        <label class="opcao"><input id="pref-foco" type="checkbox">Modo foco</label>
+        <button id="restaurar-preferencias" class="btn-config">Restaurar preferências</button>
+        <p class="aviso-local">Preferências e posição ficam salvas neste navegador.</p>
+    </aside>
+    <script src="../js-global/comentarios.js?v=20261031-enderecos1"></script>
+    <script src="../js-global/reacoes.js?v=20261031-enderecos1"></script>
+    <script src="../js-global/metadados.js?v=20261031-enderecos1"></script>
+    <script src="../js-global/contexto.js?v=20261031-enderecos1"></script>
+    <script src="../js-global/semantica.js?v=20261030-identidades"></script>
+    <script src="../js-global/guia-cenas.js?v=20261031-enderecos1"></script>
+    <script src="../js-global/leitor.js?v=20261031-enderecos1"></script>
+</body>
+</html>

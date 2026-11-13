@@ -1,0 +1,317 @@
+{
+  "diagnostics": {
+    "src/project/cartography.cpp": [
+      [
+        "2.0 * radius * std::asin",
+        "2.0 * static_cast<double>(radius) * std::asin"
+      ],
+      [
+        "          planet.radius_m / radians;",
+        "          static_cast<double>(planet.radius_m) / radians;"
+      ]
+    ],
+    "src/persistence/project_operation_store.cpp": [
+      [
+        "            const auto c = std::distance(names.begin(), found);",
+        "            // Column count was validated to at most 128.\n            const auto c = static_cast<int>(std::distance(names.begin(), found));"
+      ],
+      [
+        "sqlite3changeset_invert(bytes.size(), bytes.data(),",
+        "sqlite3changeset_invert(static_cast<int>(bytes.size()), bytes.data(),"
+      ],
+      [
+        "sqlite3changeset_apply(raw, bytes.size(),",
+        "sqlite3changeset_apply(raw, static_cast<int>(bytes.size()),"
+      ]
+    ],
+    "src/persistence/recovery_codec.cpp": [
+      [
+        "document(v.at(\"state\"), codec_version)",
+        "document(v.at(\"state\"), static_cast<int>(codec_version))"
+      ],
+      [
+        "document(v.at(\"baseline\"), codec_version)",
+        "document(v.at(\"baseline\"), static_cast<int>(codec_version))"
+      ]
+    ],
+    "src/persistence/semantic_codec.cpp": [
+      [
+        "throw std::runtime_error(\"Versão semântica inválida\");\n  return n;",
+        "throw std::runtime_error(\"Versão semântica inválida\");\n  return static_cast<std::uint32_t>(n);"
+      ]
+    ],
+    "src/persistence/semantic_store.cpp": [
+      [
+        "q.bind(args.size() + 1,",
+        "q.bind(static_cast<int>(args.size()) + 1,"
+      ],
+      [
+        "q.bind(args.size() + 2,",
+        "q.bind(static_cast<int>(args.size()) + 2,"
+      ]
+    ],
+    "src/persistence/sqlite_cartography_repository.cpp": [
+      [
+        "          {q.column_integer(2) / 1000000.0, q.column_integer(3) / 1000000.0},",
+        "          {static_cast<double>(q.column_integer(2)) / 1000000.0, static_cast<double>(q.column_integer(3)) / 1000000.0},"
+      ],
+      [
+        "        {q.column_integer(3) / 1000000.0, q.column_integer(4) / 1000000.0},",
+        "        {static_cast<double>(q.column_integer(3)) / 1000000.0, static_cast<double>(q.column_integer(4)) / 1000000.0},"
+      ],
+      [
+        "        q.column_integer(5) / 1000000.0,",
+        "        static_cast<double>(q.column_integer(5)) / 1000000.0,"
+      ]
+    ],
+    "src/application/cartography_service.cpp": [
+      [
+        "const double label_width = characters * 12.0;",
+        "const double label_width = static_cast<double>(characters) * 12.0;"
+      ]
+    ],
+    "src/application/production_packages.cpp": [
+      [
+        "std::string zip(const std::vector<std::pair<std::string, std::string>> &files) {\n  if (files.size() > 60000)\n    throw std::runtime_error(\"Pacote excede o limite ZIP32\");\n  std::string out, central;\n  std::set<std::string> names;\n  for (const auto &[name, data] : files) {\n    if (name.empty() || name.size() > 60000 || name.front() == '/' ||\n        name.find(\"..\") != std::string::npos || !names.insert(name).second ||\n        out.size() + data.size() > 128 * 1024 * 1024)\n      throw std::runtime_error(\n          \"Entrada de pacote inválida ou acima de 128 MiB\");\n    const auto pos = static_cast<std::uint32_t>(out.size()), sum = crc(data),\n               size = static_cast<std::uint32_t>(data.size());\n    le(out, 0x04034b50, 4);\n    le(out, 20, 2);\n    le(out, 0x800, 2);\n    le(out, 0, 2);\n    le(out, 0, 2);\n    le(out, 33, 2);\n    le(out, sum, 4);\n    le(out, size, 4);\n    le(out, size, 4);\n    le(out, name.size(), 2);\n    le(out, 0, 2);\n    out += name;\n    out += data;\n    le(central, 0x02014b50, 4);\n    le(central, 20, 2);\n    le(central, 20, 2);\n    le(central, 0x800, 2);\n    le(central, 0, 2);\n    le(central, 0, 2);\n    le(central, 33, 2);\n    le(central, sum, 4);\n    le(central, size, 4);\n    le(central, size, 4);\n    le(central, name.size(), 2);\n    le(central, 0, 2);\n    le(central, 0, 2);\n    le(central, 0, 2);\n    le(central, 0, 2);\n    le(central, 0, 4);\n    le(central, pos, 4);\n    central += name;\n  }\n  const auto pos = out.size();\n  out += central;\n  le(out, 0x06054b50, 4);\n  le(out, 0, 2);\n  le(out, 0, 2);\n  le(out, files.size(), 2);\n  le(out, files.size(), 2);\n  le(out, central.size(), 4);\n  le(out, pos, 4);\n  le(out, 0, 2);\n  return out;\n}\n",
+        "std::string zip(const std::vector<std::pair<std::string, std::string>> &files) {\n  if (files.size() > 60000)\n    throw std::runtime_error(\"Pacote excede o limite ZIP32\");\n  std::string out, central;\n  std::set<std::string> names;\n  for (const auto &[name, data] : files) {\n    if (name.empty() || name.size() > 60000 || name.front() == '/' ||\n        name.find(\"..\") != std::string::npos || !names.insert(name).second ||\n        out.size() + data.size() > 128 * 1024 * 1024)\n      throw std::runtime_error(\n          \"Entrada de pacote inválida ou acima de 128 MiB\");\n    const auto pos = static_cast<std::uint32_t>(out.size()), sum = crc(data),\n               size = static_cast<std::uint32_t>(data.size());\n    le(out, 0x04034b50, 4);\n    le(out, 20, 2);\n    le(out, 0x800, 2);\n    le(out, 0, 2);\n    le(out, 0, 2);\n    le(out, 33, 2);\n    le(out, sum, 4);\n    le(out, size, 4);\n    le(out, size, 4);\n    le(out, static_cast<std::uint32_t>(name.size()), 2);\n    le(out, 0, 2);\n    out += name;\n    out += data;\n    le(central, 0x02014b50, 4);\n    le(central, 20, 2);\n    le(central, 20, 2);\n    le(central, 0x800, 2);\n    le(central, 0, 2);\n    le(central, 0, 2);\n    le(central, 33, 2);\n    le(central, sum, 4);\n    le(central, size, 4);\n    le(central, size, 4);\n    le(central, static_cast<std::uint32_t>(name.size()), 2);\n    le(central, 0, 2);\n    le(central, 0, 2);\n    le(central, 0, 2);\n    le(central, 0, 2);\n    le(central, 0, 4);\n    le(central, pos, 4);\n    central += name;\n  }\n  const auto pos = out.size();\n  out += central;\n  le(out, 0x06054b50, 4);\n  le(out, 0, 2);\n  le(out, 0, 2);\n  le(out, static_cast<std::uint32_t>(files.size()), 2);\n  le(out, static_cast<std::uint32_t>(files.size()), 2);\n  le(out, static_cast<std::uint32_t>(central.size()), 4);\n  le(out, static_cast<std::uint32_t>(pos), 4);\n  le(out, 0, 2);\n  return out;\n}\n"
+      ]
+    ],
+    "src/ui/composition_page.cpp": [
+      [
+        "const int position = std::distance(order.begin(), i),",
+        "const auto position = std::distance(order.begin(), i),"
+      ],
+      [
+        "target >= static_cast<int>(order.size()))",
+        "static_cast<std::size_t>(target) >= order.size())"
+      ]
+    ],
+    "src/ui/cartography_workspace_view.cpp": [
+      [
+        "scene_.cache_bytes / 1024.0",
+        "static_cast<double>(scene_.cache_bytes) / 1024.0"
+      ],
+      [
+        "scene_.render_bytes / 1024.0",
+        "static_cast<double>(scene_.render_bytes) / 1024.0"
+      ]
+    ],
+    "src/ui/editor_color_picker.cpp": [
+      [
+        "color.set_rgba(r + m, g + m, b + m, 1);",
+        "color.set_rgba(static_cast<float>(r + m), static_cast<float>(g + m),\n                 static_cast<float>(b + m), 1);"
+      ],
+      [
+        "red_.set_value(std::lround(color_.get_red() * 255));",
+        "red_.set_value(std::round(color_.get_red() * 255));"
+      ],
+      [
+        "green_.set_value(std::lround(color_.get_green() * 255));",
+        "green_.set_value(std::round(color_.get_green() * 255));"
+      ],
+      [
+        "blue_.set_value(std::lround(color_.get_blue() * 255));",
+        "blue_.set_value(std::round(color_.get_blue() * 255));"
+      ],
+      [
+        "value.set_rgba(red_.get_value() / 255, green_.get_value() / 255,\n                 blue_.get_value() / 255, 1);",
+        "value.set_rgba(static_cast<float>(red_.get_value() / 255),\n                 static_cast<float>(green_.get_value() / 255),\n                 static_cast<float>(blue_.get_value() / 255), 1);"
+      ]
+    ],
+    "src/ui/writing_workspace_distribution.cpp": [
+      [
+        "100.0 * row.characters / report.characters",
+        "100.0 * static_cast<double>(row.characters) / static_cast<double>(report.characters)"
+      ],
+      [
+        "                                  report.characters\n",
+        "                                  static_cast<double>(report.characters)\n"
+      ],
+      [
+        "                    c.state.selection.cursor));",
+        "                    static_cast<int>(c.state.selection.cursor)));"
+      ]
+    ],
+    "tests/core/structural_tree_tests.cpp": [
+      [
+        "StructuralNode volume{\n      inde::project::new_uuid(),\n      work_id,\n      std::nullopt,\n      inde::project::StructuralNodeType::Volume,\n      \"Volume I\",\n      \"\",\n      \"\",\n      \"\",\n      \"Planejamento\",\n      1000,\n      now,\n      now}",
+        "StructuralNode volume{\n      inde::project::new_uuid(),\n      work_id,\n      std::nullopt,\n      inde::project::StructuralNodeType::Volume,\n      \"Volume I\",\n      \"\",\n      \"\",\n      \"\",\n      \"Planejamento\",\n      1000,\n      now,\n      now, {}, {}, {}, {}}"
+      ],
+      [
+        "StructuralNode chapter{\n      inde::project::new_uuid(),\n      work_id,\n      volume.id,\n      inde::project::StructuralNodeType::Chapter,\n      \"Capítulo 1\",\n      \"\",\n      \"\",\n      \"\",\n      \"Planejamento\",\n      1000,\n      now,\n      now}",
+        "StructuralNode chapter{\n      inde::project::new_uuid(),\n      work_id,\n      volume.id,\n      inde::project::StructuralNodeType::Chapter,\n      \"Capítulo 1\",\n      \"\",\n      \"\",\n      \"\",\n      \"Planejamento\",\n      1000,\n      now,\n      now, {}, {}, {}, {}}"
+      ],
+      [
+        "StructuralNode scene{inde::project::new_uuid(),\n                                      work_id,\n                                      chapter.id,\n                                      inde::project::StructuralNodeType::Scene,\n                                      \"Cena 1\",\n                                      \"\",\n                                      \"\",\n                                      \"\",\n                                      \"Planejamento\",\n                                      1000,\n                                      now,\n                                      now}",
+        "StructuralNode scene{inde::project::new_uuid(),\n                                      work_id,\n                                      chapter.id,\n                                      inde::project::StructuralNodeType::Scene,\n                                      \"Cena 1\",\n                                      \"\",\n                                      \"\",\n                                      \"\",\n                                      \"Planejamento\",\n                                      1000,\n                                      now,\n                                      now, {}, {}, {}, {}}"
+      ],
+      [
+        "nodes.push_back({root_id, work_id, std::nullopt,\n                   inde::project::StructuralNodeType::Volume, \"Volume\", \"\", \"\",\n                   \"\", \"Planejamento\", 1000, now, now}",
+        "nodes.push_back({root_id, work_id, std::nullopt,\n                   inde::project::StructuralNodeType::Volume, \"Volume\", \"\", \"\",\n                   \"\", \"Planejamento\", 1000, now, now, {}, {}, {}, {}}"
+      ],
+      [
+        "nodes.push_back({id, work_id, root_id,\n                     inde::project::StructuralNodeType::Scene,\n                     \"Cena \" + std::to_string(i), \"\", \"\", \"\", \"Planejamento\",\n                     i * 1000LL, now, now}",
+        "nodes.push_back({id, work_id, root_id,\n                     inde::project::StructuralNodeType::Scene,\n                     \"Cena \" + std::to_string(i), \"\", \"\", \"\", \"Planejamento\",\n                     i * 1000LL, now, now, {}, {}, {}, {}}"
+      ],
+      [
+        "const std::vector<StructuralNode> nodes{\n      {\"part-a\", work, std::nullopt, StructuralNodeType::Part, \"Abertura\", \"\",\n       \"\", \"\", \"Planejamento\", 1000, stamp, stamp, part_type, \"Parte\", \"1\"},\n      {\"part-b\", work, std::nullopt, StructuralNodeType::Part, \"Abertura\", \"\",\n       \"\", \"\", \"Planejamento\", 2000, stamp, stamp, part_type, \"Parte\", \"2\"},\n      {\"chapter-a\", work, std::string{\"part-b\"}, StructuralNodeType::Chapter,\n       \"Chegada\", \"\", \"\", \"\", \"Planejamento\", 2000, stamp, stamp, chapter_type,\n       \"Capítulo\", \"2\"},\n      {\"chapter-b\", work, std::string{\"part-b\"}, StructuralNodeType::Chapter,\n       \"Chegada\", \"\", \"\", \"\", \"Planejamento\", 1000, stamp, stamp, chapter_type,\n       \"Capítulo\", \"1\"},\n      {\"custom\", work, std::string{\"chapter-a\"}, StructuralNodeType::Custom,\n       \"Intervalo\", \"\", \"\", \"Interlúdio\", \"Planejamento\", 1000, stamp, stamp,\n       \"20000000-0000-4000-8000-000000000001\", \"Interlúdio\", \"I\"}}",
+        "const std::vector<StructuralNode> nodes{\n      {\"part-a\", work, std::nullopt, StructuralNodeType::Part, \"Abertura\", \"\",\n       \"\", \"\", \"Planejamento\", 1000, stamp, stamp, part_type, \"Parte\", \"1\", {}},\n      {\"part-b\", work, std::nullopt, StructuralNodeType::Part, \"Abertura\", \"\",\n       \"\", \"\", \"Planejamento\", 2000, stamp, stamp, part_type, \"Parte\", \"2\", {}},\n      {\"chapter-a\", work, std::string{\"part-b\"}, StructuralNodeType::Chapter,\n       \"Chegada\", \"\", \"\", \"\", \"Planejamento\", 2000, stamp, stamp, chapter_type,\n       \"Capítulo\", \"2\", {}},\n      {\"chapter-b\", work, std::string{\"part-b\"}, StructuralNodeType::Chapter,\n       \"Chegada\", \"\", \"\", \"\", \"Planejamento\", 1000, stamp, stamp, chapter_type,\n       \"Capítulo\", \"1\", {}},\n      {\"custom\", work, std::string{\"chapter-a\"}, StructuralNodeType::Custom,\n       \"Intervalo\", \"\", \"\", \"Interlúdio\", \"Planejamento\", 1000, stamp, stamp,\n       \"20000000-0000-4000-8000-000000000001\", \"Interlúdio\", \"I\", {}}}"
+      ]
+    ],
+    "tests/core/sqlite_import_tests.cpp": [
+      [
+        "StructuralNode parent{\n      inde::project::new_uuid(),\n      work.id,\n      std::nullopt,\n      inde::project::StructuralNodeType::Chapter,\n      \"Capítulo\",\n      \"Subtítulo\",\n      \"Sinopse do capítulo\",\n      \"\",\n      \"Planejamento\",\n      2000,\n      now,\n      now}",
+        "StructuralNode parent{\n      inde::project::new_uuid(),\n      work.id,\n      std::nullopt,\n      inde::project::StructuralNodeType::Chapter,\n      \"Capítulo\",\n      \"Subtítulo\",\n      \"Sinopse do capítulo\",\n      \"\",\n      \"Planejamento\",\n      2000,\n      now,\n      now, {}, {}, {}, {}}"
+      ],
+      [
+        "StructuralNode child{inde::project::new_uuid(),\n                                      work.id,\n                                      parent.id,\n                                      inde::project::StructuralNodeType::Scene,\n                                      \"Cena\",\n                                      \"\",\n                                      \"Sinopse da cena\",\n                                      \"\",\n                                      \"Planejamento\",\n                                      1000,\n                                      now,\n                                      now}",
+        "StructuralNode child{inde::project::new_uuid(),\n                                      work.id,\n                                      parent.id,\n                                      inde::project::StructuralNodeType::Scene,\n                                      \"Cena\",\n                                      \"\",\n                                      \"Sinopse da cena\",\n                                      \"\",\n                                      \"Planejamento\",\n                                      1000,\n                                      now,\n                                      now, {}, {}, {}, {}}"
+      ]
+    ],
+    "tests/core/structural_model_tests.cpp": [
+      [
+        "StructuralNode valid{\n      inde::project::new_uuid(),\n      work_id,\n      std::nullopt,\n      inde::project::StructuralNodeType::Chapter,\n      \"Válido\",\n      \"\",\n      \"\",\n      \"\",\n      \"Planejamento\",\n      1000,\n      now,\n      now}",
+        "StructuralNode valid{\n      inde::project::new_uuid(),\n      work_id,\n      std::nullopt,\n      inde::project::StructuralNodeType::Chapter,\n      \"Válido\",\n      \"\",\n      \"\",\n      \"\",\n      \"Planejamento\",\n      1000,\n      now,\n      now, {}, {}, {}, {}}"
+      ],
+      [
+        "StructuralNode orphan{inde::project::new_uuid(),\n                                       work_id,\n                                       inde::project::new_uuid(),\n                                       inde::project::StructuralNodeType::Scene,\n                                       \"Órfão\",\n                                       \"\",\n                                       \"\",\n                                       \"\",\n                                       \"Planejamento\",\n                                       1000,\n                                       now,\n                                       now}",
+        "StructuralNode orphan{inde::project::new_uuid(),\n                                       work_id,\n                                       inde::project::new_uuid(),\n                                       inde::project::StructuralNodeType::Scene,\n                                       \"Órfão\",\n                                       \"\",\n                                       \"\",\n                                       \"\",\n                                       \"Planejamento\",\n                                       1000,\n                                       now,\n                                       now, {}, {}, {}, {}}"
+      ]
+    ],
+    "tests/core/narrative_tests.cpp": [
+      [
+        "NarrativeRelation noncanonical{\n      inde::project::new_uuid(), symmetric.id, upper, lower,\n      \"Ordem invertida direta\",  now,          now}",
+        "NarrativeRelation noncanonical{\n      inde::project::new_uuid(), symmetric.id, upper, lower,\n      \"Ordem invertida direta\",  now,          now, {}, {}, {}}"
+      ]
+    ],
+    "tests/core/writing_tests.cpp": [
+      [
+        "text_references({source.id, false})",
+        "text_references({source.id, false, std::nullopt})"
+      ],
+      [
+        "text_references({target.id, true})",
+        "text_references({target.id, true, std::nullopt})",
+        7
+      ],
+      [
+        "TextReferenceQuery{target.id, true}",
+        "TextReferenceQuery{target.id, true, std::nullopt}"
+      ]
+    ],
+    "tests/cartography_tests.cpp": [
+      [
+        "first.render_bytes / 1024.0",
+        "static_cast<double>(first.render_bytes) / 1024.0"
+      ]
+    ],
+    "src/ui/writing_workspace_semantics.cpp": [
+      [
+        "buffer->get_iter_at_offset(k->start_offset)",
+        "buffer->get_iter_at_offset(static_cast<int>(k->start_offset))"
+      ],
+      [
+        "buffer->get_iter_at_offset(k->end_offset)",
+        "buffer->get_iter_at_offset(static_cast<int>(k->end_offset))"
+      ]
+    ],
+    "src/ui/writing_workspace_semantic_fields.cpp": [
+      [
+        "#include <memory>",
+        "#include <memory>\n#include <limits>"
+      ],
+      [
+        "        selected_version = std::stoul(type_key->substr(pos + 1));",
+        "        const auto parsed_version = std::stoul(type_key->substr(pos + 1));\n        if (parsed_version > std::numeric_limits<std::uint32_t>::max())\n          throw std::runtime_error(\"Versão do tipo fora do limite suportado\");\n        selected_version = static_cast<std::uint32_t>(parsed_version);"
+      ]
+    ]
+  },
+  "performance": {
+    "src/application/text_search.cpp": [
+      [
+        "  IndexedText result;\n  for (const char *cursor",
+        "  IndexedText result;\n  // Scalar count is exact after validation; reserve once instead of growing\n  // three containers while scanning a long document.\n  const auto characters = static_cast<std::size_t>(g_utf8_strlen(text.data(), static_cast<gssize>(text.size())));\n  result.folded.reserve(text.size());\n  result.boundaries.reserve(characters + 1);\n  result.scalars.reserve(characters);\n  for (const char *cursor"
+      ],
+      [
+        "    else {\n      auto *folded = g_utf8_casefold(cursor, next - cursor);",
+        "    else if (static_cast<unsigned char>(*cursor) < 0x80U) {\n      // ASCII case folding has no expansion; GLib need not allocate per scalar.\n      result.folded.push_back(g_ascii_tolower(*cursor));\n    } else {\n      auto *folded = g_utf8_casefold(cursor, next - cursor);"
+      ]
+    ],
+    "src/application/proofreading_service.cpp": [
+      [
+        "struct Utf8Unit {\n  char32_t value{};\n  std::size_t byte{};\n  std::size_t character{};\n};",
+        "struct Utf8Unit {\n  std::size_t byte{};\n  char32_t value{};\n};\n// The vector index is already the scalar offset. Do not store it per unit.\nstatic_assert(sizeof(Utf8Unit) <= 2 * sizeof(std::size_t));"
+      ],
+      [
+        "    result.push_back({value, byte, character});",
+        "    result.push_back({byte, value});"
+      ],
+      [
+        "            units[index].character,\n",
+        "            index,\n"
+      ],
+      [
+        "                      units[first].character, index - first, first, index});\n",
+        "                      first, index - first, first, index});\n"
+      ],
+      [
+        "          return word.start == units[index].character;\n",
+        "          return word.start == index;\n"
+      ],
+      [
+        "append({project::TextIssueKind::Grammar,\n              units[first].character,\n              index - first,\n              std::string(index - first, ' '),\n              \"Há espaços consecutivos entre palavras.\",",
+        "append({project::TextIssueKind::Grammar,\n              first,\n              index - first,\n              std::string(index - first, ' '),\n              \"Há espaços consecutivos entre palavras.\","
+      ],
+      [
+        "append({project::TextIssueKind::Grammar,\n              units[first].character,\n              index - first,\n              std::string(index - first, ' '),\n              \"Não se usa espaço antes deste sinal de pontuação.\",",
+        "append({project::TextIssueKind::Grammar,\n              first,\n              index - first,\n              std::string(index - first, ' '),\n              \"Não se usa espaço antes deste sinal de pontuação.\","
+      ],
+      [
+        "      if (is_all_caps_abbreviation(word, units) || custom_words.contains(fold(word.text)))\n        continue;\n      const auto key = fold(word.text);",
+        "      if (is_all_caps_abbreviation(word, units))\n        continue;\n      const auto key = fold(word.text);\n      if (custom_words.contains(key))\n        continue;"
+      ],
+      [
+        "  std::vector<Utf8Unit> result;",
+        "  std::vector<Utf8Unit> result;\n  result.reserve(std::min<std::size_t>(text.size(), 4096));"
+      ],
+      [
+        "  std::string result;\n  for (const auto &unit : decode_utf8(value))",
+        "  std::string result;\n  result.reserve(value.size());\n  for (const auto &unit : decode_utf8(value))"
+      ],
+      [
+        "        const auto token = std::ranges::find_if(tokens, [&](const auto &word) {\n          return word.start == index;\n        });\n        if (token != tokens.end()) {",
+        "        const auto token = std::lower_bound(tokens.begin(), tokens.end(), index,\n            [](const WordToken &word, std::size_t offset) { return word.start < offset; });\n        if (token != tokens.end() && token->start == index) {"
+      ],
+      [
+        "std::vector<Utf8Unit> decode_utf8(const std::string &text,\n                                  std::stop_token cancellation = {}) {\n  std::vector<Utf8Unit> result;\n  result.reserve(std::min<std::size_t>(text.size(), 4096));\n  for (std::size_t byte = 0, character = 0; byte < text.size(); ++character) {\n    if ((character & 4095U) == 0 && cancellation.stop_requested())\n      return {};\n    const auto first = static_cast<unsigned char>(text[byte]);\n    char32_t value = first;\n    std::size_t count = 1;\n    if ((first & 0xe0U) == 0xc0U && byte + 1 < text.size()) {\n      value = first & 0x1fU;\n      count = 2;\n    } else if ((first & 0xf0U) == 0xe0U && byte + 2 < text.size()) {\n      value = first & 0x0fU;\n      count = 3;\n    } else if ((first & 0xf8U) == 0xf0U && byte + 3 < text.size()) {\n      value = first & 0x07U;\n      count = 4;\n    }\n    bool valid = count > 1;\n    for (std::size_t offset = 1; valid && offset < count; ++offset) {\n      const auto continuation = static_cast<unsigned char>(text[byte + offset]);\n      if ((continuation & 0xc0U) != 0x80U) {\n        valid = false;\n        break;\n      }\n      value = (value << 6U) | (continuation & 0x3fU);\n    }\n    if (!valid) {\n      value = first;\n      count = 1;\n    }\n    result.push_back({byte, value});\n    byte += count;\n  }\n  return result;\n}\n",
+        "Utf8Unit read_unit(const std::string &text, std::size_t &byte) {\n  const auto start = byte;\n  const auto first = static_cast<unsigned char>(text[byte]);\n  char32_t value = first;\n  std::size_t count = 1;\n  if ((first & 0xe0U) == 0xc0U && byte + 1 < text.size()) {\n    value = first & 0x1fU;\n    count = 2;\n  } else if ((first & 0xf0U) == 0xe0U && byte + 2 < text.size()) {\n    value = first & 0x0fU;\n    count = 3;\n  } else if ((first & 0xf8U) == 0xf0U && byte + 3 < text.size()) {\n    value = first & 0x07U;\n    count = 4;\n  }\n  bool valid = count > 1;\n  for (std::size_t offset = 1; valid && offset < count; ++offset) {\n    const auto continuation = static_cast<unsigned char>(text[byte + offset]);\n    if ((continuation & 0xc0U) != 0x80U) {\n      valid = false;\n      break;\n    }\n    value = (value << 6U) | (continuation & 0x3fU);\n  }\n  if (!valid) {\n    value = first;\n    count = 1;\n  }\n  byte += count;\n  return {start, value};\n}\nstd::vector<Utf8Unit> decode_utf8(const std::string &text,\n                                  std::stop_token cancellation = {}) {\n  std::vector<Utf8Unit> result;\n  result.reserve(std::min<std::size_t>(text.size(), 4096));\n  for (std::size_t byte = 0; byte < text.size();) {\n    if ((result.size() & 4095U) == 0 && cancellation.stop_requested()) return {};\n    result.push_back(read_unit(text, byte));\n  }\n  return result;\n}\n"
+      ],
+      [
+        "std::string fold(const std::string &value) {\n  std::string result;\n  result.reserve(value.size());\n  for (const auto &unit : decode_utf8(value))\n    append_utf8(result, lower(unit.value));\n  return result;\n}\n",
+        "std::string fold(const std::string &value) {\n  std::string result;\n  result.reserve(value.size());\n  for (std::size_t byte = 0; byte < value.size();)\n    append_utf8(result, lower(read_unit(value, byte).value));\n  return result;\n}\n"
+      ]
+    ],
+    "src/application/work_production.cpp": [
+      [
+        "  std::map<std::string, project::StructuralNode> index;\n  std::map<std::string, std::vector<project::StructuralNode>> children;\n  for (const auto &n : nodes)\n    if (n.id.empty() || !index.emplace(n.id, n).second)\n      throw std::runtime_error(\"Identidade editorial vazia/duplicada\");\n  for (const auto &n : nodes) {\n    if (n.parent_id && !index.contains(*n.parent_id))\n      throw std::runtime_error(\"Estrutura possui ancestral ausente\");\n    children[n.parent_id.value_or(\"\")].push_back(n);\n  }\n  for (auto &[parent, siblings] : children) {\n    (void)parent;\n    std::sort(siblings.begin(), siblings.end(),\n              [](auto &a, auto &b) { return a.position < b.position; });\n    for (std::size_t i = 1; i < siblings.size(); ++i)\n      if (siblings[i].position == siblings[i - 1].position)\n        throw std::runtime_error(\"Ordem entre irmãos ambígua; organize no \"\n                                 \"Manuscrito antes de produzir\");\n  }\n  std::vector<project::StructuralNode> out;\n  std::set<std::string> visiting;\n  std::function<void(const std::string &, int)> walk = [&](const auto &parent,\n                                                           int depth) {\n    if (depth > 64)\n      throw std::runtime_error(\"Estrutura excede 64 níveis\");\n    for (const auto &n : children[parent]) {\n      if (!visiting.insert(n.id).second)\n        throw std::runtime_error(\"Ciclo na estrutura editorial\");\n      out.push_back(n);\n      walk(n.id, depth + 1);\n    }\n  };\n",
+        "  std::set<std::string> index;\n  std::map<std::string, std::vector<const project::StructuralNode *>> children;\n  for (const auto &n : nodes)\n    if (n.id.empty() || !index.insert(n.id).second)\n      throw std::runtime_error(\"Identidade editorial vazia/duplicada\");\n  for (const auto &n : nodes) {\n    if (n.parent_id && !index.contains(*n.parent_id))\n      throw std::runtime_error(\"Estrutura possui ancestral ausente\");\n    children[n.parent_id.value_or(\"\")].push_back(&n);\n  }\n  for (auto &[parent, siblings] : children) {\n    (void)parent;\n    std::sort(siblings.begin(), siblings.end(),\n              [](const auto *a, const auto *b) { return a->position < b->position; });\n    for (std::size_t i = 1; i < siblings.size(); ++i)\n      if (siblings[i]->position == siblings[i - 1]->position)\n        throw std::runtime_error(\"Ordem entre irmãos ambígua; organize no \"\n                                 \"Manuscrito antes de produzir\");\n  }\n  std::vector<project::StructuralNode> out;\n  out.reserve(nodes.size());\n  std::set<std::string> visiting;\n  std::function<void(const std::string &, int)> walk = [&](const auto &parent,\n                                                           int depth) {\n    if (depth > 64)\n      throw std::runtime_error(\"Estrutura excede 64 níveis\");\n    const auto found = children.find(parent);\n    if (found == children.end()) return;\n    for (const auto *n : found->second) {\n      if (!visiting.insert(n->id).second)\n        throw std::runtime_error(\"Ciclo na estrutura editorial\");\n      out.push_back(*n);\n      walk(n->id, depth + 1);\n    }\n  };\n"
+      ],
+      [
+        "  std::map<std::string, project::Document> by_id;\n  for (const auto &d : docs)\n    if (!by_id.emplace(d.id, d).second)",
+        "  // Input documents outlive this synchronous preparation. Index references,\n  // not full copies of every body and its semantic layers.\n  std::map<std::string, const project::Document *> by_id;\n  for (const auto &d : docs)\n    if (!by_id.emplace(d.id, &d).second)"
+      ],
+      [
+        "      const auto d = by_id.find(id);\n      if (d == by_id.end() || d->second.editorial_node_id != n.id)\n        throw std::runtime_error(\n            \"Documento ausente ou não situado nesta unidade\");\n      valid_text(d->second.content);\n      valid_text(d->second.title);\n      const auto characters = project::utf8_character_count(d->second.content);\n      for (const auto &s : d->second.formatting) {\n        project::validate_format_span(s);\n        if (s.start_offset >= s.end_offset || s.end_offset > characters)\n          throw std::runtime_error(\"Formatação fora do texto\");\n      }\n      bytes += d->second.content.size();\n      if (bytes > 8 * 1024 * 1024)\n        throw std::runtime_error(\n            \"Produção excede 8 MiB de texto; nada foi truncado\");\n      if (it->second.documents.size() > 1000)\n        throw std::runtime_error(\"Unidade excede 1000 Documentos selecionados\");\n      const auto state = editorial_state(d->second);\n      if (state.state != \"approved\" || state.outdated)\n        out.limitations.push_back(\n            \"Documento sem decisão de revisão vigente aprovada: \" +\n            d->second.title);\n      out.preview += \"\\n\" + d->second.content + \"\\n\";\n      unit.documents.push_back(d->second);\n",
+        "      const auto d = by_id.find(id);\n      if (d == by_id.end() || d->second->editorial_node_id != n.id)\n        throw std::runtime_error(\n            \"Documento ausente ou não situado nesta unidade\");\n      valid_text(d->second->content);\n      valid_text(d->second->title);\n      const auto characters = project::utf8_character_count(d->second->content);\n      for (const auto &s : d->second->formatting) {\n        project::validate_format_span(s);\n        if (s.start_offset >= s.end_offset || s.end_offset > characters)\n          throw std::runtime_error(\"Formatação fora do texto\");\n      }\n      bytes += d->second->content.size();\n      if (bytes > 8 * 1024 * 1024)\n        throw std::runtime_error(\n            \"Produção excede 8 MiB de texto; nada foi truncado\");\n      if (it->second.documents.size() > 1000)\n        throw std::runtime_error(\"Unidade excede 1000 Documentos selecionados\");\n      const auto state = editorial_state(*d->second);\n      if (state.state != \"approved\" || state.outdated)\n        out.limitations.push_back(\n            \"Documento sem decisão de revisão vigente aprovada: \" +\n            d->second->title);\n      out.preview += \"\\n\" + d->second->content + \"\\n\";\n      unit.documents.push_back(*d->second);\n"
+      ],
+      [
+        "  std::size_t bytes{}, body_count{};",
+        "  out.units.reserve(choices.size());\n  std::size_t bytes{}, body_count{};"
+      ],
+      [
+        "    ProductionUnit unit{n, depth[n.id], it->second.heading, {}};",
+        "    ProductionUnit unit{n, depth[n.id], it->second.heading, {}};\n    unit.documents.reserve(std::min<std::size_t>(it->second.documents.size(), 1000));"
+      ]
+    ]
+  }
+}

@@ -1,0 +1,7 @@
+/* Native model renderer, COMIC-01: shape styling, centered text and safe fallback. */
+.balloon .bubble-scroll{display:flex;flex-direction:column}.balloon .bubble-text{width:100%;flex-shrink:0}.valign-center .bubble-text{margin-block:auto}.valign-end .bubble-text{margin-block-start:auto}
+.shape-oval{border-radius:50%;padding:12px 18px}.shape-caption{border-radius:3px}.shape-cloud{border-radius:40%;border-style:dashed}.shape-shout{border-radius:8px;border-width:4px}
+.balloon.text,.balloon.sfx{border:0;background:transparent;box-shadow:none;border-radius:0}.balloon.sfx{font-weight:900}
+.comic.layout-strip{display:block;max-width:1000px}.comic.layout-strip .comic-panel{margin-bottom:30px}.mode-mobile .balloon{height:auto!important;min-height:120px;max-height:320px}.mode-mobile .bubble-scroll{height:auto;max-height:280px}.mode-mobile .mobile-art{position:relative;aspect-ratio:var(--ratio);overflow:hidden}.mode-mobile .mobile-art .art,.mode-mobile .mobile-art .empty-art{position:absolute;height:100%}.mode-mobile .mobile-art .balloon.text,.mode-mobile .mobile-art .balloon.sfx{position:absolute!important;width:var(--ew)!important;height:var(--eh)!important;left:var(--ex)!important;top:var(--ey)!important;min-height:0;font-size:clamp(12px,var(--font-fluid),var(--font-px));padding:6px}.mode-mobile .mobile-art .balloon::before{display:none}
+
+.reader-header a{color:var(--accent)}.transcript-text{white-space:normal}.sfx-gloss{font-family:var(--font-fallback),sans-serif}

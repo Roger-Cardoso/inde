@@ -1,0 +1,10 @@
+{
+  "origem": "Estúdio Webcomic 0.4 criado neste chat",
+  "data": "2026-11-02",
+  "papel": "Somente recursos públicos de leitura; modelo, persistência e geração de HTML novos em C++20",
+  "sha256_origem": {
+    "reader.css": "87a1c0acd7827bee0725eec4de0f2bbc2d8b017a2d1efb1f12bd7cdbff61a37a",
+    "reader.js": "cf91010f5ba49f150a473729a9e7c56edc1e8932a00bcbf8b1e2f53b5ffbb5d9",
+    "international.css": "3e19f177ef71902bba4352c15b5dbb85014302ae3263ea149bbace13c2622567"
+  }
+}

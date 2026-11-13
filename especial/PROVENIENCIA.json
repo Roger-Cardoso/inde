@@ -1,0 +1,175 @@
+{
+  "data": "2026-10-31",
+  "origem": "Literature/UniLit v3 local",
+  "arquivos": [
+    {
+      "origem": "scripts/configuracao_site.py",
+      "arquivo": "motor/configuracao_site.py",
+      "sha256_origem": "33b59100a5d73c9c719ec3a48621028c58a6cc74f6c635b6e52c6fa4978f76e7",
+      "sha256_copia_atual": "591c8e80d1f29f94aa7e435cafc6eafa5487e9e7ad17776a1fede146ad464e99",
+      "adaptado": true
+    },
+    {
+      "origem": "scripts/contrato_semantico.py",
+      "arquivo": "motor/contrato_semantico.py",
+      "sha256_origem": "3094d06b48dcfd350ecb92207d478febba4693fff159553eccfbffd7ee4d63ee",
+      "sha256_copia_atual": "3094d06b48dcfd350ecb92207d478febba4693fff159553eccfbffd7ee4d63ee",
+      "adaptado": false
+    },
+    {
+      "origem": "scripts/enderecos.py",
+      "arquivo": "motor/enderecos.py",
+      "sha256_origem": "c23aed54bfa17fa61c0d638068fbe62e563762cefbbb0b83b0309c3f28b7ac39",
+      "sha256_copia_atual": "dc7e8af02a0c3db6b13352ebdb2ef817b69bbf617f1667e09927727551838528",
+      "adaptado": true
+    },
+    {
+      "origem": "scripts/estado_publicacao.py",
+      "arquivo": "motor/estado_publicacao.py",
+      "sha256_origem": "7f4c4d6b556e53c41b949e3feda6ad38bd29a55a4dc2d995344db12e97395fae",
+      "sha256_copia_atual": "7f4c4d6b556e53c41b949e3feda6ad38bd29a55a4dc2d995344db12e97395fae",
+      "adaptado": false
+    },
+    {
+      "origem": "scripts/exportar_offline.py",
+      "arquivo": "motor/exportar_offline.py",
+      "sha256_origem": "a402fa4f32037076ced82b0476d3fe84232f59b759b3c3ea88f0ffe8a6523ab8",
+      "sha256_copia_atual": "6d6ebd04fe4b599656951b9c1e8cee7b4b6b7d1f1317876cb0546b56b2feda9f",
+      "adaptado": true
+    },
+    {
+      "origem": "scripts/gerar_site.py",
+      "arquivo": "motor/gerar_site.py",
+      "sha256_origem": "93b7a8d6469e98ef925f94c0b3c2178afa82de92552c571b0da82a4bdcb135dc",
+      "sha256_copia_atual": "a7b5416f5acf5258d66255243e67fa391be53a6b1d293bbd76de7080c9df1d4f",
+      "adaptado": true
+    },
+    {
+      "origem": "scripts/hierarquia.py",
+      "arquivo": "motor/hierarquia.py",
+      "sha256_origem": "9229d31cebb93b702b859ea664c4b48d7eed58b0f5965fab334f89aac3dd6932",
+      "sha256_copia_atual": "9229d31cebb93b702b859ea664c4b48d7eed58b0f5965fab334f89aac3dd6932",
+      "adaptado": false
+    },
+    {
+      "origem": "scripts/personagens.py",
+      "arquivo": "motor/personagens.py",
+      "sha256_origem": "fc6d727f6b9d3572be11b3be4d1c5b85e6088c4b97e81cee06c72fbe4b1e47f2",
+      "sha256_copia_atual": "fc6d727f6b9d3572be11b3be4d1c5b85e6088c4b97e81cee06c72fbe4b1e47f2",
+      "adaptado": false
+    },
+    {
+      "origem": "css-global/guia-cenas.css",
+      "arquivo": "recursos/css-global/guia-cenas.css",
+      "sha256_origem": "7fbd008ed504affdf38f791ceea2c8ad5e1d0e1c3087a5d2fb22749c4c71768b",
+      "sha256_copia_atual": "7fbd008ed504affdf38f791ceea2c8ad5e1d0e1c3087a5d2fb22749c4c71768b",
+      "adaptado": false
+    },
+    {
+      "origem": "css-global/obra.css",
+      "arquivo": "recursos/css-global/obra.css",
+      "sha256_origem": "0c7d9085b734071d8f8ba8fcf79a860428ee539ecc3faca3a8bd0d90553615b4",
+      "sha256_copia_atual": "0c7d9085b734071d8f8ba8fcf79a860428ee539ecc3faca3a8bd0d90553615b4",
+      "adaptado": false
+    },
+    {
+      "origem": "css-global/leitor.css",
+      "arquivo": "recursos/css-global/leitor.css",
+      "sha256_origem": "c5ef888dd359dd0531ca8c82322f7296fb8f7270b42f0cf391db65f4857fe680",
+      "sha256_copia_atual": "c5ef888dd359dd0531ca8c82322f7296fb8f7270b42f0cf391db65f4857fe680",
+      "adaptado": false
+    },
+    {
+      "origem": "css-global/global.css",
+      "arquivo": "recursos/css-global/global.css",
+      "sha256_origem": "8507fb827cf783300a28d4bfd71e206eafa08e1be733d62d7a97153cbacd4fbb",
+      "sha256_copia_atual": "44d73086e15cdc879bdf99c9b876b5dcadd7ed67b75714d37d8cc2b145502320",
+      "adaptado": true
+    },
+    {
+      "origem": "css-global/reacoes.css",
+      "arquivo": "recursos/css-global/reacoes.css",
+      "sha256_origem": "203d707ad549a01ef52d258488e446462e84e8bb8b7a05d010a7b6dac5e7f162",
+      "sha256_copia_atual": "203d707ad549a01ef52d258488e446462e84e8bb8b7a05d010a7b6dac5e7f162",
+      "adaptado": false
+    },
+    {
+      "origem": "css-global/comentarios.css",
+      "arquivo": "recursos/css-global/comentarios.css",
+      "sha256_origem": "e07d452a927febd2d2befa627a91885f943937c9704a8752a9a581847b797be9",
+      "sha256_copia_atual": "e07d452a927febd2d2befa627a91885f943937c9704a8752a9a581847b797be9",
+      "adaptado": false
+    },
+    {
+      "origem": "js-global/leitor.js",
+      "arquivo": "recursos/js-global/leitor.js",
+      "sha256_origem": "071f55f32bf3d6b825150a591981b25683f4bd785213f536204047dff7ef0a1a",
+      "sha256_copia_atual": "acab1c57099b26c3c60cf862b44e9bc7557e0aab9c7736fd3a82939212ddda6c",
+      "adaptado": true
+    },
+    {
+      "origem": "js-global/guia-cenas.js",
+      "arquivo": "recursos/js-global/guia-cenas.js",
+      "sha256_origem": "801a75e687e067baa518a7ed78f1bfb878ff6bd2d2727605a2b62d841e3601c8",
+      "sha256_copia_atual": "801a75e687e067baa518a7ed78f1bfb878ff6bd2d2727605a2b62d841e3601c8",
+      "adaptado": false
+    },
+    {
+      "origem": "js-global/metadados.js",
+      "arquivo": "recursos/js-global/metadados.js",
+      "sha256_origem": "7a20a56c358c6bde3c4915b8ea7ca44bc570f4d741be16aa92a15f189b602569",
+      "sha256_copia_atual": "7a20a56c358c6bde3c4915b8ea7ca44bc570f4d741be16aa92a15f189b602569",
+      "adaptado": false
+    },
+    {
+      "origem": "js-global/semantica.js",
+      "arquivo": "recursos/js-global/semantica.js",
+      "sha256_origem": "b4cfda9e61243c7a172d92bad4d53564a52b2eba6dd895d68cb9f34aafd8a597",
+      "sha256_copia_atual": "b4cfda9e61243c7a172d92bad4d53564a52b2eba6dd895d68cb9f34aafd8a597",
+      "adaptado": false
+    },
+    {
+      "origem": "js-global/reacoes.js",
+      "arquivo": "recursos/js-global/reacoes.js",
+      "sha256_origem": "3bfec1e10cb735949c92176ee290198d1789a13220daf4efb86684d43415e951",
+      "sha256_copia_atual": "3bfec1e10cb735949c92176ee290198d1789a13220daf4efb86684d43415e951",
+      "adaptado": false
+    },
+    {
+      "origem": "js-global/contexto.js",
+      "arquivo": "recursos/js-global/contexto.js",
+      "sha256_origem": "497489c452324d52c57aad624462c41ccfb3443d08307980274ea319d47d686c",
+      "sha256_copia_atual": "497489c452324d52c57aad624462c41ccfb3443d08307980274ea319d47d686c",
+      "adaptado": false
+    },
+    {
+      "origem": "js-global/comentarios.js",
+      "arquivo": "recursos/js-global/comentarios.js",
+      "sha256_origem": "433b114531c62b2f7ab3571d3b0343200624a844879a8347b232aa15b4b405cd",
+      "sha256_copia_atual": "05aef606c4a25bad7e4c37cc1a6a9c2c23d17092adfd108ff55c0ad17e721323",
+      "adaptado": true
+    },
+    {
+      "origem": "scripts/modelos/obra/index-obra.html",
+      "arquivo": "recursos/modelos/index-obra.html",
+      "sha256_origem": "c78a9cbb22fad437fa913f73712acc61e1a4d8074a6634a328af22de8923bdbf",
+      "sha256_copia_atual": "c58e5405b2b0d0e27940cf336a6de2564e1b1df433329599ef4e797488c8d0e0",
+      "adaptado": true
+    },
+    {
+      "origem": "scripts/modelos/obra/leitor.html",
+      "arquivo": "recursos/modelos/leitor.html",
+      "sha256_origem": "4813d878d7a77581aa93f370483fed7acdef5832c3f3cc58cbcb2724e17e64fa",
+      "sha256_copia_atual": "0b84d016b01acf71fb59605d792edd443b0c4469c066c00a6fc8adb9d72cc467",
+      "adaptado": true
+    },
+    {
+      "origem": "assets/imagens/personagem.svg",
+      "arquivo": "recursos/personagem.svg",
+      "sha256_origem": "d3b68ec7a023caff3f2f02339e8465ca00a93ea0b30fcb6d6de07fdc992c22f4",
+      "sha256_copia_atual": "d3b68ec7a023caff3f2f02339e8465ca00a93ea0b30fcb6d6de07fdc992c22f4",
+      "adaptado": false
+    }
+  ],
+  "observacao": "Cópia delimitada de código e modelos; não inclui obras, credenciais, backups nem o site autoral. Adaptações locais são descritas no README."
+}

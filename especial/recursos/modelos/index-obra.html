@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>A obra — __INDE_NOME__</title>
+    <link rel="stylesheet" href="../css-global/global.css">
+    <style>
+        /* --- ESTILOS ESPECÍFICOS DA ENCICLOPÉDIA --- */
+        body { max-width: 1000px; } /* Override do global para leitura mais confortável */
+
+        /* --- HERO SECTION --- */
+        .hero-obra { display: flex; gap: 40px; margin-bottom: 50px; }
+        .capa-container { flex-shrink: 0; width: 240px; display: flex; flex-direction: column; gap: 15px; }
+        .capa-oficial { width: 100%; border-radius: 8px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); object-fit: cover; aspect-ratio: 2/3;}
+        .btn-ler {
+            background-color: var(--acento-primario); color: #0b0c10; text-align: center; font-weight: bold;
+            padding: 12px; border-radius: 6px; text-decoration: none; transition: 0.2s; font-size: 0.95rem; border: none; cursor: pointer;
+        }
+        .btn-ler:hover { background-color: var(--acento-hover); color: var(--texto-claro); }
+
+        .hero-info { flex-grow: 1; }
+        .titulo-obra { font-size: 3rem; color: var(--texto-claro); margin: 0 0 5px 0; line-height: 1.1; letter-spacing: -1px; }
+        .subtitulo-obra { font-size: 1.3rem; color: var(--acento-primario); margin: 0 0 20px 0; font-weight: normal; }
+        
+        .metadados-limpos { display: flex; flex-wrap: wrap; gap: 15px; align-items: center; color: var(--texto-mutado); font-size: 0.9rem; margin-bottom: 25px; }
+        .meta-dot { color: #333; font-size: 1.2rem; line-height: 0; }
+        .meta-destaque { color: var(--texto-claro); font-weight: 600; }
+
+        .sinopse { font-size: 1.05rem; color: var(--texto-padrao); margin-bottom: 25px; line-height: 1.7; text-align: justify; }
+        
+        .tags-limpas { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; margin-bottom: 20px;}
+        .tag { background-color: transparent; padding: 4px 10px; border-radius: 20px; font-size: 0.8rem; border: 1px solid #333; color: var(--texto-mutado);}
+        .tag-destaque { border-color: var(--acento-primario); color: var(--acento-primario); }
+
+        /* --- BARRA DE PROGRESSO DE LEITURA --- */
+        .progresso-leitura { margin-top: 30px; max-width: 600px; }
+        .progresso-textos { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 8px; font-size: 0.9rem; flex-wrap: wrap; gap: 10px; }
+        .progresso-porcentagem { color: var(--texto-padrao); }
+        .progresso-porcentagem strong { color: var(--acento-primario); font-size: 1.1rem; margin-left: 5px; }
+        .progresso-tempo { color: #777; font-size: 0.85rem; }
+        .progresso-trilha { width: 100%; height: 6px; background-color: var(--cor-borda); border-radius: 4px; overflow: hidden; }
+        .progresso-barra-preenchimento { height: 100%; background-color: var(--acento-primario); width: 0%; box-shadow: 0 0 10px var(--brilho-acento); transition: width 1s cubic-bezier(0.4, 0, 0.2, 1); }
+
+        /* --- SISTEMA DE ABAS --- */
+        .tabs-container { border-bottom: 1px solid var(--cor-borda); margin-bottom: 40px; display: flex; gap: 20px; overflow-x: auto; }
+        .tab-btn {
+            background: none; border: none; color: #777; font-size: 1rem; font-weight: bold;
+            padding: 10px 0 15px 0; cursor: pointer; transition: 0.3s; border-bottom: 2px solid transparent; font-family: inherit; margin-bottom: -1px; white-space: nowrap;
+        }
+        .tab-btn:hover { color: var(--texto-padrao); }
+        .tab-btn.active { color: var(--texto-claro); border-bottom-color: var(--acento-primario); }
+
+        .tab-content { display: none; animation: fadeIn 0.4s ease; }
+        .tab-content.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* --- BARRA DE CONTROLO (SELETORES) --- */
+        .controle-volume { display: flex; align-items: center; gap: 20px; margin-bottom: 40px; flex-wrap: wrap; }
+        .seletor-nativo {
+            background-color: transparent; color: var(--texto-claro); border: none; font-size: 1.1rem; outline: none;
+            cursor: pointer; font-family: inherit; font-weight: bold; padding: 0; appearance: none; -webkit-appearance: none;
+            padding-right: 15px; background-image: url('data:image/svg+xml;utf8,<svg fill="%2366fcf1" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/><path d="M0 0h24v24H0z" fill="none"/></svg>');
+            background-repeat: no-repeat; background-position-x: 100%; background-position-y: 5px;
+        }
+        .seletor-nativo:hover, .seletor-nativo:focus { color: var(--acento-primario); }
+        .seletor-nativo option { background-color: var(--bg-principal); color: var(--texto-claro); }
+
+        .busca-capitulo { flex-grow: 1; max-width: 300px; margin-left: auto; position: relative; }
+        .input-busca-local {
+            width: 100%; background-color: transparent; color: var(--texto-claro);
+            border: none; border-bottom: 1px solid #333; padding: 8px 0 8px 25px; font-size: 0.95rem; outline: none; transition: border-color 0.2s; font-family: inherit;
+        }
+        .input-busca-local:focus { border-bottom-color: var(--acento-primario); }
+        .busca-capitulo::before { content: '🔍'; position: absolute; left: 0; top: 50%; transform: translateY(-50%); font-size: 0.8rem; opacity: 0.5; }
+
+        /* --- CARTÕES DE CAPÍTULO (DICIONÁRIO) --- */
+        .grid-dicionario-capitulos { display: flex; flex-direction: column; }
+        .cartao-capitulo-dic { padding: 30px 0; border-bottom: 1px solid var(--cor-borda); display: flex; flex-direction: column; gap: 15px; }
+        .cartao-capitulo-dic:first-child { padding-top: 0; }
+        .cartao-capitulo-dic:last-child { border-bottom: none; }
+
+        .dic-linha-superior { display: flex; justify-content: space-between; align-items: center; }
+        .dic-posicao { font-size: 0.85rem; color: var(--acento-primario); font-weight: bold; text-transform: uppercase; letter-spacing: 1px; }
+        .dic-titulo { font-size: 1.5rem; color: var(--texto-claro); margin: 5px 0; }
+        
+        .dic-meta-info { font-size: 0.85rem; color: #777; display: flex; gap: 10px; align-items: center; }
+
+        .dic-sinopse-container { font-size: 0.95rem; color: var(--texto-mutado); }
+        .dic-sinopse { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; transition: max-height 0.3s; margin: 0 0 8px 0; }
+        .dic-sinopse.expandida { display: block; }
+        .btn-texto { background: none; border: none; color: var(--texto-padrao); cursor: pointer; font-size: 0.85rem; padding: 0; font-family: inherit;}
+        .btn-texto:hover { color: var(--texto-claro); text-decoration: underline; }
+
+        .dic-composicao { margin-top: 15px; display: none; padding-left: 20px; border-left: 2px solid #333; }
+        .dic-composicao.aberta { display: block; }
+        .lista-cenas { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 12px; }
+        .cena-item { font-size: 0.9rem; color: var(--texto-mutado); display: flex; flex-direction: column; gap: 3px; }
+        .cena-tag { display: inline-block; font-size: 0.75rem; font-weight: bold; color: #777; text-transform: uppercase; letter-spacing: 0.5px;}
+
+        .dic-acoes { display: flex; justify-content: space-between; align-items: center; margin-top: 10px; flex-wrap: wrap; gap: 15px; }
+        .btn-voto { background: transparent; border: none; color: var(--texto-claro); }
+        .dic-botoes-leitura { display: flex; gap: 20px; align-items: center; margin-left: auto;}
+        .btn-dic-primario { background-color: #66fcf1; color: #0b0c10; padding: 8px 25px; border-radius: 4px; cursor: pointer; font-weight: bold; text-decoration: none; transition: 0.2s; font-size: 0.9rem;}
+        .btn-dic-secundario { background: transparent; border: none; color: #777; padding: 0; cursor: pointer; transition: 0.2s; font-family: inherit; font-size: 0.9rem;}
+        .btn-dic-secundario:hover { color: var(--texto-claro); }
+
+        /* --- GRID DE CARTÕES (Universo / Personagens) --- */
+        .grid-cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 20px; margin-bottom: 40px; }
+        .card { background-color: transparent; border-radius: 8px; padding: 20px; border: 1px solid var(--cor-borda); transition: 0.2s; text-decoration: none; color: inherit; display: block;}
+        .card:hover { border-color: #333; background-color: var(--bg-cartao); transform: translateY(-2px); }
+        .card h4 { color: var(--texto-claro); margin: 0 0 8px 0; }
+        .card p { font-size: 0.85rem; color: #777; margin: 0; }
+
+        @media (max-width: 768px) {
+            .hero-obra { flex-direction: column; align-items: center; text-align: center; }
+            .metadados-limpos { justify-content: center; }
+            .tags-limpas { justify-content: center; }
+            .controle-volume { flex-direction: column; align-items: flex-start; gap: 15px; }
+            .busca-capitulo { max-width: 100%; width: 100%; margin-left: 0; }
+            .dic-botoes-leitura { width: 100%; justify-content: space-between; margin-left: 0;}
+        }
+    </style>
+    <link rel="stylesheet" href="../css-global/obra.css">
+    <link rel="icon" type="image/svg+xml" href="../assets/imagens/marca.svg">
+    <meta name="theme-color" content="#0c1216">
+    <link rel="stylesheet" href="../css-global/guia-cenas.css">
+    <link rel="stylesheet" href="../css-global/comentarios.css?v=20261030-comentarios2">
+    <link rel="stylesheet" href="../css-global/reacoes.css?v=20261030-1">
+</head>
+<body class="page-obra">
+    <a class="skip-link" href="#ui-principal">Ir para a obra</a>
+
+    <nav class="navbar">
+        <a href="../home/" class="logo" aria-label="__INDE_NOME__ — início">__INDE_NOME__<span>.</span></a>
+        <a href="../home/" class="voltar-link">← Biblioteca</a>
+    </nav>
+
+    <div id="ui-carregamento" class="loading-mensagem">Carregando Enciclopédia...</div>
+    <div id="ui-principal" style="display: none;">
+
+        <section class="hero-obra">
+            <div class="capa-container">
+                <img id="ui-capa" src="" alt="Capa Oficial" class="capa-oficial">
+                <a href="offline.html" download class="download-obra">↓ Baixar leitura offline</a>
+                <a id="ui-btn-continuar" class="btn-ler" hidden>Continuar leitura</a>
+                <a id="ui-btn-ler" href="#" class="btn-ler">Ler Primeiro Capítulo</a>
+            </div>
+
+            <div class="hero-info"><span class="eyebrow">Dentro deste universo</span>
+                <h1 id="ui-titulo" class="titulo-obra"></h1>
+                <h2 id="ui-subtitulo" class="subtitulo-obra"></h2>
+                
+                <div id="ui-tags" class="tags-limpas"></div>
+
+                <div class="metadados-limpos">
+                    <span id="ui-status" class="meta-destaque"></span> <span class="meta-dot">•</span>
+                    <span id="ui-total-caps"></span> <span class="meta-dot">•</span>
+                    <span>Autor: <span id="ui-autor" class="meta-destaque"></span></span>
+                </div>
+
+                <p id="ui-sinopse" class="sinopse"></p>
+                
+                <div id="ui-temas" class="tags-limpas"></div>
+
+                <div class="progresso-leitura">
+                    <div class="progresso-textos">
+                        <span class="progresso-porcentagem">Progresso: <strong id="valor-porcentagem">0%</strong> <span style="color:#777; font-size:0.8rem;">(Cap <span id="cap-atual">0</span>/<span id="cap-total">0</span>)</span></span>
+                        <span class="progresso-tempo">
+                            <span id="tempo-lido">~0h lidas</span> <span class="meta-dot">•</span> 
+                            <span id="tempo-restante">~0h para acabar</span>
+                        </span>
+                    </div>
+                    <div class="progresso-trilha">
+                        <div class="progresso-barra-preenchimento" id="barra-preenchimento"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="reacoes" aria-label="Reações à obra" hidden></section>
+        <div class="tabs-container">
+            <button class="tab-btn active" onclick="abrirAba('aba-indice', this)">Capítulos</button>
+            <button class="tab-btn" onclick="abrirAba('aba-universo', this)">Universo</button>
+            <button class="tab-btn" onclick="abrirAba('aba-personagens', this)">Personagens</button>
+            <button class="tab-btn" onclick="abrirAba('aba-estatisticas', this)">Sobre a leitura</button>
+        </div>
+
+        <div id="aba-indice" class="tab-content active">
+            <div class="controle-volume">
+                <select aria-label="Saga" id="seletorSaga" class="seletor-nativo" onchange="atualizarVolumes()"></select>
+                <span style="color:#333;">/</span>
+                <select aria-label="Volume" id="seletorVolume" class="seletor-nativo" onchange="atualizarArcos()"></select>
+                <span style="color:#333;">/</span>
+                <select aria-label="Arco" id="seletorArco" class="seletor-nativo" onchange="renderizarCapitulos()"></select>
+
+                <div class="busca-capitulo">
+                    <input type="text" aria-label="Buscar capítulos por título" id="inputBuscaCapitulo" class="input-busca-local" placeholder="Pesquisar título..." onkeyup="filtrarCapitulos()">
+                </div>
+            </div>
+
+            <div class="grid-dicionario-capitulos" id="container-capitulos">
+                </div>
+        </div>
+
+        <div id="aba-universo" class="tab-content">
+            <div class="grid-cards" id="container-lore"></div>
+        </div>
+
+        <div id="aba-personagens" class="tab-content">
+            <div class="grid-cards" id="container-personagens"></div>
+        </div>
+
+        <div id="aba-estatisticas" class="tab-content">
+            <div class="grid-cards">
+                <div class="card"><h4>No seu ritmo</h4><p>Conclua capítulos no leitor para acompanhar seu caminho pela obra. Seu progresso fica salvo neste navegador.</p></div>
+            </div>
+        </div>
+
+        <section id="comentarios" aria-label="Comentários da obra" hidden></section>
+    </div>
+
+    <footer class="site-footer"><span class="footer-brand">__INDE_NOME__.</span><span class="footer-note">__INDE_DESCRICAO__</span><span>__INDE_AUTOR__</span></footer>
+    <script src="../js-global/guia-cenas.js?v=20261031-enderecos1"></script>
+    <script src="../js-global/comentarios.js?v=20261031-enderecos1"></script>
+    <script src="../js-global/reacoes.js?v=20261031-enderecos1"></script>
+    <script src="../js-global/metadados.js?v=20261031-enderecos1"></script>
+    <script>
+        let estruturaGlobal = null;
+        let infoGlobal = null;
+
+        async function inicializarPagina() {
+            try {
+                const [resInfo, resEstrutura] = await Promise.all([
+                    fetch('dados/info-obra.json',{cache:'no-store'}),
+                    fetch('dados/estrutura.json',{cache:'no-store'})
+                ]);
+                
+                infoGlobal = await resInfo.json();
+                estruturaGlobal = await resEstrutura.json();
+
+                window.ReacoesLiterature?.montar({obra:infoGlobal,destino:document.getElementById('reacoes')});
+                window.ComentariosLiterature?.montar({obra:infoGlobal,destino:document.getElementById('comentarios')});
+                renderizarHero();
+                renderizarAbas();
+                if (new URLSearchParams(location.search).get('aba') === 'universo') {
+                    abrirAba('aba-universo', document.querySelectorAll('.tab-btn')[1]);
+                    requestAnimationFrame(() => {
+                        const id = decodeURIComponent(location.hash.slice(1));
+                        document.getElementById(id)?.scrollIntoView({block:'center'});
+                    });
+                }
+                inicializarSeletores();
+                calcularProgresso();
+                const posicao = Unilit.ler(`unilit:v2:retomar:${infoGlobal.id_obra}`, {});
+                const capRetomada = Unilit.capitulos(estruturaGlobal).find(c => c.id === posicao.capitulo);
+                if (capRetomada) {
+                    const continuar = document.getElementById('ui-btn-continuar');
+                    continuar.href = Unilit.urlCapitulo(capRetomada);
+                    continuar.textContent = `Continuar · ${capRetomada.titulo}`;
+                    continuar.hidden = false;
+                }
+
+                document.getElementById('ui-carregamento').style.display = 'none';
+                document.getElementById('ui-principal').style.display = 'block';
+
+            } catch (erro) {
+                console.error("Erro Crítico:", erro);
+                document.getElementById('ui-carregamento').innerHTML = `Erro ao carregar arquivos JSON. Verifique se executou o gerador Python.`;
+            }
+        }
+        
+        // --- UTILITÁRIO: CONVERTER PALAVRAS EM TEMPO ---
+        function calcularTempoFormatado(totalPalavras) {
+            const palavrasPorMinuto = 225;
+            const minutosTotais = Math.ceil(totalPalavras / palavrasPorMinuto);
+            
+            if (minutosTotais < 60) return `~${minutosTotais} min`;
+            const horas = (minutosTotais / 60).toFixed(1);
+            return `~${horas}h`;
+        }
+
+        // --- ATUALIZAÇÃO: RENDERIZAÇÃO DA HERO SECTION ---
+        function elemento(tag,texto='',classe='') {
+            const el=document.createElement(tag);el.textContent=texto;el.className=classe;return el;
+        }
+        function renderizarHero() {
+            document.title = `${infoGlobal.titulo} — ${window.INDE_SITE.nome}`;
+            document.getElementById('ui-capa').src = infoGlobal.capa_url;
+            document.getElementById('ui-capa').alt = infoGlobal.capa.alt;
+            document.getElementById('ui-titulo').innerText = infoGlobal.titulo;
+            document.getElementById('ui-subtitulo').innerText = infoGlobal.subtitulo || '';
+            document.getElementById('ui-status').innerText = infoGlobal.status;
+            document.getElementById('ui-total-caps').innerText = `${estruturaGlobal.total_capitulos} Capítulos`;
+            document.getElementById('ui-autor').innerText = infoGlobal.autor;
+            document.getElementById('ui-sinopse').innerText = infoGlobal.sinopse;
+
+            // NOVO: Cálculo Dinâmico de tempo de leitura da obra inteira + Dia de Lançamento
+            const tempoObra = calcularTempoFormatado(estruturaGlobal.total_palavras || 0);
+            const metadados=document.querySelector('.metadados-limpos');metadados.replaceChildren();
+            const status=elemento('span',infoGlobal.status,'meta-destaque');status.id='ui-status';
+            const autor=elemento('span','Autor: ');autor.append(elemento('span',infoGlobal.autor,'meta-destaque'));
+            const itens=[status,elemento('span',`${estruturaGlobal.total_capitulos} Capítulos`),elemento('span',`Tempo total: ${tempoObra}`)];
+            if(infoGlobal.periodicidade_texto)itens.push(elemento('span',infoGlobal.periodicidade_texto));itens.push(autor);
+            itens.forEach((item,i)=>{if(i)metadados.append(elemento('span','•','meta-dot'));metadados.append(item);});
+
+            if (estruturaGlobal.total_capitulos > 0) {
+                document.getElementById('ui-btn-ler').href = Unilit.urlCapitulo(Unilit.capitulos(estruturaGlobal)[0]);
+            } else {
+                document.getElementById('ui-btn-ler').style.display = 'none';
+            }
+
+            const tags=document.getElementById('ui-tags');tags.replaceChildren();
+            [infoGlobal.formato,...(infoGlobal.generos||[]),...(infoGlobal.tags||[])].filter(Boolean).forEach((tag,i)=>tags.append(elemento('span',tag==='publicacao_seriada'?'Publicação seriada':tag,'tag '+(i===0?'tag-destaque':''))));
+        }
+
+        function renderizarAbas() {
+            const lore=document.getElementById('container-lore');lore.replaceChildren();
+            for(const item of (infoGlobal.lore||[]).filter(x=>Unilit.revelar(x,infoGlobal.id_obra,estruturaGlobal))){
+                const card=elemento('div','','card');card.id='verbete-'+item.id;card.append(elemento('h4',item.titulo),elemento('p',item.descricao));lore.append(card);
+            }
+            if(!lore.childElementCount)lore.append(elemento('p','Nenhum verbete disponível neste ponto da leitura.','card'));
+            const personagens=document.getElementById('container-personagens');personagens.replaceChildren();
+            for(const char of (infoGlobal.personagens||[]).filter(x=>Unilit.revelar(x,infoGlobal.id_obra,estruturaGlobal))){
+                const card=elemento('div','','card personagem-card');const img=document.createElement('img');
+                img.alt=char.imagem_alt||char.nome;img.src=char.imagem||'../assets/imagens/personagem.svg';img.loading='lazy';
+                img.addEventListener('error',()=>{if(!img.dataset.fallback){img.dataset.fallback='true';img.src='../assets/imagens/personagem.svg';}});
+                const texto=elemento('div');texto.append(elemento('h4',char.nome),elemento('p',char.descricao_curta||''));card.append(img,texto);personagens.append(card);
+            }
+            if(!personagens.childElementCount)personagens.append(elemento('p','Nenhum personagem disponível neste ponto da leitura.','card'));
+        }
+
+        // --- SISTEMA DE SELETORES E CAPÍTULOS ---
+        function inicializarSeletores() {
+            const seletorSaga = document.getElementById('seletorSaga');
+            seletorSaga.innerHTML = '';
+            
+            if(!estruturaGlobal.sagas || estruturaGlobal.sagas.length === 0) {
+                seletorSaga.innerHTML = '<option>Nenhuma obra publicada</option>';
+                return;
+            }
+
+            estruturaGlobal.sagas.forEach((saga, index) => {
+                seletorSaga.append(new Option(saga.nome,String(index)));
+            });
+            atualizarVolumes();
+        }
+
+        function atualizarVolumes() {
+            const indexSaga = document.getElementById('seletorSaga').value;
+            const seletorVolume = document.getElementById('seletorVolume');
+            seletorVolume.innerHTML = '';
+            
+            const sagaSelecionada = estruturaGlobal.sagas[indexSaga];
+            if(sagaSelecionada && sagaSelecionada.volumes) {
+                sagaSelecionada.volumes.forEach((vol, index) => {
+                    seletorVolume.append(new Option(vol.nome,String(index)));
+                });
+            }
+            atualizarArcos();
+        }
+
+        function atualizarArcos() {
+            const indexSaga = document.getElementById('seletorSaga').value;
+            const indexVol = document.getElementById('seletorVolume').value;
+            const seletorArco = document.getElementById('seletorArco');
+            seletorArco.innerHTML = '';
+            
+            const volSelecionado = estruturaGlobal.sagas[indexSaga].volumes[indexVol];
+            if(volSelecionado && volSelecionado.arcos) {
+                volSelecionado.arcos.forEach((arco, index) => {
+                    seletorArco.append(new Option(arco.nome,String(index)));
+                });
+            }
+            renderizarCapitulos();
+        }
+
+        // --- ATUALIZAÇÃO: RENDERIZAÇÃO DOS CAPÍTULOS ---
+        function renderizarCapitulos() {
+            const indexSaga = document.getElementById('seletorSaga').value;
+            const indexVol = document.getElementById('seletorVolume').value;
+            const indexArco = document.getElementById('seletorArco').value;
+            const container = document.getElementById('container-capitulos');
+            
+            container.innerHTML = '';
+            
+            try {
+                const arcoSelecionado = estruturaGlobal.sagas[indexSaga].volumes[indexVol].arcos[indexArco];
+                
+                if(arcoSelecionado && arcoSelecionado.capitulos.length > 0) {
+                    arcoSelecionado.capitulos.forEach(cap => {
+                        
+                        // 1. Calcula o tempo deste capítulo específico
+                        const tempoCapitulo = calcularTempoFormatado(cap.palavras || 0);
+                        
+                        const card=elemento('article','','cartao-capitulo-dic js-capitulo-item');
+                        const superior=elemento('div','','dic-linha-superior');superior.append(elemento('span',`Nº ${cap.numero||cap.ordem}`,'dic-posicao'));
+                        const meta=elemento('div','','dic-meta-info');
+                        meta.append(elemento('span',cap.publicado_em?new Date(cap.publicado_em+'T12:00:00').toLocaleDateString('pt-BR',{day:'numeric',month:'short',year:'numeric'}):''),elemento('span','•','meta-dot'),elemento('span',`${tempoCapitulo} leitura (${cap.palavras||0} palavras)`));
+                        card.append(superior,elemento('h4',cap.titulo,'dic-titulo js-capitulo-titulo'),meta);
+                        if(cap.sinopse){
+                            const sinopse=elemento('div','','dic-sinopse-container');const botao=elemento('button','Ler sinopse completa ↓','btn-texto');botao.type='button';botao.onclick=()=>alternarSinopseCapitulo(botao);
+                            sinopse.append(elemento('p',cap.sinopse,'dic-sinopse'),botao);card.append(sinopse);
+                        }
+                        const destino=document.createElement('div');destino.dataset.guiaCapitulo=cap.id;card.append(destino);
+                        const acoes=elemento('div','','dic-acoes'),botoes=elemento('div','','dic-botoes-leitura'),link=elemento('a','Ler Capítulo','btn-dic-primario');
+                        link.href=Unilit.urlCapitulo(cap);botoes.append(link);acoes.append(botoes);card.append(acoes);container.append(card);
+                        const todos = Unilit.capitulos(estruturaGlobal);
+                        GuiaCenas.montar({capitulo:cap,destino,proximo:todos[todos.findIndex(c=>c.id===cap.id)+1]});
+                    });
+                } else {
+                    container.innerHTML = '<p style="color: #777; font-style: italic; padding: 20px 0;">Não há capítulos publicados neste arco ainda.</p>';
+                }
+            } catch(e) {
+                container.innerHTML = '<p style="color: #777; font-style: italic;">Selecione um caminho válido.</p>';
+            }
+        }
+
+        // --- SISTEMA DE BUSCA LOCAL ---
+        function filtrarCapitulos() {
+            const termo = document.getElementById('inputBuscaCapitulo').value.toLowerCase();
+            const cartoes = document.querySelectorAll('.js-capitulo-item');
+            
+            cartoes.forEach(cartao => {
+                const titulo = cartao.querySelector('.js-capitulo-titulo').innerText.toLowerCase();
+                cartao.style.display = titulo.includes(termo) ? 'flex' : 'none';
+            });
+        }
+
+        // --- ATUALIZAÇÃO: BARRA DE PROGRESSO COM BASE EM PALAVRAS ---
+        function calcularProgresso() {
+            const totalPalavras = estruturaGlobal.total_palavras;
+            const totalCapitulos = estruturaGlobal.total_capitulos;
+            
+            if (totalCapitulos === 0 || totalPalavras === 0) return;
+
+            const chaveStorage = `progresso_${infoGlobal.id_obra}`;
+            const capitulosLidosIds = Unilit.lidos(infoGlobal.id_obra, estruturaGlobal);
+            const lidosCount = capitulosLidosIds.length;
+
+            // Para ser preciso, calculamos a soma de palavras APENAS dos capítulos lidos
+            let palavrasLidas = 0;
+            
+            // Varre a estrutura para somar o peso de leitura de quem já foi lido
+            estruturaGlobal.sagas.forEach(saga => {
+                saga.volumes.forEach(vol => {
+                    vol.arcos.forEach(arco => {
+                        arco.capitulos.forEach(cap => {
+                            if (capitulosLidosIds.includes(cap.id)) {
+                                palavrasLidas += cap.palavras;
+                            }
+                        });
+                    });
+                });
+            });
+
+            const porcentagem = (palavrasLidas / totalPalavras) * 100;
+            
+            const tempoLidoStr = calcularTempoFormatado(palavrasLidas);
+            const tempoRestanteStr = calcularTempoFormatado(totalPalavras - palavrasLidas);
+
+            document.getElementById('cap-atual').innerText = lidosCount;
+            document.getElementById('cap-total').innerText = totalCapitulos;
+            document.getElementById('valor-porcentagem').innerText = porcentagem.toFixed(1) + '%';
+            document.getElementById('tempo-lido').innerText = `${tempoLidoStr} lidas`;
+            document.getElementById('tempo-restante').innerText = `${tempoRestanteStr} para acabar`;
+            
+            setTimeout(() => {
+                document.getElementById('barra-preenchimento').style.width = porcentagem + '%';
+            }, 100);
+        }
+
+        function alternarComposicao(botao) {
+            const painel = botao.closest('article').querySelector('.dic-composicao');
+            if (painel) { painel.style.display = painel.style.display === 'block' ? 'none' : 'block'; }
+        }
+        // --- INTERAÇÕES DE UI ---
+        function abrirAba(idAba, botaoClicado) {
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById(idAba).classList.add('active');
+            botaoClicado.classList.add('active');
+        }
+
+        function alternarSinopseCapitulo(botao) {
+            const container = botao.previousElementSibling;
+            container.classList.toggle('expandida');
+            botao.innerText = container.classList.contains('expandida') ? 'Recolher sinopse ▲' : 'Ler sinopse completa ▼';
+        }
+
+
+
+        window.onload = inicializarPagina;
+    </script>
+</body>
+</html>
