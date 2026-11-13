@@ -1,4 +1,4 @@
-name: Build and test
+name: Build and test INDE
 
 on:
   push:
@@ -10,20 +10,18 @@ permissions:
   contents: read
 
 jobs:
-  release-tests:
+  linux:
     runs-on: ubuntu-24.04
-    timeout-minutes: 30
+    timeout-minutes: 60
     steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
       - name: Install dependencies
         run: |
           sudo apt-get update
           sudo apt-get install --yes build-essential cmake ninja-build pkg-config \
             libgtkmm-4.0-dev libsqlite3-dev uuid-dev libicu-dev libhunspell-dev \
             libenchant-2-2 hunspell-pt-br xauth xvfb
-      - name: Configure
-        run: cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Release -DBUILD_TESTING=ON
-      - name: Build
-        run: cmake --build build --parallel 2
-      - name: Test
-        run: ctest --test-dir build --output-on-failure
+      - name: Build the special edition
+        run: sh Preparar-INDE-especial.sh
+      - name: Run integration tests
+        run: xvfb-run -a python3 -m unittest discover -s tests -v

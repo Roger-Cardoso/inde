@@ -1,11 +1,7 @@
-/build-appimage/
-/dist/
 __pycache__/
-/build*/
-*.inde/
-*.sqlite
-*.sqlite3
-*.sqlite-wal
-*.sqlite-shm
-*.sqlite3-wal
-*.sqlite3-shm
+build-*/
+dados/
+demo-*/
+perfil-*/
+fontes/inde-schema28/
+fontes/inde-integrado-schema37/
