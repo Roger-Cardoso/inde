@@ -9,6 +9,7 @@ on:
       - tests/run_object_model_tests.sh
       - tests/object_model/**
       - tests/object_document/**
+      - tests/object_composition/**
       - tests/audit_obj01_sources.py
       - tests/test_obj01_source_audit.py
       - fontes/*.tar.gz
@@ -24,6 +25,7 @@ on:
       - tests/run_object_model_tests.sh
       - tests/object_model/**
       - tests/object_document/**
+      - tests/object_composition/**
       - tests/audit_obj01_sources.py
       - tests/test_obj01_source_audit.py
       - fontes/*.tar.gz
@@ -94,3 +96,31 @@ jobs:
           ASAN_OPTIONS: detect_leaks=1:halt_on_error=1
           UBSAN_OPTIONS: halt_on_error=1:print_stacktrace=1
         run: ctest --test-dir build-obj01-document --output-on-failure
+
+  composition-read-adapter:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    strategy:
+      matrix:
+        compiler: [g++, clang++]
+        sanitize: ["OFF", "ON"]
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+      - name: Install pure composition-domain dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install --yes libglib2.0-dev uuid-dev ninja-build
+      - name: Extract verified schema 37 owner source
+        run: python3 verificar_base.py --integrado --extrair
+      - name: Configure composition and document read adapters
+        run: >-
+          cmake -S tests/object_composition -B build-obj01-composition -G Ninja
+          -DCMAKE_CXX_COMPILER=${{ matrix.compiler }}
+          -DOBJ01_SANITIZE=${{ matrix.sanitize }}
+      - name: Compile adapters and real owner codecs
+        run: cmake --build build-obj01-composition --parallel 2
+      - name: Verify versions, profiles, references and private snapshots
+        env:
+          ASAN_OPTIONS: detect_leaks=1:halt_on_error=1
+          UBSAN_OPTIONS: halt_on_error=1:print_stacktrace=1
+        run: ctest --test-dir build-obj01-composition --output-on-failure

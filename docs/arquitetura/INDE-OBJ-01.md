@@ -1,14 +1,16 @@
 # INDE-OBJ-01 — Contrato da fundação de objetos e operações
 
-Versão **0.3 experimental — núcleo de comandos 0.2 e ponte de leitura**, 2026-11-20. Escopo: **Fase 1**, C++20 em memória. Implementação: `cpp/object_model.{hpp,cpp}` e `cpp/object_commands.{hpp,cpp}`. O núcleo de comandos permanece isolado. O corte posterior acrescenta uma biblioteca separada de leitura do Documento (`object_document_adapter.*`), sem escrita, GTK, alterações SQLite ou arquivo único `.inde`. Seu contrato está em [ponte de leitura](ADAPTADOR-DOCUMENTO-OBJ-01.md).
+Versão **0.4 experimental — núcleo de comandos 0.2 e duas pontes de leitura**, 2026-11-20. Escopo: **Fase 1**, C++20 em memória. Implementação: `cpp/object_model.{hpp,cpp}` e `cpp/object_commands.{hpp,cpp}`. O núcleo de comandos permanece isolado. Bibliotecas separadas fazem leitura do Documento (`object_document_adapter.*`) e da Composição persistida (`object_composition_adapter.*`), sem escrita, GTK, alterações SQLite ou arquivo único `.inde`. Ver [ponte documental](ADAPTADOR-DOCUMENTO-OBJ-01.md) e [ponte da Composição](ADAPTADOR-COMPOSICAO-OBJ-01.md).
 
 ## Autoridades e identidades
 
-Objeto tem identidade e tipo lógico (Paragraph, Image, Table, Equation, Container). Ocorrência é um uso identificado do objeto em uma composição. O mesmo objeto pode ter diversas ocorrências; mover uma delas não modifica as demais. Recursos são metadados lógicos (ID, SHA-256 declarado, MIME, tamanho), sem caminhos autoritativos nem bytes incorporados.
+Objeto tem identidade e tipo lógico (Paragraph, Image, Table, Equation, Container, TextBlock, TextReference). Ocorrência é um uso identificado do objeto em uma composição. O mesmo objeto pode ter diversas ocorrências; mover uma delas não modifica as demais. Recursos são metadados lógicos (ID, SHA-256 declarado, MIME, tamanho), sem caminhos autoritativos nem bytes incorporados.
 
 A árvore ativa tem um layout raiz sem pai; cada outro layout tem exatamente um pai, e todos são alcançáveis. Ocorrências têm exatamente uma colocação. Contêiner aponta para layout interno exclusivo: reutilizar o mesmo objeto contêiner em duas ocorrências implicaria múltiplos pais e continua recusado. Instâncias reutilizáveis exigem contrato futuro, não relaxamento dessa invariante. Objetos/recursos de biblioteca sem ocorrência são admitidos; layouts órfãos não.
 
 `objects::Composition` não substitui `project::Composition`. `ObjectKind::Paragraph` não contém texto nem referencia automaticamente um `DocumentParagraph`. IDs nesta fundação são opacos e únicos entre categorias; a ponte de leitura agora fornece mapas explícitos qualificados por projeto/documento, preservando IDs de parágrafos e o hash do snapshot completo. Esses mapas pertencem à projeção privada, não a uma nova autoridade de texto. Nenhuma equivalência é inferida de posição, nome ou conteúdo parecido.
+
+TextBlock representa uma revisão capturada de bloco, que pode ter várias linhas; TextReference é navegação sem texto incorporado. Nas capturas de Composição, o objeto deriva de bloco/revisão e a ocorrência preserva o ID de colocação; o bloco lógico permanente permanece explícito no vínculo.
 
 A ordem autoral do Documento continua com as estruturas textuais existentes. `Layout.children` é a ordem lógica de leitura **da composição OBJ-01**. `paint_order` é a pintura espacial de baixo para cima. Posição gráfica não define leitura, cronologia, causalidade, personagem, POV ou significado narrativo.
 

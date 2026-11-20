@@ -76,7 +76,7 @@ A CI conserva os cinco jobs anteriores e acrescenta GCC/Clang × sem/com sanitiz
 ## Próximos cortes e condições de avanço
 
 1. **Entregue aqui:** leitura do Documento, captura integral privada, mapa de identidades, freshness e prova de ausência de escrita.
-2. **Próximo:** adaptador próprio da Composição persistida, preservando revisão/hash do agregado, revisão efetiva de cada ocorrência, pinned/live/forked/reference-only, origens, variantes, camadas e rascunhos sem aplicá-los.
+2. **Entregue no corte posterior:** [ponte da Composição persistida](ADAPTADOR-COMPOSICAO-OBJ-01.md), preservando revisão/hash do agregado, revisão efetiva de cada ocorrência, pinned/live/forked/reference-only, origens, variantes, camadas e rascunhos sem aplicá-los.
 3. **Depois das duas pontes:** contrato de plano de alteração que diferencie apresentação visual e mudança autoral. Um movimento textual deve delegar ao motor existente, manter suas recusas e ser ensaiado com offsets Unicode, âncoras, resmas, semântica, visibilidade, undo e recovery.
 4. **Antes de escrita persistente:** guarda dentro da transação, prova de falhas/conflitos e equivalência em fixtures, incluindo preservação de revisões/IDs públicos e separação entre bancos.
 5. **Só após esses requisitos:** interação visual e renderização de objetos. Arquivo único `.inde`, mídia incorporada e migrações permanecem cortes posteriores próprios.

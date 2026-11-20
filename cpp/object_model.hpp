@@ -10,7 +10,9 @@
 // Not a replacement for project::Document, project::Composition or schema 37.
 namespace inde::objects {
 
-enum class ObjectKind { Paragraph, Image, Table, Equation, Container };
+// TextBlock captures a source block revision (possibly multiline). TextReference
+// is navigation-only; neither kind implies paragraph identities or publication.
+enum class ObjectKind { Paragraph, Image, Table, Equation, Container, TextBlock, TextReference };
 enum class LayoutKind { Stack, Row, Grid, Overlay, Freeform };
 
 struct Resource {

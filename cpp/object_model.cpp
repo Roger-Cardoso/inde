@@ -18,6 +18,8 @@ bool known_object_kind(const ObjectKind kind) {
     case ObjectKind::Table:
     case ObjectKind::Equation:
     case ObjectKind::Container:
+    case ObjectKind::TextBlock:
+    case ObjectKind::TextReference:
       return true;
   }
   return false;

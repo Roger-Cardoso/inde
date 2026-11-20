@@ -61,3 +61,25 @@ target_link_libraries(inde_object_document_adapter_tests PRIVATE inde_object_doc
 target_compile_options(inde_object_document_adapter_tests PRIVATE -Wall -Wextra -Wpedantic -Wconversion -Werror)
 add_test(NAME inde_object_document_adapter_tests COMMAND inde_object_document_adapter_tests)
 set_tests_properties(inde_object_document_adapter_tests PROPERTIES TIMEOUT 120)
+
+# Optional extension for the Composition reader. The standalone Document build
+# retains its original 18 owner units and does not gain editing dependencies.
+if(OBJ01_COMPOSITION)
+  target_sources(inde_document_owner PRIVATE
+    ${OBJ01_OWNER}/src/experimental/text_blocks.cpp
+    ${OBJ01_OWNER}/src/experimental/text_blocks_operations.cpp
+    ${OBJ01_OWNER}/src/experimental/text_blocks_snapshot.cpp
+    ${OBJ01_OWNER}/src/experimental/block_layers.cpp
+    ${OBJ01_OWNER}/src/application/document_text_transaction.cpp
+    ${OBJ01_OWNER}/src/application/text_edit_delta.cpp
+    ${OBJ01_OWNER}/src/persistence/composition_codec.cpp)
+  add_library(inde_object_composition_adapter STATIC ${OBJ01_CPP}/object_composition_adapter.cpp)
+  target_include_directories(inde_object_composition_adapter PUBLIC ${OBJ01_CPP})
+  target_link_libraries(inde_object_composition_adapter PUBLIC inde_object_document_adapter)
+  target_compile_options(inde_object_composition_adapter PRIVATE -Wall -Wextra -Wpedantic -Wconversion -Werror)
+  add_executable(inde_object_composition_adapter_tests ${OBJ01_CPP}/object_composition_adapter_tests.cpp)
+  target_link_libraries(inde_object_composition_adapter_tests PRIVATE inde_object_composition_adapter)
+  target_compile_options(inde_object_composition_adapter_tests PRIVATE -Wall -Wextra -Wpedantic -Wconversion -Werror)
+  add_test(NAME inde_object_composition_adapter_tests COMMAND inde_object_composition_adapter_tests)
+  set_tests_properties(inde_object_composition_adapter_tests PROPERTIES TIMEOUT 120)
+endif()
