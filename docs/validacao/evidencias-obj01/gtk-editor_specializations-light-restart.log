@@ -1,0 +1,5 @@
+PASS P03c restart exact source/order/leaves/profiles, same editor
+[INDE] Renderer compatibility: Cairo for Intel 8086:0102; explicit GSK_RENDERER overrides this default.
+
+(inde_integrated_editor_specializations_smoke:31161): Gtk-WARNING **: 12:10:22.190: No IM module matching GTK_IM_MODULE=ibus found
+STATUS Documento aberto para Escrita

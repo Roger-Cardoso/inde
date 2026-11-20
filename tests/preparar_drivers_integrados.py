@@ -30,7 +30,9 @@ def prepare(build, driver):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('driver', choices=['editor_specializations', 'contextual_visual', 'contextual_delivery'])
+    parser.add_argument('driver', choices=['editor_specializations', 'contextual_visual', 'contextual_delivery',
+                                              'document_paragraphs', 'document_alternatives',
+                                              'document_reading_order', 'document_visibility'])
     parser.add_argument('--build', type=Path, default=BASE / 'build-nativo')
     args = parser.parse_args()
     prepare(args.build.resolve(), args.driver)

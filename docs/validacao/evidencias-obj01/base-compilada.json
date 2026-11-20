@@ -1,0 +1,130 @@
+{
+  "performance": true,
+  "lto": false,
+  "changed_build_copy": [
+    {
+      "path": "src/application/cartography_service.cpp",
+      "archive_sha256": "73b5633ee68ee099d5aec0b3779c19091b3b57d2744c6e69470a6526fa49a45d",
+      "build_sha256": "684e6a3f7dd52aea7705365b28734e828722579126b722af504bff7ff674a290"
+    },
+    {
+      "path": "src/application/production_packages.cpp",
+      "archive_sha256": "04efa03ce376110b2a8bcce9f1704f2fac82ab983f83ad44466ccb10a543e982",
+      "build_sha256": "73b5896b52f5afc89e3f8b3eade65859f7630681cb5ca68c06c617c40ecfdc03"
+    },
+    {
+      "path": "src/application/proofreading_service.cpp",
+      "archive_sha256": "6a667ded64912ece8a8845163fb3e82b0d033ae68fd1c3ba18aed5d2a976e422",
+      "build_sha256": "fa85a405100c01c4b5fd6562bf2c80731823aa3534fcf88257e8578261458150"
+    },
+    {
+      "path": "src/application/text_search.cpp",
+      "archive_sha256": "13a2b3bb652c5b3fafbb67511ad95d88e7dbe1e79ea0a9dfc09ae947503558dd",
+      "build_sha256": "794ee09406149849a61b8cc13f4ccb864a95b36148a9d5367c6bb0f7942302a3"
+    },
+    {
+      "path": "src/application/work_production.cpp",
+      "archive_sha256": "6376813821611429b8f54a0b80e1ff5e08f95266a685190e2297176512991591",
+      "build_sha256": "f48eaf450f0b445831ec38082758cc07f433f983346344d26e45581d481279dc"
+    },
+    {
+      "path": "src/persistence/project_operation_store.cpp",
+      "archive_sha256": "665142f1e351599b9750e59dbb7fe5362aac4bfba4a080ede03d4f9d3c27a982",
+      "build_sha256": "ceae7936b6fd27ad8eb2e6536476a0a8e9f883e5521743cb77b76c3bf6cdec5d"
+    },
+    {
+      "path": "src/persistence/recovery_codec.cpp",
+      "archive_sha256": "bff39b712ca10f0a68a7512d444cca56f58c479872a871dc6953a91a18c3cd83",
+      "build_sha256": "5b30561711bb397a33f5144d7fc8103e806174acb9e5e2223162d52822a49d40"
+    },
+    {
+      "path": "src/persistence/semantic_codec.cpp",
+      "archive_sha256": "8fe8e872dde9b01e31e14f48906c4d0fbfaee852e0e4964ceb9d749d3e987549",
+      "build_sha256": "f8e4e4de5d0c6d8f7e6064d342281a26746bc5b45c4c184934be5172d93b52c2"
+    },
+    {
+      "path": "src/persistence/semantic_store.cpp",
+      "archive_sha256": "fda51eab285c6c87cb1ba4b927e4f39395797adb47e54bddaa8d8d5debb7a0b5",
+      "build_sha256": "e6debdb840ea1a5ecaead029506665247b7e8bcc7ccf373831925abae5633694"
+    },
+    {
+      "path": "src/persistence/sqlite_cartography_repository.cpp",
+      "archive_sha256": "781c1d4bf436911349a6eec7fcddb58d0b6d15720167353089070a277d9b3551",
+      "build_sha256": "5f2baae7a35a50dbb1b597743f472b579657eb164c628cb40611018ef57920f3"
+    },
+    {
+      "path": "src/project/cartography.cpp",
+      "archive_sha256": "5e8dc65635169afdf62f9ce818c3dc872e9f30b3c85141129012d4b40294084e",
+      "build_sha256": "72b0fc0b096722e0e6fc935a5d63008f418e8a9a511bd6337b718834d18f6910"
+    },
+    {
+      "path": "src/ui/cartography_workspace_view.cpp",
+      "archive_sha256": "a29742735b19507fe1137d27d82998f93bb6c3bf6d651b49f74588b616fafc38",
+      "build_sha256": "b5fe9127189011934ac3a761249e2f544d1f68e9716e847ded62986d17f05971"
+    },
+    {
+      "path": "src/ui/composition_page.cpp",
+      "archive_sha256": "66086f4aa55b75bb669906b6787e71fdc124d15276e01b1092c980098bf85b3e",
+      "build_sha256": "b37d341eafd56a4f54b90281b73c8960d371d24be5334abecb0c938a8cd5abb1"
+    },
+    {
+      "path": "src/ui/editor_color_picker.cpp",
+      "archive_sha256": "cc56f5e49536eb0801c9db1121235bccc81a7fa50cdc274e04f8db029f490089",
+      "build_sha256": "9c5ea732610d98511464df1ab7ac604f1f235dfa21cacaa295ef47e8f0b404c5"
+    },
+    {
+      "path": "src/ui/writing_workspace_distribution.cpp",
+      "archive_sha256": "461b9c9cc7018e763c6c9d08f8d64f69a1d684e2799184daef25f083a304de5f",
+      "build_sha256": "b5c4408b78161b663bd2b5970dfd2dd8afd855d45423051f55191b3099ba337c"
+    },
+    {
+      "path": "src/ui/writing_workspace_semantic_fields.cpp",
+      "archive_sha256": "a0b62e4d074e10adb2150ec5a1af2614c6b64908751733fb6c41f9e35aa8badb",
+      "build_sha256": "e8f43cf0be6237564706d1f0c39e6aba12ae5fed59b76ce2d1aed0ca7e04a4f0"
+    },
+    {
+      "path": "src/ui/writing_workspace_semantics.cpp",
+      "archive_sha256": "4ede2f81411aec173f64c3e7226e5734d809955ce82e68a8a0839a9f01443891",
+      "build_sha256": "9e66bdb2d9afb6499a5c8a429c8fd28b0a11a73a59b59d9059305ad9288fc6aa"
+    },
+    {
+      "path": "tests/cartography_tests.cpp",
+      "archive_sha256": "953c6c2fe66ea31b71451bec606a524c8ab79c285cffbf6b4d66b8c3e455e2fa",
+      "build_sha256": "dd5b64462864f76518b43317a84a57c040d72aa710c5797aa328d658fc8be278"
+    },
+    {
+      "path": "tests/core/narrative_tests.cpp",
+      "archive_sha256": "81399eb48331302e3c44895d8599bff0afe8362630136c8edbc348891d0a1150",
+      "build_sha256": "9d92cdc3b25161fbaaf397f825ac7fea2117d541f5329f9bc23801cc73edf496"
+    },
+    {
+      "path": "tests/core/sqlite_import_tests.cpp",
+      "archive_sha256": "00eb4f293e3b50e2d41b87b19a11eabf38115411b69fbc6749e5055c11bdae81",
+      "build_sha256": "c2077be90afa4f94f30a5d12af54cbeb310011551b14ba440d687aa4951132bf"
+    },
+    {
+      "path": "tests/core/structural_model_tests.cpp",
+      "archive_sha256": "d991f3061e57d984803b6df2097ab1fb912fd95576b495d4524744507b6876b4",
+      "build_sha256": "951ccefdb06c39f2366906ec4cda496825b3643f99db7a920ae613d59164be55"
+    },
+    {
+      "path": "tests/core/structural_tree_tests.cpp",
+      "archive_sha256": "2cda39a927def744820842429d56ebe76e6dff324b83aa47c534a18a8bc82813",
+      "build_sha256": "907bc857ba861fbeea94dd7e47aefe6580283ec2c90bbd5c0bc67817cb5cd512"
+    },
+    {
+      "path": "tests/core/writing_tests.cpp",
+      "archive_sha256": "45747e6e91c9749c0c9ec1a9736ad8de1488343d2488792973fbd1defaf38537",
+      "build_sha256": "4360bd74c7a5b677192f4c2e685b95fc7f48a288311f7023a03ae1457076bfd9"
+    }
+  ],
+  "overlays": {
+    "cpp/overlay/include/inde/ui/main_window.hpp": "5368ef9f9d9cfadcd9430f84bf31a5e2b60727b65d2d85c870d22f528554e74f",
+    "cpp/overlay/include/inde/ui/writing_workspace.hpp": "343d721025ee9047bbec3797cfb1b70f90077755cb711299f8d8a0c3e2d3c376",
+    "cpp/overlay/src/main.cpp": "569b03c02d188eb3f80d708542d8c2918ec36204f18bd763a5981ed1f9d9a3bb",
+    "cpp/overlay/src/ui/main_window.cpp": "79103a66177a817be2d9b7e5e354d26483be3a130fd341fea0422c074f45acc4",
+    "cpp/overlay/src/ui/main_window_context.cpp": "512716986e7485e33a3f3de7681a1fd334f40a0aa0cbad95294ec067a6a27401",
+    "cpp/overlay/src/ui/main_window_keyboard.cpp": "37a5585a051a66a21be74837fc4be755330f96fc637078c8f09b322cba6e61cd",
+    "cpp/overlay/src/ui/overlay_dialog.cpp": "4ff86041ed922434eca2c29ed78f6e1f22e7d37ab456132bc213ec950e272b74"
+  }
+}

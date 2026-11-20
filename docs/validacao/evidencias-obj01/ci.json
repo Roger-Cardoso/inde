@@ -1,0 +1,31 @@
+{
+  "commit": "cb583168c96741f6ebd5a2820266cdbd4e1ec5fa",
+  "run_id": 44759492358,
+  "url": "https://github.com/Roger-Cardoso/inde/actions/runs/44759492358",
+  "status": "completed",
+  "conclusion": "success",
+  "jobs": [
+    {
+      "name": "pinned-sources",
+      "conclusion": "success"
+    },
+    {
+      "name": "standalone-model (g++, OFF)",
+      "conclusion": "success"
+    },
+    {
+      "name": "standalone-model (clang++, OFF)",
+      "conclusion": "success"
+    },
+    {
+      "name": "standalone-model (g++, ON)",
+      "conclusion": "success"
+    },
+    {
+      "name": "standalone-model (clang++, ON)",
+      "conclusion": "success"
+    }
+  ],
+  "remote_asan_options": "detect_leaks=1:halt_on_error=1",
+  "remote_ubsan_options": "halt_on_error=1:print_stacktrace=1"
+}

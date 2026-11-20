@@ -1,0 +1,3 @@
+-- Configuring done (1.2s)
+-- Generating done (0.4s)
+-- Build files have been written to: /home/roger/Documents/Projects/GitHub/INDE/obj01-audit/build-nativo

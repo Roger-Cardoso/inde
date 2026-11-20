@@ -1,0 +1,12 @@
+{
+  "comic": {
+    "resultado": "aprovado",
+    "captura": "workspace-comic.png",
+    "saida": "{\"site\": \"/tmp/inde-obj01-ui-20261120-workspaces-final/comic/Publicacao.inde/outputs/comics/e41254cf-6fdf-49b0-b5d6-86a3a1911516/site\", \"avisos\": []}\nCOMIC-02 GTK: barra exata, Criar, workspace principal, rascunho, contexto, zoom, desfazer/refazer, publicação e mesma sessão de Escrita OK"
+  },
+  "novel": {
+    "resultado": "aprovado",
+    "captura": "workspace-novel.png",
+    "saida": "PUB-02 GTK integrado: sessão viva, bloqueio sem salvamento implícito, CRUD, geração, retorno, seleção e desfazer OK"
+  }
+}

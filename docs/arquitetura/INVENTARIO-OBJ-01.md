@@ -49,6 +49,14 @@ Os caminhos `include/…`, `src/…` e `tests/…` nesta seção são membros de
 | `cpp/comic_service.cpp`, `publication_service.cpp` | Comic e publicação têm bancos separados, revisão esperada e retratos preparados; mudar fonte invalida preparo. | Revisão OBJ-01 é token local, não substitui revisões desses serviços, nem implementa transação distribuída entre bancos. |
 | `cpp/snapshot_model.cpp`, `public_identity.cpp`, `ponte_inde.py`, `publicacao.py`, `motor/contrato_semantico.py` | Publicação seleciona documentos, conserva numeração/URLs e emite avisos: usa corpo corrente integral; alternativas cobertas ficam privadas e perfis não filtram a Edição. Recursos públicos têm inventário/hash. | IDs públicos não se derivam de posição visual. Exportação de novos objetos ainda exige tradutor, seleção e relatório de perdas; não há fallback que publique dados de autoria. |
 
+## Fonte arquivada e aplicativo efetivamente compilado
+
+A receita atual não compila diretamente o tar: `cpp/otimizar_base.py` cria uma cópia em `build-nativo/inde-source`, aplicando substituições exatas de `cpp/base_patches.json`; `cpp/integrar_gtk.py` e `integrar_workspace.py` geram os overlays usados pelo aplicativo. Esses mecanismos também foram examinados. O perfil ensaiado mantém `INDE_CODE_OPTIMIZATIONS=ON`, avisos como erros e desliga LTO para conter o custo desta recompilação local.
+
+Há **23 arquivos diferentes** entre a base integrada e sua cópia de build: 20 sob correções de diagnósticos/conversões/testes e três sob otimizações de busca, revisão ortográfica e produção. Isso é transformação preexistente da receita, não alteração dos originais pela OBJ-01. [base-compilada.json](../validacao/evidencias-obj01/base-compilada.json) registra os hashes antes/depois e dos overlays. Os tipos `Document`, parágrafos, alternativas, a operação de leitura e a sessão de edição examinados permanecem os do pacote integrado; codecs de semântica/recovery têm conversões numéricas explícitas na cópia. Os testes de núcleo usam asserções habilitadas (`-UNDEBUG`) mesmo em Release.
+
+A cópia de Documento para Comic em `comic::copy_document` leva somente texto corrente e procedência (`source_document`, hash do corpo). Não é referência viva nem transporte de formatação, resmas e semântica. Essa fronteira exige relatório de conservação no futuro adaptador; não se presume que copiar um Documento criou um objeto universal sem perdas.
+
 ## Riscos, invariantes e verificação
 
 | Risco | Invariante / decisão neste corte | Evidência ou gate |
@@ -66,6 +74,9 @@ Os caminhos `include/…`, `src/…` e `tests/…` nesta seção são membros de
 | Overflow/NaN na geometria | Posição, dimensões e arestas resultantes finitas; tamanho positivo | Casos não finitos e overflow de arestas |
 | Perda de texto, folhas ou semântica na futura integração | Não existe ponte de escrita neste corte; estruturas atuais permanecem autoritativas | Hashes dos fontes + regressões existentes; gate futuro de equivalência integral |
 | Tratar visibilidade como autorização editorial | Fundação não publica nem filtra texto | Teste existente de publicação integral/alternativa privada; gate futuro de exportação OBJ-01 |
+| Copiar projeto aberto como se fosse backup transacional | `ProjectRepository::save_as` usa cópia recursiva; `ProjectService` reatribui identidade do banco autoral; overlays adotam publicação/Comic depois, em transações separadas. Isso não prova snapshot simultâneo sob escrita concorrente ou WAL. A atualização da extensão de publicação, diferentemente, usa `VACUUM INTO` e verifica integridade. | Risco de compatibilidade observado em código; concorrência/falha entre adoções não ensaiada neste corte. Gate obrigatório antes de arquivo único; sem alterar Save As agora. |
+| Tratar restore de recovery como transação entre dois bancos | Serviço pode persistir Documento e depois falhar ao arquivar journal; informa a persistência parcial e conserva evidência | `document_recovery_service.cpp`; não prometer atomicidade multibanco a partir da atomicidade local dos comandos OBJ-01 |
+| Usar `source_base` público como prova suficiente do executável | `cpp/snapshot_model.cpp` mantém identificação histórica schema 28, junto a `source_schema=37`; identidade de build depende também de pacote/hash/patches/commit | Registrar proveniência completa; não alterar protocolo público silenciosamente |
 | Confundir undo com durabilidade | Histórico somente em memória, sem SQLite/recovery OBJ-01 | Limite declarado, sem promessa de recuperação após fechar processo |
 | Alterar arquivo autoral por teste | Somente fixtures novas em diretórios temporários; checkout original preservado | Logs da suíte e comparação de Git; nenhum projeto real como entrada |
 
@@ -90,3 +101,7 @@ Não avançamos para adaptadores, GTK, unificação de bancos ou arquivo único 
 | Publicação e sessão | Retratos preparados, integridade, geração local e fronteira autoria/público | `tests/test_publicacao.py`, `tests/test_sessao_nativa.py` |
 
 Consolidar esses percursos significa conservar suas autoridades e recusas, não trocar seus tipos por `Object` sem protocolo de compatibilidade.
+
+## Lacuna encontrada na própria evidência histórica
+
+O driver GTK P03b `ui_document_visibility_smoke.cpp` ainda procura um segundo `TextView` chamado `visibility-lens-editor`. O P03c usa o editor contínuo único com tags; esse driver histórico falhou nos dois temas antes de exercer suas operações. Os percursos atuais de `ui_editor_specializations_smoke.cpp` passaram incluindo a visibilidade no mesmo editor, clipboard, semântica e ordem filtrada. O inventário diferencia essa incompatibilidade do teste de uma falha de conteúdo comprovada no aplicativo; os dois logs e a cobertura atual constam no relatório. Não se deve usar o sucesso histórico de P03b como evidência direta do P03c nem recriar o segundo editor para satisfazer o driver antigo.

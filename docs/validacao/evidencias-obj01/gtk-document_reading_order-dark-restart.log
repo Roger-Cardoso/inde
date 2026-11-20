@@ -1,0 +1,4 @@
+PASS P03a GTK restart: exact text/identities/resmas/anchors
+[INDE] Renderer compatibility: Cairo for Intel 8086:0102; explicit GSK_RENDERER overrides this default.
+
+(inde_integrated_document_reading_order_smoke:30998): Gtk-WARNING **: 12:10:08.348: No IM module matching GTK_IM_MODULE=ibus found

@@ -1,0 +1,4 @@
+PASS P03a GTK 15 phases: exterior circles, drag preview/drop, Escape, keyboard, multiline resma, semantic anchor, undo/redo, native typing, wrapped/scrolling text
+[INDE] Renderer compatibility: Cairo for Intel 8086:0102; explicit GSK_RENDERER overrides this default.
+
+(inde_integrated_document_reading_order_smoke:30890): Gtk-WARNING **: 12:09:54.209: No IM module matching GTK_IM_MODULE=ibus found

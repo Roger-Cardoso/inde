@@ -1,0 +1,62 @@
+{
+  "date": "2026-11-20",
+  "phase": "INDE-OBJ-01 Fase 1",
+  "implementation_commit": "cb583168c96741f6ebd5a2820266cdbd4e1ec5fa",
+  "branch": "feature/inde-obj-01-foundation",
+  "main_preserved": "d41a5c9b9809ca7d40beb6ff10f22f1a5b451e0b",
+  "gcc": "c++ (Ubuntu 15.2.0-14ubuntu1~24~ppa1) 15.2.0",
+  "clang": "Ubuntu clang version 18.1.8 (++20240731025043+3b5b5c1ec4a3-1~exp1~20240731145144.92)",
+  "packages": {
+    "gtkmm-4.0": "4.10.0",
+    "glib-2.0": "2.80.0",
+    "sqlite3": "3.45.1",
+    "icu-uc": "74.2",
+    "pangocairo": "1.52.1"
+  },
+  "native_profile": {
+    "CMAKE_BUILD_TYPE": "Release",
+    "INDE_BUILD_CORE_TESTS": true,
+    "INDE_CODE_OPTIMIZATIONS": true,
+    "INDE_ENABLE_LTO": false,
+    "INDE_STRICT_WARNINGS": true
+  },
+  "foundation_groups": {
+    "model": 13,
+    "commands": 15,
+    "oracle_reorders": 4000,
+    "oracle_transfers": 1500,
+    "generated_trees": 250,
+    "deep_containers": 7000
+  },
+  "python_suite": {
+    "tests": 92,
+    "failures": 0,
+    "skipped": 0
+  },
+  "gtk_document_forensic_run": {
+    "current_passed": 16,
+    "historical_p03b_failed": 2,
+    "historical_p03b_restart_not_executed": 2
+  },
+  "gtk_workspaces_final": {
+    "comic": "passed",
+    "writing_publication": "passed",
+    "initial_publication_failure_unclassified": true
+  },
+  "limits": {
+    "local_lsan": "blocked under ptrace; disabled locally",
+    "remote_lsan": "enabled and passed",
+    "object_persistence": "not implemented",
+    "author_projects": "not opened or migrated",
+    "schema_source_changes": false,
+    "synthetic_migration_tests": true,
+    "new_gtk_integration": false,
+    "single_inde_file": false
+  },
+  "native_ctest": {
+    "tests": 49,
+    "failures": 0,
+    "skipped": 0,
+    "seconds": 149.05
+  }
+}

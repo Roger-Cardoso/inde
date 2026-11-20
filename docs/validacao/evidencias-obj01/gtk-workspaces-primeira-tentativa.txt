@@ -1,0 +1,12 @@
+Traceback (most recent call last):
+  File "/home/roger/Documents/Projects/GitHub/INDE/obj01-audit/tests/verificar_workspace_comic.py", line 35, in <module>
+    verify(parser.parse_args().resultado)
+  File "/home/roger/Documents/Projects/GitHub/INDE/obj01-audit/tests/verificar_workspace_comic.py", line 24, in verify
+    result=run([sys.executable,BASE/'ambiente.py','--perfil',fixture/'perfil-gtk',
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/roger/Documents/Projects/GitHub/INDE/obj01-audit/tests/verificar_workspace_comic.py", line 10, in run
+    return subprocess.run([str(a) for a in args],check=True,text=True,capture_output=True)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/subprocess.py", line 571, in run
+    raise CalledProcessError(retcode, process.args,
+subprocess.CalledProcessError: Command '['/usr/bin/python3', '/home/roger/Documents/Projects/GitHub/INDE/obj01-audit/ambiente.py', '--perfil', '/tmp/inde-obj01-ui-20261120-workspaces/novel/perfil-gtk', '--recursos', '/home/roger/Documents/Projects/GitHub/INDE/obj01-audit', '/home/roger/Documents/Projects/GitHub/INDE/obj01-audit/build-nativo/inde-especial', '--pub02-smoke', '/tmp/inde-obj01-ui-20261120-workspaces/novel/Publicacao.inde', '/tmp/inde-obj01-ui-20261120-workspaces/workspace-novel.png']' returned non-zero exit status 1.

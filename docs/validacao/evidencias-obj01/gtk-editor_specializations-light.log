@@ -1,0 +1,54 @@
+TRACE P03c phase=0
+TRACE P03c phase=1
+TRACE P03c phase=2
+TRACE P03c phase=3
+TRACE P03c phase=4
+TRACE P03c phase=5
+TRACE P03c phase=5
+TRACE P03c phase=5
+TRACE P03c phase=5
+TRACE P03c phase=6
+TRACE P03c phase=7
+TRACE P03c phase=7
+TRACE P03c phase=7
+TRACE P03c phase=8
+TRACE P03c phase=9
+TRACE P03c phase=10
+TRACE P03c phase=11
+TRACE P03c phase=11
+TRACE P03c phase=12
+TRACE P03c phase=13
+TRACE P03c phase=14
+TRACE P03c phase=15
+TRACE P03c phase=16
+TRACE P03c phase=17
+TRACE P03c phase=17
+TRACE P03c phase=18
+TRACE P03c phase=19
+TRACE P03c phase=20
+TRACE P03c phase=21
+TRACE P03c phase=22
+TRACE P03c phase=23
+TRACE P03c phase=24
+TRACE P03c phase=25
+TRACE P03c phase=26
+PASS P03c GTK27phases: one surface, five specializations, semantic inspector/realce, selection, hidden formatting, copy/PRIMARY/cut/native/rich paste, canonical iterators, find/replace, neighbour moves, IME guards/commit, shared history, A/B/C, save/recovery
+[INDE] Renderer compatibility: Cairo for Intel 8086:0102; explicit GSK_RENDERER overrides this default.
+
+(inde_integrated_editor_specializations_smoke:31078): Gtk-WARNING **: 12:10:11.285: No IM module matching GTK_IM_MODULE=ibus found
+STATUS Documento aberto para Escrita
+STATUS Texto copiado sem vínculos ou estilos de origem
+STATUS Prosa copiada por arrasto, sem vínculos. Para mover blocos com identidade, use o círculo lateral em Estrutura.
+STATUS Texto colado; nenhum vínculo ou estilo de origem importado
+STATUS Texto e estilos copiados; vínculos não foram copiados
+STATUS Texto e estilos colados; nenhum vínculo importado
+STATUS Substituição concluída em uma operação reversível
+STATUS Documento aberto para Escrita
+STATUS Ordem alterada pela identidade do vizinho; os blocos ocultos mantêm sua ordem relativa.
+STATUS Ordem alterada pela identidade do vizinho; os blocos ocultos mantêm sua ordem relativa.
+STATUS Ordem alterada pela identidade do vizinho; os blocos ocultos mantêm sua ordem relativa.
+STATUS Documento aberto para Escrita
+STATUS Composição IME em andamento — texto provisório ainda não salvo.
+STATUS Há uma composição IME em andamento. Confirme o texto ou cancele a composição no editor antes de mudar de contexto.
+STATUS Composição IME confirmada; texto incorporado ao salvamento.
+STATUS Texto colado; nenhum vínculo ou estilo de origem importado

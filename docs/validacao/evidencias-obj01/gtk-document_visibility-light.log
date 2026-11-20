@@ -1,0 +1,9 @@
+[INDE] Renderer compatibility: Cairo for Intel 8086:0102; explicit GSK_RENDERER overrides this default.
+
+(inde_integrated_document_visibility_smoke:31051): Gtk-WARNING **: 12:10:09.955: No IM module matching GTK_IM_MODULE=ibus found
+STATUS Documento aberto para Escrita
+
+** (inde_integrated_document_visibility_smoke:31051): ERROR **: 12:10:10.206: 
+unhandled exception (type std::exception) in signal handler:
+what: Original and derived continuous lens
+

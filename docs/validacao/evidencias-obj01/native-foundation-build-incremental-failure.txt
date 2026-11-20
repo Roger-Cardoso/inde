@@ -1,0 +1,18 @@
+[1/6] Building CXX object CMakeFiles/inde_object_model.dir/object_model.cpp.o
+[2/6] Building CXX object CMakeFiles/inde_object_model.dir/object_commands.cpp.o
+[3/6] Linking CXX static library libinde_object_model.a
+[4/6] Linking CXX executable inde_object_model_tests
+FAILED: inde_object_model_tests 
+: && /usr/bin/c++ -O3 -DNDEBUG -Wl,--dependency-file=CMakeFiles/inde_object_model_tests.dir/link.d CMakeFiles/inde_object_model_tests.dir/object_model_tests.cpp.o -o inde_object_model_tests  libinde_object_model.a && :
+/usr/bin/ld: CMakeFiles/inde_object_model_tests.dir/object_model_tests.cpp.o: in function `(anonymous namespace)::test_deep_composition()':
+object_model_tests.cpp:(.text+0x23aa): undefined reference to `inde::objects::validate(inde::objects::Composition const&)'
+/usr/bin/ld: CMakeFiles/inde_object_model_tests.dir/object_model_tests.cpp.o: in function `(anonymous namespace)::test_valid_graph()':
+object_model_tests.cpp:(.text+0x6c99): undefined reference to `inde::objects::validate(inde::objects::Composition const&)'
+/usr/bin/ld: object_model_tests.cpp:(.text+0x6cfe): undefined reference to `inde::objects::validate(inde::objects::Composition const&)'
+/usr/bin/ld: CMakeFiles/inde_object_model_tests.dir/object_model_tests.cpp.o: in function `(anonymous namespace)::test_missing_references()':
+object_model_tests.cpp:(.text+0x6e30): undefined reference to `inde::objects::validate(inde::objects::Composition const&)'
+/usr/bin/ld: object_model_tests.cpp:(.text+0x6fdf): undefined reference to `inde::objects::validate(inde::objects::Composition const&)'
+/usr/bin/ld: CMakeFiles/inde_object_model_tests.dir/object_model_tests.cpp.o:object_model_tests.cpp:(.text+0x7176): more undefined references to `inde::objects::validate(inde::objects::Composition const&)' follow
+collect2: error: ld returned 1 exit status
+[5/6] Building CXX object CMakeFiles/inde_object_commands_tests.dir/object_commands_tests.cpp.o
+ninja: build stopped: subcommand failed.

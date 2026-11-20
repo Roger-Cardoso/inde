@@ -1,0 +1,3 @@
+[INDE] Renderer compatibility: Cairo for Intel 8086:0102; explicit GSK_RENDERER overrides this default.
+
+(inde_integrated_document_paragraphs_smoke:30665): Gtk-WARNING **: 12:09:34.098: No IM module matching GTK_IM_MODULE=ibus found

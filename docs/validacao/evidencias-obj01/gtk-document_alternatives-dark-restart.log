@@ -1,0 +1,4 @@
+PASS P02 restart: exact identities, top and covered leaves
+[INDE] Renderer compatibility: Cairo for Intel 8086:0102; explicit GSK_RENDERER overrides this default.
+
+(inde_integrated_document_alternatives_smoke:30861): Gtk-WARNING **: 12:09:51.732: No IM module matching GTK_IM_MODULE=ibus found

@@ -6,8 +6,12 @@ import subprocess
 import sys
 BASE = Path(__file__).resolve().parents[1]
 
-def run(args):
-    return subprocess.run([str(a) for a in args],check=True,text=True,capture_output=True)
+def run(args, log=None):
+    result = subprocess.run([str(a) for a in args], text=True, capture_output=True, timeout=120)
+    if log is not None:
+        Path(log).write_text(result.stdout + result.stderr)
+    result.check_returncode()
+    return result
 
 def verify(destination):
     destination=Path(destination).resolve()
@@ -22,8 +26,8 @@ def verify(destination):
         if label=='comic':run([binary/'inde_comic_demo',fixture/'Publicacao.inde'])
         picture=destination/('workspace-'+label+'.png')
         result=run([sys.executable,BASE/'ambiente.py','--perfil',fixture/'perfil-gtk',
-                    '--recursos',BASE,binary/'inde-especial',flag,fixture/'Publicacao.inde',picture])
-        (destination/(label+'.log')).write_text(result.stdout+result.stderr)
+                    '--recursos',BASE,binary/'inde-especial',flag,fixture/'Publicacao.inde',picture],
+                   destination / (label + '.log'))
         results[label]={'resultado':'aprovado','captura':picture.name,'saida':result.stdout.strip()}
     (destination/'resultado.json').write_text(json.dumps(results,ensure_ascii=False,indent=2)+'\n')
     print(json.dumps(results,ensure_ascii=False,indent=2))

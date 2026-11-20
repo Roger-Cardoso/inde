@@ -1,0 +1,2 @@
+[INDE] Renderer compatibility: Cairo for Intel 8086:0102; explicit GSK_RENDERER overrides this default.
+PUB-02 GTK integrado: sessão viva, bloqueio sem salvamento implícito, CRUD, geração, retorno, seleção e desfazer OK

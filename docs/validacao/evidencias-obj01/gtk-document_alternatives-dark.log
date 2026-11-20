@@ -1,0 +1,23 @@
+TRACE P02 phase=0
+TRACE P02 phase=1
+TRACE P02 phase=2
+TRACE P02 phase=3
+TRACE P02 phase=4
+TRACE P02 phase=5
+TRACE P02 phase=6
+TRACE P02 phase=7
+TRACE P02 phase=8
+TRACE P02 phase=9
+TRACE P02 phase=10
+TRACE P02 phase=11
+TRACE P02 phase=12
+TRACE P02 phase=13
+TRACE P02 phase=14
+TRACE P02 phase=15
+TRACE P02 phase=16
+TRACE P02 phase=17
+TRACE P02 phase=18
+PASS P02 GTK: selection to blank leaf, A/B/C arrows and chooser, styles, normal clipboard without covered text, names, undo/redo, native cross-document delete conservation, empty slot, conditional controls, reopen and linked-range rejection
+[INDE] Renderer compatibility: Cairo for Intel 8086:0102; explicit GSK_RENDERER overrides this default.
+
+(inde_integrated_document_alternatives_smoke:30792): Gtk-WARNING **: 12:09:45.118: No IM module matching GTK_IM_MODULE=ibus found

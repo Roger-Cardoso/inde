@@ -1,0 +1,2 @@
+INDE-OBJ-01: 13 test groups passed
+INDE-OBJ-01: 15 command test groups passed (4000 oracle reorders, 1500 oracle transfers, 250 generated trees, depth 7000)
