@@ -16,6 +16,14 @@ INDE-OBJ-01: 13 test groups passed
 
 A entrega reforçada cobre **13 grupos de testes**: grafo válido e reuso de objetos; referências inválidas; identidades e ocorrências; ciclos; geometria; metadados; campos incompatíveis; múltiplos pais; layouts inalcançáveis; tipos desconhecidos; metadados e geometria adversariais; determinismo; e uma cadeia com 7.000 contêineres. Para reexecutar com sanitizadores: `SANITIZE=1 sh tests/run_object_model_tests.sh`. O alvo `inde_object_model_tests` também foi adicionado ao CMake e registrado com CTest quando `INDE_BUILD_CORE_TESTS` estiver habilitado.
 
+## Evidência do CI remoto
+
+Workflow `.github/workflows/obj-01.yml` aprovado no GitHub Actions: [execução 44753323199](https://github.com/Roger-Cardoso/inde/actions/runs/44753323199). Os passos **Validate strict C++20 model** e **Validate with ASan and UBSan** tiveram conclusão `success`.
+
+Esta execução corresponde ao commit `215a12fb31ac95798b30080cf052013b0ceff055`, que contém as alterações do modelo, dos testes, do runner e do workflow. Modificações posteriores nesta branch foram exclusivamente documentais.
+
+A comparação com `main` confirmou que a branch está à frente, sem divergência de commits (`behind_by = 0`). Não houve merge ou alteração de projetos autorais.
+
 **Não executados nesta etapa:** compilação GTK/CTest completo (gtkmm-4.0 indisponível no ambiente de validação), extração e inspeção integral do tar.gz schema 37, migradores SQLite, edição visual, undo/recovery do aplicativo, publicação HTML e integração de demos. Não houve modificação de schema nem migração de projetos. Resultados INT-01 anteriores não foram reexecutados.
 
 Esses testes não demonstram resistência a documentos arbitrariamente grandes ou maliciosos nem verificam hashes contra bytes, pois o modelo atual mantém apenas metadados. O relatório não substitui resultados do workflow remoto até sua conclusão.
