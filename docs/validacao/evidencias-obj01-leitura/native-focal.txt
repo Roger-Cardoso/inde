@@ -1,0 +1,9 @@
+Test project /home/roger/Documents/Projects/GitHub/INDE/obj01-audit/build-nativo
+    Start 3: inde_object_document_adapter_tests
+1/2 Test #3: inde_object_document_adapter_tests ...   Passed    0.71 sec
+    Start 4: inde_object_document_service_tests
+2/2 Test #4: inde_object_document_service_tests ...   Passed    0.55 sec
+
+100% tests passed out of 2
+
+Total Test time (real) =   1.27 sec

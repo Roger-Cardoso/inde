@@ -1,0 +1,38 @@
+{
+  "date": "2026-11-20",
+  "base_commit": "73dee10344535aedaeaa5d267d152e76329b53cf",
+  "branch": "feature/inde-obj-01-foundation",
+  "adapter_groups": 9,
+  "generated_orders": 250,
+  "paragraph_boundary": 10000,
+  "local_compilers": {
+    "gcc": "15.2.0",
+    "clang": "18.1.8"
+  },
+  "local_sanitizers": {
+    "asan": "passed",
+    "ubsan": "passed",
+    "lsan": "disabled under ptrace"
+  },
+  "native_ctest": {
+    "passed": 51,
+    "total": 51,
+    "seconds": 145.85
+  },
+  "repository_test": {
+    "all_project_files_byte_equal_after_read_and_object_commands": true,
+    "document_snapshot_preserved": true,
+    "composition_hash_revision_payload_preserved": true,
+    "drafts_unapplied": true,
+    "schema": 37,
+    "integrity_check": "ok",
+    "foreign_key_check": "ok",
+    "synthetic_competing_writer_detected": true
+  },
+  "owner_clang_sign_conversion_exception": true,
+  "new_adapter_strict_warnings": true,
+  "writeback": false,
+  "gtk_integration": false,
+  "real_project_migration": false,
+  "implementation_commit": "bdaa349f3d5b3c23050188f0a936b14aca8aa7dc"
+}

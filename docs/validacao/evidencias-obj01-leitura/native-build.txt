@@ -1,0 +1,6 @@
+[1/6] Building CXX object CMakeFiles/inde_object_document_adapter.dir/object_document_adapter.cpp.o
+[2/6] Linking CXX static library libinde_object_document_adapter.a
+[3/6] Building CXX object CMakeFiles/inde_object_document_adapter_tests.dir/object_document_adapter_tests.cpp.o
+[4/6] Linking CXX executable inde_object_document_adapter_tests
+[5/6] Building CXX object CMakeFiles/inde_object_document_service_tests.dir/object_document_service_tests.cpp.o
+[6/6] Linking CXX executable inde_object_document_service_tests

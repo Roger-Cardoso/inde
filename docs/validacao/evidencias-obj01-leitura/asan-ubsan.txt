@@ -1,0 +1,7 @@
+Test project /home/roger/Documents/Projects/GitHub/INDE/obj01-audit/build-obj01-document-asan
+    Start 1: inde_object_document_adapter_tests
+1/1 Test #1: inde_object_document_adapter_tests ...   Passed    9.91 sec
+
+100% tests passed out of 1
+
+Total Test time (real) =   9.91 sec

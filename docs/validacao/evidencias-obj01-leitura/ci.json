@@ -1,0 +1,57 @@
+{
+  "headSha": "bdaa349f3d5b3c23050188f0a936b14aca8aa7dc",
+  "url": "https://github.com/Roger-Cardoso/inde/actions/runs/44765626359",
+  "status": "completed",
+  "conclusion": "success",
+  "jobs": [
+    {
+      "name": "document-read-adapter (g++, OFF)",
+      "conclusion": "success",
+      "url": "https://github.com/Roger-Cardoso/inde/actions/runs/44765626359/job/136389342686"
+    },
+    {
+      "name": "pinned-sources",
+      "conclusion": "success",
+      "url": "https://github.com/Roger-Cardoso/inde/actions/runs/44765626359/job/136389342878"
+    },
+    {
+      "name": "standalone-model (g++, ON)",
+      "conclusion": "success",
+      "url": "https://github.com/Roger-Cardoso/inde/actions/runs/44765626359/job/136389342949"
+    },
+    {
+      "name": "document-read-adapter (clang++, ON)",
+      "conclusion": "success",
+      "url": "https://github.com/Roger-Cardoso/inde/actions/runs/44765626359/job/136389342999"
+    },
+    {
+      "name": "document-read-adapter (g++, ON)",
+      "conclusion": "success",
+      "url": "https://github.com/Roger-Cardoso/inde/actions/runs/44765626359/job/136389343047"
+    },
+    {
+      "name": "standalone-model (clang++, OFF)",
+      "conclusion": "success",
+      "url": "https://github.com/Roger-Cardoso/inde/actions/runs/44765626359/job/136389343071"
+    },
+    {
+      "name": "document-read-adapter (clang++, OFF)",
+      "conclusion": "success",
+      "url": "https://github.com/Roger-Cardoso/inde/actions/runs/44765626359/job/136389343086"
+    },
+    {
+      "name": "standalone-model (clang++, ON)",
+      "conclusion": "success",
+      "url": "https://github.com/Roger-Cardoso/inde/actions/runs/44765626359/job/136389343141"
+    },
+    {
+      "name": "standalone-model (g++, OFF)",
+      "conclusion": "success",
+      "url": "https://github.com/Roger-Cardoso/inde/actions/runs/44765626359/job/136389343236"
+    }
+  ],
+  "sanitizers": {
+    "ASAN_OPTIONS": "detect_leaks=1:halt_on_error=1",
+    "UBSAN_OPTIONS": "halt_on_error=1:print_stacktrace=1"
+  }
+}
