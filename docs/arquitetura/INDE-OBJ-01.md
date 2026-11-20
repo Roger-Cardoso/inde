@@ -1,6 +1,6 @@
 # INDE-OBJ-01 — Contrato da fundação de objetos e operações
 
-Versão **0.2 experimental**, 2026-11-20. Escopo: **Fase 1**, C++20 em memória. Implementação: `cpp/object_model.{hpp,cpp}` e `cpp/object_commands.{hpp,cpp}`. Este reforço inclui comandos e histórico locais; não inicia adaptação ao Documento, GTK, SQLite ou arquivo único `.inde`.
+Versão **0.3 experimental — núcleo de comandos 0.2 e ponte de leitura**, 2026-11-20. Escopo: **Fase 1**, C++20 em memória. Implementação: `cpp/object_model.{hpp,cpp}` e `cpp/object_commands.{hpp,cpp}`. O núcleo de comandos permanece isolado. O corte posterior acrescenta uma biblioteca separada de leitura do Documento (`object_document_adapter.*`), sem escrita, GTK, alterações SQLite ou arquivo único `.inde`. Seu contrato está em [ponte de leitura](ADAPTADOR-DOCUMENTO-OBJ-01.md).
 
 ## Autoridades e identidades
 
@@ -8,7 +8,7 @@ Objeto tem identidade e tipo lógico (Paragraph, Image, Table, Equation, Contain
 
 A árvore ativa tem um layout raiz sem pai; cada outro layout tem exatamente um pai, e todos são alcançáveis. Ocorrências têm exatamente uma colocação. Contêiner aponta para layout interno exclusivo: reutilizar o mesmo objeto contêiner em duas ocorrências implicaria múltiplos pais e continua recusado. Instâncias reutilizáveis exigem contrato futuro, não relaxamento dessa invariante. Objetos/recursos de biblioteca sem ocorrência são admitidos; layouts órfãos não.
 
-`objects::Composition` não substitui `project::Composition`. `ObjectKind::Paragraph` não contém texto nem referencia automaticamente um `DocumentParagraph`. IDs nesta fundação são opacos e únicos entre categorias; um adaptador futuro precisará de mapas explícitos com escopo de projeto/documento e revisão. Nenhuma equivalência é inferida de posição, nome ou conteúdo parecido.
+`objects::Composition` não substitui `project::Composition`. `ObjectKind::Paragraph` não contém texto nem referencia automaticamente um `DocumentParagraph`. IDs nesta fundação são opacos e únicos entre categorias; a ponte de leitura agora fornece mapas explícitos qualificados por projeto/documento, preservando IDs de parágrafos e o hash do snapshot completo. Esses mapas pertencem à projeção privada, não a uma nova autoridade de texto. Nenhuma equivalência é inferida de posição, nome ou conteúdo parecido.
 
 A ordem autoral do Documento continua com as estruturas textuais existentes. `Layout.children` é a ordem lógica de leitura **da composição OBJ-01**. `paint_order` é a pintura espacial de baixo para cima. Posição gráfica não define leitura, cronologia, causalidade, personagem, POV ou significado narrativo.
 
@@ -73,7 +73,7 @@ Falhas de alocação podem lançar exceções, conservando o estado/histórico a
 
 O `.inde` atual permanece diretório, com `data/project.sqlite3`, `data/publicacao.sqlite3`, `data/comics.sqlite3` e recovery próprio. Nenhum arquivo foi convertido. O schema autoral continua 37; códigos dos migradores, codecs e serviços existentes não foram alterados.
 
-Antes de integrar, será necessário especificar e testar o vínculo com parágrafos/revisões e todas as autoridades inventariadas: texto ativo, folhas cobertas, referências semânticas, seleção/visibilidade, revisões aplicadas, origens congeladas, IDs públicos, undo/recovery e Save As. O grafo OBJ-01 ainda não possui payload textual, persistência, mídia incorporada, serializador ou exportador. Recursos declarados não têm prova de integridade de bytes no modelo.
+Antes de integrar, será necessário especificar e testar o vínculo com parágrafos/revisões e todas as autoridades inventariadas: texto ativo, folhas cobertas, referências semânticas, seleção/visibilidade, revisões aplicadas, origens congeladas, IDs públicos, undo/recovery e Save As. O grafo OBJ-01 ainda não possui payload textual, persistência, mídia incorporada, serializador ou exportador. A ponte separada resolve conteúdo de parágrafos sobre um snapshot integral privado, sem copiar texto para o grafo nem permitir escrita de volta. Recursos declarados não têm prova de integridade de bytes no modelo.
 
 GTK, instâncias de contêiner, inclusão/remoção, wrap/unwrap, clipboard, geometria responsiva, spans de grade e arquivo único `.inde` permanecem futuros e não foram iniciados. Uma futura migração exigirá backup consistente SQLite (inclusive WAL), validação em cópias, reversibilidade e seleção explícita do conteúdo público. Visibilidade não autoriza publicar e arquivos de autoria/credenciais não pertencem ao pacote público.
 
