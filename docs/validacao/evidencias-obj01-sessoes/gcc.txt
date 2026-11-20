@@ -1,0 +1,111 @@
+
+/tmp/obj01-session-configure.log
+-- The CXX compiler identification is GNU 15.2.0
+-- Detecting CXX compiler ABI info
+-- Detecting CXX compiler ABI info - done
+-- Check for working CXX compiler: /usr/bin/c++ - skipped
+-- Detecting CXX compile features
+-- Detecting CXX compile features - done
+-- Found PkgConfig: /usr/bin/pkg-config (found version "1.8.1")
+-- Checking for module 'glib-2.0'
+--   Found glib-2.0, version 2.80.0
+-- Checking for module 'uuid'
+--   Found uuid, version 2.39.3
+-- Found Python3: /usr/bin/python3.12 (found version "3.12.3") found components: Interpreter
+{
+  "schema": 37,
+  "arquivos_conferidos": 758,
+  "arquivo_sha256": "554623abec5d7c3c175dab2aa6bbabc8a95abd6e3d98a27191cea0260a4965c4",
+  "resultado": "ok"
+}
+-- Configuring done (2.0s)
+-- Generating done (0.0s)
+-- Build files have been written to: /home/roger/Documents/Projects/GitHub/INDE/obj01-audit/build-obj01-session
+
+/tmp/obj01-session-build-final.log
+[1/2] Building CXX object document-domain/CMakeFiles/inde_object_change_session_tests.dir/home/roger/Documents/Projects/GitHub/INDE/obj01-audit/cpp/object_change_session_tests.cpp.o
+[2/2] Linking CXX executable document-domain/inde_object_change_session_tests
+
+/tmp/obj01-session-ctest-final.log
+Test project /home/roger/Documents/Projects/GitHub/INDE/obj01-audit/build-obj01-session
+    Start 1: inde_object_document_adapter_tests
+1/4 Test #1: inde_object_document_adapter_tests ......   Passed    2.91 sec
+    Start 2: inde_object_composition_adapter_tests
+2/4 Test #2: inde_object_composition_adapter_tests ...   Passed    5.05 sec
+    Start 3: inde_object_change_plan_tests
+3/4 Test #3: inde_object_change_plan_tests ...........   Passed    8.14 sec
+    Start 4: inde_object_change_session_tests
+4/4 Test #4: inde_object_change_session_tests ........   Passed    3.77 sec
+
+100% tests passed out of 4
+
+Total Test time (real) =  19.89 sec
+
+build-obj01-session/Testing/Temporary/LastTest.log
+Start testing: Nov 20 14:20 -03
+----------------------------------------------------------
+1/4 Testing: inde_object_document_adapter_tests
+1/4 Test: inde_object_document_adapter_tests
+Command: "/home/roger/Documents/Projects/GitHub/INDE/obj01-audit/build-obj01-session/document-domain/inde_object_document_adapter_tests"
+Directory: /home/roger/Documents/Projects/GitHub/INDE/obj01-audit/build-obj01-session/document-domain
+"inde_object_document_adapter_tests" start time: Nov 20 14:20 -03
+Output:
+----------------------------------------------------------
+INDE-OBJ-01: 9 document read-adapter groups passed (250 generated source orders, 10000 paragraph boundary)
+<end of output>
+Test time =   2.91 sec
+----------------------------------------------------------
+Test Passed.
+"inde_object_document_adapter_tests" end time: Nov 20 14:20 -03
+"inde_object_document_adapter_tests" time elapsed: 00:00:02
+----------------------------------------------------------
+
+2/4 Testing: inde_object_composition_adapter_tests
+2/4 Test: inde_object_composition_adapter_tests
+Command: "/home/roger/Documents/Projects/GitHub/INDE/obj01-audit/build-obj01-session/document-domain/inde_object_composition_adapter_tests"
+Directory: /home/roger/Documents/Projects/GitHub/INDE/obj01-audit/build-obj01-session/document-domain
+"inde_object_composition_adapter_tests" start time: Nov 20 14:20 -03
+Output:
+----------------------------------------------------------
+INDE-OBJ-01: 11 composition read-adapter groups passed (200 generated orders, 2048 occurrence boundary)
+<end of output>
+Test time =   5.05 sec
+----------------------------------------------------------
+Test Passed.
+"inde_object_composition_adapter_tests" end time: Nov 20 14:20 -03
+"inde_object_composition_adapter_tests" time elapsed: 00:00:05
+----------------------------------------------------------
+
+3/4 Testing: inde_object_change_plan_tests
+3/4 Test: inde_object_change_plan_tests
+Command: "/home/roger/Documents/Projects/GitHub/INDE/obj01-audit/build-obj01-session/document-domain/inde_object_change_plan_tests"
+Directory: /home/roger/Documents/Projects/GitHub/INDE/obj01-audit/build-obj01-session/document-domain
+"inde_object_change_plan_tests" start time: Nov 20 14:20 -03
+Output:
+----------------------------------------------------------
+INDE-OBJ-01: 10 change-plan groups passed (150 document plans, 150 composition plans, existing undo/redo)
+<end of output>
+Test time =   8.14 sec
+----------------------------------------------------------
+Test Passed.
+"inde_object_change_plan_tests" end time: Nov 20 14:20 -03
+"inde_object_change_plan_tests" time elapsed: 00:00:08
+----------------------------------------------------------
+
+4/4 Testing: inde_object_change_session_tests
+4/4 Test: inde_object_change_session_tests
+Command: "/home/roger/Documents/Projects/GitHub/INDE/obj01-audit/build-obj01-session/document-domain/inde_object_change_session_tests"
+Directory: /home/roger/Documents/Projects/GitHub/INDE/obj01-audit/build-obj01-session/document-domain
+"inde_object_change_session_tests" start time: Nov 20 14:20 -03
+Output:
+----------------------------------------------------------
+INDE-OBJ-01: 9 session groups passed (40+40 generated applies, 80 undo and 80 redo, origin conflicts, bounded reversible history)
+<end of output>
+Test time =   3.77 sec
+----------------------------------------------------------
+Test Passed.
+"inde_object_change_session_tests" end time: Nov 20 14:20 -03
+"inde_object_change_session_tests" time elapsed: 00:00:03
+----------------------------------------------------------
+
+End testing: Nov 20 14:20 -03

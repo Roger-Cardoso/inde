@@ -86,3 +86,22 @@ Os 92 testes Python do aplicativo e percursos GTK/publicação não foram reexec
 O próximo requisito é o protocolo de persistência/reconhecimento de save e recovery, inicialmente em fixtures isoladas e sem migração. Aplicar em memória não deve ser confundido com gravar no projeto. GTK e arquivo único `.inde` continuam fora da fase atual.
 
 Ver [contrato](../arquitetura/SESSOES-OBJ-01.md), [planos anteriores](VALIDACAO-OBJ-01-PLANOS.md) e [inventário](../arquitetura/INVENTARIO-OBJ-01.md). Resultados e evidências são consolidados no complemento deste relatório.
+
+## Resultados registrados
+
+Implementação e contrato: `c880cf7bdeee63f6229c4934a0e096e815ebdaa3`. O complemento de evidências mantém esse código.
+
+| Verificação | Resultado | Evidência |
+| --- | --- | --- |
+| GCC 15.2.0, build mínimo | 4/4 programas aprovados; 39 grupos entre pontes, planos e sessões | [gcc.txt](evidencias-obj01-sessoes/gcc.txt) |
+| Clang 18.1.8, build mínimo | 4/4 aprovados | [clang.txt](evidencias-obj01-sessoes/clang.txt) |
+| ASan/UBSan locais, incluindo 26 unidades proprietárias | 4/4 aprovados, sem diagnósticos; LSan local desativado | [asan-ubsan.txt](evidencias-obj01-sessoes/asan-ubsan.txt) |
+| Fundação, pontes, planos, sessões e serviços no núcleo completo | 10/10 programas aprovados | [native-focal.txt](evidencias-obj01-sessoes/native-focal.txt) |
+| CI, incluindo LSan remoto | **21/21 jobs aprovados** | [execução 44783196145](https://github.com/Roger-Cardoso/inde/actions/runs/44783196145), [ci.json](evidencias-obj01-sessoes/ci.json) |
+| CTest nativo completo | **57/57 aprovados**, em 186,85 s | [native-ctest.txt](evidencias-obj01-sessoes/native-ctest.txt) |
+| Três pacotes de fontes/manifests | Hashes e inventários reconferidos: 641 / 757 / 758 arquivos | [fontes.json](evidencias-obj01-sessoes/fontes.json) |
+| Recusas do verificador de fontes | 5/5 testes Python aprovados | [fontes-tests.txt](evidencias-obj01-sessoes/fontes-tests.txt) |
+
+O ensaio focal inicial tinha oito grupos de sessão; o nono acrescentou recusas da Composição e a fronteira de bytes. O CTest completo e os builds mínimos finais incluem os nove grupos. Não houve mudança produtiva entre esses ensaios. O build mínimo GCC foi criado do zero; Clang/ASan reutilizaram as unidades proprietárias já compiladas, recompilando os fontes alterados e acrescentando a nova biblioteca/teste.
+
+O [resumo estruturado](evidencias-obj01-sessoes/resultados.json) identifica commit, hashes dos fontes implementados, cobertura e fronteiras. Logs/JSON possuem [SHA256SUMS](evidencias-obj01-sessoes/SHA256SUMS), verificáveis nessa pasta com `sha256sum -c SHA256SUMS`. São checksums de conteúdo, não atestação externa. A CI acima corresponde à implementação; o commit de evidências mantém o mesmo código.

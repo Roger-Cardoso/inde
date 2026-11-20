@@ -1,0 +1,114 @@
+{
+  "date": "2026-11-20",
+  "branch": "feature/inde-obj-01-foundation",
+  "base_commit": "b23a93dac441d6cd1397e4826fa815fa50d5513e",
+  "implementation_commit": "c880cf7bdeee63f6229c4934a0e096e815ebdaa3",
+  "scope": "OBJ-01 Phase 1 reviewed application in private in-memory sessions only",
+  "implementation_sha256": {
+    "cpp/object_change_session.cpp": "468a8d21bb20e9500cb0d2e44a687874331533f07901a663d0c9da0908c2393a",
+    "cpp/object_change_session.hpp": "2cc644c06fbcd9804aa6ee2e8072f33b678f62641dadd01e61fe131dae2b8f22",
+    "cpp/object_change_session_tests.cpp": "ea8da77dbd8b8c4a171159ad17b230a6bd2535fa2d66e8f1e085f1d612db6315",
+    "cpp/object_change_session_service_tests.cpp": "b7f30fed241dfa4e4a32e383eb825df27db2bd311c3045c231bad66858a44a08",
+    "cpp/object_change_plan.cpp": "a9b06679b8c17c2dbd09dfbc827640526552b19f4a5c61421dc898642022d098",
+    "cpp/object_change_plan.hpp": "94d9237bd8a69c0ce2d74a78eadc4d368821a6cfecd100ebe3762b189a4a372f",
+    "cpp/CMakeLists.txt": "315eb877deb7c5058efb93101db26e03f60908df81d1b933f05613295a247336",
+    "tests/object_change_session/CMakeLists.txt": "2a14941a2ffb4915cb9b3ff86e13b8bd1c4c59a6a1cc6b22b5d9289fdd16673b",
+    "tests/object_document/CMakeLists.txt": "66f5f73c7e6d84eb8f2f45c1397f95730c52772f6387e38eb0b9778de1687c92",
+    ".github/workflows/obj-01.yml": "6f9245611ee9b65e15a26accdb3a42536bd67f384ef676716d1db2c3788f947a"
+  },
+  "minimal": {
+    "gcc": "15.2.0",
+    "clang": "18.1.8",
+    "programs_passed_per_build": 4,
+    "groups": 39,
+    "owner_units": 26,
+    "asan_ubsan": "passed",
+    "local_lsan": false,
+    "ci_lsan": true
+  },
+  "new_session_groups": 9,
+  "generated_applies": {
+    "document": 40,
+    "composition": 40
+  },
+  "generated_undo": 80,
+  "generated_redo": 80,
+  "native_focal": {
+    "passed": 10,
+    "total": 10,
+    "session_groups_at_focal": 8
+  },
+  "native_full": {
+    "passed": 57,
+    "total": 57,
+    "seconds": 186.85,
+    "session_groups": 9
+  },
+  "archive_verifier_tests": 5,
+  "archives": [
+    {
+      "label": "schema28",
+      "path": "fontes/inde-schema28-89b47f27.tar.gz",
+      "sha256": "3d6bee4c60dbecc602a56881b1957f90b55798dbc711c9c290701e2ad8a6e97e",
+      "files": 641,
+      "manifest_match": true
+    },
+    {
+      "label": "original37",
+      "path": "fontes/inde-P03c-schema37-original.tar.gz",
+      "sha256": "2e97a15ddcda56b8f5892d033c9a7427d6102bcf650454678491c50ff5459ef2",
+      "files": 757,
+      "manifest_match": true
+    },
+    {
+      "label": "integrated37",
+      "path": "fontes/inde-integrado-schema37.tar.gz",
+      "sha256": "554623abec5d7c3c175dab2aa6bbabc8a95abd6e3d98a27191cea0260a4965c4",
+      "files": 758,
+      "manifest_match": true
+    }
+  ],
+  "repository_proof": "New temporary synthetic project via real ProjectService/SQLite only; prepare/apply/undo/redo conserve every project file byte; schema37 integrity/FK pass; sequential durable external changes block replay without overwriting.",
+  "history": {
+    "default_steps": 64,
+    "default_representation_bytes": 67108864,
+    "max_steps": 64,
+    "max_representation_bytes": 134217728,
+    "refuse_if_latest_reversible_pair_exceeds_budget": true,
+    "quota_is_rss": false
+  },
+  "safety_contract": [
+    "scoped immutable preview ticket",
+    "ticket bound to monotonic session revision",
+    "single use including no-op",
+    "external opening origin check on apply/undo/redo",
+    "coordinated graph/source/selection history",
+    "owner document commit/undo/redo replay per transaction",
+    "no implicit promotion of divergent visual order",
+    "candidate allocations before final vector swap"
+  ],
+  "not_implemented": [
+    "persistent save/revision acknowledgement",
+    "durable OBJ-01 recovery",
+    "GTK/current typing-session integration",
+    "thread/process synchronization",
+    "rebase after external edits",
+    "schema/project migration",
+    "single-file .inde",
+    "publication integration"
+  ],
+  "not_tested": [
+    "allocation-failure injection",
+    "process interruption",
+    "concurrent stress",
+    "interactive latency benchmark"
+  ],
+  "ci": {
+    "run_id": 44783196145,
+    "url": "https://github.com/Roger-Cardoso/inde/actions/runs/44783196145",
+    "head_sha": "c880cf7bdeee63f6229c4934a0e096e815ebdaa3",
+    "jobs": 21,
+    "passed": 21,
+    "conclusion": "success"
+  }
+}

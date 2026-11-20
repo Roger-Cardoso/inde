@@ -1,0 +1,1664 @@
+{
+  "conclusion": "success",
+  "databaseId": 44783196145,
+  "headSha": "c880cf7bdeee63f6229c4934a0e096e815ebdaa3",
+  "jobs": [
+    {
+      "completedAt": "2026-11-20T17:25:49Z",
+      "conclusion": "success",
+      "databaseId": 136451026536,
+      "name": "pinned-sources",
+      "startedAt": "2026-11-20T17:25:45Z",
+      "status": "completed",
+      "steps": [
+        {
+          "completedAt": "2026-11-20T17:25:46Z",
+          "conclusion": "success",
+          "name": "Set up job",
+          "number": 1,
+          "startedAt": "2026-11-20T17:25:45Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-11-20T17:25:47Z",
+          "conclusion": "success",
+          "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "number": 2,
+          "startedAt": "2026-11-20T17:25:46Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-11-20T17:25:47Z",
+          "conclusion": "success",
+          "name": "Test archive verifier refusal paths",
+          "number": 3,
+          "startedAt": "2026-11-20T17:25:47Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-11-20T17:25:47Z",
+          "conclusion": "success",
+          "name": "Verify three archives, manifests and extracted bytes",
+          "number": 4,
+          "startedAt": "2026-11-20T17:25:47Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-11-20T17:25:48Z",
+          "conclusion": "success",
+          "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "number": 8,
+          "startedAt": "2026-11-20T17:25:47Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-11-20T17:25:48Z",
+          "conclusion": "success",
+          "name": "Complete job",
+          "number": 9,
+          "startedAt": "2026-11-20T17:25:48Z",
+          "status": "completed"
+        }
+      ],
+      "url": "https://github.com/Roger-Cardoso/inde/actions/runs/44783196145/job/136451026536"
+    },
+    {
+      "completedAt": "2026-11-20T17:26:49Z",
+      "conclusion": "success",
+      "databaseId": 136451026874,
+      "name": "immutable-change-plans (clang++, OFF)",
+      "startedAt": "2026-11-20T17:25:45Z",
+      "status": "completed",
+      "steps": [
+        {
+          "completedAt": "2026-11-20T17:25:46Z",
+          "conclusion": "success",
+          "name": "Set up job",
+          "number": 1,
+          "startedAt": "2026-11-20T17:25:45Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-11-20T17:25:47Z",
+          "conclusion": "success",
+          "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "number": 2,
+          "startedAt": "2026-11-20T17:25:46Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-11-20T17:25:59Z",
+          "conclusion": "success",
+          "name": "Install pure owner-domain dependencies",
+          "number": 3,
+          "startedAt": "2026-11-20T17:25:47Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-11-20T17:26:00Z",
+          "conclusion": "success",
+          "name": "Extract verified schema 37 owner source",
+          "number": 4,
+          "startedAt": "2026-11-20T17:25:59Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-11-20T17:26:06Z",
+          "conclusion": "success",
+          "name": "Configure immutable plans and real editing engine",
+          "number": 5,
+          "startedAt": "2026-11-20T17:26:00Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-11-20T17:26:37Z",
+          "conclusion": "success",
+          "name": "Compile strict change planner and owner units",
+          "number": 6,
+          "startedAt": "2026-11-20T17:26:06Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-11-20T17:26:47Z",
+          "conclusion": "success",
+          "name": "Verify intent, translation, refusal, freshness and undo",
+          "number": 7,
+          "startedAt": "2026-11-20T17:26:37Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-11-20T17:26:47Z",
+          "conclusion": "success",
+          "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "number": 14,
+          "startedAt": "2026-11-20T17:26:47Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-11-20T17:26:47Z",
+          "conclusion": "success",
+          "name": "Complete job",
+          "number": 15,
+          "startedAt": "2026-11-20T17:26:47Z",
+          "status": "completed"
+        }
+      ],
+      "url": "https://github.com/Roger-Cardoso/inde/actions/runs/44783196145/job/136451026874"
+    },
+    {
+      "completedAt": "2026-11-20T17:26:56Z",
+      "conclusion": "success",
+      "databaseId": 136451026985,
+      "name": "immutable-change-plans (clang++, ON)",
+      "startedAt": "2026-11-20T17:25:45Z",
+      "status": "completed",
+      "steps": [
+        {
+          "completedAt": "2026-11-20T17:25:47Z",
+          "conclusion": "success",
+          "name": "Set up job",
+          "number": 1,
+          "startedAt": "2026-11-20T17:25:45Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-11-20T17:25:50Z",
+          "conclusion": "success",
+          "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "number": 2,
+          "startedAt": "2026-11-20T17:25:47Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-11-20T17:26:07Z",
+          "conclusion": "success",
+          "name": "Install pure owner-domain dependencies",
+          "number": 3,
+          "startedAt": "2026-11-20T17:25:50Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-11-20T17:26:08Z",
+          "conclusion": "success",
+          "name": "Extract verified schema 37 owner source",
+          "number": 4,
+          "startedAt": "2026-11-20T17:26:07Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-11-20T17:26:13Z",
+          "conclusion": "success",
+          "name": "Configure immutable plans and real editing engine",
+          "number": 5,
+          "startedAt": "2026-11-20T17:26:08Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-11-20T17:26:38Z",
+          "conclusion": "success",
+          "name": "Compile strict change planner and owner units",
+          "number": 6,
+          "startedAt": "2026-11-20T17:26:13Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-11-20T17:26:54Z",
+          "conclusion": "success",
+          "name": "Verify intent, translation, refusal, freshness and undo",
+          "number": 7,
+          "startedAt": "2026-11-20T17:26:39Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-11-20T17:26:54Z",
+          "conclusion": "success",
+          "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "number": 14,
+          "startedAt": "2026-11-20T17:26:54Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-11-20T17:26:54Z",
+          "conclusion": "success",
+          "name": "Complete job",
+          "number": 15,
+          "startedAt": "2026-11-20T17:26:54Z",
+          "status": "completed"
+        }
+      ],
+      "url": "https://github.com/Roger-Cardoso/inde/actions/runs/44783196145/job/136451026985"
+    },
+    {
+      "completedAt": "2026-11-20T17:26:40Z",
+      "conclusion": "success",
+      "databaseId": 136451026999,
+      "name": "document-read-adapter (g++, ON)",
+      "startedAt": "2026-11-20T17:25:46Z",
+      "status": "completed",
+      "steps": [
+        {
+          "completedAt": "2026-11-20T17:25:47Z",
+          "conclusion": "success",
+          "name": "Set up job",
+          "number": 1,
+          "startedAt": "2026-11-20T17:25:47Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-11-20T17:25:48Z",
+          "conclusion": "success",
+          "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "number": 2,
+          "startedAt": "2026-11-20T17:25:47Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-11-20T17:26:16Z",
+          "conclusion": "success",
+          "name": "Install pure document-domain dependencies",
+          "number": 3,
+          "startedAt": "2026-11-20T17:25:48Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-11-20T17:26:16Z",
+          "conclusion": "success",
+          "name": "Extract verified schema 37 owner source",
+          "number": 4,
+          "startedAt": "2026-11-20T17:26:16Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-11-20T17:26:17Z",
+          "conclusion": "success",
+          "name": "Configure read-only adapter and real document codecs",
+          "number": 5,
+          "startedAt": "2026-11-20T17:26:16Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-11-20T17:26:35Z",
+          "conclusion": "success",
+          "name": "Compile adapter and document-domain source",
+          "number": 6,
+          "startedAt": "2026-11-20T17:26:17Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-11-20T17:26:38Z",
+          "conclusion": "success",
+          "name": "Verify full capture, identity, limits and freshness",
+          "number": 7,
+          "startedAt": "2026-11-20T17:26:35Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-11-20T17:26:38Z",
+          "conclusion": "success",
+          "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "number": 14,
+          "startedAt": "2026-11-20T17:26:38Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-11-20T17:26:39Z",
+          "conclusion": "success",
+          "name": "Complete job",
+          "number": 15,
+          "startedAt": "2026-11-20T17:26:38Z",
+          "status": "completed"
+        }
+      ],
+      "url": "https://github.com/Roger-Cardoso/inde/actions/runs/44783196145/job/136451026999"
+    },
+    {
+      "completedAt": "2026-11-20T17:27:01Z",
+      "conclusion": "success",
+      "databaseId": 136451027052,
+      "name": "document-read-adapter (g++, OFF)",
+      "startedAt": "2026-11-20T17:25:45Z",
+      "status": "completed",
+      "steps": [
+        {
+          "completedAt": "2026-11-20T17:25:48Z",
+          "conclusion": "success",
+          "name": "Set up job",
+          "number": 1,
+          "startedAt": "2026-11-20T17:25:45Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-11-20T17:25:51Z",
+          "conclusion": "success",
+          "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "number": 2,
+          "startedAt": "2026-11-20T17:25:48Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-11-20T17:26:29Z",
+          "conclusion": "success",
+          "name": "Install pure document-domain dependencies",
+          "number": 3,
+          "startedAt": "2026-11-20T17:25:51Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-11-20T17:26:29Z",
+          "conclusion": "success",
+          "name": "Extract verified schema 37 owner source",
+          "number": 4,
+          "startedAt": "2026-11-20T17:26:29Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-11-20T17:26:33Z",
+          "conclusion": "success",
+          "name": "Configure read-only adapter and real document codecs",
+          "number": 5,
+          "startedAt": "2026-11-20T17:26:29Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-11-20T17:26:58Z",
+          "conclusion": "success",
+          "name": "Compile adapter and document-domain source",
+          "number": 6,
+          "startedAt": "2026-11-20T17:26:33Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-11-20T17:27:00Z",
+          "conclusion": "success",
+          "name": "Verify full capture, identity, limits and freshness",
+          "number": 7,
+          "startedAt": "2026-11-20T17:26:58Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-11-20T17:27:00Z",
+          "conclusion": "success",
+          "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "number": 14,
+          "startedAt": "2026-11-20T17:27:00Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-11-20T17:27:00Z",
+          "conclusion": "success",
+          "name": "Complete job",
+          "number": 15,
+          "startedAt": "2026-11-20T17:27:00Z",
+          "status": "completed"
+        }
+      ],
+      "url": "https://github.com/Roger-Cardoso/inde/actions/runs/44783196145/job/136451027052"
+    },
+    {
+      "completedAt": "2026-11-20T17:26:47Z",
+      "conclusion": "success",
+      "databaseId": 136451027078,
+      "name": "composition-read-adapter (clang++, OFF)",
+      "startedAt": "2026-11-20T17:25:45Z",
+      "status": "completed",
+      "steps": [
+        {
+          "completedAt": "2026-11-20T17:25:47Z",
+          "conclusion": "success",
+          "name": "Set up job",
+          "number": 1,
+          "startedAt": "2026-11-20T17:25:46Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-11-20T17:25:48Z",
+          "conclusion": "success",
+          "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "number": 2,
+          "startedAt": "2026-11-20T17:25:47Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-11-20T17:26:02Z",
+          "conclusion": "success",
+          "name": "Install pure composition-domain dependencies",
+          "number": 3,
+          "startedAt": "2026-11-20T17:25:48Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-11-20T17:26:02Z",
+          "conclusion": "success",
+          "name": "Extract verified schema 37 owner source",
+          "number": 4,
+          "startedAt": "2026-11-20T17:26:02Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-11-20T17:26:11Z",
+          "conclusion": "success",
+          "name": "Configure composition and document read adapters",
+          "number": 5,
+          "startedAt": "2026-11-20T17:26:02Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-11-20T17:26:40Z",
+          "conclusion": "success",
+          "name": "Compile adapters and real owner codecs",
+          "number": 6,
+          "startedAt": "2026-11-20T17:26:11Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-11-20T17:26:45Z",
+          "conclusion": "success",
+          "name": "Verify versions, profiles, references and private snapshots",
+          "number": 7,
+          "startedAt": "2026-11-20T17:26:40Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-11-20T17:26:45Z",
+          "conclusion": "success",
+          "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "number": 14,
+          "startedAt": "2026-11-20T17:26:45Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-11-20T17:26:45Z",
+          "conclusion": "success",
+          "name": "Complete job",
+          "number": 15,
+          "startedAt": "2026-11-20T17:26:45Z",
+          "status": "completed"
+        }
+      ],
+      "url": "https://github.com/Roger-Cardoso/inde/actions/runs/44783196145/job/136451027078"
+    },
+    {
+      "completedAt": "2026-11-20T17:26:30Z",
+      "conclusion": "success",
+      "databaseId": 136451027081,
+      "name": "standalone-model (clang++, ON)",
+      "startedAt": "2026-11-20T17:25:46Z",
+      "status": "completed",
+      "steps": [
+        {
+          "completedAt": "2026-11-20T17:25:49Z",
+          "conclusion": "success",
+          "name": "Set up job",
+          "number": 1,
+          "startedAt": "2026-11-20T17:25:46Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-11-20T17:25:55Z",
+          "conclusion": "success",
+          "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "number": 2,
+          "startedAt": "2026-11-20T17:25:49Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-11-20T17:26:08Z",
+          "conclusion": "success",
+          "name": "Configure isolated C++20 foundation",
+          "number": 3,
+          "startedAt": "2026-11-20T17:25:55Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-11-20T17:26:21Z",
+          "conclusion": "success",
+          "name": "Compile strict C++20 foundation",
+          "number": 4,
+          "startedAt": "2026-11-20T17:26:08Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-11-20T17:26:28Z",
+          "conclusion": "success",
+          "name": "Validate invariants and transactional commands",
+          "number": 5,
+          "startedAt": "2026-11-20T17:26:21Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-11-20T17:26:28Z",
+          "conclusion": "success",
+          "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "number": 10,
+          "startedAt": "2026-11-20T17:26:28Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-11-20T17:26:28Z",
+          "conclusion": "success",
+          "name": "Complete job",
+          "number": 11,
+          "startedAt": "2026-11-20T17:26:28Z",
+          "status": "completed"
+        }
+      ],
+      "url": "https://github.com/Roger-Cardoso/inde/actions/runs/44783196145/job/136451027081"
+    },
+    {
+      "completedAt": "2026-11-20T17:26:59Z",
+      "conclusion": "success",
+      "databaseId": 136451027083,
+      "name": "composition-read-adapter (g++, OFF)",
+      "startedAt": "2026-11-20T17:25:45Z",
+      "status": "completed",
+      "steps": [
+        {
+          "completedAt": "2026-11-20T17:25:48Z",
+          "conclusion": "success",
+          "name": "Set up job",
+          "number": 1,
+          "startedAt": "2026-11-20T17:25:46Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-11-20T17:25:53Z",
+          "conclusion": "success",
+          "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "number": 2,
+          "startedAt": "2026-11-20T17:25:48Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-11-20T17:26:24Z",
+          "conclusion": "success",
+          "name": "Install pure composition-domain dependencies",
+          "number": 3,
+          "startedAt": "2026-11-20T17:25:53Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-11-20T17:26:24Z",
+          "conclusion": "success",
+          "name": "Extract verified schema 37 owner source",
+          "number": 4,
+          "startedAt": "2026-11-20T17:26:24Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-11-20T17:26:27Z",
+          "conclusion": "success",
+          "name": "Configure composition and document read adapters",
+          "number": 5,
+          "startedAt": "2026-11-20T17:26:24Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-11-20T17:26:53Z",
+          "conclusion": "success",
+          "name": "Compile adapters and real owner codecs",
+          "number": 6,
+          "startedAt": "2026-11-20T17:26:27Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-11-20T17:26:56Z",
+          "conclusion": "success",
+          "name": "Verify versions, profiles, references and private snapshots",
+          "number": 7,
+          "startedAt": "2026-11-20T17:26:53Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-11-20T17:26:56Z",
+          "conclusion": "success",
+          "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "number": 14,
+          "startedAt": "2026-11-20T17:26:56Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-11-20T17:26:56Z",
+          "conclusion": "success",
+          "name": "Complete job",
+          "number": 15,
+          "startedAt": "2026-11-20T17:26:56Z",
+          "status": "completed"
+        }
+      ],
+      "url": "https://github.com/Roger-Cardoso/inde/actions/runs/44783196145/job/136451027083"
+    },
+    {
+      "completedAt": "2026-11-20T17:27:22Z",
+      "conclusion": "success",
+      "databaseId": 136451027109,
+      "name": "composition-read-adapter (g++, ON)",
+      "startedAt": "2026-11-20T17:25:45Z",
+      "status": "completed",
+      "steps": [
+        {
+          "completedAt": "2026-11-20T17:25:48Z",
+          "conclusion": "success",
+          "name": "Set up job",
+          "number": 1,
+          "startedAt": "2026-11-20T17:25:45Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-11-20T17:25:53Z",
+          "conclusion": "success",
+          "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "number": 2,
+          "startedAt": "2026-11-20T17:25:48Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-11-20T17:26:28Z",
+          "conclusion": "success",
+          "name": "Install pure composition-domain dependencies",
+          "number": 3,
+          "startedAt": "2026-11-20T17:25:53Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-11-20T17:26:28Z",
+          "conclusion": "success",
+          "name": "Extract verified schema 37 owner source",
+          "number": 4,
+          "startedAt": "2026-11-20T17:26:28Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-11-20T17:26:32Z",
+          "conclusion": "success",
+          "name": "Configure composition and document read adapters",
+          "number": 5,
+          "startedAt": "2026-11-20T17:26:28Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-11-20T17:27:11Z",
+          "conclusion": "success",
+          "name": "Compile adapters and real owner codecs",
+          "number": 6,
+          "startedAt": "2026-11-20T17:26:32Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-11-20T17:27:21Z",
+          "conclusion": "success",
+          "name": "Verify versions, profiles, references and private snapshots",
+          "number": 7,
+          "startedAt": "2026-11-20T17:27:11Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-11-20T17:27:21Z",
+          "conclusion": "success",
+          "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "number": 14,
+          "startedAt": "2026-11-20T17:27:21Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-11-20T17:27:21Z",
+          "conclusion": "success",
+          "name": "Complete job",
+          "number": 15,
+          "startedAt": "2026-11-20T17:27:21Z",
+          "status": "completed"
+        }
+      ],
+      "url": "https://github.com/Roger-Cardoso/inde/actions/runs/44783196145/job/136451027109"
+    },
+    {
+      "completedAt": "2026-11-20T17:26:37Z",
+      "conclusion": "success",
+      "databaseId": 136451027115,
+      "name": "reviewed-working-sessions (g++, OFF)",
+      "startedAt": "2026-11-20T17:25:45Z",
+      "status": "completed",
+      "steps": [
+        {
+          "completedAt": "2026-11-20T17:25:46Z",
+          "conclusion": "success",
+          "name": "Set up job",
+          "number": 1,
+          "startedAt": "2026-11-20T17:25:46Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-11-20T17:25:47Z",
+          "conclusion": "success",
+          "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "number": 2,
+          "startedAt": "2026-11-20T17:25:46Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-11-20T17:25:58Z",
+          "conclusion": "success",
+          "name": "Install pure domain dependencies",
+          "number": 3,
+          "startedAt": "2026-11-20T17:25:47Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-11-20T17:25:59Z",
+          "conclusion": "success",
+          "name": "Extract verified schema 37 owner source",
+          "number": 4,
+          "startedAt": "2026-11-20T17:25:58Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-11-20T17:25:59Z",
+          "conclusion": "success",
+          "name": "Configure working sessions and owner replay",
+          "number": 5,
+          "startedAt": "2026-11-20T17:25:59Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-11-20T17:26:26Z",
+          "conclusion": "success",
+          "name": "Compile sessions and real editing units",
+          "number": 6,
+          "startedAt": "2026-11-20T17:25:59Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-11-20T17:26:35Z",
+          "conclusion": "success",
+          "name": "Verify ticket scope, source checks, coordinated history and quotas",
+          "number": 7,
+          "startedAt": "2026-11-20T17:26:26Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-11-20T17:26:36Z",
+          "conclusion": "success",
+          "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "number": 14,
+          "startedAt": "2026-11-20T17:26:36Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-11-20T17:26:36Z",
+          "conclusion": "success",
+          "name": "Complete job",
+          "number": 15,
+          "startedAt": "2026-11-20T17:26:36Z",
+          "status": "completed"
+        }
+      ],
+      "url": "https://github.com/Roger-Cardoso/inde/actions/runs/44783196145/job/136451027115"
+    },
+    {
+      "completedAt": "2026-11-20T17:26:09Z",
+      "conclusion": "success",
+      "databaseId": 136451027128,
+      "name": "standalone-model (g++, OFF)",
+      "startedAt": "2026-11-20T17:25:45Z",
+      "status": "completed",
+      "steps": [
+        {
+          "completedAt": "2026-11-20T17:25:47Z",
+          "conclusion": "success",
+          "name": "Set up job",
+          "number": 1,
+          "startedAt": "2026-11-20T17:25:46Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-11-20T17:25:51Z",
+          "conclusion": "success",
+          "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "number": 2,
+          "startedAt": "2026-11-20T17:25:47Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-11-20T17:25:54Z",
+          "conclusion": "success",
+          "name": "Configure isolated C++20 foundation",
+          "number": 3,
+          "startedAt": "2026-11-20T17:25:51Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-11-20T17:26:05Z",
+          "conclusion": "success",
+          "name": "Compile strict C++20 foundation",
+          "number": 4,
+          "startedAt": "2026-11-20T17:25:54Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-11-20T17:26:08Z",
+          "conclusion": "success",
+          "name": "Validate invariants and transactional commands",
+          "number": 5,
+          "startedAt": "2026-11-20T17:26:05Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-11-20T17:26:08Z",
+          "conclusion": "success",
+          "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "number": 10,
+          "startedAt": "2026-11-20T17:26:08Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-11-20T17:26:08Z",
+          "conclusion": "success",
+          "name": "Complete job",
+          "number": 11,
+          "startedAt": "2026-11-20T17:26:08Z",
+          "status": "completed"
+        }
+      ],
+      "url": "https://github.com/Roger-Cardoso/inde/actions/runs/44783196145/job/136451027128"
+    },
+    {
+      "completedAt": "2026-11-20T17:26:27Z",
+      "conclusion": "success",
+      "databaseId": 136451027162,
+      "name": "reviewed-working-sessions (clang++, OFF)",
+      "startedAt": "2026-11-20T17:25:45Z",
+      "status": "completed",
+      "steps": [
+        {
+          "completedAt": "2026-11-20T17:25:46Z",
+          "conclusion": "success",
+          "name": "Set up job",
+          "number": 1,
+          "startedAt": "2026-11-20T17:25:45Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-11-20T17:25:47Z",
+          "conclusion": "success",
+          "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "number": 2,
+          "startedAt": "2026-11-20T17:25:46Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-11-20T17:26:00Z",
+          "conclusion": "success",
+          "name": "Install pure domain dependencies",
+          "number": 3,
+          "startedAt": "2026-11-20T17:25:47Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-11-20T17:26:00Z",
+          "conclusion": "success",
+          "name": "Extract verified schema 37 owner source",
+          "number": 4,
+          "startedAt": "2026-11-20T17:26:00Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-11-20T17:26:03Z",
+          "conclusion": "success",
+          "name": "Configure working sessions and owner replay",
+          "number": 5,
+          "startedAt": "2026-11-20T17:26:00Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-11-20T17:26:19Z",
+          "conclusion": "success",
+          "name": "Compile sessions and real editing units",
+          "number": 6,
+          "startedAt": "2026-11-20T17:26:03Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-11-20T17:26:25Z",
+          "conclusion": "success",
+          "name": "Verify ticket scope, source checks, coordinated history and quotas",
+          "number": 7,
+          "startedAt": "2026-11-20T17:26:19Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-11-20T17:26:25Z",
+          "conclusion": "success",
+          "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "number": 14,
+          "startedAt": "2026-11-20T17:26:25Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-11-20T17:26:25Z",
+          "conclusion": "success",
+          "name": "Complete job",
+          "number": 15,
+          "startedAt": "2026-11-20T17:26:25Z",
+          "status": "completed"
+        }
+      ],
+      "url": "https://github.com/Roger-Cardoso/inde/actions/runs/44783196145/job/136451027162"
+    },
+    {
+      "completedAt": "2026-11-20T17:26:25Z",
+      "conclusion": "success",
+      "databaseId": 136451027181,
+      "name": "standalone-model (g++, ON)",
+      "startedAt": "2026-11-20T17:25:46Z",
+      "status": "completed",
+      "steps": [
+        {
+          "completedAt": "2026-11-20T17:25:49Z",
+          "conclusion": "success",
+          "name": "Set up job",
+          "number": 1,
+          "startedAt": "2026-11-20T17:25:46Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-11-20T17:25:54Z",
+          "conclusion": "success",
+          "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "number": 2,
+          "startedAt": "2026-11-20T17:25:49Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-11-20T17:25:58Z",
+          "conclusion": "success",
+          "name": "Configure isolated C++20 foundation",
+          "number": 3,
+          "startedAt": "2026-11-20T17:25:54Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-11-20T17:26:13Z",
+          "conclusion": "success",
+          "name": "Compile strict C++20 foundation",
+          "number": 4,
+          "startedAt": "2026-11-20T17:25:58Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-11-20T17:26:22Z",
+          "conclusion": "success",
+          "name": "Validate invariants and transactional commands",
+          "number": 5,
+          "startedAt": "2026-11-20T17:26:13Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-11-20T17:26:23Z",
+          "conclusion": "success",
+          "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "number": 10,
+          "startedAt": "2026-11-20T17:26:22Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-11-20T17:26:23Z",
+          "conclusion": "success",
+          "name": "Complete job",
+          "number": 11,
+          "startedAt": "2026-11-20T17:26:23Z",
+          "status": "completed"
+        }
+      ],
+      "url": "https://github.com/Roger-Cardoso/inde/actions/runs/44783196145/job/136451027181"
+    },
+    {
+      "completedAt": "2026-11-20T17:26:45Z",
+      "conclusion": "success",
+      "databaseId": 136451027219,
+      "name": "immutable-change-plans (g++, OFF)",
+      "startedAt": "2026-11-20T17:25:45Z",
+      "status": "completed",
+      "steps": [
+        {
+          "completedAt": "2026-11-20T17:25:46Z",
+          "conclusion": "success",
+          "name": "Set up job",
+          "number": 1,
+          "startedAt": "2026-11-20T17:25:46Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-11-20T17:25:48Z",
+          "conclusion": "success",
+          "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "number": 2,
+          "startedAt": "2026-11-20T17:25:46Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-11-20T17:26:02Z",
+          "conclusion": "success",
+          "name": "Install pure owner-domain dependencies",
+          "number": 3,
+          "startedAt": "2026-11-20T17:25:48Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-11-20T17:26:02Z",
+          "conclusion": "success",
+          "name": "Extract verified schema 37 owner source",
+          "number": 4,
+          "startedAt": "2026-11-20T17:26:02Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-11-20T17:26:03Z",
+          "conclusion": "success",
+          "name": "Configure immutable plans and real editing engine",
+          "number": 5,
+          "startedAt": "2026-11-20T17:26:02Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-11-20T17:26:33Z",
+          "conclusion": "success",
+          "name": "Compile strict change planner and owner units",
+          "number": 6,
+          "startedAt": "2026-11-20T17:26:03Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-11-20T17:26:43Z",
+          "conclusion": "success",
+          "name": "Verify intent, translation, refusal, freshness and undo",
+          "number": 7,
+          "startedAt": "2026-11-20T17:26:33Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-11-20T17:26:44Z",
+          "conclusion": "success",
+          "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "number": 14,
+          "startedAt": "2026-11-20T17:26:43Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-11-20T17:26:44Z",
+          "conclusion": "success",
+          "name": "Complete job",
+          "number": 15,
+          "startedAt": "2026-11-20T17:26:44Z",
+          "status": "completed"
+        }
+      ],
+      "url": "https://github.com/Roger-Cardoso/inde/actions/runs/44783196145/job/136451027219"
+    },
+    {
+      "completedAt": "2026-11-20T17:26:04Z",
+      "conclusion": "success",
+      "databaseId": 136451027232,
+      "name": "standalone-model (clang++, OFF)",
+      "startedAt": "2026-11-20T17:25:45Z",
+      "status": "completed",
+      "steps": [
+        {
+          "completedAt": "2026-11-20T17:25:46Z",
+          "conclusion": "success",
+          "name": "Set up job",
+          "number": 1,
+          "startedAt": "2026-11-20T17:25:45Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-11-20T17:25:47Z",
+          "conclusion": "success",
+          "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "number": 2,
+          "startedAt": "2026-11-20T17:25:46Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-11-20T17:25:53Z",
+          "conclusion": "success",
+          "name": "Configure isolated C++20 foundation",
+          "number": 3,
+          "startedAt": "2026-11-20T17:25:47Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-11-20T17:25:58Z",
+          "conclusion": "success",
+          "name": "Compile strict C++20 foundation",
+          "number": 4,
+          "startedAt": "2026-11-20T17:25:53Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-11-20T17:26:02Z",
+          "conclusion": "success",
+          "name": "Validate invariants and transactional commands",
+          "number": 5,
+          "startedAt": "2026-11-20T17:25:58Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-11-20T17:26:02Z",
+          "conclusion": "success",
+          "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "number": 10,
+          "startedAt": "2026-11-20T17:26:02Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-11-20T17:26:02Z",
+          "conclusion": "success",
+          "name": "Complete job",
+          "number": 11,
+          "startedAt": "2026-11-20T17:26:02Z",
+          "status": "completed"
+        }
+      ],
+      "url": "https://github.com/Roger-Cardoso/inde/actions/runs/44783196145/job/136451027232"
+    },
+    {
+      "completedAt": "2026-11-20T17:26:31Z",
+      "conclusion": "success",
+      "databaseId": 136451027296,
+      "name": "document-read-adapter (clang++, ON)",
+      "startedAt": "2026-11-20T17:25:45Z",
+      "status": "completed",
+      "steps": [
+        {
+          "completedAt": "2026-11-20T17:25:46Z",
+          "conclusion": "success",
+          "name": "Set up job",
+          "number": 1,
+          "startedAt": "2026-11-20T17:25:46Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-11-20T17:25:48Z",
+          "conclusion": "success",
+          "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "number": 2,
+          "startedAt": "2026-11-20T17:25:46Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-11-20T17:26:00Z",
+          "conclusion": "success",
+          "name": "Install pure document-domain dependencies",
+          "number": 3,
+          "startedAt": "2026-11-20T17:25:48Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-11-20T17:26:00Z",
+          "conclusion": "success",
+          "name": "Extract verified schema 37 owner source",
+          "number": 4,
+          "startedAt": "2026-11-20T17:26:00Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-11-20T17:26:03Z",
+          "conclusion": "success",
+          "name": "Configure read-only adapter and real document codecs",
+          "number": 5,
+          "startedAt": "2026-11-20T17:26:00Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-11-20T17:26:25Z",
+          "conclusion": "success",
+          "name": "Compile adapter and document-domain source",
+          "number": 6,
+          "startedAt": "2026-11-20T17:26:03Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-11-20T17:26:29Z",
+          "conclusion": "success",
+          "name": "Verify full capture, identity, limits and freshness",
+          "number": 7,
+          "startedAt": "2026-11-20T17:26:25Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-11-20T17:26:30Z",
+          "conclusion": "success",
+          "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "number": 14,
+          "startedAt": "2026-11-20T17:26:29Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-11-20T17:26:30Z",
+          "conclusion": "success",
+          "name": "Complete job",
+          "number": 15,
+          "startedAt": "2026-11-20T17:26:30Z",
+          "status": "completed"
+        }
+      ],
+      "url": "https://github.com/Roger-Cardoso/inde/actions/runs/44783196145/job/136451027296"
+    },
+    {
+      "completedAt": "2026-11-20T17:27:48Z",
+      "conclusion": "success",
+      "databaseId": 136451027329,
+      "name": "composition-read-adapter (clang++, ON)",
+      "startedAt": "2026-11-20T17:25:45Z",
+      "status": "completed",
+      "steps": [
+        {
+          "completedAt": "2026-11-20T17:25:47Z",
+          "conclusion": "success",
+          "name": "Set up job",
+          "number": 1,
+          "startedAt": "2026-11-20T17:25:46Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-11-20T17:25:48Z",
+          "conclusion": "success",
+          "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "number": 2,
+          "startedAt": "2026-11-20T17:25:47Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-11-20T17:26:59Z",
+          "conclusion": "success",
+          "name": "Install pure composition-domain dependencies",
+          "number": 3,
+          "startedAt": "2026-11-20T17:25:48Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-11-20T17:26:59Z",
+          "conclusion": "success",
+          "name": "Extract verified schema 37 owner source",
+          "number": 4,
+          "startedAt": "2026-11-20T17:26:59Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-11-20T17:27:07Z",
+          "conclusion": "success",
+          "name": "Configure composition and document read adapters",
+          "number": 5,
+          "startedAt": "2026-11-20T17:26:59Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-11-20T17:27:36Z",
+          "conclusion": "success",
+          "name": "Compile adapters and real owner codecs",
+          "number": 6,
+          "startedAt": "2026-11-20T17:27:07Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-11-20T17:27:46Z",
+          "conclusion": "success",
+          "name": "Verify versions, profiles, references and private snapshots",
+          "number": 7,
+          "startedAt": "2026-11-20T17:27:36Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-11-20T17:27:46Z",
+          "conclusion": "success",
+          "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "number": 14,
+          "startedAt": "2026-11-20T17:27:46Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-11-20T17:27:46Z",
+          "conclusion": "success",
+          "name": "Complete job",
+          "number": 15,
+          "startedAt": "2026-11-20T17:27:46Z",
+          "status": "completed"
+        }
+      ],
+      "url": "https://github.com/Roger-Cardoso/inde/actions/runs/44783196145/job/136451027329"
+    },
+    {
+      "completedAt": "2026-11-20T17:26:27Z",
+      "conclusion": "success",
+      "databaseId": 136451027346,
+      "name": "document-read-adapter (clang++, OFF)",
+      "startedAt": "2026-11-20T17:25:45Z",
+      "status": "completed",
+      "steps": [
+        {
+          "completedAt": "2026-11-20T17:25:46Z",
+          "conclusion": "success",
+          "name": "Set up job",
+          "number": 1,
+          "startedAt": "2026-11-20T17:25:46Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-11-20T17:25:48Z",
+          "conclusion": "success",
+          "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "number": 2,
+          "startedAt": "2026-11-20T17:25:46Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-11-20T17:26:03Z",
+          "conclusion": "success",
+          "name": "Install pure document-domain dependencies",
+          "number": 3,
+          "startedAt": "2026-11-20T17:25:48Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-11-20T17:26:03Z",
+          "conclusion": "success",
+          "name": "Extract verified schema 37 owner source",
+          "number": 4,
+          "startedAt": "2026-11-20T17:26:03Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-11-20T17:26:06Z",
+          "conclusion": "success",
+          "name": "Configure read-only adapter and real document codecs",
+          "number": 5,
+          "startedAt": "2026-11-20T17:26:03Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-11-20T17:26:21Z",
+          "conclusion": "success",
+          "name": "Compile adapter and document-domain source",
+          "number": 6,
+          "startedAt": "2026-11-20T17:26:06Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-11-20T17:26:25Z",
+          "conclusion": "success",
+          "name": "Verify full capture, identity, limits and freshness",
+          "number": 7,
+          "startedAt": "2026-11-20T17:26:21Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-11-20T17:26:25Z",
+          "conclusion": "success",
+          "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "number": 14,
+          "startedAt": "2026-11-20T17:26:25Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-11-20T17:26:25Z",
+          "conclusion": "success",
+          "name": "Complete job",
+          "number": 15,
+          "startedAt": "2026-11-20T17:26:25Z",
+          "status": "completed"
+        }
+      ],
+      "url": "https://github.com/Roger-Cardoso/inde/actions/runs/44783196145/job/136451027346"
+    },
+    {
+      "completedAt": "2026-11-20T17:27:41Z",
+      "conclusion": "success",
+      "databaseId": 136451027587,
+      "name": "reviewed-working-sessions (g++, ON)",
+      "startedAt": "2026-11-20T17:25:45Z",
+      "status": "completed",
+      "steps": [
+        {
+          "completedAt": "2026-11-20T17:25:46Z",
+          "conclusion": "success",
+          "name": "Set up job",
+          "number": 1,
+          "startedAt": "2026-11-20T17:25:46Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-11-20T17:25:47Z",
+          "conclusion": "success",
+          "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "number": 2,
+          "startedAt": "2026-11-20T17:25:46Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-11-20T17:25:59Z",
+          "conclusion": "success",
+          "name": "Install pure domain dependencies",
+          "number": 3,
+          "startedAt": "2026-11-20T17:25:47Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-11-20T17:25:59Z",
+          "conclusion": "success",
+          "name": "Extract verified schema 37 owner source",
+          "number": 4,
+          "startedAt": "2026-11-20T17:25:59Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-11-20T17:26:01Z",
+          "conclusion": "success",
+          "name": "Configure working sessions and owner replay",
+          "number": 5,
+          "startedAt": "2026-11-20T17:25:59Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-11-20T17:27:00Z",
+          "conclusion": "success",
+          "name": "Compile sessions and real editing units",
+          "number": 6,
+          "startedAt": "2026-11-20T17:26:01Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-11-20T17:27:40Z",
+          "conclusion": "success",
+          "name": "Verify ticket scope, source checks, coordinated history and quotas",
+          "number": 7,
+          "startedAt": "2026-11-20T17:27:00Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-11-20T17:27:40Z",
+          "conclusion": "success",
+          "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "number": 14,
+          "startedAt": "2026-11-20T17:27:40Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-11-20T17:27:40Z",
+          "conclusion": "success",
+          "name": "Complete job",
+          "number": 15,
+          "startedAt": "2026-11-20T17:27:40Z",
+          "status": "completed"
+        }
+      ],
+      "url": "https://github.com/Roger-Cardoso/inde/actions/runs/44783196145/job/136451027587"
+    },
+    {
+      "completedAt": "2026-11-20T17:27:38Z",
+      "conclusion": "success",
+      "databaseId": 136451027929,
+      "name": "immutable-change-plans (g++, ON)",
+      "startedAt": "2026-11-20T17:25:51Z",
+      "status": "completed",
+      "steps": [
+        {
+          "completedAt": "2026-11-20T17:25:54Z",
+          "conclusion": "success",
+          "name": "Set up job",
+          "number": 1,
+          "startedAt": "2026-11-20T17:25:52Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-11-20T17:26:00Z",
+          "conclusion": "success",
+          "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "number": 2,
+          "startedAt": "2026-11-20T17:25:54Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-11-20T17:26:28Z",
+          "conclusion": "success",
+          "name": "Install pure owner-domain dependencies",
+          "number": 3,
+          "startedAt": "2026-11-20T17:26:00Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-11-20T17:26:29Z",
+          "conclusion": "success",
+          "name": "Extract verified schema 37 owner source",
+          "number": 4,
+          "startedAt": "2026-11-20T17:26:28Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-11-20T17:26:32Z",
+          "conclusion": "success",
+          "name": "Configure immutable plans and real editing engine",
+          "number": 5,
+          "startedAt": "2026-11-20T17:26:29Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-11-20T17:27:16Z",
+          "conclusion": "success",
+          "name": "Compile strict change planner and owner units",
+          "number": 6,
+          "startedAt": "2026-11-20T17:26:32Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-11-20T17:27:35Z",
+          "conclusion": "success",
+          "name": "Verify intent, translation, refusal, freshness and undo",
+          "number": 7,
+          "startedAt": "2026-11-20T17:27:16Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-11-20T17:27:35Z",
+          "conclusion": "success",
+          "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "number": 14,
+          "startedAt": "2026-11-20T17:27:35Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-11-20T17:27:35Z",
+          "conclusion": "success",
+          "name": "Complete job",
+          "number": 15,
+          "startedAt": "2026-11-20T17:27:35Z",
+          "status": "completed"
+        }
+      ],
+      "url": "https://github.com/Roger-Cardoso/inde/actions/runs/44783196145/job/136451027929"
+    },
+    {
+      "completedAt": "2026-11-20T17:28:37Z",
+      "conclusion": "success",
+      "databaseId": 136451027960,
+      "name": "reviewed-working-sessions (clang++, ON)",
+      "startedAt": "2026-11-20T17:25:45Z",
+      "status": "completed",
+      "steps": [
+        {
+          "completedAt": "2026-11-20T17:25:47Z",
+          "conclusion": "success",
+          "name": "Set up job",
+          "number": 1,
+          "startedAt": "2026-11-20T17:25:46Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-11-20T17:25:48Z",
+          "conclusion": "success",
+          "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "number": 2,
+          "startedAt": "2026-11-20T17:25:47Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-11-20T17:27:04Z",
+          "conclusion": "success",
+          "name": "Install pure domain dependencies",
+          "number": 3,
+          "startedAt": "2026-11-20T17:25:48Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-11-20T17:27:04Z",
+          "conclusion": "success",
+          "name": "Extract verified schema 37 owner source",
+          "number": 4,
+          "startedAt": "2026-11-20T17:27:04Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-11-20T17:27:26Z",
+          "conclusion": "success",
+          "name": "Configure working sessions and owner replay",
+          "number": 5,
+          "startedAt": "2026-11-20T17:27:04Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-11-20T17:28:11Z",
+          "conclusion": "success",
+          "name": "Compile sessions and real editing units",
+          "number": 6,
+          "startedAt": "2026-11-20T17:27:26Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-11-20T17:28:35Z",
+          "conclusion": "success",
+          "name": "Verify ticket scope, source checks, coordinated history and quotas",
+          "number": 7,
+          "startedAt": "2026-11-20T17:28:11Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-11-20T17:28:35Z",
+          "conclusion": "success",
+          "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "number": 14,
+          "startedAt": "2026-11-20T17:28:35Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-11-20T17:28:35Z",
+          "conclusion": "success",
+          "name": "Complete job",
+          "number": 15,
+          "startedAt": "2026-11-20T17:28:35Z",
+          "status": "completed"
+        }
+      ],
+      "url": "https://github.com/Roger-Cardoso/inde/actions/runs/44783196145/job/136451027960"
+    }
+  ],
+  "status": "completed",
+  "url": "https://github.com/Roger-Cardoso/inde/actions/runs/44783196145"
+}

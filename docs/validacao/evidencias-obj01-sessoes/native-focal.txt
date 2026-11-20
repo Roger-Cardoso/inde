@@ -1,0 +1,46 @@
+
+/tmp/obj01-session-native-configure.log
+-- Configuring done (1.4s)
+-- Generating done (0.5s)
+-- Build files have been written to: /home/roger/Documents/Projects/GitHub/INDE/obj01-audit/build-nativo
+
+/tmp/obj01-session-native-build.log
+[1/12] Building CXX object CMakeFiles/inde_object_change_plan.dir/object_change_plan.cpp.o
+[2/12] Linking CXX static library libinde_object_change_plan.a
+[3/12] Building CXX object CMakeFiles/inde_object_change_plan_tests.dir/object_change_plan_tests.cpp.o
+[4/12] Linking CXX executable inde_object_change_plan_tests
+[5/12] Building CXX object CMakeFiles/inde_object_change_session.dir/object_change_session.cpp.o
+[6/12] Linking CXX static library libinde_object_change_session.a
+[7/12] Building CXX object CMakeFiles/inde_object_change_plan_service_tests.dir/object_change_plan_service_tests.cpp.o
+[8/12] Linking CXX executable inde_object_change_plan_service_tests
+[9/12] Building CXX object CMakeFiles/inde_object_change_session_tests.dir/object_change_session_tests.cpp.o
+[10/12] Building CXX object CMakeFiles/inde_object_change_session_service_tests.dir/object_change_session_service_tests.cpp.o
+[11/12] Linking CXX executable inde_object_change_session_tests
+[12/12] Linking CXX executable inde_object_change_session_service_tests
+
+/tmp/obj01-session-native-focal.log
+Test project /home/roger/Documents/Projects/GitHub/INDE/obj01-audit/build-nativo
+      Start  1: inde_object_model_tests
+ 1/10 Test  #1: inde_object_model_tests ....................   Passed    0.29 sec
+      Start  2: inde_object_commands_tests
+ 2/10 Test  #2: inde_object_commands_tests .................   Passed    1.94 sec
+      Start  3: inde_object_document_adapter_tests
+ 3/10 Test  #3: inde_object_document_adapter_tests .........   Passed    0.95 sec
+      Start  4: inde_object_document_service_tests
+ 4/10 Test  #4: inde_object_document_service_tests .........   Passed    0.77 sec
+      Start  5: inde_object_composition_adapter_tests
+ 5/10 Test  #5: inde_object_composition_adapter_tests ......   Passed    2.13 sec
+      Start  6: inde_object_composition_service_tests
+ 6/10 Test  #6: inde_object_composition_service_tests ......   Passed    0.98 sec
+      Start  7: inde_object_change_plan_tests
+ 7/10 Test  #7: inde_object_change_plan_tests ..............   Passed    2.97 sec
+      Start  8: inde_object_change_plan_service_tests
+ 8/10 Test  #8: inde_object_change_plan_service_tests ......   Passed    1.04 sec
+      Start  9: inde_object_change_session_tests
+ 9/10 Test  #9: inde_object_change_session_tests ...........   Passed    1.14 sec
+      Start 10: inde_object_change_session_service_tests
+10/10 Test #10: inde_object_change_session_service_tests ...   Passed    0.99 sec
+
+100% tests passed out of 10
+
+Total Test time (real) =  13.24 sec
