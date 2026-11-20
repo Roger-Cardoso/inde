@@ -11,3 +11,6 @@
 - [Auditoria aprofundada das bases](arquitetura/INVENTARIO-OBJ-01.md).
 - [Ponte somente de leitura do Documento](arquitetura/ADAPTADOR-DOCUMENTO-OBJ-01.md).
 - [Validação da ponte de leitura](validacao/VALIDACAO-OBJ-01-LEITURA.md).
+
+- [Ponte somente de leitura da Composição persistida](arquitetura/ADAPTADOR-COMPOSICAO-OBJ-01.md).
+- [Validação da ponte da Composição](validacao/VALIDACAO-OBJ-01-COMPOSICAO.md).

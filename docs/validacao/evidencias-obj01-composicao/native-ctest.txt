@@ -1,0 +1,111 @@
+Test project /home/roger/Documents/Projects/GitHub/INDE/obj01-audit/build-nativo
+      Start  1: inde_object_model_tests
+ 1/53 Test  #1: inde_object_model_tests .................   Passed    0.09 sec
+      Start  2: inde_object_commands_tests
+ 2/53 Test  #2: inde_object_commands_tests ..............   Passed    0.98 sec
+      Start  3: inde_object_document_adapter_tests
+ 3/53 Test  #3: inde_object_document_adapter_tests ......   Passed    1.00 sec
+      Start  4: inde_object_document_service_tests
+ 4/53 Test  #4: inde_object_document_service_tests ......   Passed    0.41 sec
+      Start  5: inde_object_composition_adapter_tests
+ 5/53 Test  #5: inde_object_composition_adapter_tests ...   Passed    1.49 sec
+      Start  6: inde_object_composition_service_tests
+ 6/53 Test  #6: inde_object_composition_service_tests ...   Passed    0.44 sec
+      Start  7: inde_optimization_tests
+ 7/53 Test  #7: inde_optimization_tests .................   Passed    6.27 sec
+      Start  8: inde_optimization_lot2_tests
+ 8/53 Test  #8: inde_optimization_lot2_tests ............   Passed    1.69 sec
+      Start  9: inde_document_unified_editor_tests
+ 9/53 Test  #9: inde_document_unified_editor_tests ......   Passed    1.29 sec
+      Start 10: inde_document_visibility_tests
+10/53 Test #10: inde_document_visibility_tests ..........   Passed    1.41 sec
+      Start 11: inde_document_reading_order_tests
+11/53 Test #11: inde_document_reading_order_tests .......   Passed    0.63 sec
+      Start 12: inde_document_alternatives_tests
+12/53 Test #12: inde_document_alternatives_tests ........   Passed    2.57 sec
+      Start 13: inde_document_paragraphs_tests
+13/53 Test #13: inde_document_paragraphs_tests ..........   Passed    1.85 sec
+      Start 14: inde_contextual_operative_tests
+14/53 Test #14: inde_contextual_operative_tests .........   Passed    4.92 sec
+      Start 15: inde_contextual_visual_tests
+15/53 Test #15: inde_contextual_visual_tests ............   Passed    2.79 sec
+      Start 16: inde_contextual_modules_tests
+16/53 Test #16: inde_contextual_modules_tests ...........   Passed    6.86 sec
+      Start 17: inde_contextual_delivery_tests
+17/53 Test #17: inde_contextual_delivery_tests ..........   Passed   10.80 sec
+      Start 18: inde_contextual_advanced_tests
+18/53 Test #18: inde_contextual_advanced_tests ..........   Passed    5.92 sec
+      Start 19: inde_contextual_planning_tests
+19/53 Test #19: inde_contextual_planning_tests ..........   Passed    5.02 sec
+      Start 20: inde_optimization_lot3_tests
+20/53 Test #20: inde_optimization_lot3_tests ............   Passed    0.77 sec
+      Start 21: inde_keyboard_policy_tests
+21/53 Test #21: inde_keyboard_policy_tests ..............   Passed    0.15 sec
+      Start 22: inde_author_vocabulary_tests
+22/53 Test #22: inde_author_vocabulary_tests ............   Passed    0.86 sec
+      Start 23: inde_work_setup_tests
+23/53 Test #23: inde_work_setup_tests ...................   Passed    1.23 sec
+      Start 24: inde_narrative_builder_tests
+24/53 Test #24: inde_narrative_builder_tests ............   Passed    5.23 sec
+      Start 25: inde_narrative_alternatives_tests
+25/53 Test #25: inde_narrative_alternatives_tests .......   Passed    5.01 sec
+      Start 26: inde_narrative_realization_tests
+26/53 Test #26: inde_narrative_realization_tests ........   Passed    7.90 sec
+      Start 27: inde_calendar_view_tests
+27/53 Test #27: inde_calendar_view_tests ................   Passed   12.30 sec
+      Start 28: inde_worldbuilding_tests
+28/53 Test #28: inde_worldbuilding_tests ................   Passed   16.59 sec
+      Start 29: inde_temporal_system_tests
+29/53 Test #29: inde_temporal_system_tests ..............   Passed    9.11 sec
+      Start 30: inde_temporal_templates_tests
+30/53 Test #30: inde_temporal_templates_tests ...........   Passed    5.58 sec
+      Start 31: inde_temporal_workflow_tests
+31/53 Test #31: inde_temporal_workflow_tests ............   Passed    1.48 sec
+      Start 32: inde_temporal_context_tests
+32/53 Test #32: inde_temporal_context_tests .............   Passed    1.82 sec
+      Start 33: inde_composition_tests
+33/53 Test #33: inde_composition_tests ..................   Passed    2.16 sec
+      Start 34: inde_project_operation_tests
+34/53 Test #34: inde_project_operation_tests ............   Passed    6.68 sec
+      Start 35: inde_removal_assistant_tests
+35/53 Test #35: inde_removal_assistant_tests ............   Passed    3.44 sec
+      Start 36: inde_work_production_tests
+36/53 Test #36: inde_work_production_tests ..............   Passed    0.50 sec
+      Start 37: inde_editorial_review_tests
+37/53 Test #37: inde_editorial_review_tests .............   Passed    1.24 sec
+      Start 38: inde_continuity_production_tests
+38/53 Test #38: inde_continuity_production_tests ........   Passed    1.30 sec
+      Start 39: inde_editor_toolbar_tests
+39/53 Test #39: inde_editor_toolbar_tests ...............   Passed    1.31 sec
+      Start 40: inde_semantic_increment_tests
+40/53 Test #40: inde_semantic_increment_tests ...........   Passed    3.86 sec
+      Start 41: inde_text_semantic_tests
+41/53 Test #41: inde_text_semantic_tests ................   Passed    1.70 sec
+      Start 42: inde_core_tests
+42/53 Test #42: inde_core_tests .........................   Passed   20.73 sec
+      Start 43: inde_editor_interaction_tests
+43/53 Test #43: inde_editor_interaction_tests ...........   Passed    0.93 sec
+      Start 44: inde_semantic_context_tests
+44/53 Test #44: inde_semantic_context_tests .............   Passed    1.86 sec
+      Start 45: inde_text_analysis_tests
+45/53 Test #45: inde_text_analysis_tests ................   Passed    0.01 sec
+      Start 46: inde_document_edit_tests
+46/53 Test #46: inde_document_edit_tests ................   Passed    0.50 sec
+      Start 47: inde_editor_scale_tests
+47/53 Test #47: inde_editor_scale_tests .................   Passed    0.53 sec
+      Start 48: inde_document_recovery_tests
+48/53 Test #48: inde_document_recovery_tests ............   Passed    3.90 sec
+      Start 49: inde_recovery_retention_tests
+49/53 Test #49: inde_recovery_retention_tests ...........   Passed    0.39 sec
+      Start 50: inde_rendering_policy_tests
+50/53 Test #50: inde_rendering_policy_tests .............   Passed    0.02 sec
+      Start 51: inde_theme_compatibility_tests
+51/53 Test #51: inde_theme_compatibility_tests ..........   Passed    0.00 sec
+      Start 52: inde_cartography_tests
+52/53 Test #52: inde_cartography_tests ..................   Passed    5.34 sec
+      Start 53: inde_linguistic_integration_tests
+53/53 Test #53: inde_linguistic_integration_tests .......   Passed    2.26 sec
+
+100% tests passed out of 53
+
+Total Test time (real) = 183.21 sec

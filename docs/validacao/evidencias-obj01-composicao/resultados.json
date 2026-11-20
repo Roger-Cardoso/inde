@@ -1,0 +1,41 @@
+{
+  "date": "2026-11-20",
+  "base_commit": "6f4c216785a0d37c89d7392ff6e85f1b9e002beb",
+  "implementation_commit": "0ca67284d0e087a782939e64dcbf81e3d9b0f60f",
+  "branch": "feature/inde-obj-01-foundation",
+  "composition_groups": 11,
+  "document_regression_groups": 9,
+  "generated_orders": 200,
+  "occurrence_boundary": 2048,
+  "native_ctest": {
+    "passed": 53,
+    "total": 53,
+    "seconds": 183.21
+  },
+  "native_focal_programs": 6,
+  "owner_source_units_in_minimal_build": 25,
+  "local_compilers": {
+    "gcc": "15.2.0",
+    "clang": "18.1.8"
+  },
+  "local_sanitizers": {
+    "asan": "passed",
+    "ubsan": "passed",
+    "lsan": "disabled under ptrace"
+  },
+  "repository_test": {
+    "all_present_project_files_byte_identical_after_read_and_graph_commands": true,
+    "document_unchanged_by_adapter": true,
+    "all_modes_origins_history_profiles_drafts_preserved": true,
+    "origin_document_edit_does_not_implicitly_advance_block": true,
+    "new_durable_draft_detected_as_revision_conflict": true,
+    "schema": 37,
+    "integrity_check": "ok",
+    "foreign_key_check": "ok"
+  },
+  "old_owner_clang_sign_conversion_exception": true,
+  "new_code_strict_warnings": true,
+  "writeback": false,
+  "gtk_integration": false,
+  "real_project_migration": false
+}

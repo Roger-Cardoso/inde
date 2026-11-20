@@ -1,0 +1,9 @@
+Test project /home/roger/Documents/Projects/GitHub/INDE/obj01-audit/build-obj01-composition-clang
+    Start 1: inde_object_document_adapter_tests
+1/2 Test #1: inde_object_document_adapter_tests ......   Passed    2.21 sec
+    Start 2: inde_object_composition_adapter_tests
+2/2 Test #2: inde_object_composition_adapter_tests ...   Passed    3.84 sec
+
+100% tests passed out of 2
+
+Total Test time (real) =   6.05 sec

@@ -1,0 +1,77 @@
+{
+  "status": "completed",
+  "conclusion": "success",
+  "headSha": "0ca67284d0e087a782939e64dcbf81e3d9b0f60f",
+  "url": "https://github.com/Roger-Cardoso/inde/actions/runs/44770360362",
+  "jobs": [
+    {
+      "name": "pinned-sources",
+      "conclusion": "success",
+      "url": "https://github.com/Roger-Cardoso/inde/actions/runs/44770360362/job/136406062504"
+    },
+    {
+      "name": "document-read-adapter (g++, ON)",
+      "conclusion": "success",
+      "url": "https://github.com/Roger-Cardoso/inde/actions/runs/44770360362/job/136406062839"
+    },
+    {
+      "name": "standalone-model (g++, OFF)",
+      "conclusion": "success",
+      "url": "https://github.com/Roger-Cardoso/inde/actions/runs/44770360362/job/136406062963"
+    },
+    {
+      "name": "document-read-adapter (g++, OFF)",
+      "conclusion": "success",
+      "url": "https://github.com/Roger-Cardoso/inde/actions/runs/44770360362/job/136406063017"
+    },
+    {
+      "name": "standalone-model (clang++, OFF)",
+      "conclusion": "success",
+      "url": "https://github.com/Roger-Cardoso/inde/actions/runs/44770360362/job/136406063044"
+    },
+    {
+      "name": "standalone-model (g++, ON)",
+      "conclusion": "success",
+      "url": "https://github.com/Roger-Cardoso/inde/actions/runs/44770360362/job/136406063135"
+    },
+    {
+      "name": "composition-read-adapter (g++, OFF)",
+      "conclusion": "success",
+      "url": "https://github.com/Roger-Cardoso/inde/actions/runs/44770360362/job/136406063138"
+    },
+    {
+      "name": "standalone-model (clang++, ON)",
+      "conclusion": "success",
+      "url": "https://github.com/Roger-Cardoso/inde/actions/runs/44770360362/job/136406063209"
+    },
+    {
+      "name": "document-read-adapter (clang++, ON)",
+      "conclusion": "success",
+      "url": "https://github.com/Roger-Cardoso/inde/actions/runs/44770360362/job/136406063262"
+    },
+    {
+      "name": "composition-read-adapter (clang++, ON)",
+      "conclusion": "success",
+      "url": "https://github.com/Roger-Cardoso/inde/actions/runs/44770360362/job/136406063364"
+    },
+    {
+      "name": "document-read-adapter (clang++, OFF)",
+      "conclusion": "success",
+      "url": "https://github.com/Roger-Cardoso/inde/actions/runs/44770360362/job/136406063373"
+    },
+    {
+      "name": "composition-read-adapter (g++, ON)",
+      "conclusion": "success",
+      "url": "https://github.com/Roger-Cardoso/inde/actions/runs/44770360362/job/136406063429"
+    },
+    {
+      "name": "composition-read-adapter (clang++, OFF)",
+      "conclusion": "success",
+      "url": "https://github.com/Roger-Cardoso/inde/actions/runs/44770360362/job/136406063521"
+    }
+  ],
+  "sanitizers": {
+    "ASAN_OPTIONS": "detect_leaks=1:halt_on_error=1",
+    "UBSAN_OPTIONS": "halt_on_error=1:print_stacktrace=1"
+  }
+}
