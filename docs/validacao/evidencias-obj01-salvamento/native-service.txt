@@ -1,0 +1,16 @@
+12/59 Testing: inde_object_save_service_tests
+12/59 Test: inde_object_save_service_tests
+Command: "/home/roger/Documents/Projects/GitHub/INDE/obj01-audit/build-nativo/inde_object_save_service_tests"
+Directory: /home/roger/Documents/Projects/GitHub/INDE/obj01-audit/build-nativo
+"inde_object_save_service_tests" start time: Nov 20 18:27 -03
+Output:
+----------------------------------------------------------
+INDE-OBJ-01: real CAS saves/conflicts passed; durable fixture checkpoints survived fresh process exit after commit before ack, source/visual recovery and schema37 integrity verified
+<end of output>
+Test time =   1.00 sec
+----------------------------------------------------------
+Test Passed.
+"inde_object_save_service_tests" end time: Nov 20 18:27 -03
+"inde_object_save_service_tests" time elapsed: 00:00:00
+----------------------------------------------------------
+

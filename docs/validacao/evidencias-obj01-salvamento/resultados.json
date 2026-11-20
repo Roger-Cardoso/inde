@@ -1,0 +1,125 @@
+{
+  "date": "2026-11-20",
+  "branch": "feature/inde-obj-01-foundation",
+  "base_commit": "df13a5ff91e276e78a66a3bd74473db462cb4955",
+  "implementation_commit": "e9876784105f0c7f5f560d00dc980994681fa032",
+  "scope": "OBJ-01 Phase 1 pure save/readback and recovery protocol; actual writes only via existing services in temporary fixtures",
+  "implementation_sha256": {
+    "cpp/object_change_session.cpp": "adc2cec8f902d72e02e035fc95eba0f16d359a4294555c46d778f33da344211d",
+    "cpp/object_change_session.hpp": "c2137c9ae3643af14f891cc8b91accde1e89fb502b7eded5148ac2d0a0a0d505",
+    "cpp/object_session_checkpoint.cpp": "bda69a9c086ad5ee8a49220867cfad9ac1db748596e3536495598c5c5b60bb63",
+    "cpp/object_session_checkpoint.hpp": "78c896d11de39e4e9309346a42ab4a6241dadf5fcfbc4ba3fc61569f1e06fd96",
+    "cpp/object_save_protocol_tests.cpp": "b5722acb09894621c30a2915ed613fe9afd1df6345bbfaa2fa710e639671a344",
+    "cpp/object_save_service_tests.cpp": "4c0c22c76cd5cd54dd9975a059eafc3d044d5ea9ede3844707b4f1a68e19dd55",
+    "cpp/CMakeLists.txt": "97f9150d4f0b039876b50927c710ede9f6fa8cf81ccaf461a256055041fbc328",
+    "tests/object_document/CMakeLists.txt": "d8c7f751416ec7dc932fcc5e630b312fe03d4219b7d8ce8b8030ea0cc077ff85",
+    "tests/object_save_protocol/CMakeLists.txt": "7b22fae30e38470047e63dd3c335d6d8d19c54de86fff311eeed78f6eb021b17",
+    ".github/workflows/obj-01.yml": "2777cc0b4d9e0e99172f116c068bd793f7f760d8f26e0bfd41b0155af5759301"
+  },
+  "minimal": {
+    "gcc": "15.2.0",
+    "clang": "18.1.8",
+    "programs_passed_per_build": 5,
+    "groups": 46,
+    "owner_units": 26,
+    "asan_ubsan": "passed",
+    "local_lsan": false,
+    "ci_lsan": true
+  },
+  "new_protocol_groups": 7,
+  "repeated_savepoints": {
+    "document": 20,
+    "composition": 20
+  },
+  "generated_truncated_checkpoints": 100,
+  "native_full": {
+    "passed": 59,
+    "total": 59,
+    "seconds": 187.82
+  },
+  "repository_proof": {
+    "real_document_CAS": true,
+    "real_composition_CAS": true,
+    "conflicts_preserve_winner": true,
+    "readback_formatting_storage_order_normalization_observed_and_handled": true,
+    "child_fresh_exec_exit_after_both_commits": 73,
+    "child_fresh_exec_exit_between_commits": 74,
+    "schema": 37,
+    "integrity_check": "ok",
+    "foreign_key_check": "empty"
+  },
+  "archive_verifier_tests": 5,
+  "archives": [
+    {
+      "label": "schema28",
+      "path": "fontes/inde-schema28-89b47f27.tar.gz",
+      "sha256": "3d6bee4c60dbecc602a56881b1957f90b55798dbc711c9c290701e2ad8a6e97e",
+      "files": 641,
+      "manifest_match": true
+    },
+    {
+      "label": "original37",
+      "path": "fontes/inde-P03c-schema37-original.tar.gz",
+      "sha256": "2e97a15ddcda56b8f5892d033c9a7427d6102bcf650454678491c50ff5459ef2",
+      "files": 757,
+      "manifest_match": true
+    },
+    {
+      "label": "integrated37",
+      "path": "fontes/inde-integrado-schema37.tar.gz",
+      "sha256": "554623abec5d7c3c175dab2aa6bbabc8a95abd6e3d98a27191cea0260a4965c4",
+      "files": 758,
+      "manifest_match": true
+    }
+  ],
+  "checkpoint": {
+    "format": "OBJ01-RECOVERY-LAB-1",
+    "byte_limit": 67108864,
+    "source_byte_limit": 16777216,
+    "json_depth_limit": 64,
+    "json_delimiter_limit": 1000000,
+    "graph_list_limit": 10000,
+    "id_byte_limit": 512,
+    "restored_undo_history": false,
+    "restored_old_tickets": false
+  },
+  "protocol": [
+    "single immutable in-flight save intent",
+    "edit/history barrier",
+    "expected baseline passed to owner CAS",
+    "actual readback acknowledgement",
+    "history retained on live acknowledgement",
+    "1024-byte encoded timestamp reserve per document state",
+    "explicit resume-unsaved vs adopt-matching-save modes",
+    "independent Document/Composition transaction outcomes"
+  ],
+  "not_implemented": [
+    "production filesystem checkpoint store",
+    "checkpoint generation replacement",
+    "lease/retention/export policy",
+    "asynchronous autosave integration",
+    "cross-authority atomicity",
+    "restart undo/redo restoration",
+    "rebase/copy of conflicting source",
+    "GTK",
+    "schema/project migration",
+    "single-file .inde",
+    "publication integration"
+  ],
+  "not_tested": [
+    "power loss",
+    "disk-full/fsync failure injection",
+    "allocation-failure injection",
+    "every crash point",
+    "concurrent stress",
+    "interactive latency/RSS benchmark"
+  ],
+  "ci": {
+    "run_id": 44821075664,
+    "url": "https://github.com/Roger-Cardoso/inde/actions/runs/44821075664",
+    "head_sha": "e9876784105f0c7f5f560d00dc980994681fa032",
+    "jobs": 21,
+    "passed": 21,
+    "conclusion": "success"
+  }
+}

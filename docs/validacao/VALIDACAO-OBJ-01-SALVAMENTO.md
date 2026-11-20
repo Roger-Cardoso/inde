@@ -85,3 +85,20 @@ Não foram reexecutados os 92 testes Python do aplicativo ou percursos GTK/publi
 O próximo gate da Fase 1 é projetar/ensaiar o armazenamento durável versionado e sua coordenação/lease, ainda em fixtures. O protocolo atual não libera escrita em obras reais, integração GTK, migração ou arquivo único `.inde`.
 
 Ver [contrato](../arquitetura/SALVAMENTO-RECOVERY-OBJ-01.md), [sessões anteriores](VALIDACAO-OBJ-01-SESSOES.md) e [inventário](../arquitetura/INVENTARIO-OBJ-01.md). Resultados e evidências seguem no complemento.
+
+## Resultados registrados
+
+Implementação e contrato: `e9876784105f0c7f5f560d00dc980994681fa032`. A consolidação posterior acrescenta somente evidências/documentação.
+
+| Verificação | Resultado | Evidência |
+| --- | --- | --- |
+| GCC 15.2.0, mínimo | 5/5 programas aprovados, 46 grupos | [gcc.txt](evidencias-obj01-salvamento/gcc.txt) |
+| Clang 18.1.8, mínimo | 5/5 aprovados | [clang.txt](evidencias-obj01-salvamento/clang.txt) |
+| ASan/UBSan locais, incluindo 26 unidades proprietárias | 5/5 aprovados; sem diagnósticos, LSan local desativado | [asan-ubsan.txt](evidencias-obj01-salvamento/asan-ubsan.txt) |
+| CI, incluindo LSan remoto | **21/21 jobs aprovados** | [execução 44821075664](https://github.com/Roger-Cardoso/inde/actions/runs/44821075664), [ci.json](evidencias-obj01-salvamento/ci.json) |
+| CTest nativo completo | **59/59 aprovados**, em 187,82 s | [native-ctest.txt](evidencias-obj01-salvamento/native-ctest.txt) |
+| CAS, readback e reinício em processo novo | Aprovado, incluindo commits separados e schema 37 íntegro | [native-service.txt](evidencias-obj01-salvamento/native-service.txt) |
+| Três pacotes de fontes/manifests | Hashes/inventários conferidos: 641 / 757 / 758 arquivos | [fontes.json](evidencias-obj01-salvamento/fontes.json) |
+| Recusas do verificador de fontes | 5/5 testes Python aprovados | [fontes-tests.txt](evidencias-obj01-salvamento/fontes-tests.txt) |
+
+O [resumo estruturado](evidencias-obj01-salvamento/resultados.json) identifica commit, hashes da implementação, cobertura e limites. Os logs/JSON possuem [SHA256SUMS](evidencias-obj01-salvamento/SHA256SUMS), verificáveis nessa pasta com `sha256sum -c SHA256SUMS`. São checksums de conteúdo, não atestação externa. A CI registrada corresponde à implementação; o commit de evidências conserva esse código.

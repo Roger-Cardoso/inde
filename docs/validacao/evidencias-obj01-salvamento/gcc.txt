@@ -1,0 +1,120 @@
+
+/tmp/obj01-save-configure.log
+{
+  "schema": 37,
+  "arquivos_conferidos": 758,
+  "arquivo_sha256": "554623abec5d7c3c175dab2aa6bbabc8a95abd6e3d98a27191cea0260a4965c4",
+  "resultado": "ok"
+}
+-- Configuring done (1.0s)
+-- Generating done (0.0s)
+-- Build files have been written to: /home/roger/Documents/Projects/GitHub/INDE/obj01-audit/build-obj01-session
+
+/tmp/obj01-save-gcc-final-build.log
+[1/5] Building CXX object document-domain/CMakeFiles/inde_object_change_session.dir/home/roger/Documents/Projects/GitHub/INDE/obj01-audit/cpp/object_session_checkpoint.cpp.o
+[2/5] Building CXX object document-domain/CMakeFiles/inde_object_change_session.dir/home/roger/Documents/Projects/GitHub/INDE/obj01-audit/cpp/object_change_session.cpp.o
+[3/5] Linking CXX static library document-domain/libinde_object_change_session.a
+[4/5] Linking CXX executable document-domain/inde_object_change_session_tests
+[5/5] Linking CXX executable document-domain/inde_object_save_protocol_tests
+
+/tmp/obj01-save-gcc-final-ctest.log
+Test project /home/roger/Documents/Projects/GitHub/INDE/obj01-audit/build-obj01-session
+    Start 1: inde_object_document_adapter_tests
+1/5 Test #1: inde_object_document_adapter_tests ......   Passed    2.50 sec
+    Start 2: inde_object_composition_adapter_tests
+2/5 Test #2: inde_object_composition_adapter_tests ...   Passed    4.44 sec
+    Start 3: inde_object_change_plan_tests
+3/5 Test #3: inde_object_change_plan_tests ...........   Passed    7.40 sec
+    Start 4: inde_object_change_session_tests
+4/5 Test #4: inde_object_change_session_tests ........   Passed    3.21 sec
+    Start 5: inde_object_save_protocol_tests
+5/5 Test #5: inde_object_save_protocol_tests .........   Passed    3.04 sec
+
+100% tests passed out of 5
+
+Total Test time (real) =  20.60 sec
+
+build-obj01-session/Testing/Temporary/LastTest.log
+Start testing: Nov 20 18:27 -03
+----------------------------------------------------------
+1/5 Testing: inde_object_document_adapter_tests
+1/5 Test: inde_object_document_adapter_tests
+Command: "/home/roger/Documents/Projects/GitHub/INDE/obj01-audit/build-obj01-session/document-domain/inde_object_document_adapter_tests"
+Directory: /home/roger/Documents/Projects/GitHub/INDE/obj01-audit/build-obj01-session/document-domain
+"inde_object_document_adapter_tests" start time: Nov 20 18:27 -03
+Output:
+----------------------------------------------------------
+INDE-OBJ-01: 9 document read-adapter groups passed (250 generated source orders, 10000 paragraph boundary)
+<end of output>
+Test time =   2.50 sec
+----------------------------------------------------------
+Test Passed.
+"inde_object_document_adapter_tests" end time: Nov 20 18:27 -03
+"inde_object_document_adapter_tests" time elapsed: 00:00:02
+----------------------------------------------------------
+
+2/5 Testing: inde_object_composition_adapter_tests
+2/5 Test: inde_object_composition_adapter_tests
+Command: "/home/roger/Documents/Projects/GitHub/INDE/obj01-audit/build-obj01-session/document-domain/inde_object_composition_adapter_tests"
+Directory: /home/roger/Documents/Projects/GitHub/INDE/obj01-audit/build-obj01-session/document-domain
+"inde_object_composition_adapter_tests" start time: Nov 20 18:27 -03
+Output:
+----------------------------------------------------------
+INDE-OBJ-01: 11 composition read-adapter groups passed (200 generated orders, 2048 occurrence boundary)
+<end of output>
+Test time =   4.44 sec
+----------------------------------------------------------
+Test Passed.
+"inde_object_composition_adapter_tests" end time: Nov 20 18:27 -03
+"inde_object_composition_adapter_tests" time elapsed: 00:00:04
+----------------------------------------------------------
+
+3/5 Testing: inde_object_change_plan_tests
+3/5 Test: inde_object_change_plan_tests
+Command: "/home/roger/Documents/Projects/GitHub/INDE/obj01-audit/build-obj01-session/document-domain/inde_object_change_plan_tests"
+Directory: /home/roger/Documents/Projects/GitHub/INDE/obj01-audit/build-obj01-session/document-domain
+"inde_object_change_plan_tests" start time: Nov 20 18:27 -03
+Output:
+----------------------------------------------------------
+INDE-OBJ-01: 10 change-plan groups passed (150 document plans, 150 composition plans, existing undo/redo)
+<end of output>
+Test time =   7.40 sec
+----------------------------------------------------------
+Test Passed.
+"inde_object_change_plan_tests" end time: Nov 20 18:27 -03
+"inde_object_change_plan_tests" time elapsed: 00:00:07
+----------------------------------------------------------
+
+4/5 Testing: inde_object_change_session_tests
+4/5 Test: inde_object_change_session_tests
+Command: "/home/roger/Documents/Projects/GitHub/INDE/obj01-audit/build-obj01-session/document-domain/inde_object_change_session_tests"
+Directory: /home/roger/Documents/Projects/GitHub/INDE/obj01-audit/build-obj01-session/document-domain
+"inde_object_change_session_tests" start time: Nov 20 18:27 -03
+Output:
+----------------------------------------------------------
+INDE-OBJ-01: 9 session groups passed (40+40 generated applies, 80 undo and 80 redo, origin conflicts, bounded reversible history)
+<end of output>
+Test time =   3.21 sec
+----------------------------------------------------------
+Test Passed.
+"inde_object_change_session_tests" end time: Nov 20 18:27 -03
+"inde_object_change_session_tests" time elapsed: 00:00:03
+----------------------------------------------------------
+
+5/5 Testing: inde_object_save_protocol_tests
+5/5 Test: inde_object_save_protocol_tests
+Command: "/home/roger/Documents/Projects/GitHub/INDE/obj01-audit/build-obj01-session/document-domain/inde_object_save_protocol_tests"
+Directory: /home/roger/Documents/Projects/GitHub/INDE/obj01-audit/build-obj01-session/document-domain
+"inde_object_save_protocol_tests" start time: Nov 20 18:27 -03
+Output:
+----------------------------------------------------------
+INDE-OBJ-01: 7 save/recovery groups passed (20+20 savepoints, 100 truncated checkpoints, CAS receipt barriers and restart modes)
+<end of output>
+Test time =   3.04 sec
+----------------------------------------------------------
+Test Passed.
+"inde_object_save_protocol_tests" end time: Nov 20 18:27 -03
+"inde_object_save_protocol_tests" time elapsed: 00:00:03
+----------------------------------------------------------
+
+End testing: Nov 20 18:27 -03
