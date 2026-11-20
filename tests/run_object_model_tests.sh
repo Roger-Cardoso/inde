@@ -14,3 +14,8 @@ fi
   "$ROOT/cpp/object_model.cpp" "$ROOT/cpp/object_model_tests.cpp" \
   -o "$BUILD_DIR/inde_object_model_tests"
 "$BUILD_DIR/inde_object_model_tests"
+
+"${CXX:-c++}" "$@" \
+  "$ROOT/cpp/object_model.cpp" "$ROOT/cpp/object_commands.cpp" \
+  "$ROOT/cpp/object_commands_tests.cpp" -o "$BUILD_DIR/inde_object_commands_tests"
+"$BUILD_DIR/inde_object_commands_tests"

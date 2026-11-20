@@ -1,5 +1,6 @@
 #include "object_model.hpp"
 
+#include <algorithm>
 #include <cmath>
 #include <cstdint>
 #include <unordered_map>
@@ -58,12 +59,54 @@ bool valid_media_type(const std::string &value) {
 bool valid_frame(const Frame &frame) {
   return std::isfinite(frame.x) && std::isfinite(frame.y) &&
          std::isfinite(frame.width) && std::isfinite(frame.height) &&
-         frame.width > 0 && frame.height > 0;
+         frame.width > 0 && frame.height > 0 &&
+         std::isfinite(frame.x + frame.width) && std::isfinite(frame.y + frame.height);
 }
 
 } // namespace
 
-std::vector<Diagnostic> validate(const Composition &composition) {
+std::vector<Diagnostic> validate(const Composition &composition, ValidationLimits limits) {
+  // Overflow-safe accounting of all input vectors/strings before graph work.
+  std::size_t entities{}, references{}, bytes{};
+  auto add = [](std::size_t &used, std::size_t amount, std::size_t cap) {
+    if (used > cap || amount > cap - used) return false;
+    used += amount;
+    return true;
+  };
+  bool within = true;
+  for (const auto n : {composition.objects.size(), composition.occurrences.size(),
+                       composition.layouts.size(), composition.resources.size()})
+    within = add(entities, n, limits.entities) && within;
+  if (!within) return {{"input_limit", composition.id}};
+  auto string = [&](const std::string &s) {
+    within = add(bytes, s.size(), limits.string_bytes) && within;
+  };
+  auto reference = [&](const std::string &s) {
+    within = add(references, 1, limits.references) && within;
+    string(s);
+  };
+  string(composition.id); reference(composition.root_layout_id);
+  for (const auto &r : composition.resources) {
+    string(r.id); string(r.sha256); string(r.media_type);
+  }
+  for (const auto &o : composition.objects) {
+    string(o.id);
+    if (o.resource_id) reference(*o.resource_id);
+    if (o.layout_id) reference(*o.layout_id);
+  }
+  for (const auto &o : composition.occurrences) {
+    string(o.id); reference(o.object_id);
+  }
+  // Refuse oversized adjacency lists before iterating over their strings.
+  for (const auto &l : composition.layouts) {
+    string(l.id);
+    within = add(references, l.children.size(), limits.references) && within;
+    within = add(references, l.paint_order.size(), limits.references) && within;
+    if (!within) return {{"input_limit", composition.id}};
+    for (const auto &id : l.children) string(id);
+    for (const auto &id : l.paint_order) string(id);
+  }
+  if (!within) return {{"input_limit", composition.id}};
   std::vector<Diagnostic> errors;
   auto issue = [&](const std::string &code, const std::string &id) {
     errors.push_back({code, id});
@@ -133,6 +176,16 @@ std::vector<Diagnostic> validate(const Composition &composition) {
     } else if (layout.columns != 0) {
       issue("unexpected_grid_columns", layout.id);
     }
+    if (!layout.paint_order.empty()) {
+      if (layout.kind != LayoutKind::Overlay && layout.kind != LayoutKind::Freeform)
+        issue("unexpected_paint_order", layout.id);
+      std::unordered_set<std::string> painting(layout.paint_order.begin(), layout.paint_order.end());
+      if (layout.paint_order.size() != layout.children.size() ||
+          painting.size() != layout.paint_order.size() ||
+          std::any_of(layout.children.begin(), layout.children.end(),
+                      [&](const auto &id) { return !painting.contains(id); }))
+        issue("invalid_paint_order", layout.id);
+    }
     for (const auto &child_id : layout.children) {
       const auto child = occurrences.find(child_id);
       if (child == occurrences.end()) {
@@ -164,8 +217,10 @@ std::vector<Diagnostic> validate(const Composition &composition) {
     }
   }
   for (const auto &occurrence : composition.occurrences)
-    if (!placed_occurrences.contains(occurrence.id))
+    if (!placed_occurrences.contains(occurrence.id)) {
       issue("orphan_occurrence", occurrence.id);
+      if (!objects.contains(occurrence.object_id)) issue("missing_object", occurrence.id);
+    }
   if (layout_parents.contains(composition.root_layout_id))
     issue("root_layout_nested", composition.root_layout_id);
 

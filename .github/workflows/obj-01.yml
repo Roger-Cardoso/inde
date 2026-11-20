@@ -4,15 +4,29 @@ on:
   push:
     branches: [feature/inde-obj-01-foundation]
     paths:
-      - cpp/object_model.*
-      - cpp/object_model_tests.cpp
+      - cpp/object_*
+      - cpp/CMakeLists.txt
       - tests/run_object_model_tests.sh
+      - tests/object_model/**
+      - tests/audit_obj01_sources.py
+      - tests/test_obj01_source_audit.py
+      - fontes/*.tar.gz
+      - metadata/BASE-INDE.json
+      - metadata/INTEGRACAO-INDE.json
+      - docs/arquitetura/*OBJ-01*
+      - docs/validacao/*OBJ-01*
       - .github/workflows/obj-01.yml
   pull_request:
     paths:
-      - cpp/object_model.*
-      - cpp/object_model_tests.cpp
+      - cpp/object_*
+      - cpp/CMakeLists.txt
       - tests/run_object_model_tests.sh
+      - tests/object_model/**
+      - tests/audit_obj01_sources.py
+      - tests/test_obj01_source_audit.py
+      - fontes/*.tar.gz
+      - metadata/BASE-INDE.json
+      - metadata/INTEGRACAO-INDE.json
       - .github/workflows/obj-01.yml
   workflow_dispatch:
 
@@ -20,12 +34,33 @@ permissions:
   contents: read
 
 jobs:
+  pinned-sources:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+      - name: Test archive verifier refusal paths
+        run: python3 -m unittest discover -s tests -p test_obj01_source_audit.py -v
+      - name: Verify three archives, manifests and extracted bytes
+        run: python3 tests/audit_obj01_sources.py --extract-to "$RUNNER_TEMP/obj01-sources"
   standalone-model:
     runs-on: ubuntu-24.04
     timeout-minutes: 10
+    strategy:
+      matrix:
+        compiler: [g++, clang++]
+        sanitize: ["OFF", "ON"]
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
-      - name: Validate strict C++20 model
-        run: sh tests/run_object_model_tests.sh
-      - name: Validate with ASan and UBSan
-        run: SANITIZE=1 sh tests/run_object_model_tests.sh
+      - name: Configure isolated C++20 foundation
+        run: >-
+          cmake -S tests/object_model -B build-obj01 -G Ninja
+          -DCMAKE_CXX_COMPILER=${{ matrix.compiler }}
+          -DOBJ01_SANITIZE=${{ matrix.sanitize }}
+      - name: Compile strict C++20 foundation
+        run: cmake --build build-obj01 --parallel 2
+      - name: Validate invariants and transactional commands
+        env:
+          ASAN_OPTIONS: detect_leaks=1:halt_on_error=1
+          UBSAN_OPTIONS: halt_on_error=1:print_stacktrace=1
+        run: ctest --test-dir build-obj01 --output-on-failure
