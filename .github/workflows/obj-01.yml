@@ -1,0 +1,31 @@
+name: INDE OBJ-01 isolated model checks
+
+on:
+  push:
+    branches: [feature/inde-obj-01-foundation]
+    paths:
+      - cpp/object_model.*
+      - cpp/object_model_tests.cpp
+      - tests/run_object_model_tests.sh
+      - .github/workflows/obj-01.yml
+  pull_request:
+    paths:
+      - cpp/object_model.*
+      - cpp/object_model_tests.cpp
+      - tests/run_object_model_tests.sh
+      - .github/workflows/obj-01.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  standalone-model:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+      - name: Validate strict C++20 model
+        run: sh tests/run_object_model_tests.sh
+      - name: Validate with ASan and UBSan
+        run: SANITIZE=1 sh tests/run_object_model_tests.sh
