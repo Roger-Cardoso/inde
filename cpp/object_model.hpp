@@ -6,8 +6,8 @@
 #include <string>
 #include <vector>
 
-// INDE-OBJ-01 v0: an isolated, in-memory composition graph.
-// This is not a replacement for project::Document or any persisted schema.
+// INDE-OBJ-01 v0.1: isolated, in-memory composition graph.
+// Not a replacement for project::Document, project::Composition or schema 37.
 namespace inde::objects {
 
 enum class ObjectKind { Paragraph, Image, Table, Equation, Container };
@@ -15,7 +15,7 @@ enum class LayoutKind { Stack, Row, Grid, Overlay, Freeform };
 
 struct Resource {
   std::string id;
-  std::string sha256;    // Lowercase hex digest of original bytes.
+  std::string sha256;    // Claimed lowercase hex digest, not verified without bytes.
   std::string media_type;
   std::uint64_t byte_size{};
 };
@@ -23,12 +23,12 @@ struct Resource {
 struct Object {
   std::string id;
   ObjectKind kind{ObjectKind::Paragraph};
-  std::optional<std::string> resource_id;  // Logical reference, never a file path.
+  std::optional<std::string> resource_id; // Logical reference, never a file path.
   std::optional<std::string> layout_id;    // Required only for containers.
 };
 
-// Positions are relative to the layout's coordinate system; the renderer
-// determines pixels, page size and responsive breakpoints.
+// Relative to the containing layout's coordinate system. Negative positions
+// are allowed for off-canvas freeform work; dimensions must be positive/finite.
 struct Frame {
   double x{}, y{}, width{1.0}, height{1.0};
 };
@@ -43,16 +43,16 @@ struct Layout {
   std::string id;
   LayoutKind kind{LayoutKind::Stack};
   std::size_t columns{};             // Positive only for Grid.
-  std::vector<std::string> children; // Ordered occurrence IDs = logical reading order.
+  std::vector<std::string> children; // Ordered occurrence IDs = reading order.
 };
 
 struct Composition {
   std::string id;
   std::string root_layout_id;
-  std::vector<Object> objects;
-  std::vector<Occurrence> occurrences;
-  std::vector<Layout> layouts;
-  std::vector<Resource> resources;
+  std::vector<Object> objects;          // Reusable logical objects.
+  std::vector<Occurrence> occurrences; // Exactly one placement per occurrence.
+  std::vector<Layout> layouts;          // Single rooted layout tree.
+  std::vector<Resource> resources;      // Metadata only: no binary data.
 };
 
 // Stable machine-readable codes; no throwing for malformed input.
@@ -61,6 +61,7 @@ struct Diagnostic {
   std::string subject_id;
 };
 
+// Read-only validation. Diagnostics are deterministic and do not mutate data.
 [[nodiscard]] std::vector<Diagnostic> validate(const Composition &composition);
 
 } // namespace inde::objects
