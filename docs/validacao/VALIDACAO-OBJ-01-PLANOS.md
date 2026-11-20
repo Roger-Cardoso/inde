@@ -74,3 +74,24 @@ O suporte autoral documental é um grupo inteiro por plano; multi-grupo/lote é 
 O próximo requisito dentro da Fase 1 é especificar a aplicação controlada desses candidatos e sua relação com sessão/histórico, com conferência da fonte na autoridade correta. A validade do plano isolado não autoriza writeback.
 
 Ver [contrato dos planos](../arquitetura/PLANO-ALTERACOES-OBJ-01.md), [inventário aprofundado](../arquitetura/INVENTARIO-OBJ-01.md) e [validação anterior](VALIDACAO-OBJ-01-COMPOSICAO.md). Resultados, commits e evidências verificáveis são registrados no complemento abaixo.
+
+## Resultados registrados
+
+Implementação e contrato: `ced60ea1ab34899cfb4f162e4ea3d33940d56bfd`. Os commits seguintes deste corte consolidam evidências e documentação; não modificam a implementação ensaiada.
+
+| Verificação | Resultado | Evidência |
+| --- | --- | --- |
+| GCC 15.2.0, build mínimo | 3/3 programas aprovados; 30 grupos entre as duas pontes e os planos | [gcc.txt](evidencias-obj01-planos/gcc.txt) |
+| Clang 18.1.8, build mínimo | 3/3 programas aprovados | [clang.txt](evidencias-obj01-planos/clang.txt) |
+| ASan/UBSan locais, incluindo as 26 unidades proprietárias | 3/3 aprovados, sem diagnóstico dos sanitizadores; LSan local desativado | [asan-ubsan.txt](evidencias-obj01-planos/asan-ubsan.txt) |
+| Testes nativos de objetos, duas pontes, planos e serviços | 8/8 programas aprovados; teste de planos refeito após acrescentar recusas das quotas agregadas | [native-focal.txt](evidencias-obj01-planos/native-focal.txt) |
+| CI, incluindo LSan remoto | **17/17 jobs aprovados** | [execução 44775079685](https://github.com/Roger-Cardoso/inde/actions/runs/44775079685), [ci.json](evidencias-obj01-planos/ci.json) |
+| CTest nativo completo | **55/55 aprovados**, em 211,08 s | [native-ctest.txt](evidencias-obj01-planos/native-ctest.txt) |
+| Três arquivos de fontes e manifests | Hashes e inventários conferidos: 641 / 757 / 758 arquivos | [fontes.json](evidencias-obj01-planos/fontes.json) |
+| Recusas do verificador de fontes | 5/5 testes Python aprovados | [fontes-tests.txt](evidencias-obj01-planos/fontes-tests.txt) |
+
+A execução completa e os builds mínimos cobrem a implementação final. Depois do início do CTest completo foram acrescentados somente dois casos de teste de recusa de quotas (entradas e bytes); o programa nativo correspondente foi recompilado e reexecutado separadamente, e os builds mínimos/CI incluem esses casos. Não houve alteração produtiva entre os ensaios.
+
+O checkout local de `main` continua em `d41a5c9b9809ca7d40beb6ff10f22f1a5b451e0b`; sua alteração preexistente de permissão em `Preparar-ponte.sh` foi preservada. Não houve merge, release ou promoção de fase.
+
+O [resumo estruturado](evidencias-obj01-planos/resultados.json) identifica commit, cobertura e fronteiras. Logs e JSON possuem [SHA256SUMS](evidencias-obj01-planos/SHA256SUMS), verificáveis nessa pasta com `sha256sum -c SHA256SUMS`. São checksums de conteúdo, não atestação externa. A CI registrada acima corresponde ao commit da implementação; o commit de evidências mantém o mesmo código.

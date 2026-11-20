@@ -1,0 +1,89 @@
+{
+  "date": "2026-11-20",
+  "branch": "feature/inde-obj-01-foundation",
+  "base_commit": "5f2cff75e5bc9d03a050ac2d1d37ed473e6b47bf",
+  "implementation_commit": "ced60ea1ab34899cfb4f162e4ea3d33940d56bfd",
+  "scope": "OBJ-01 Phase 1 immutable in-memory dry-run plans only",
+  "implementation_sha256": {
+    "cpp/object_change_plan.cpp": "9212ab68f3f0b25c98983367830523b4c56988a03f1c4af754e90bb2b91ac11e",
+    "cpp/object_change_plan.hpp": "92f82e1b3933b47127a2986bb1c9ed82d25ac1bd1d19293420a6e45822abed10",
+    "cpp/object_change_plan_tests.cpp": "ca50f0ac79b54d9d329734018ecf2a587dd1c0f2a56acf5c4447157ed692c0cd",
+    "cpp/object_change_plan_service_tests.cpp": "c0ebd4870c75b2a1a0417ac147431afb2b29806f3f31d1c2133c098beccb455c",
+    "tests/object_change_plan/CMakeLists.txt": "b5ad5fe46a56dd651effb86f722b9422add713142c393326e45b1edb205c5e48",
+    "tests/object_document/CMakeLists.txt": "57cea348a2b5c5e896065b59c067f2833c62dd7f32360feb4280d87321f0bde6",
+    ".github/workflows/obj-01.yml": "15c2645dbcb81646f40c40f11cf5cb3c36b384bb2dc3565fb4442f33aa5c3c74"
+  },
+  "minimal": {
+    "gcc": "15.2.0",
+    "clang": "18.1.8",
+    "programs_passed_per_build": 3,
+    "groups": 30,
+    "owner_units": 26,
+    "asan_ubsan": "passed",
+    "local_lsan": false,
+    "ci_lsan": true
+  },
+  "new_plan_groups": 10,
+  "generated_document_moves": 150,
+  "generated_composition_moves": 150,
+  "native_focal": {
+    "passed": 8,
+    "total": 8
+  },
+  "native_full": {
+    "passed": 55,
+    "total": 55,
+    "seconds": 211.08
+  },
+  "quota_cases_added_after_full_started": "Only tests changed; final native plan program rebuilt and rerun, minimal builds and CI include them.",
+  "archive_verifier_tests": 5,
+  "archives": [
+    {
+      "label": "schema28",
+      "path": "fontes/inde-schema28-89b47f27.tar.gz",
+      "sha256": "3d6bee4c60dbecc602a56881b1957f90b55798dbc711c9c290701e2ad8a6e97e",
+      "files": 641,
+      "manifest_match": true
+    },
+    {
+      "label": "original37",
+      "path": "fontes/inde-P03c-schema37-original.tar.gz",
+      "sha256": "2e97a15ddcda56b8f5892d033c9a7427d6102bcf650454678491c50ff5459ef2",
+      "files": 757,
+      "manifest_match": true
+    },
+    {
+      "label": "integrated37",
+      "path": "fontes/inde-integrado-schema37.tar.gz",
+      "sha256": "554623abec5d7c3c175dab2aa6bbabc8a95abd6e3d98a27191cea0260a4965c4",
+      "files": 758,
+      "manifest_match": true
+    }
+  ],
+  "ci": {
+    "run_id": 44775079685,
+    "url": "https://github.com/Roger-Cardoso/inde/actions/runs/44775079685",
+    "head_sha": "ced60ea1ab34899cfb4f162e4ea3d33940d56bfd",
+    "jobs": 17,
+    "passed": 17,
+    "conclusion": "success"
+  },
+  "repository_proof": "Fresh synthetic project only; every project file byte-equal before/after planning and source checks; schema37 integrity/FK pass; sequential competing source writers detected.",
+  "limits": {
+    "commands": 64,
+    "id_entries": 20000,
+    "id_bytes": 512,
+    "total_id_bytes": 4194304,
+    "document_authorial_commands": 1,
+    "document_groups_per_move": 1
+  },
+  "not_implemented": [
+    "persistent application/transaction",
+    "durable OBJ-01 undo/recovery",
+    "GTK integration",
+    "schema/project migration",
+    "single-file .inde",
+    "authorial transfers/arrangements",
+    "publication integration"
+  ]
+}

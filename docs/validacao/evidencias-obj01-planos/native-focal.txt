@@ -1,0 +1,49 @@
+
+/tmp/obj01-plan-native-configure.log
+-- Configuring done (1.3s)
+-- Generating done (0.6s)
+-- Build files have been written to: /home/roger/Documents/Projects/GitHub/INDE/obj01-audit/build-nativo
+
+/tmp/obj01-plan-native-build.log
+[1/6] Building CXX object CMakeFiles/inde_object_change_plan.dir/object_change_plan.cpp.o
+[2/6] Linking CXX static library libinde_object_change_plan.a
+[3/6] Building CXX object CMakeFiles/inde_object_change_plan_tests.dir/object_change_plan_tests.cpp.o
+[4/6] Linking CXX executable inde_object_change_plan_tests
+[5/6] Building CXX object CMakeFiles/inde_object_change_plan_service_tests.dir/object_change_plan_service_tests.cpp.o
+[6/6] Linking CXX executable inde_object_change_plan_service_tests
+
+/tmp/obj01-plan-native-focal.log
+Test project /home/roger/Documents/Projects/GitHub/INDE/obj01-audit/build-nativo
+    Start 1: inde_object_model_tests
+1/8 Test #1: inde_object_model_tests .................   Passed    0.11 sec
+    Start 2: inde_object_commands_tests
+2/8 Test #2: inde_object_commands_tests ..............   Passed    1.33 sec
+    Start 3: inde_object_document_adapter_tests
+3/8 Test #3: inde_object_document_adapter_tests ......   Passed    1.43 sec
+    Start 4: inde_object_document_service_tests
+4/8 Test #4: inde_object_document_service_tests ......   Passed    0.80 sec
+    Start 5: inde_object_composition_adapter_tests
+5/8 Test #5: inde_object_composition_adapter_tests ...   Passed    1.49 sec
+    Start 6: inde_object_composition_service_tests
+6/8 Test #6: inde_object_composition_service_tests ...   Passed    0.88 sec
+    Start 7: inde_object_change_plan_tests
+7/8 Test #7: inde_object_change_plan_tests ...........   Passed    3.32 sec
+    Start 8: inde_object_change_plan_service_tests
+8/8 Test #8: inde_object_change_plan_service_tests ...   Passed    0.93 sec
+
+100% tests passed out of 8
+
+Total Test time (real) =  10.30 sec
+
+/tmp/obj01-plan-native-build-final.log
+[1/2] Building CXX object CMakeFiles/inde_object_change_plan_tests.dir/object_change_plan_tests.cpp.o
+[2/2] Linking CXX executable inde_object_change_plan_tests
+
+/tmp/obj01-plan-native-quota.log
+Test project /home/roger/Documents/Projects/GitHub/INDE/obj01-audit/build-nativo
+    Start 7: inde_object_change_plan_tests
+1/1 Test #7: inde_object_change_plan_tests ....   Passed    1.92 sec
+
+100% tests passed out of 1
+
+Total Test time (real) =   1.94 sec
