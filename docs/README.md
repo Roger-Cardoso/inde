@@ -17,3 +17,6 @@
 
 - [Planos imutáveis de alterações e intenção explícita](arquitetura/PLANO-ALTERACOES-OBJ-01.md).
 - [Validação dos planos](validacao/VALIDACAO-OBJ-01-PLANOS.md).
+
+- [Sessões de aplicação e histórico em memória](arquitetura/SESSOES-OBJ-01.md).
+- [Validação das sessões](validacao/VALIDACAO-OBJ-01-SESSOES.md).

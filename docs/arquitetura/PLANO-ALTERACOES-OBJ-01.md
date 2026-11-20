@@ -61,3 +61,7 @@ O build mínimo `tests/object_change_plan` estende as duas pontes com a sessão 
 O teste nativo adicional usa `ProjectService` e SQLite reais em diretório temporário recém-criado, compara todos os arquivos antes/depois do planejamento e verifica conflitos de fontes após escritores sequenciais sintéticos. Não abre uma obra autoral. O núcleo nativo completo é Release; a instrumentação ASan/UBSan fica no build mínimo, que inclui as rotinas proprietárias pertinentes.
 
 Ver [validação e reprodução](../validacao/VALIDACAO-OBJ-01-PLANOS.md), [fundação](INDE-OBJ-01.md), [ponte documental](ADAPTADOR-DOCUMENTO-OBJ-01.md) e [ponte da Composição](ADAPTADOR-COMPOSICAO-OBJ-01.md).
+
+## Continuidade: execução em memória
+
+O corte seguinte acrescentou [sessões de memória](SESSOES-OBJ-01.md) que preparam/aplicam tickets, conferem origem e coordenam undo/redo. Os planos continuam imutáveis e sem API de save/apply própria. Novas sobrecargas permitem apresentação validada da mesma captura; intenção autoral exige ordem anterior alinhada à fonte. Escrita persistente continua fora da implementação.

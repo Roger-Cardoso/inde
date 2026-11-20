@@ -33,6 +33,14 @@ using CompositionPlanResult = PlanResult<CompositionChangePlan>;
 [[nodiscard]] CompositionPlanResult plan_composition_change(const compat::CompositionReadProjection &,
     const project::StoredComposition &current, const ChangeRequest &);
 
+// Presentation-aware overloads preserve only validated presentation changes of
+// the same flat capture. Authorial intent requires source-aligned reading order.
+[[nodiscard]] DocumentPlanResult plan_document_change(const compat::DocumentReadProjection &,
+    const std::string &, const project::Document &, const ChangeRequest &,
+    application::TextSelection, const Composition &presentation);
+[[nodiscard]] CompositionPlanResult plan_composition_change(const compat::CompositionReadProjection &,
+    const project::StoredComposition &, const ChangeRequest &, const Composition &presentation);
+
 // Immutable, authoring-private, independently retained preview. No save/apply,
 // transaction, signature, access grant or durable undo. Recheck is in-memory.
 class DocumentChangePlan final {
@@ -49,6 +57,8 @@ private:
   DocumentChangePlan() = default;
   friend DocumentPlanResult plan_document_change(const compat::DocumentReadProjection &, const std::string &,
       const project::Document &, const ChangeRequest &, application::TextSelection);
+  friend DocumentPlanResult plan_document_change(const compat::DocumentReadProjection &, const std::string &,
+      const project::Document &, const ChangeRequest &, application::TextSelection, const Composition &);
   PlanReview review_;
   compat::DocumentSourceStamp source_;
   Composition before_graph_, after_graph_;
@@ -74,6 +84,8 @@ private:
   CompositionChangePlan() = default;
   friend CompositionPlanResult plan_composition_change(const compat::CompositionReadProjection &,
       const project::StoredComposition &, const ChangeRequest &);
+  friend CompositionPlanResult plan_composition_change(const compat::CompositionReadProjection &,
+      const project::StoredComposition &, const ChangeRequest &, const Composition &);
   PlanReview review_;
   compat::CompositionSourceStamp source_;
   Composition before_graph_, after_graph_;

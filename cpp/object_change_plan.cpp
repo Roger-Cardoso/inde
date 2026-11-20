@@ -52,6 +52,29 @@ void preflight(const ChangeRequest &r) {
     }, command);
   }
 }
+void check_presentation(const Composition &canonical, const Composition &presentation, ChangePurpose purpose) {
+  const auto errors = validate(presentation);
+  if (!errors.empty()) refuse(errors.front().code, errors.front().subject_id, "Apresentação inválida; nenhum plano produzido.");
+  if (presentation.layouts.size() != 1 || canonical.layouts.size() != 1 ||
+      presentation.objects.size() != canonical.objects.size() ||
+      presentation.occurrences.size() != canonical.occurrences.size())
+    refuse("presentation_capture_mismatch", canonical.id, "A apresentação deve conservar as entidades da captura plana.");
+  auto normalized = presentation;
+  for (auto &o : normalized.occurrences) o.frame.reset();
+  normalized.layouts[0] = canonical.layouts[0];
+  auto expected = canonical;
+  auto order_storage = [](Composition &g) {
+    auto by_id = [](const auto &a, const auto &b) { return a.id < b.id; };
+    std::sort(g.objects.begin(), g.objects.end(), by_id);
+    std::sort(g.occurrences.begin(), g.occurrences.end(), by_id);
+    std::sort(g.resources.begin(), g.resources.end(), by_id);
+  };
+  order_storage(normalized); order_storage(expected);
+  if (normalized != expected)
+    refuse("presentation_capture_mismatch", canonical.id, "Apresentação pertence a outra captura ou alterou identidades/metadados.");
+  if (purpose == ChangePurpose::AuthorialReorder && presentation.layouts[0].children != canonical.layouts[0].children)
+    refuse("presentation_reading_order_diverged", canonical.id, "Restaure explicitamente a ordem visual correspondente à fonte antes de reordenar a autoria.");
+}
 Composition target_graph(const Composition &base, const ChangeRequest &r) {
   CompositionEditor copy(base, 0);
   const auto result = copy.apply(0, r.commands);
@@ -89,6 +112,11 @@ std::pair<std::string, std::string> document_move(const compat::DocumentReadProj
 DocumentPlanResult plan_document_change(const compat::DocumentReadProjection &base,
     const std::string &project_id, const project::Document &current,
     const ChangeRequest &request, application::TextSelection selection) {
+  return plan_document_change(base, project_id, current, request, selection, base.graph());
+}
+DocumentPlanResult plan_document_change(const compat::DocumentReadProjection &base,
+    const std::string &project_id, const project::Document &current,
+    const ChangeRequest &request, application::TextSelection selection, const Composition &presentation) {
   try {
     preflight(request);
     const auto source = base.check_source(project_id, current);
@@ -98,9 +126,10 @@ DocumentPlanResult plan_document_change(const compat::DocumentReadProjection &ba
       refuse("invalid_text_selection", base.source().document_id, "Seleção Unicode fora da fonte capturada.");
     if (request.purpose == ChangePurpose::AuthorialReorder && request.commands.size() > 1)
       refuse("document_authorial_batch_unsupported", base.source().document_id, "Este corte traduz um movimento de grupo por plano documental.");
-    auto target = target_graph(base.graph(), request);
+    check_presentation(base.graph(), presentation, request.purpose);
+    auto target = target_graph(presentation, request);
     auto p = std::unique_ptr<DocumentChangePlan>(new DocumentChangePlan);
-    p->source_ = base.source(); p->before_graph_ = base.graph(); p->after_graph_ = std::move(target);
+    p->source_ = base.source(); p->before_graph_ = presentation; p->after_graph_ = std::move(target);
     p->before_ = {base.source_snapshot(), selection}; p->after_ = p->before_;
     if (request.purpose == ChangePurpose::AuthorialReorder && !request.commands.empty()) {
       const auto &r = std::get<ReorderOccurrences>(request.commands.front());
@@ -124,6 +153,10 @@ DocumentPlanResult plan_document_change(const compat::DocumentReadProjection &ba
 }
 CompositionPlanResult plan_composition_change(const compat::CompositionReadProjection &base,
     const project::StoredComposition &current, const ChangeRequest &request) {
+  return plan_composition_change(base, current, request, base.graph());
+}
+CompositionPlanResult plan_composition_change(const compat::CompositionReadProjection &base,
+    const project::StoredComposition &current, const ChangeRequest &request, const Composition &presentation) {
   try {
     preflight(request);
     const auto source = base.check_source(current);
@@ -132,9 +165,10 @@ CompositionPlanResult plan_composition_change(const compat::CompositionReadProje
       if (request.purpose == ChangePurpose::AuthorialReorder &&
           std::get<ReorderOccurrences>(command).layout_id != base.graph().root_layout_id)
         refuse("unsupported_authorial_layout", base.source().composition_id, "Reordenação autoral exige o layout raiz da captura.");
-    auto target = target_graph(base.graph(), request);
+    check_presentation(base.graph(), presentation, request.purpose);
+    auto target = target_graph(presentation, request);
     auto p = std::unique_ptr<CompositionChangePlan>(new CompositionChangePlan);
-    p->source_ = base.source(); p->before_graph_ = base.graph(); p->after_graph_ = std::move(target);
+    p->source_ = base.source(); p->before_graph_ = presentation; p->after_graph_ = std::move(target);
     p->before_ = base.source_snapshot().value; p->after_ = p->before_;
     std::unordered_map<std::string, std::string> bindings;
     for (const auto &b : base.occurrences()) { bindings.emplace(b.occurrence_id, b.source_occurrence_id); p->source_order_.push_back(b.source_occurrence_id); }
