@@ -105,3 +105,7 @@ Consolidar esses percursos significa conservar suas autoridades e recusas, não 
 ## Lacuna encontrada na própria evidência histórica
 
 O driver GTK P03b `ui_document_visibility_smoke.cpp` ainda procura um segundo `TextView` chamado `visibility-lens-editor`. O P03c usa o editor contínuo único com tags; esse driver histórico falhou nos dois temas antes de exercer suas operações. Os percursos atuais de `ui_editor_specializations_smoke.cpp` passaram incluindo a visibilidade no mesmo editor, clipboard, semântica e ordem filtrada. O inventário diferencia essa incompatibilidade do teste de uma falha de conteúdo comprovada no aplicativo; os dois logs e a cobertura atual constam no relatório. Não se deve usar o sucesso histórico de P03b como evidência direta do P03c nem recriar o segundo editor para satisfazer o driver antigo.
+
+## Complemento: save/readback e recovery de laboratório
+
+O [corte de protocolo](SALVAMENTO-RECOVERY-OBJ-01.md) confirmou três pontos na implementação real: o CAS precisa permanecer dentro das transações proprietárias; o readback documental pode ordenar spans por posição sem mudar seu estado autoral; o journal documental não representa apresentação ou Composição OBJ-01. O reconhecimento usa igualdade proprietária e adota o readback, preservando o histórico com timestamp reservado. Dois processos ensaiam commit antes de ack e interrupção entre autoridades independentes. Não se promove esse ensaio a store de produção, lease, atomicidade conjunta ou migração. [Evidências](../validacao/VALIDACAO-OBJ-01-SALVAMENTO.md).

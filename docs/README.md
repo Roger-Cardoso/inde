@@ -20,3 +20,6 @@
 
 - [Sessões de aplicação e histórico em memória](arquitetura/SESSOES-OBJ-01.md).
 - [Validação das sessões](validacao/VALIDACAO-OBJ-01-SESSOES.md).
+
+- [Protocolo de salvamento e recovery em laboratório](arquitetura/SALVAMENTO-RECOVERY-OBJ-01.md).
+- [Validação de save/recovery](validacao/VALIDACAO-OBJ-01-SALVAMENTO.md).

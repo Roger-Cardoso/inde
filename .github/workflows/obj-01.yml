@@ -12,6 +12,7 @@ on:
       - tests/object_composition/**
       - tests/object_change_plan/**
       - tests/object_change_session/**
+      - tests/object_save_protocol/**
       - tests/audit_obj01_sources.py
       - tests/test_obj01_source_audit.py
       - fontes/*.tar.gz
@@ -30,6 +31,7 @@ on:
       - tests/object_composition/**
       - tests/object_change_plan/**
       - tests/object_change_session/**
+      - tests/object_save_protocol/**
       - tests/audit_obj01_sources.py
       - tests/test_obj01_source_audit.py
       - fontes/*.tar.gz
@@ -174,12 +176,12 @@ jobs:
         run: python3 verificar_base.py --integrado --extrair
       - name: Configure working sessions and owner replay
         run: >-
-          cmake -S tests/object_change_session -B build-obj01-session -G Ninja
+          cmake -S tests/object_save_protocol -B build-obj01-session -G Ninja
           -DCMAKE_CXX_COMPILER=${{ matrix.compiler }}
           -DOBJ01_SANITIZE=${{ matrix.sanitize }}
       - name: Compile sessions and real editing units
         run: cmake --build build-obj01-session --parallel 2
-      - name: Verify ticket scope, source checks, coordinated history and quotas
+      - name: Verify sessions, save barriers, receipts, checkpoints and recovery modes
         env:
           ASAN_OPTIONS: detect_leaks=1:halt_on_error=1
           UBSAN_OPTIONS: halt_on_error=1:print_stacktrace=1

@@ -53,8 +53,48 @@ template<class Ticket> struct PreparationResult {
   std::unique_ptr<Ticket> ticket;
   std::vector<PlanDiagnostic> diagnostics;
 };
+// Pure save/recovery protocol. No writer, filesystem or database handle here.
+struct SessionCheckpoint { std::string bytes, sha256; };
+enum class RecoveryMode { ResumeUnsaved, AdoptMatchingSave };
+template<class Session> struct SessionRecoveryResult {
+  std::unique_ptr<Session> session;
+  std::vector<PlanDiagnostic> diagnostics;
+};
+class PreparedDocumentSave final {
+public:
+  PreparedDocumentSave(const PreparedDocumentSave &) = delete;
+  PreparedDocumentSave &operator=(const PreparedDocumentSave &) = delete;
+  [[nodiscard]] const project::Document &expected() const { return expected_; }
+  [[nodiscard]] const project::Document &candidate() const { return candidate_; }
+  [[nodiscard]] const std::string &project_id() const { return project_id_; }
+  [[nodiscard]] bool consumed() const { return consumed_; }
+private:
+  PreparedDocumentSave() = default;
+  friend class DocumentChangeSession;
+  std::string session_id_, intent_id_, project_id_;
+  std::uint64_t revision_{};
+  project::Document expected_, candidate_;
+  bool consumed_{};
+};
+class PreparedCompositionSave final {
+public:
+  PreparedCompositionSave(const PreparedCompositionSave &) = delete;
+  PreparedCompositionSave &operator=(const PreparedCompositionSave &) = delete;
+  // Expected is the last acknowledged envelope. Candidate has NO future revision.
+  [[nodiscard]] const project::StoredComposition &expected() const { return expected_; }
+  [[nodiscard]] const project::Composition &candidate() const { return candidate_; }
+  [[nodiscard]] bool consumed() const { return consumed_; }
+private:
+  PreparedCompositionSave() = default;
+  friend class CompositionChangeSession;
+  std::string session_id_, intent_id_;
+  std::uint64_t revision_{};
+  project::StoredComposition expected_;
+  project::Composition candidate_;
+  bool consumed_{};
+};
 // Owns the working authority in memory. No external edits, pending typing,
-// saving, rebasing, persistent revisions or recovery records in this API.
+// database writes, rebasing or manufactured persistent revisions in this API.
 // Views from current()/graph() must be treated as invalid after mutation.
 // Caller inputs must be stable during a call; sessions are not thread-safe.
 class DocumentChangeSession final {
@@ -75,13 +115,23 @@ public:
   [[nodiscard]] std::size_t history_bytes() const;
   [[nodiscard]] PreparationResult<PreparedDocumentChange> prepare(const ChangeRequest &) const;
   // Explicit application of this exact reviewed ticket, once. The provided
-  // external origin must still match the ORIGINAL opening capture, not working.
+  // external origin must match the latest acknowledged baseline, not working.
   [[nodiscard]] SessionResult apply(PreparedDocumentChange &, const std::string &project_id,
       const project::Document &external_origin);
   [[nodiscard]] SessionResult undo(std::uint64_t expected, const std::string &project_id,
       const project::Document &external_origin);
   [[nodiscard]] SessionResult redo(std::uint64_t expected, const std::string &project_id,
       const project::Document &external_origin);
+  [[nodiscard]] bool save_pending() const;
+  [[nodiscard]] PreparationResult<PreparedDocumentSave> begin_save();
+  [[nodiscard]] SessionResult acknowledge_save(PreparedDocumentSave &, const std::string &project_id,
+      const project::Document &persisted_readback);
+  [[nodiscard]] SessionResult cancel_save(PreparedDocumentSave &, const std::string &project_id,
+      const project::Document &unchanged_external);
+  [[nodiscard]] SessionCheckpoint checkpoint() const;
+  [[nodiscard]] static SessionRecoveryResult<DocumentChangeSession> restore(const SessionCheckpoint &,
+      const std::string &project_id, const project::Document &external, RecoveryMode = RecoveryMode::ResumeUnsaved,
+      SessionHistoryLimits = {});
 private:
   struct Impl;
   std::unique_ptr<Impl> impl_;
@@ -106,6 +156,13 @@ public:
   [[nodiscard]] SessionResult apply(PreparedCompositionChange &, const project::StoredComposition &external_origin);
   [[nodiscard]] SessionResult undo(std::uint64_t expected, const project::StoredComposition &external_origin);
   [[nodiscard]] SessionResult redo(std::uint64_t expected, const project::StoredComposition &external_origin);
+  [[nodiscard]] bool save_pending() const;
+  [[nodiscard]] PreparationResult<PreparedCompositionSave> begin_save();
+  [[nodiscard]] SessionResult acknowledge_save(PreparedCompositionSave &, const project::StoredComposition &persisted_readback);
+  [[nodiscard]] SessionResult cancel_save(PreparedCompositionSave &, const project::StoredComposition &unchanged_external);
+  [[nodiscard]] SessionCheckpoint checkpoint() const;
+  [[nodiscard]] static SessionRecoveryResult<CompositionChangeSession> restore(const SessionCheckpoint &,
+      const project::StoredComposition &external, RecoveryMode = RecoveryMode::ResumeUnsaved, SessionHistoryLimits = {});
 private:
   struct Impl;
   std::unique_ptr<Impl> impl_;

@@ -1,0 +1,8 @@
+cmake_minimum_required(VERSION 3.22)
+project(inde_obj01_save_protocol LANGUAGES CXX)
+include(CTest)
+set(OBJ01_COMPOSITION ON)
+set(OBJ01_CHANGE_PLAN ON)
+set(OBJ01_CHANGE_SESSION ON)
+set(OBJ01_SAVE_PROTOCOL ON)
+add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/../object_document document-domain)

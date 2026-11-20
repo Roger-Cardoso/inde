@@ -60,3 +60,7 @@ O `source()` do plano dentro do ticket descreve essa captura de trabalho; o `ori
 Não há confirmação de save, refresh/rebase, executor persistente, registro de recovery ou serialização da sessão. Encerrar o processo perde esse trabalho em memória. Uma integração futura precisa definir transação/revisão na autoridade real, reconhecimento do save sem confundir base/trabalho, undo/recovery coerentes e tratamento de falhas antes de ligar a interface. Nenhum schema/projeto autoral é migrado por este corte.
 
 Ver [validação das sessões](../validacao/VALIDACAO-OBJ-01-SESSOES.md), [planos](PLANO-ALTERACOES-OBJ-01.md) e [inventário](INVENTARIO-OBJ-01.md).
+
+## Continuidade: save/readback e checkpoint
+
+O corte seguinte adicionou o [protocolo de laboratório](SALVAMENTO-RECOVERY-OBJ-01.md): barreira de save, reconhecimento/cancelamento e checkpoint privado. `origin()` passa a representar a última origem reconhecida, inicialmente a abertura. O reconhecimento documental conserva histórico e atualiza timestamps, com reserva de representação; recuperação após reinício conserva trabalho/apresentação, mas abre nova sessão sem undo/redo anterior. Não há escritor externo na biblioteca nem integração com GTK.
