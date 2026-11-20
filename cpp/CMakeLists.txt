@@ -97,3 +97,14 @@ if(INDE_ENABLE_LTO AND CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
     endif()
   endforeach()
 endif()
+
+
+# INDE-OBJ-01: isolated non-persistent composition model (no GTK dependency).
+add_library(inde_object_model STATIC object_model.cpp)
+target_include_directories(inde_object_model PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+target_compile_options(inde_object_model PRIVATE -Wall -Wextra -Wpedantic -Wconversion -Werror)
+add_executable(inde_object_model_tests object_model_tests.cpp)
+target_link_libraries(inde_object_model_tests PRIVATE inde_object_model)
+if(INDE_BUILD_CORE_TESTS)
+  add_test(NAME inde_object_model_tests COMMAND inde_object_model_tests)
+endif()
