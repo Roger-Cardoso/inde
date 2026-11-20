@@ -80,8 +80,10 @@ A exceção Clang `-Wno-sign-conversion` permanece restrita ao alvo dos fontes a
 
 A CI acrescenta quatro combinações GCC/Clang × sem/com sanitizadores, conservando os nove jobs anteriores. Os cenários incluem todos os modos, versões distintas para o mesmo bloco, origem completa, rascunhos, perfis/camadas/famílias, igualdade da leitura com o núcleo, independência das alocações, fronteira de 2.048 ocorrências e ordens geradas. A prova de repositório compara todos os arquivos da fixture antes/depois, guarda versões e detecta outro escritor.
 
-## Próximo requisito
+## Continuidade da Fase 1
 
 As duas pontes de leitura agora permitem estudar o plano de alterações com fontes e identidades explícitas. O próximo corte deve distinguir alteração visual de mudança autoral, mapear apenas operações demonstravelmente conservadoras e produzir diagnóstico antes de qualquer escrita. Movimento de texto deve delegar ao motor existente e manter suas recusas sobre resmas/âncoras; mudança de ordem de ocorrências da Composição deve preservar modos, versões e classificações. Escrita persistente, GTK, unificação de bancos e `.inde` único continuam fora deste corte.
 
 Ver [fundação](INDE-OBJ-01.md), [ponte documental](ADAPTADOR-DOCUMENTO-OBJ-01.md) e [validação deste corte](../validacao/VALIDACAO-OBJ-01-COMPOSICAO.md).
+
+O corte seguinte implementou esse requisito em biblioteca separada: [planos de alterações](PLANO-ALTERACOES-OBJ-01.md). A API desta ponte permanece somente de leitura. O planejador produz candidatos privados e conserva as recusas do motor; nenhuma escrita persistente foi liberada.

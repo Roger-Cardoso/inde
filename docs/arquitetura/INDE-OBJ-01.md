@@ -1,6 +1,6 @@
 # INDE-OBJ-01 — Contrato da fundação de objetos e operações
 
-Versão **0.4 experimental — núcleo de comandos 0.2 e duas pontes de leitura**, 2026-11-20. Escopo: **Fase 1**, C++20 em memória. Implementação: `cpp/object_model.{hpp,cpp}` e `cpp/object_commands.{hpp,cpp}`. O núcleo de comandos permanece isolado. Bibliotecas separadas fazem leitura do Documento (`object_document_adapter.*`) e da Composição persistida (`object_composition_adapter.*`), sem escrita, GTK, alterações SQLite ou arquivo único `.inde`. Ver [ponte documental](ADAPTADOR-DOCUMENTO-OBJ-01.md) e [ponte da Composição](ADAPTADOR-COMPOSICAO-OBJ-01.md).
+Versão **0.5 experimental — núcleo de comandos 0.2, duas pontes e planos de alterações**, 2026-11-20. Escopo: **Fase 1**, C++20 em memória. Implementação: `cpp/object_model.{hpp,cpp}` e `cpp/object_commands.{hpp,cpp}`. O núcleo de comandos permanece isolado. Bibliotecas separadas fazem leitura do Documento (`object_document_adapter.*`) e da Composição persistida (`object_composition_adapter.*`), sem escrita, GTK, alterações SQLite ou arquivo único `.inde`. Ver [ponte documental](ADAPTADOR-DOCUMENTO-OBJ-01.md), [ponte da Composição](ADAPTADOR-COMPOSICAO-OBJ-01.md) e [planos de alterações](PLANO-ALTERACOES-OBJ-01.md). O planejador separado traduz prévias autorais conservadoras pelo motor existente; não aplica alterações na fonte.
 
 ## Autoridades e identidades
 
@@ -57,7 +57,7 @@ Transferência e mudança de arranjo usam `FramePolicy`:
 
 Não existe perda silenciosa de geometria para fazer uma transferência passar. Mudar para fluxo dispensa a ordem de pintura por definição desse arranjo; voltar a espacial inicializa nova ordem, e desfazer restaura exatamente a anterior. Preservação de preferências de arranjos inativos exige modelo futuro separado.
 
-Nenhum comando modifica seleção GTK, texto, âncoras, alternativas ou identidades públicas. Seleção aqui significa apenas conjunto explícito de IDs de ocorrência de um comando. Seleções misturando pais ou ancestrais/descendentes não são implicitamente expandidas. Âncora selecionada, ausente ou em outro layout é erro; índices de uma vista filtrada não fazem parte da API.
+Nenhum comando do núcleo modifica seleção GTK, texto, âncoras, alternativas ou identidades públicas. O planejador separado pode traduzir uma intenção autoral explícita em candidato privado pelo motor proprietário, sem modificar a fonte fornecida. Seleção aqui significa apenas conjunto explícito de IDs de ocorrência de um comando. Seleções misturando pais ou ancestrais/descendentes não são implicitamente expandidas. Âncora selecionada, ausente ou em outro layout é erro; índices de uma vista filtrada não fazem parte da API.
 
 ## Transações, revisão, histórico e falhas
 
@@ -80,3 +80,5 @@ Antes de integrar, será necessário especificar e testar o vínculo com parágr
 GTK, instâncias de contêiner, inclusão/remoção, wrap/unwrap, clipboard, geometria responsiva, spans de grade e arquivo único `.inde` permanecem futuros e não foram iniciados. Uma futura migração exigirá backup consistente SQLite (inclusive WAL), validação em cópias, reversibilidade e seleção explícita do conteúdo público. Visibilidade não autoriza publicar e arquivos de autoria/credenciais não pertencem ao pacote público.
 
 Ver [inventário aprofundado](INVENTARIO-OBJ-01.md) e [relatório de validação](../validacao/VALIDACAO-OBJ-01.md).
+
+O requisito de plano explícito está implementado de forma limitada e verificável: intenção visual preserva o agregado; intenção autoral admite um grupo documental inteiro ou reordenação de ocorrências da Composição. A aplicação desses candidatos continua fora da API. Ver [contrato](PLANO-ALTERACOES-OBJ-01.md) e [validação](../validacao/VALIDACAO-OBJ-01-PLANOS.md).

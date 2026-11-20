@@ -14,3 +14,6 @@
 
 - [Ponte somente de leitura da Composição persistida](arquitetura/ADAPTADOR-COMPOSICAO-OBJ-01.md).
 - [Validação da ponte da Composição](validacao/VALIDACAO-OBJ-01-COMPOSICAO.md).
+
+- [Planos imutáveis de alterações e intenção explícita](arquitetura/PLANO-ALTERACOES-OBJ-01.md).
+- [Validação dos planos](validacao/VALIDACAO-OBJ-01-PLANOS.md).
