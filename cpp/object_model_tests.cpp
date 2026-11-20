@@ -3,6 +3,7 @@
 #include <algorithm>
 #include <cmath>
 #include <iostream>
+#include <limits>
 #include <string>
 #include <vector>
 
@@ -110,7 +111,7 @@ void test_asset_metadata() {
   expect(contains(obj::validate(doc), "invalid_resource_hash"), "invalid hash rejected");
   doc = sample();
   doc.resources[0].media_type.clear();
-  expect(contains(obj::validate(doc), "missing_media_type"), "missing media type rejected");
+  expect(contains(obj::validate(doc), "invalid_media_type"), "missing media type rejected");
 }
 
 void test_unexpected_fields() {
@@ -124,6 +125,116 @@ void test_unexpected_fields() {
          "flow layout cannot use absolute frames");
 }
 
+void test_layout_parentage() {
+  auto doc = sample();
+  doc.occurrences.push_back({"second-group", "group", {}});
+  doc.layouts[0].children.push_back("second-group");
+  expect(contains(obj::validate(doc), "layout_multiple_parents"),
+         "reused container must not reuse same nested layout");
+  doc = sample();
+  doc.objects.push_back({"other-group", obj::ObjectKind::Container, {}, "inner"});
+  doc.occurrences.push_back({"second-group", "other-group", {}});
+  doc.layouts[0].children.push_back("second-group");
+  expect(contains(obj::validate(doc), "layout_multiple_parents"),
+         "different container objects must not share nested layout");
+  doc = sample();
+  doc.objects.push_back({"recursive", obj::ObjectKind::Container, {}, "root"});
+  doc.occurrences.push_back({"loop", "recursive", {}});
+  doc.layouts[1].children.push_back("loop");
+  expect(contains(obj::validate(doc), "root_layout_nested"),
+         "root layout cannot be nested");
+}
+
+void test_layout_reachability() {
+  auto doc = sample();
+  doc.layouts.push_back({"detached", obj::LayoutKind::Stack, 0, {}});
+  expect(contains(obj::validate(doc), "unreachable_layout"),
+         "detached layout rejected");
+  doc = sample();
+  doc.layouts[0].children.erase(doc.layouts[0].children.begin() + 1);
+  expect(contains(obj::validate(doc), "unreachable_layout"),
+         "unreachable child layout rejected");
+  doc = sample();
+  doc.layouts = {{"root", obj::LayoutKind::Stack, 0, {}}};
+  doc.occurrences.clear();
+  doc.objects.clear();
+  doc.resources.clear();
+  expect(obj::validate(doc).empty(), "empty rooted composition valid");
+}
+
+void test_unknown_kinds_and_identities() {
+  auto doc = sample();
+  doc.objects[0].kind = static_cast<obj::ObjectKind>(500);
+  expect(contains(obj::validate(doc), "unknown_object_kind"), "unknown object kind rejected");
+  doc = sample();
+  doc.layouts[1].kind = static_cast<obj::LayoutKind>(500);
+  expect(contains(obj::validate(doc), "unknown_layout_kind"), "unknown layout kind rejected");
+  doc = sample();
+  doc.resources[0].id = "root";
+  expect(contains(obj::validate(doc), "duplicate_id"), "cross-category ID collision rejected");
+  doc = sample();
+  doc.occurrences[0].id.clear();
+  expect(contains(obj::validate(doc), "missing_id"), "empty occurrence ID rejected");
+}
+
+void test_strict_resource_and_geometry() {
+  auto doc = sample();
+  doc.resources[0].byte_size = 0;
+  expect(contains(obj::validate(doc), "empty_resource"), "zero-sized resource rejected");
+  doc = sample();
+  doc.resources[0].media_type = "image/png; bad";
+  expect(contains(obj::validate(doc), "invalid_media_type"), "malformed MIME rejected");
+  doc = sample();
+  doc.resources.push_back({"resource-copy", doc.resources[0].sha256, "image/png", 128});
+  expect(obj::validate(doc).empty(), "distinct resource IDs may share content hash");
+  doc = sample();
+  doc.layouts[1].kind = obj::LayoutKind::Freeform;
+  doc.occurrences[2].frame = obj::Frame{-5, 0, 1, 1};
+  expect(obj::validate(doc).empty(), "finite negative canvas coordinate allowed");
+  for (const double invalid : {0.0, -1.0, std::nan(""),
+                               std::numeric_limits<double>::infinity()}) {
+    doc.occurrences[2].frame->width = invalid;
+    expect(contains(obj::validate(doc), "invalid_frame"), "invalid frame width rejected");
+  }
+  doc.occurrences[2].frame = obj::Frame{std::nan(""), 0, 1, 1};
+  expect(contains(obj::validate(doc), "invalid_frame"), "NaN x coordinate rejected");
+}
+
+void test_deterministic_diagnostics() {
+  auto doc = sample();
+  doc.objects[1].resource_id = "missing";
+  doc.layouts[0].children.push_back("intro");
+  const auto first = obj::validate(doc), second = obj::validate(doc);
+  expect(first.size() == second.size(), "stable number of diagnostics");
+  if (first.size() == second.size())
+    for (std::size_t i = 0; i < first.size(); ++i)
+      expect(first[i].code == second[i].code &&
+             first[i].subject_id == second[i].subject_id, "stable diagnostic order");
+  expect(doc.objects[1].resource_id == "missing", "validation must not mutate object");
+  expect(doc.layouts[0].children.back() == "intro", "validation must not mutate layout");
+}
+
+void test_deep_composition() {
+  constexpr int depth = 7000;
+  obj::Composition doc;
+  doc.id = "deep";
+  doc.root_layout_id = "layout-0";
+  doc.layouts.reserve(depth + 1);
+  doc.objects.reserve(depth);
+  doc.occurrences.reserve(depth);
+  for (int i = 0; i <= depth; ++i) {
+    doc.layouts.push_back({"layout-" + std::to_string(i), obj::LayoutKind::Stack, 0, {}});
+    if (i == depth) continue;
+    const auto occurrence_id = "occ-" + std::to_string(i);
+    doc.layouts.back().children.push_back(occurrence_id);
+    doc.objects.push_back({"obj-" + std::to_string(i), obj::ObjectKind::Container,
+                           {}, "layout-" + std::to_string(i + 1)});
+    doc.occurrences.push_back({occurrence_id, doc.objects.back().id, {}});
+  }
+  expect(obj::validate(doc).empty(),
+         "7000 nested containers validated without recursive call stack");
+}
+
 } // namespace
 
 int main() {
@@ -134,9 +245,15 @@ int main() {
   test_geometry_and_columns();
   test_asset_metadata();
   test_unexpected_fields();
+  test_layout_parentage();
+  test_layout_reachability();
+  test_unknown_kinds_and_identities();
+  test_strict_resource_and_geometry();
+  test_deterministic_diagnostics();
+  test_deep_composition();
   if (failures != 0) {
     std::cerr << failures << " object-model tests failed\n";
     return 1;
   }
-  std::cout << "INDE-OBJ-01: 7 test groups passed\n";
+  std::cout << "INDE-OBJ-01: 13 test groups passed\n";
 }
