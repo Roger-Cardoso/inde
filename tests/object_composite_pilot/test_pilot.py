@@ -27,11 +27,12 @@ def png(width=80, height=48, color=(70, 128, 126, 255)):
 
 
 class Client:
-    def __init__(self, folder, profile='p2a', seed=None):
+    def __init__(self, folder, profile='p2a', seed=None, binary=None, fault=None):
         self.folder = Path(folder)
-        args = [BINARY, '--workspace', str(folder), '--profile', profile]
+        args = [binary or BINARY, '--workspace', str(folder), '--profile', profile]
         if seed is not None:
-            args += ['--seed-p2a', str(seed)]
+            args += ['--seed-p2b' if profile=='p2c' else '--seed-p2a', str(seed)]
+        if fault is not None: args += ['--test-fault', fault]
         self.process = subprocess.Popen(args, stdin=subprocess.PIPE,
                                         stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, encoding='utf-8')
         self.state = self.send({'op': 'view'})['state']
@@ -56,14 +57,15 @@ class Client:
                        caption=values.get('caption', 'Figura sintética'), alt=values.get('alt', 'Campo verde'),
                        decorative=values.get('decorative', False))
 
-    def close(self):
+    def close(self, expected=0):
+        if self.process.stdout.closed: return
         if self.process.stdin and not self.process.stdin.closed:
             self.process.stdin.close()
         self.process.wait(timeout=15)
         error = self.process.stderr.read()
         self.process.stdout.close()
         self.process.stderr.close()
-        if self.process.returncode:
+        if self.process.returncode != expected:
             raise AssertionError(f'C++ exit {self.process.returncode}: {error}')
 
 

@@ -32,3 +32,17 @@ add_test(NAME inde_object_composite_p2b_tests COMMAND ${Python3_EXECUTABLE} ${CM
 set_tests_properties(inde_object_composite_p2b_tests PROPERTIES TIMEOUT 180)
 add_test(NAME inde_object_composite_http_p2b_tests COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_LIST_DIR}/test_http_p2b.py $<TARGET_FILE:inde_object_composite_pilot>)
 set_tests_properties(inde_object_composite_http_p2b_tests PROPERTIES TIMEOUT 180)
+# Fault injection exists only in this separate test driver, never in the UI binary.
+add_executable(inde_object_composite_pilot_fault_driver ../../cpp/object_composite_pilot_main.cpp)
+target_compile_definitions(inde_object_composite_pilot_fault_driver PRIVATE OBJ01_TEST_FAULTS=1)
+target_link_libraries(inde_object_composite_pilot_fault_driver PRIVATE inde_object_composite_pilot_domain)
+target_compile_options(inde_object_composite_pilot_fault_driver PRIVATE -Wall -Wextra -Wpedantic -Wconversion -Werror)
+if(OBJ01_SANITIZE)
+  target_compile_options(inde_object_composite_pilot_fault_driver PRIVATE -g1 -fsanitize=address,undefined -fno-omit-frame-pointer)
+  target_link_options(inde_object_composite_pilot_fault_driver PRIVATE -fsanitize=address,undefined)
+endif()
+add_test(NAME inde_object_composite_p2c_tests COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_LIST_DIR}/test_p2c.py $<TARGET_FILE:inde_object_composite_pilot> $<TARGET_FILE:inde_object_composite_pilot_fault_driver>)
+set_tests_properties(inde_object_composite_p2c_tests PROPERTIES TIMEOUT 300)
+
+add_test(NAME inde_object_composite_http_p2c_tests COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_LIST_DIR}/test_http_p2c.py $<TARGET_FILE:inde_object_composite_pilot>)
+set_tests_properties(inde_object_composite_http_p2c_tests PROPERTIES TIMEOUT 180)

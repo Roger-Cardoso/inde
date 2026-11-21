@@ -18,6 +18,15 @@ const errors = {
   png_dimensions_limit: 'A imagem ultrapassa o perfil do experimento: lados de até 8.192 pixels e até 16 milhões de pixels.',
   png_byte_limit: 'O PNG precisa ter até 8 MiB.',
   blob_total_limit: 'Os recursos do experimento precisam caber em 32 MiB.',
+  editing_context_required: 'Escolha o instrumento adequado: Texto para células, Estrutura para inserir/mover e Composição para arranjos.',
+  persistence_outcome_uncertain: 'O resultado da gravação ficou incerto. O candidato foi conservado; reabra o trabalho para conferir o estado confirmado.',
+  persistence_requires_reopen: 'Reabra o trabalho antes de editar novamente: o resultado anterior precisa ser conferido.',
+  working_generation_conflict: 'O registro de trabalho mudou fora desta sessão. Reabra e confira antes de continuar.',
+  working_base_conflict: 'O trabalho recuperável não corresponde ao estado salvo atual. Nenhuma substituição foi realizada.',
+  owner_text_move_refused: 'Esse movimento partiria ou inverteria um trecho protegido. O motor textual recusou a operação inteira.',
+  reading_group_not_found: 'Escolha um grupo textual completo. Um parágrafo interno de resma não pode ser movido isoladamente.',
+  reading_group_target_selected: 'Escolha um destino fora do próprio grupo textual.',
+  composite_publication_not_supported: 'Este experimento ainda não possui tradução para o publicador antigo. Nenhuma publicação foi feita.',
   cell_text_limit: 'Cada célula pode conter até 4.096 caracteres Unicode.',
   invalid_text_or_limit: 'O texto contém caracteres inválidos ou excede o limite deste campo.',
   document_string_limit: 'O texto do experimento ultrapassa seu limite de armazenamento.',
@@ -87,7 +96,7 @@ function action(op, values = {}, success = '') {
     busy = true; activeOperation = op; controls();
     try {
       // A structural change/save must never silently discard a typed cell.
-      if (!['edit_cell', 'select_cell', 'reopen'].includes(op)) {
+      if (!['edit_cell', 'select_cell', 'reopen', 'reopen_working'].includes(op)) {
         for (const n of [...document.querySelectorAll('.cell-editor')]) {
           if (n.value !== cellData(n.dataset.table, n.dataset.cell)?.text) {
             if (!await sendOperation('edit_cell', { id: n.dataset.table, cell: n.dataset.cell, text: n.value })) return false;
@@ -138,6 +147,21 @@ function controls() {
   $('alt').disabled = busy || $('decorative').checked;
   $('save-status').textContent = hasDrafts() ? 'Célula em edição' : state.dirty ? 'Alterações em memória' : 'Salvo localmente';
   $('save-status').className = state.dirty ? 'dirty' : '';
+  if (state.profile === 'P2-C') {
+    for (const id of ['reorder-text', 'text-group', 'text-before', 'publication-check', 'reopen-working']) $(id).disabled = busy;
+    $('reopen-working').disabled = false;
+    const context = state.context;
+    $('context').value = context;
+    for (const n of document.querySelectorAll('.cell-editor')) n.readOnly = context !== 'text' || state.persistence_status === 'uncertain' || (busy && !['edit_cell', 'select_cell'].includes(activeOperation));
+    for (const id of ['import', 'create-table', 'move', 'duplicate', 'remove', 'reorder-text']) $(id).disabled ||= context !== 'structure';
+    for (const id of ['arrange', 'stack', 'restore']) $(id).disabled ||= context !== 'composition';
+    $('context').disabled = busy || state.persistence_status === 'uncertain';
+    $('reorder-text').disabled ||= busy || state.persistence_status === 'uncertain';
+    if (state.persistence_status === 'uncertain') for (const id of ['save','import','create-table','move','duplicate','remove','arrange','stack','restore','undo','redo']) $(id).disabled = true;
+    $('save-status').textContent = state.persistence_status === 'uncertain' ? 'Resultado incerto' : state.persistence_status === 'error' ? 'Registro não confirmado' : hasDrafts() ? 'Texto ainda sendo aplicado' : state.dirty ? 'Trabalho protegido · não salvo' : 'Salvo e conferido';
+    $('recovery-note').textContent = state.persistence_status === 'uncertain' ? 'Reabra o trabalho para conferir a gravação. O candidato foi retido; novas alterações estão bloqueadas.' : state.recovered_on_open ? 'Trabalho não salvo recuperado. Conteúdo e seleção foram reconstruídos; o histórico desta sessão começa vazio.' : 'Cada operação confirmada é registrada para recuperação. Salvar confirma o estado autoral; o histórico não sobrevive ao reinício.';
+  }
+
 }
 async function imageUrl(resource, hash) {
   const key = resource + '/' + hash;
@@ -172,7 +196,9 @@ function tableItem(t) {
         return Promise.resolve(true);
       };
       input.addEventListener('change', commit);
-      input.addEventListener('input', controls);
+      const protect = () => { if (state.profile === 'P2-C' && input.value !== cellData(t.id,cell.id)?.text) action('edit_cell',{id:t.id,cell:cell.id,text:input.value}); };
+      input.addEventListener('input', event => { controls(); if (!event.isComposing) protect(); });
+      input.addEventListener('compositionend', protect);
       input.addEventListener('keydown', async event => {
         if (event.key !== 'Tab' && !(event.key === 'Enter' && (event.ctrlKey || event.metaKey))) return;
         event.preventDefault();
@@ -229,15 +255,21 @@ function item(id, currentGeneration) {
 }
 function render() {
   const currentGeneration = ++generation;
-  const p2b = state.profile === 'P2-B';
+  const p2c = state.profile === 'P2-C';
+  const p2b = state.profile !== 'P2-A';
+  document.querySelectorAll('.p2c-only').forEach(n => { n.hidden = !p2c; });
   document.querySelectorAll('.p2b-only').forEach(n => { n.hidden = !p2b; });
   $('phase').textContent = 'OBJ-01 / ' + state.profile;
   if (p2b) { document.title = 'INDE · Texto, figura e tabela'; document.querySelector('.eyebrow').textContent = 'DOCUMENTO COMPOSTO · TEXTO + FIGURA + TABELA'; document.querySelector('.intro p:not(.eyebrow)').textContent = 'Edite notas e experimente a composição sem perder a ordem de leitura.'; document.querySelector('.paper-footer').textContent = 'INDE · EXPERIMENTO AUTORAL P2-B'; document.querySelector('h1').textContent = 'Palavras, figuras e notas.'; $('limits').textContent = 'Texto de origem em leitura. Desfazer/refazer vale nesta sessão; alterações não salvas e o histórico não sobrevivem ao encerramento.'; }
+  document.querySelector('.bottom span:last-child').textContent = p2c ? 'Operações confirmadas ficam protegidas para recuperação. Salvar confirma o estado autoral. Nenhuma publicação é realizada.' : 'Salve antes de encerrar o servidor. Nenhuma publicação é realizada.';
+  if (p2c) {document.title = 'INDE · Trabalho recuperável'; document.querySelector('h1').textContent = 'Seu trabalho continua aqui.'; document.querySelector('.paper-footer').textContent = 'INDE · EXPERIMENTO AUTORAL P2-C'; $('limits').textContent = 'Células em Texto, objetos em Estrutura, arranjos em Composição. Operações confirmadas são recuperáveis; o histórico reinicia.';}
   const destination = state.author_order.filter(id => !state.rows.some(r => r.children[1] === id) && (state.figures.some(f => f.id === id) || state.tables?.some(t => t.id === id) || state.reading_groups.some(g => g[0] === id))).map(id => [id, shortText(id)]);
   destination.push(['', 'Fim do documento']);
   options('insert-before', destination, state.paragraphs[1]?.id || '');
   options('table-before', destination, '');
   options('move-before', destination.filter(([id]) => id !== state.selection), '');
+  options('text-before', destination, '');
+  options('text-group', (state.text_groups || []).map(g => [g.id, g.occurrences.map(shortText).join(' / ')]), state.text_groups?.[0]?.id || '');
   options('paragraph', state.paragraphs.map(p => [p.id, shortText(p.id)]), state.paragraphs[1]?.id || '');
   const f = figure();
   $('selected-label').textContent = f ? 'Figura selecionada: ' + (f.caption || 'sem legenda') : 'Selecione uma figura no documento.';
@@ -297,12 +329,19 @@ $('redo').addEventListener('click', () => action('redo', {}, 'Operação refeita
 
 $('save').addEventListener('click', () => action('save', {}, 'Documento salvo e conferido no armazenamento local.'));
 $('reopen').addEventListener('click', () => {
-  if ((state.dirty || hasDrafts()) && !confirm('Reabrir o estado salvo e descartar as alterações que estão apenas em memória?')) return;
-  action('reopen', { discard_unsaved: state.dirty || hasDrafts() }, 'Estado salvo reaberto e conferido.');
+  if ((state.dirty || hasDrafts() || state.persistence_status === 'uncertain') && !confirm('Reabrir o estado salvo e descartar as alterações posteriores a ele?')) return;
+  action('reopen', { discard_unsaved: state.dirty || hasDrafts() || state.persistence_status === 'uncertain' }, 'Estado salvo reaberto e conferido.');
+});
+$('context').addEventListener('change', () => action('set_context',{context:$('context').value},'Instrumento alterado; seleção conservada.'));
+$('reorder-text').addEventListener('click', () => action('reorder_text',{group:$('text-group').value,before:$('text-before').value},'Grupo textual movido pelo motor proprietário.'));
+$('publication-check').addEventListener('click', () => action('export_legacy'));
+$('reopen-working').addEventListener('click', () => {
+  if (hasDrafts() && !confirm('Reabrir o trabalho registrado e descartar o texto que ainda não foi confirmado?')) return;
+  action('reopen_working',{discard_unsaved:true},'Trabalho registrado reaberto e conferido.');
 });
 $('visual-tab').addEventListener('click', () => { mode = 'visual'; render(); });
 $('reading-tab').addEventListener('click', () => { mode = 'reading'; render(); });
-window.addEventListener('beforeunload', event => { if (state?.dirty || hasDrafts()) { event.preventDefault(); event.returnValue = ''; } });
+window.addEventListener('beforeunload', event => { if (hasDrafts() || (state?.dirty && state.profile !== 'P2-C') || state?.persistence_status === 'uncertain' || state?.persistence_status === 'error') { event.preventDefault(); event.returnValue = ''; } });
 (async () => {
   try {
     const response = await fetchApi('/api/state'), result = await response.json();

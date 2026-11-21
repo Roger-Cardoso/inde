@@ -2,10 +2,18 @@
 #include <glib.h>
 #include <iostream>
 #include <string>
+#ifdef OBJ01_TEST_FAULTS
+#include <unistd.h>
+#endif
 
 int main(int argc, char **argv) {
   try {
     std::filesystem::path workspace, seed;
+    std::string seed_option;
+    inde::objects::pilot::PersistenceHook hook;
+#ifdef OBJ01_TEST_FAULTS
+    std::string fault;
+#endif
     auto profile = inde::objects::pilot::Profile::P2A;
     for (int i = 1; i < argc; ++i) {
       const std::string arg = argv[i];
@@ -14,18 +22,44 @@ int main(int argc, char **argv) {
       const std::string value = argv[++i];
       if (arg == "--workspace")
         workspace = value;
-      else if (arg == "--seed-p2a")
+      else if (arg == "--seed-p2a" || arg == "--seed-p2b") {
         seed = value;
+        seed_option = arg;
+      } else if (arg == "--profile" && value == "p2c")
+        profile = inde::objects::pilot::Profile::P2C;
       else if (arg == "--profile" && value == "p2b")
         profile = inde::objects::pilot::Profile::P2B;
       else if (arg == "--profile" && value == "p2a")
         profile = inde::objects::pilot::Profile::P2A;
+#ifdef OBJ01_TEST_FAULTS
+      else if (arg == "--test-fault")
+        fault = value;
+#endif
       else
         throw std::runtime_error("invalid_argument");
     }
     if (workspace.empty())
       throw std::runtime_error("workspace_required");
-    inde::objects::pilot::Session session(workspace, profile, seed);
+    if (!seed.empty() && ((seed_option == "--seed-p2b") !=
+                          (profile == inde::objects::pilot::Profile::P2C)))
+      throw std::runtime_error("invalid_seed_profile");
+#ifdef OBJ01_TEST_FAULTS
+    hook = [&](std::string_view op,
+               inde::objects::pilot::PersistenceStage stage) {
+      using S = inde::objects::pilot::PersistenceStage;
+      const std::string name = stage == S::BeforeWrite     ? "before_write"
+                               : stage == S::AfterBlobs    ? "after_blobs"
+                               : stage == S::AfterSnapshot ? "after_snapshot"
+                               : stage == S::BeforeCommit  ? "before_commit"
+                                                           : "after_commit";
+      if (fault == std::string(op) + ":" + name + ":crash")
+        ::_exit(86);
+      if (fault == std::string(op) + ":" + name + ":throw")
+        throw std::runtime_error("injected_persistence_fault");
+    };
+#endif
+    inde::objects::pilot::Session session(workspace, profile, seed,
+                                          std::move(hook));
     std::string line;
     while (true) {
       line.clear();

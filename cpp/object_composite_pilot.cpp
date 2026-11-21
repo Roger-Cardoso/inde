@@ -1,4 +1,5 @@
 #include "object_composite_pilot.hpp"
+#include "inde/application/document_reading_order.hpp"
 #include "inde/persistence/document_snapshot.hpp"
 #include "inde/project/document_state.hpp"
 #include "inde/project/manifest.hpp"
@@ -429,14 +430,17 @@ struct State {
   std::vector<Figure> figures, archived_figures;
   std::vector<Table> tables, archived_tables;
   std::string selected_cell;
-  bool p2b = false;
+  bool p2b = false, p2c = false;
+  std::string working_text, context = "structure";
   std::vector<Row> rows;
   std::map<std::string, std::shared_ptr<const Bytes>> blobs;
 };
 std::unique_ptr<compat::DocumentReadProjection> projection(const State &s) {
-  auto d = persistence::decode_document_snapshot(s.source);
+  auto d =
+      persistence::decode_document_snapshot(s.p2c ? s.working_text : s.source);
   auto r = compat::read_document(s.project, d);
-  if (!r.projection || r.projection->source().snapshot_sha256 != s.source_hash)
+  if (!r.projection || r.projection->source().snapshot_sha256 !=
+                           (s.p2c ? sha(s.working_text) : s.source_hash))
     fail("invalid_source_capture");
   return std::move(r.projection);
 }
@@ -491,6 +495,34 @@ Composition graph(const State &s,
   }
   return g;
 }
+void validate_owner_reorder(const State &s) {
+  if (!s.p2c)
+    return;
+  text(s.working_text, 16 * mib);
+  if (s.context != "text" && s.context != "structure" &&
+      s.context != "composition")
+    fail("invalid_editing_context");
+  if (s.working_text == s.source)
+    return;
+  application::DocumentEditState expected{
+      persistence::decode_document_snapshot(s.source), {}};
+  const auto actual = persistence::decode_document_snapshot(s.working_text);
+  if (actual.id != expected.document.id)
+    fail("working_document_identity_changed");
+  const auto target = application::reading_blocks(actual);
+  auto blocks = application::reading_blocks(expected.document);
+  if (target.size() != blocks.size() || target.size() > 256)
+    fail("working_reading_groups_changed");
+  for (std::size_t i = 0; i < target.size(); ++i) {
+    blocks = application::reading_blocks(expected.document);
+    if (blocks[i].id != target[i].id)
+      expected =
+          application::move_reading_block(expected, target[i].id, blocks[i].id);
+  }
+  if (persistence::encode_document_snapshot(expected.document) !=
+      s.working_text)
+    fail("working_text_not_owner_reorder");
+}
 V encode(const State &s);
 void validate(const State &s, bool decode_media = true) {
   if (s.figures.size() + s.archived_figures.size() > 256 ||
@@ -498,6 +530,7 @@ void validate(const State &s, bool decode_media = true) {
       s.blobs.size() > 64)
     fail("entity_limit");
   text(s.source, 16 * mib);
+  validate_owner_reorder(s);
   text(s.selection, 256);
   if (s.source.size() + s.selection.size() > 8 * mib)
     fail("document_string_limit");
@@ -789,8 +822,9 @@ V encode(const State &s) {
                                 {"first", r.first},
                                 {"second", r.second},
                                 {"gap", r.gap}});
-  V::Object result{{"format", s.p2b ? "INDE-OBJ01-COMPOSITE-P2B-1"
-                                    : "INDE-OBJ01-COMPOSITE-P2A-1"},
+  V::Object result{{"format", s.p2c   ? "INDE-OBJ01-COMPOSITE-P2C-1"
+                              : s.p2b ? "INDE-OBJ01-COMPOSITE-P2B-1"
+                                      : "INDE-OBJ01-COMPOSITE-P2A-1"},
                    {"project", s.project},
                    {"source", s.source},
                    {"source_sha256", s.source_hash},
@@ -811,6 +845,10 @@ V encode(const State &s) {
     result.emplace("tables", std::move(tables));
     result.emplace("archived_tables", std::move(retired));
     result.emplace("selected_cell", s.selected_cell);
+  }
+  if (s.p2c) {
+    result.emplace("working_text", s.working_text);
+    result.emplace("context", s.context);
   }
   return result;
 }
@@ -837,10 +875,16 @@ State decode(const std::string &bytes) {
   const auto v = persistence::json::parse(bytes);
   const auto format = v.at("format").as_string();
   State s;
-  s.p2b = format == "INDE-OBJ01-COMPOSITE-P2B-1";
+  s.p2c = format == "INDE-OBJ01-COMPOSITE-P2C-1";
+  s.p2b = s.p2c || format == "INDE-OBJ01-COMPOSITE-P2B-1";
   if (!s.p2b && format != "INDE-OBJ01-COMPOSITE-P2A-1")
     fail("unsupported_snapshot_version");
-  if (s.p2b)
+  if (s.p2c)
+    fields(v, {"format", "project", "source", "source_sha256", "author_order",
+               "visual_order", "figures", "rows", "selection",
+               "archived_figures", "tables", "archived_tables", "selected_cell",
+               "working_text", "context"});
+  else if (s.p2b)
     fields(v,
            {"format", "project", "source", "source_sha256", "author_order",
             "visual_order", "figures", "rows", "selection", "archived_figures",
@@ -852,6 +896,10 @@ State decode(const std::string &bytes) {
   s.source = v.at("source").as_string();
   s.source_hash = v.at("source_sha256").as_string();
   s.selection = v.at("selection").as_string();
+  if (s.p2c) {
+    s.working_text = v.at("working_text").as_string();
+    s.context = v.at("context").as_string();
+  }
   s.author = strings(v.at("author_order"));
   s.visual = strings(v.at("visual_order"));
   if (v.at("figures").as_array().size() > 256 ||
@@ -967,15 +1015,21 @@ struct Session::Impl {
   State working;
   std::string saved_hash, saved_bytes;
   std::int64_t persisted = 0, revision = 0;
-  bool p2b = false;
+  bool p2b = false, p2c = false, recovered = false, uncertain = false,
+       storage_error = false;
+  std::int64_t generation = 0;
+  std::string journal_hash;
+  std::optional<State> uncertain_candidate;
+  PersistenceHook hook;
   std::vector<State> undo, redo;
   static constexpr std::size_t history_limit = 32, history_bytes = 32 * mib;
 
   explicit Impl(std::filesystem::path path, Profile profile,
-                const std::filesystem::path &seed)
+                const std::filesystem::path &seed, PersistenceHook callback)
       : workspace(
             std::filesystem::absolute(std::move(path)).lexically_normal()),
-        p2b(profile == Profile::P2B) {
+        p2b(profile != Profile::P2A), p2c(profile == Profile::P2C),
+        hook(std::move(callback)) {
     for (const auto &part : workspace)
       if (part.extension() == ".inde")
         fail("legacy_project_path_forbidden");
@@ -1014,11 +1068,16 @@ struct Session::Impl {
           fail("unsafe_seed_directory");
         Db original(source_path / "obj01-piloto.sqlite3", true);
         original.exec("BEGIN");
-        auto copied = read_saved(original, source_path, false);
+        auto copied = read_saved(original, source_path, p2c ? 2 : 1);
         original.exec("ROLLBACK");
         working = std::move(copied.state);
       }
       working.p2b = p2b;
+      working.p2c = p2c;
+      if (p2c) {
+        working.working_text = working.source;
+        working.context = "structure";
+      }
       validate(working);
       create_file(workspace / "origem-documento.json", working.source);
       create_file(database, "");
@@ -1026,12 +1085,18 @@ struct Session::Impl {
       db->exec("PRAGMA synchronous=FULL");
       Tx tx(*db);
       db->exec(
-          p2b ? "PRAGMA application_id=1329744433; PRAGMA user_version=2;"
-              : "PRAGMA application_id=1329744433; PRAGMA user_version=1;");
+          p2c   ? "PRAGMA application_id=1329744433; PRAGMA user_version=3;"
+          : p2b ? "PRAGMA application_id=1329744433; PRAGMA user_version=2;"
+                : "PRAGMA application_id=1329744433; PRAGMA user_version=1;");
       db->exec("CREATE TABLE saved(id INTEGER PRIMARY KEY CHECK(id=1), "
                "revision INTEGER NOT NULL CHECK(revision>=0), sha256 TEXT NOT "
                "NULL, snapshot TEXT NOT NULL); CREATE TABLE blobs(sha256 TEXT "
                "PRIMARY KEY, data BLOB NOT NULL);");
+      if (p2c)
+        db->exec("CREATE TABLE working(id INTEGER PRIMARY KEY CHECK(id=1), "
+                 "generation INTEGER NOT NULL, base_revision INTEGER NOT NULL, "
+                 "base_sha256 TEXT NOT NULL, sha256 TEXT NOT NULL, snapshot "
+                 "TEXT NOT NULL)");
       saved_bytes = encode_json(encode(working));
       saved_hash = sha(saved_bytes);
       for (const auto &[hash, bytes] : working.blobs) {
@@ -1044,6 +1109,13 @@ struct Session::Impl {
       q.bind(1, saved_hash);
       q.bind(2, saved_bytes);
       (void)q.step();
+      if (p2c) {
+        Query w(*db, "INSERT INTO working VALUES(1,0,0,?,?,?)");
+        w.bind(1, saved_hash);
+        w.bind(2, saved_hash);
+        w.bind(3, saved_bytes);
+        (void)w.step();
+      }
       tx.commit();
       Fd folder;
       folder.n = ::open(workspace.c_str(), O_RDONLY | O_DIRECTORY | O_CLOEXEC);
@@ -1051,12 +1123,21 @@ struct Session::Impl {
         fail("workspace_sync_failed");
     } else
       db = std::make_unique<Db>(database);
+    db->exec("PRAGMA synchronous=FULL");
     auto loaded = load();
     working = std::move(loaded.state);
     saved_bytes = std::move(loaded.bytes);
     saved_hash = std::move(loaded.hash);
     persisted = loaded.rev;
-    db->exec("PRAGMA synchronous=FULL");
+    if (p2c) {
+      Tx tx(*db);
+      auto current = read_work();
+      working = std::move(current.state);
+      generation = current.rev;
+      journal_hash = std::move(current.hash);
+      recovered = dirty();
+      tx.commit();
+    }
   }
   struct Loaded {
     State state;
@@ -1064,19 +1145,20 @@ struct Session::Impl {
     std::int64_t rev;
   };
   static Loaded read_saved(Db &database, const std::filesystem::path &origin,
-                           bool p2b) {
+                           int version, bool work = false) {
     Query app(database, "PRAGMA application_id");
     if (!app.step() || app.integer(0) != application_id)
       fail("not_a_pilot_database");
     Query ver(database, "PRAGMA user_version");
-    if (!ver.step() || ver.integer(0) != (p2b ? 2 : 1))
+    if (!ver.step() || ver.integer(0) != version)
       fail("unsupported_database_version");
     Query journal(database, "PRAGMA journal_mode");
     if (!journal.step() || journal.string(0) != "delete")
       fail("unsupported_journal_mode");
-    Query q(database,
-            "SELECT revision, sha256, length(CAST(snapshot AS BLOB)), "
-            "snapshot FROM saved WHERE id=1");
+    Query q(database, work ? "SELECT generation,sha256,length(CAST(snapshot AS "
+                             "BLOB)),snapshot FROM working WHERE id=1"
+                           : "SELECT revision,sha256,length(CAST(snapshot AS "
+                             "BLOB)),snapshot FROM saved WHERE id=1");
     if (!q.step())
       fail("saved_document_missing");
     const auto rev = q.integer(0), size = q.integer(2);
@@ -1087,7 +1169,7 @@ struct Session::Impl {
     if (sha(bytes) != hash)
       fail("saved_hash_mismatch");
     State s = decode(bytes);
-    if (s.p2b != p2b)
+    if ((s.p2c ? 3 : s.p2b ? 2 : 1) != version)
       fail("profile_snapshot_mismatch");
     if (read_file(origin / "origem-documento.json") != s.source)
       fail("frozen_source_changed");
@@ -1101,13 +1183,200 @@ struct Session::Impl {
       const auto n = blob.integer(1);
       if (n <= 0 || n > 8 * static_cast<std::int64_t>(mib))
         fail("png_byte_limit");
-      s.blobs.emplace(blob.string(0),
-                      std::make_shared<const Bytes>(blob.bytes(2)));
+      auto hash = blob.string(0);
+      auto data = blob.bytes(2);
+      const auto refers = [&](const auto &assets) {
+        return std::any_of(assets.begin(), assets.end(),
+                           [&](const auto &f) { return f.hash == hash; });
+      };
+      if (version != 3 || refers(s.figures) || refers(s.archived_figures))
+        s.blobs.emplace(hash, std::make_shared<const Bytes>(std::move(data)));
+      else {
+        if (sha(data) != hash)
+          fail("unclaimed_blob_hash_mismatch");
+        (void)png(data);
+      }
     }
     validate(s);
     return {std::move(s), std::move(bytes), std::move(hash), rev};
   }
-  Loaded load() { return read_saved(*db, workspace, p2b); }
+  Loaded load() { return read_saved(*db, workspace, p2c ? 3 : p2b ? 2 : 1); }
+  Loaded read_work(std::int64_t base = -1, const std::string &hash = {}) {
+    auto loaded = read_saved(*db, workspace, 3, true);
+    Query q(*db, "SELECT base_revision,base_sha256 FROM working WHERE id=1");
+    if (!q.step() || q.integer(0) != (base < 0 ? persisted : base) ||
+        q.string(1) != (base < 0 ? saved_hash : hash))
+      fail("working_base_conflict");
+    return loaded;
+  }
+  void point(std::string_view op, PersistenceStage stage) {
+    if (hook)
+      hook(op, stage);
+  }
+  template <class Body>
+  void transaction(State &candidate, std::string_view op, Body body) {
+    Tx tx(*db);
+    bool attempted = false;
+    try {
+      point(op, PersistenceStage::BeforeWrite);
+      body();
+      point(op, PersistenceStage::BeforeCommit);
+      attempted = true;
+      tx.commit();
+      point(op, PersistenceStage::AfterCommit);
+      storage_error = false;
+    } catch (...) {
+      storage_error = true;
+      if (attempted) {
+        uncertain = true;
+        uncertain_candidate.emplace(std::move(candidate));
+        fail("persistence_outcome_uncertain");
+      }
+      throw;
+    }
+  }
+  void insert_blobs(const State &s) {
+    for (const auto &[hash, bytes] : s.blobs) {
+      Query q(*db,
+              "INSERT INTO blobs VALUES(?,?) ON CONFLICT(sha256) DO NOTHING");
+      q.bind(1, hash);
+      q.bind(2, *bytes);
+      (void)q.step();
+    }
+  }
+  struct Reference {
+    std::int64_t base, gen;
+    std::string saved, journal;
+  };
+  Reference reference() const {
+    return {persisted, generation, saved_hash, journal_hash};
+  }
+  void checkpoint(State &candidate, const Reference &expected) {
+    validate(candidate);
+    if (expected.gen == std::numeric_limits<std::int64_t>::max())
+      fail("generation_limit");
+    auto bytes = encode_json(encode(candidate));
+    auto hash = sha(bytes);
+    transaction(candidate, "checkpoint", [&] {
+      const auto base = load();
+      const auto current = read_work(base.rev, base.hash);
+      if (base.rev != expected.base || base.hash != expected.saved)
+        fail("persisted_revision_conflict");
+      if (current.rev != expected.gen || current.hash != expected.journal)
+        fail("working_generation_conflict");
+      insert_blobs(candidate);
+      point("checkpoint", PersistenceStage::AfterBlobs);
+      Query q(*db, "UPDATE working SET "
+                   "generation=?,base_revision=?,base_sha256=?,sha256=?,"
+                   "snapshot=? WHERE id=1 AND generation=? AND sha256=?");
+      q.bind(1, expected.gen + 1);
+      q.bind(2, expected.base);
+      q.bind(3, expected.saved);
+      q.bind(4, hash);
+      q.bind(5, bytes);
+      q.bind(6, expected.gen);
+      q.bind(7, expected.journal);
+      (void)q.step();
+      if (sqlite3_changes(db->handle()) != 1)
+        fail("working_generation_conflict");
+      point("checkpoint", PersistenceStage::AfterSnapshot);
+      const auto checked = read_work(expected.base, expected.saved);
+      if (checked.bytes != bytes || checked.rev != expected.gen + 1)
+        fail("checkpoint_readback_mismatch");
+    });
+    generation = expected.gen + 1;
+    journal_hash = std::move(hash);
+  }
+  void checkpoint(State &candidate) { checkpoint(candidate, reference()); }
+  void save_composite() {
+    State candidate = working;
+    validate(candidate);
+    if (persisted == std::numeric_limits<std::int64_t>::max() ||
+        generation == std::numeric_limits<std::int64_t>::max())
+      fail("revision_limit");
+    auto bytes = encode_json(encode(candidate));
+    auto hash = sha(bytes);
+    transaction(candidate, "save", [&] {
+      const auto base = load();
+      const auto current = read_work(base.rev, base.hash);
+      if (base.rev != persisted || base.hash != saved_hash)
+        fail("persisted_revision_conflict");
+      if (current.rev != generation || current.hash != journal_hash)
+        fail("working_generation_conflict");
+      insert_blobs(candidate);
+      point("save", PersistenceStage::AfterBlobs);
+      Query q(*db, "UPDATE saved SET revision=?,sha256=?,snapshot=? WHERE id=1 "
+                   "AND revision=? AND sha256=?");
+      q.bind(1, persisted + 1);
+      q.bind(2, hash);
+      q.bind(3, bytes);
+      q.bind(4, persisted);
+      q.bind(5, saved_hash);
+      (void)q.step();
+      if (sqlite3_changes(db->handle()) != 1)
+        fail("persisted_revision_conflict");
+      Query w(*db, "UPDATE working SET "
+                   "generation=?,base_revision=?,base_sha256=?,sha256=?,"
+                   "snapshot=? WHERE id=1 AND generation=? AND sha256=?");
+      w.bind(1, generation + 1);
+      w.bind(2, persisted + 1);
+      w.bind(3, hash);
+      w.bind(4, hash);
+      w.bind(5, bytes);
+      w.bind(6, generation);
+      w.bind(7, journal_hash);
+      (void)w.step();
+      if (sqlite3_changes(db->handle()) != 1)
+        fail("working_generation_conflict");
+      point("save", PersistenceStage::AfterSnapshot);
+      const auto saved = load();
+      const auto work = read_work(persisted + 1, hash);
+      if (saved.bytes != bytes || work.bytes != bytes ||
+          work.rev != generation + 1)
+        fail("save_readback_mismatch");
+    });
+    saved_bytes = std::move(bytes);
+    saved_hash = hash;
+    journal_hash = std::move(hash);
+    ++persisted;
+    ++generation;
+    recovered = false;
+    increment();
+  }
+  void reopen_composite(bool saved, bool discard) {
+    if ((dirty() || uncertain) && !discard)
+      fail("unsaved_confirmation_required");
+    try {
+      Loaded base, current;
+      {
+        Tx tx(*db);
+        base = load();
+        current = read_work(base.rev, base.hash);
+        tx.commit();
+      }
+      State candidate = saved ? base.state : current.state;
+      if (saved)
+        checkpoint(candidate, {base.rev, current.rev, base.hash, current.hash});
+      else {
+        generation = current.rev;
+        journal_hash = current.hash;
+      }
+      working = std::move(candidate);
+      persisted = base.rev;
+      saved_hash = std::move(base.hash);
+      saved_bytes = std::move(base.bytes);
+      uncertain = false;
+      uncertain_candidate.reset();
+      undo.clear();
+      redo.clear();
+      recovered = !saved && dirty();
+      storage_error = false;
+      increment();
+    } catch (...) {
+      storage_error = true;
+      throw;
+    }
+  }
   bool dirty() const { return encode_json(encode(working)) != saved_bytes; }
   V view() const {
     const auto p = projection(working);
@@ -1144,8 +1413,15 @@ struct Session::Impl {
       v.emplace("id", t.occurrence);
       tables.emplace_back(std::move(v));
     }
+    V::Array text_groups;
+    for (const auto &g : p->reading_groups())
+      text_groups.emplace_back(V::Object{
+          {"id", g.source_block_id}, {"occurrences", array(g.occurrence_ids)}});
     return V::Object{
-        {"profile", p2b ? "P2-B" : "P2-A"},
+        {"text_groups", std::move(text_groups)},
+        {"profile", p2c   ? "P2-C"
+                    : p2b ? "P2-B"
+                          : "P2-A"},
         {"tables", std::move(tables)},
         {"selected_cell", working.selected_cell},
         {"can_undo", !undo.empty()},
@@ -1170,7 +1446,15 @@ struct Session::Impl {
         {"private_alternatives", number(p->source_snapshot().resmas.size())},
         {"visibility_profiles",
          number(p->source_snapshot().visibility_profiles.size())},
-        {"unsaved_recovery", false}};
+        {"unsaved_recovery", p2c},
+        {"context", working.context},
+        {"recovery_generation", generation},
+        {"recovered_on_open", recovered},
+        {"persistence_status", uncertain       ? "uncertain"
+                               : storage_error ? "error"
+                               : p2c           ? "protected"
+                                               : "memory_only"},
+        {"uncertain_candidate_available", uncertain_candidate.has_value()}};
   }
   static bool fits(const State &current, const std::vector<State> &past,
                    const std::vector<State> &future) {
@@ -1232,6 +1516,8 @@ struct Session::Impl {
         else
           fail("history_budget_limit");
       }
+      if (p2c)
+        checkpoint(candidate);
       working = std::move(candidate);
       undo.swap(past);
       redo.swap(future);
@@ -1258,6 +1544,10 @@ struct Session::Impl {
     }
     if (!fits(candidate, past, future))
       fail("history_budget_limit");
+    if (p2c) {
+      candidate.context = working.context;
+      checkpoint(candidate);
+    }
     working = std::move(candidate);
     undo.swap(past);
     redo.swap(future);
@@ -1295,7 +1585,30 @@ struct Session::Impl {
       expected(v);
       if (revision == std::numeric_limits<std::int64_t>::max())
         fail("revision_limit");
-      if (op == "undo" || op == "redo") {
+      if (p2c && uncertain && op != "reopen" && op != "reopen_working")
+        fail("persistence_requires_reopen");
+      if (p2c) {
+        const bool text_edit = op == "edit_cell";
+        const bool structure = op == "create_table" || op == "import" ||
+                               op == "duplicate" || op == "move" ||
+                               op == "remove" || op == "reorder_text";
+        const bool composition =
+            op == "arrange" || op == "stack" || op == "restore";
+        if ((text_edit && working.context != "text") ||
+            (structure && working.context != "structure") ||
+            (composition && working.context != "composition"))
+          fail("editing_context_required");
+      }
+      if (op == "save" && p2c) {
+        fields(v, {"op", "expected"});
+        save_composite();
+      } else if ((op == "reopen" || op == "reopen_working") && p2c) {
+        fields(v, {"op", "expected", "discard_unsaved"});
+        reopen_composite(op == "reopen", v.at("discard_unsaved").as_boolean());
+      } else if (op == "export_legacy") {
+        fields(v, {"op", "expected"});
+        fail("composite_publication_not_supported");
+      } else if (op == "undo" || op == "redo") {
         fields(v, {"op", "expected"});
         replay(op == "redo");
       } else if (op == "save") {
@@ -1352,7 +1665,72 @@ struct Session::Impl {
       } else {
         State candidate = working;
         bool remember = true;
-        if (op == "create_table") {
+        if (op == "set_context") {
+          if (!p2c)
+            fail("p2c_profile_required");
+          fields(v, {"op", "expected", "context"});
+          candidate.context = v.at("context").as_string();
+          remember = false;
+        } else if (op == "reorder_text") {
+          if (!p2c)
+            fail("p2c_profile_required");
+          fields(v, {"op", "expected", "group", "before"});
+          if (candidate.author != candidate.visual)
+            fail("authorial_requires_alignment");
+          const auto p = projection(candidate);
+          const auto id = v.at("group").as_string(),
+                     before = v.at("before").as_string();
+          const auto group = std::find_if(
+              p->reading_groups().begin(), p->reading_groups().end(),
+              [&](const auto &g) { return g.source_block_id == id; });
+          if (group == p->reading_groups().end())
+            fail("reading_group_not_found");
+          if (std::find(group->occurrence_ids.begin(),
+                        group->occurrence_ids.end(),
+                        before) != group->occurrence_ids.end())
+            fail("reading_group_target_selected");
+          for (const auto &child : group->occurrence_ids)
+            unpair(candidate, child);
+          for (const auto &r : candidate.rows)
+            if (r.children[1] == before)
+              fail("destination_inside_row");
+          for (const auto &child : group->occurrence_ids)
+            std::erase(candidate.author, child);
+          const auto target = before.empty()
+                                  ? candidate.author.end()
+                                  : std::find(candidate.author.begin(),
+                                              candidate.author.end(), before);
+          if (!before.empty() && target == candidate.author.end())
+            fail("destination_not_found");
+          const auto at =
+              candidate.author.insert(target, group->occurrence_ids.begin(),
+                                      group->occurrence_ids.end());
+          const auto after =
+              at + static_cast<std::ptrdiff_t>(group->occurrence_ids.size());
+          std::string owner_before;
+          for (auto it = after; it != candidate.author.end(); ++it) {
+            const auto b = std::find_if(
+                p->paragraphs().begin(), p->paragraphs().end(),
+                [&](const auto &b) { return b.occurrence_id == *it; });
+            if (b != p->paragraphs().end()) {
+              owner_before = b->paragraph_id;
+              break;
+            }
+          }
+          application::DocumentEditState old{p->source_snapshot(), {}};
+          try {
+            candidate.working_text = persistence::encode_document_snapshot(
+                application::move_reading_block(old, id, owner_before)
+                    .document);
+          } catch (const std::bad_alloc &) {
+            throw;
+          } catch (const std::exception &) {
+            fail("owner_text_move_refused");
+          }
+          candidate.visual = candidate.author;
+          candidate.selection = group->occurrence_ids.front();
+          candidate.selected_cell.clear();
+        } else if (op == "create_table") {
           if (!p2b)
             fail("p2b_profile_required");
           fields(v, {"op", "expected", "before", "title", "header", "cells"});
@@ -1586,8 +1964,8 @@ struct Session::Impl {
   }
 };
 Session::Session(const std::filesystem::path &path, Profile profile,
-                 const std::filesystem::path &seed)
-    : impl_(std::make_unique<Impl>(path, profile, seed)) {}
+                 const std::filesystem::path &seed, PersistenceHook hook)
+    : impl_(std::make_unique<Impl>(path, profile, seed, std::move(hook))) {}
 Session::~Session() = default;
 persistence::json::Value Session::request(const persistence::json::Value &v) {
   return impl_->request(v);
