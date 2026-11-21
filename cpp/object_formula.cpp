@@ -470,6 +470,14 @@ void validate(const std::vector<Record> &records) {
       checked(value);
     }
   }
+  // Renaming is not supported in this profile. A persisted binding must match
+  // both the stable target identity and its immutable public name.
+  for (const auto &r : records)
+    for (const auto &[name, id] : r.bindings)
+      if (std::none_of(records.begin(), records.end(), [&](const auto &target) {
+            return target.id == id && target.name == name;
+          }))
+        fail("formula_binding_identity");
 }
 void bind(Record &r, const std::vector<Record> &records) {
   // Invalid drafts keep their previous bindings/overrides for later repair.

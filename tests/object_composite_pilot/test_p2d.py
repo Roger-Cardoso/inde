@@ -5,6 +5,7 @@ from pathlib import Path
 import random
 import signal
 import sqlite3
+import subprocess
 import sys
 import tempfile
 import unittest
@@ -131,6 +132,18 @@ class Formulas(unittest.TestCase):
         self.ctx('structure');before=self.c.state
         for name,source,error in [('Combate','= 1','formula_identity'),('Com espaço','= 1','formula_identity'),('Longa','x'*16385,'formula_source_limit')]:
             r=self.c.op('create_formula',name=name,source=source,before='',table='',cell='');self.assertEqual(r['error'],error);self.assertEqual(self.c.state,before)
+    def test_corrupt_binding_identity_fails_closed_without_rebinding(self):
+        self.new('A','= 10');self.new('B','= 20');self.new('C','resultado A.resultado');self.c.close()
+        path=self.folder/'obj01-piloto.sqlite3'
+        with sqlite3.connect(path) as db:
+            raw,digest=db.execute('SELECT snapshot,sha256 FROM working').fetchone();snap=json.loads(raw)
+            snap['formulas'][2]['bindings']['A']=snap['formulas'][1]['id']
+            changed=json.dumps(snap,ensure_ascii=False,separators=(',',':'))
+            db.execute('UPDATE working SET snapshot=?,sha256=?',(changed,hashlib.sha256(changed.encode()).hexdigest()))
+        r=subprocess.run([base.BINARY,'--workspace',str(self.folder),'--profile','p2d'],input='',capture_output=True,text=True,timeout=15)
+        self.assertEqual(r.returncode,1);self.assertIn('formula_binding_identity',r.stderr)
+        with sqlite3.connect(path) as db:db.execute('UPDATE working SET snapshot=?,sha256=?',(raw,digest))
+        self.c=base.Client(self.folder,profile='p2d');self.assertEqual(self.formula('C')['display'],'10')
     def test_p2c_seed_preserves_reordered_owner_and_prior_files(self):
         folder=Path(self.tmp.name)/'c';c=base.Client(folder,profile='p2c')
         s=c.state;c.op('reorder_text',group=s['text_groups'][1]['id'],before=s['paragraphs'][0]['id']);c.op('save');expected=c.state['paragraphs'];c.close()
