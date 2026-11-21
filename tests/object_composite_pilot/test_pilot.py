@@ -31,7 +31,7 @@ class Client:
         self.folder = Path(folder)
         args = [binary or BINARY, '--workspace', str(folder), '--profile', profile]
         if seed is not None:
-            args += ['--seed-p2b' if profile=='p2c' else '--seed-p2a', str(seed)]
+            args += ['--seed-p2c' if profile=='p2d' else '--seed-p2b' if profile=='p2c' else '--seed-p2a', str(seed)]
         if fault is not None: args += ['--test-fault', fault]
         self.process = subprocess.Popen(args, stdin=subprocess.PIPE,
                                         stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, encoding='utf-8')

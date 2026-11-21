@@ -12,7 +12,7 @@ namespace inde::objects {
 
 // TextBlock captures a source block revision (possibly multiline). TextReference
 // is navigation-only; neither kind implies paragraph identities or publication.
-enum class ObjectKind { Paragraph, Image, Table, Equation, Container, TextBlock, TextReference };
+enum class ObjectKind { Paragraph, Image, Table, Equation, Container, TextBlock, TextReference, Formula };
 enum class LayoutKind { Stack, Row, Grid, Overlay, Freeform };
 
 struct Resource {

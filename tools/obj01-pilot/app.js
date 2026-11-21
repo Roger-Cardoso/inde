@@ -6,6 +6,29 @@ if (location.hash) history.replaceState(null, '', location.pathname);
 let state, upload, uploadName = '', mode = 'visual', busy = false, generation = 0, activeOperation = '';
 const imageCache = new Map();
 const errors = {
+  formula_identity: 'Use um nome único, sem espaços, com letras de A a Z, números ou sublinhado; comece por uma letra ou sublinhado.',
+  formula_source_limit: 'A fonte da fórmula excede o limite de 16 KiB ou contém texto inválido.',
+  formula_expression: 'Há uma expressão incompleta. Confira os números e operadores.',
+  formula_syntax: 'Confira os parênteses, chaves e separadores da fórmula.',
+  formula_statement: 'Separe as declarações e o resultado por linhas.',
+  formula_result_required: 'Declare um resultado para esta fórmula.',
+  formula_reference_missing: 'Uma fórmula referenciada ainda não foi encontrada.',
+  formula_variable_missing: 'Uma variável referenciada não existe na fórmula de origem.',
+  formula_cycle: 'Há uma dependência circular entre variáveis ou resultados. Abra a fonte para corrigir.',
+  formula_division_zero: 'A fórmula tenta dividir por zero.',
+  formula_number: 'Confira a escrita e o tamanho desse número.',
+  formula_number_limit: 'O cálculo excede o limite numérico deste experimento.',
+  formula_function: 'Esta função ainda não é suportada. Use SOMA, MEDIA, MIN, MAX, ABS ou SE.',
+  formula_arguments: 'Confira a quantidade de argumentos da função.',
+  formula_execution_would_break_dependency: 'A alteração deixaria um resultado dependente inválido. Nenhuma variável foi alterada.',
+  formula_duplicate_assignment: 'A mesma execução tenta alterar uma variável mais de uma vez. Nenhuma alteração foi aplicada.',
+  formula_cell_already_bound: 'Esta célula já contém uma fórmula. Edite-a ou retire o uso primeiro.',
+  formula_depth: 'A expressão tem níveis demais para este experimento.',
+  formula_evaluation_limit: 'O cálculo excede o limite de dependências ou operações deste experimento.',
+  formula_identifier: 'Confira o nome usado para a variável ou referência.',
+  formula_duplicate_variable: 'Uma variável foi declarada mais de uma vez.',
+  formula_no_actions: 'Esta fórmula calcula um resultado, mas não declara alterações para executar.',
+  formula_execution_invalid: 'Corrija a fórmula antes de executar suas alterações.',
   reading_group_split: 'Esse ponto divide um grupo textual protegido. Escolha antes do grupo ou o fim do documento.',
   authorial_requires_alignment: 'Restaure a apresentação pela ordem de leitura antes de alterar a sequência autoral.',
   row_requires_adjacent_items: 'A figura e o parágrafo precisam estar vizinhos na apresentação. Mova a figura primeiro.',
@@ -61,7 +84,9 @@ async function fetchApi(path, options = {}) {
   return response;
 }
 function cellData(tableId, cellId) { return state?.tables?.find(t => t.id === tableId)?.cells.find(c => c.id === cellId); }
-function hasDrafts() { return [...document.querySelectorAll('.cell-editor')].some(n => n.value !== cellData(n.dataset.table, n.dataset.cell)?.text); }
+let formulaEditing = null;
+function formulaDraft() { return formulaEditing && formulaEditing.draft !== state?.formulas?.find(f => f.id === formulaEditing.id)?.source; }
+function hasDrafts() { return formulaDraft() || [...document.querySelectorAll('.cell-editor')].some(n => n.value !== cellData(n.dataset.table, n.dataset.cell)?.text); }
 function updateSelection() {
   for (const node of $('document').querySelectorAll('.item')) {
     const selected = state.selection === node.dataset.occurrence;
@@ -95,6 +120,9 @@ function action(op, values = {}, success = '') {
     if (!state) return false;
     busy = true; activeOperation = op; controls();
     try {
+      if (!['edit_formula','reopen','reopen_working'].includes(op) && formulaDraft()) {
+        if (!await sendOperation('edit_formula',{id:formulaEditing.id,source:formulaEditing.draft})) return false;
+      }
       // A structural change/save must never silently discard a typed cell.
       if (!['edit_cell', 'select_cell', 'reopen', 'reopen_working'].includes(op)) {
         for (const n of [...document.querySelectorAll('.cell-editor')]) {
@@ -114,12 +142,16 @@ function action(op, values = {}, success = '') {
   return next;
 }
 function selectedTable() { return state?.tables?.find(t => t.id === state.selection); }
+function selectedFormulaUse() { return state?.formula_uses?.find(u => u.id === state.selection); }
+function libraryFormula() { return state?.formulas?.find(f => f.id === $('formula-library').value); }
 function figure() { return state?.figures.find(f => f.id === state.selection); }
 function shortText(id) {
   const p = state.paragraphs.find(p => p.id === id);
   if (p) return p.text.length > 36 ? p.text.slice(0, 36) + '…' : p.text;
   const table = state.tables?.find(t => t.id === id);
   if (table) return 'Tabela: ' + table.title;
+  const use = state.formula_uses?.find(u => u.id === id);
+  if (use) return 'Fórmula: ' + state.formulas.find(f => f.id === use.object).name;
   const f = state.figures.find(f => f.id === id);
   return f ? 'Figura: ' + (f.caption || 'sem legenda') : id;
 }
@@ -140,14 +172,15 @@ function controls() {
   for (const id of ['move', 'duplicate', 'arrange', 'stack']) $(id).disabled = busy || !figure();
   $('save').disabled = false; $('reopen').disabled = false;
   $('undo').disabled = !state.can_undo; $('redo').disabled = !state.can_redo;
-  $('move').disabled = busy || !(figure() || selectedTable());
-  $('remove').disabled = busy || !(figure() || selectedTable());
-  $('move').textContent = selectedTable() ? 'Mover tabela selecionada' : 'Mover figura selecionada';
+  $('move').disabled = busy || !(figure() || selectedTable() || selectedFormulaUse());
+  $('remove').disabled = busy || !(figure() || selectedTable() || selectedFormulaUse());
+  $('move').textContent = selectedFormulaUse() ? 'Mover fórmula selecionada' : selectedTable() ? 'Mover tabela selecionada' : 'Mover figura selecionada';
   $('selected-label').textContent = selectedTable() ? 'Tabela selecionada: ' + selectedTable().title : figure() ? 'Figura selecionada: ' + (figure().caption || 'sem legenda') : 'Selecione uma figura ou tabela no documento.';
+  if (selectedFormulaUse()) $('selected-label').textContent = shortText(state.selection);
   $('alt').disabled = busy || $('decorative').checked;
   $('save-status').textContent = hasDrafts() ? 'Célula em edição' : state.dirty ? 'Alterações em memória' : 'Salvo localmente';
   $('save-status').className = state.dirty ? 'dirty' : '';
-  if (state.profile === 'P2-C') {
+  if (['P2-C','P2-D'].includes(state.profile)) {
     for (const id of ['reorder-text', 'text-group', 'text-before', 'publication-check', 'reopen-working']) $(id).disabled = busy;
     $('reopen-working').disabled = false;
     const context = state.context;
@@ -158,10 +191,23 @@ function controls() {
     $('context').disabled = busy || state.persistence_status === 'uncertain';
     $('reorder-text').disabled ||= busy || state.persistence_status === 'uncertain';
     if (state.persistence_status === 'uncertain') for (const id of ['save','import','create-table','move','duplicate','remove','arrange','stack','restore','undo','redo']) $(id).disabled = true;
-    $('save-status').textContent = state.persistence_status === 'uncertain' ? 'Resultado incerto' : state.persistence_status === 'error' ? 'Registro não confirmado' : hasDrafts() ? 'Texto ainda sendo aplicado' : state.dirty ? 'Trabalho protegido · não salvo' : 'Salvo e conferido';
+    $('save-status').textContent = state.persistence_status === 'uncertain' ? 'Resultado incerto' : state.persistence_status === 'error' ? 'Registro não confirmado' : formulaDraft() ? 'Fonte aguardando aplicação' : hasDrafts() ? 'Texto ainda sendo aplicado' : state.dirty ? 'Trabalho protegido · não salvo' : 'Salvo e conferido';
     $('recovery-note').textContent = state.persistence_status === 'uncertain' ? 'Reabra o trabalho para conferir a gravação. O candidato foi retido; novas alterações estão bloqueadas.' : state.recovered_on_open ? 'Trabalho não salvo recuperado. Conteúdo e seleção foram reconstruídos; o histórico desta sessão começa vazio.' : 'Cada operação confirmada é registrada para recuperação. Salvar confirma o estado autoral; o histórico não sobrevive ao reinício.';
   }
 
+  if (state.profile === 'P2-D') {
+    const uncertain = state.persistence_status === 'uncertain';
+    for (const id of ['formula-name','formula-source','formula-target','formula-before','formula-library']) $(id).disabled = busy || uncertain;
+    $('create-formula').disabled = busy || uncertain || state.context !== 'structure';
+    $('edit-formula').disabled = busy || uncertain || !libraryFormula();
+    $('execute-formula').disabled = busy || uncertain || state.context !== 'text' || !libraryFormula()?.valid || !libraryFormula()?.actions;
+    $('attach-formula').disabled = busy || uncertain || state.context !== 'structure' || !state.selected_cell || !libraryFormula();
+    $('detach-formula').disabled = busy || uncertain || state.context !== 'structure' || !state.formula_cells?.[state.selected_cell];
+    for (const n of document.querySelectorAll('.formula-open')) n.disabled = busy || uncertain;
+    for (const n of document.querySelectorAll('.formula-editor')) n.readOnly = busy || uncertain || state.context !== 'text';
+    for (const n of document.querySelectorAll('.formula-reset')) n.disabled = busy || uncertain || state.context !== 'text';
+    for (const n of document.querySelectorAll('.formula-apply')) n.disabled = busy || uncertain || state.context !== 'text';
+  }
 }
 async function imageUrl(resource, hash) {
   const key = resource + '/' + hash;
@@ -184,6 +230,9 @@ function tableItem(t) {
       const cell = t.cells.find(c => c.row === row && c.column === column);
       const holder = document.createElement(t.header && ri === 0 ? 'th' : 'td');
       if (t.header && ri === 0) holder.scope = 'col';
+      if (state.formula_cells?.[cell.id]) {
+        holder.append(formulaItem(state.formula_cells[cell.id],cell.id,t.id,cell.id)); tr.append(holder); continue;
+      }
       const input = document.createElement('textarea');
       input.className = 'cell-editor' + (state.selection === t.id && state.selected_cell === cell.id ? ' selected-cell' : ''); input.value = cell.text; input.rows = 2;
       input.dataset.table = t.id; input.dataset.cell = cell.id;
@@ -196,7 +245,7 @@ function tableItem(t) {
         return Promise.resolve(true);
       };
       input.addEventListener('change', commit);
-      const protect = () => { if (state.profile === 'P2-C' && input.value !== cellData(t.id,cell.id)?.text) action('edit_cell',{id:t.id,cell:cell.id,text:input.value}); };
+      const protect = () => { if (['P2-C','P2-D'].includes(state.profile) && input.value !== cellData(t.id,cell.id)?.text) action('edit_cell',{id:t.id,cell:cell.id,text:input.value}); };
       input.addEventListener('input', event => { controls(); if (!event.isComposing) protect(); });
       input.addEventListener('compositionend', protect);
       input.addEventListener('keydown', async event => {
@@ -207,7 +256,7 @@ function tableItem(t) {
         const next = ordered.findIndex(c => c.id === cell.id) + (event.shiftKey ? -1 : 1);
         if (next < 0) { wrapper.focus(); return; }
         if (next >= ordered.length) { exit.focus(); return; }
-        [...wrapper.querySelectorAll('.cell-editor')].find(n => n.dataset.cell === ordered[next].id)?.focus();
+        [...wrapper.querySelectorAll('.cell-editor, .formula-result')].find(n => n.dataset.cell === ordered[next].id)?.focus();
       });
       holder.append(input); tr.append(holder);
     }
@@ -224,9 +273,65 @@ function tableItem(t) {
   return wrapper;
 }
 
+function renderVariables() {
+  const target = $('formula-variables'); target.replaceChildren();
+  const f = libraryFormula();
+  if (!f) return;
+  const summary = document.createElement('p'); summary.textContent = f.valid ? `Resultado de ${f.name}: ${f.display}` : formulaError(f); target.append(summary);
+  for (const v of f.variables) {
+    const row = document.createElement('p');
+    row.textContent = `${v.name}: inicial ${v.initial ?? 'indisponível'} · atual ${v.current}${v.overridden ? ' · alterado por execução' : ''}`;
+    if (v.overridden) {
+      const reset = document.createElement('button'); reset.textContent = `Restaurar inicial de ${v.name}`; reset.className='formula-reset';
+      reset.disabled = busy || state.context !== 'text' || state.persistence_status === 'uncertain';
+      reset.addEventListener('click',()=>action('reset_formula_variable',{id:f.id,variable:v.name},'Valor inicial restaurado.'));
+      row.append(reset);
+    }
+    target.append(row);
+  }
+  if (formulaEditing?.key === 'library') target.append(formulaItem(f.id,'library'));
+}
+function formulaError(f) {
+  return errors[f.error] || 'A fórmula precisa ser conferida. Abra sua fonte para corrigir.';
+}
+async function openFormula(id,key,table='',cell='') {
+  if (state.context !== 'text' && !await action('set_context',{context:'text'})) return;
+  if (table) { if (!await action('select_cell',{id:table,cell})) return; }
+  else if (key !== 'library') { if (!await action('select',{id:key})) return; }
+  else if (formulaDraft() && !await action('edit_formula',{id:formulaEditing.id,source:formulaEditing.draft})) return;
+  const f=state.formulas.find(f=>f.id===id);
+  formulaEditing={id,key,draft:f.source}; $('formula-library').value=id; render();
+  document.querySelector('.formula-editor')?.focus({preventScroll:true});
+}
+function formulaItem(id,key,table='',cell='') {
+  const f=state.formulas.find(f=>f.id===id), wrapper=document.createElement('div');
+  wrapper.className='formula-box'; wrapper.dataset.formula=id;
+  if (formulaEditing?.id === id && formulaEditing.key === key) {
+    const label=document.createElement('label'); label.textContent=`Fonte de ${f.name}`;
+    const input=document.createElement('textarea'); input.className='formula-editor'; input.rows=Math.min(12,Math.max(3,formulaEditing.draft.split('\n').length));
+    input.maxLength=16384;input.value=formulaEditing.draft;input.setAttribute('aria-label',`Fonte de ${f.name}`);label.append(input);wrapper.append(label);
+    input.addEventListener('input',()=>{formulaEditing.draft=input.value;controls();});
+    const done=async()=>{if(await action('edit_formula',{id,source:input.value},'Fórmula aplicada e trabalho protegido.')) {formulaEditing=null;render();}};
+    const apply=document.createElement('button');apply.textContent='Aplicar fórmula';apply.className='formula-apply';apply.addEventListener('click',done);
+    const close=document.createElement('button');close.textContent='Cancelar edição';close.addEventListener('click',()=>{formulaEditing=null;render();});
+    input.addEventListener('keydown',e=>{if(e.key==='Enter'&&(e.ctrlKey||e.metaKey)){e.preventDefault();done();}else if(e.key==='Escape'){e.preventDefault();formulaEditing=null;render();}});
+    wrapper.append(apply,close);
+    if(!f.valid){const error=document.createElement('p');error.className='formula-error';error.textContent=formulaError(f);wrapper.append(error);}
+  } else {
+    const output=document.createElement('button');output.type='button';output.className='formula-result formula-open';
+    output.textContent=f.valid?f.display:formulaError(f);output.classList.toggle('formula-error',!f.valid);
+    output.setAttribute('aria-label',`Editar fórmula ${f.name}: ${f.valid?f.display:'conferir fonte'}`);
+    output.title=`${f.name} · editar fórmula`;if(cell)output.dataset.cell=cell;
+    output.addEventListener('click',()=>openFormula(id,key,table,cell));wrapper.append(output);
+  }
+  return wrapper;
+}
+
 function item(id, currentGeneration) {
   const table = state.tables?.find(t => t.id === id);
   if (table) return tableItem(table);
+  const use = state.formula_uses?.find(u => u.id === id);
+  if (use) { const n = formulaItem(use.object,id); n.classList.add('item'); n.dataset.occurrence = id; n.classList.toggle('selected',state.selection === id); return n; }
   const node = document.createElement('div');
   node.className = 'item' + (state.selection === id ? ' selected' : '');
   node.tabIndex = 0; node.setAttribute('role', 'button'); node.setAttribute('aria-pressed', String(state.selection === id));
@@ -255,18 +360,26 @@ function item(id, currentGeneration) {
 }
 function render() {
   const currentGeneration = ++generation;
-  const p2c = state.profile === 'P2-C';
+  const p2c = ['P2-C','P2-D'].includes(state.profile);
+  const p2d = state.profile === 'P2-D';
+  document.body.classList.toggle('has-formulas',p2d);
+  if (state.context !== 'text') formulaEditing = null;
   const p2b = state.profile !== 'P2-A';
+  document.querySelectorAll('.p2d-only').forEach(n => { n.hidden = !p2d; });
   document.querySelectorAll('.p2c-only').forEach(n => { n.hidden = !p2c; });
   document.querySelectorAll('.p2b-only').forEach(n => { n.hidden = !p2b; });
   $('phase').textContent = 'OBJ-01 / ' + state.profile;
   if (p2b) { document.title = 'INDE · Texto, figura e tabela'; document.querySelector('.eyebrow').textContent = 'DOCUMENTO COMPOSTO · TEXTO + FIGURA + TABELA'; document.querySelector('.intro p:not(.eyebrow)').textContent = 'Edite notas e experimente a composição sem perder a ordem de leitura.'; document.querySelector('.paper-footer').textContent = 'INDE · EXPERIMENTO AUTORAL P2-B'; document.querySelector('h1').textContent = 'Palavras, figuras e notas.'; $('limits').textContent = 'Texto de origem em leitura. Desfazer/refazer vale nesta sessão; alterações não salvas e o histórico não sobrevivem ao encerramento.'; }
   document.querySelector('.bottom span:last-child').textContent = p2c ? 'Operações confirmadas ficam protegidas para recuperação. Salvar confirma o estado autoral. Nenhuma publicação é realizada.' : 'Salve antes de encerrar o servidor. Nenhuma publicação é realizada.';
   if (p2c) {document.title = 'INDE · Trabalho recuperável'; document.querySelector('h1').textContent = 'Seu trabalho continua aqui.'; document.querySelector('.paper-footer').textContent = 'INDE · EXPERIMENTO AUTORAL P2-C'; $('limits').textContent = 'Células em Texto, objetos em Estrutura, arranjos em Composição. Operações confirmadas são recuperáveis; o histórico reinicia.';}
-  const destination = state.author_order.filter(id => !state.rows.some(r => r.children[1] === id) && (state.figures.some(f => f.id === id) || state.tables?.some(t => t.id === id) || state.reading_groups.some(g => g[0] === id))).map(id => [id, shortText(id)]);
+  if (p2d) { document.title = 'INDE · Fórmulas vivas'; document.querySelector('h1').textContent = 'Resultados que acompanham sua história.'; document.querySelector('.paper-footer').textContent = 'INDE · EXPERIMENTO AUTORAL P2-D'; $('limits').textContent = 'Fórmulas numéricas com variáveis e dependências. Alterações de variáveis exigem execução; resultados recalculam automaticamente.'; }
+  const destination = state.author_order.filter(id => !state.rows.some(r => r.children[1] === id) && (state.figures.some(f => f.id === id) || state.tables?.some(t => t.id === id) || state.formula_uses?.some(u => u.id === id) || state.reading_groups.some(g => g[0] === id))).map(id => [id, shortText(id)]);
   destination.push(['', 'Fim do documento']);
   options('insert-before', destination, state.paragraphs[1]?.id || '');
   options('table-before', destination, '');
+  options('formula-before',destination,'');
+  options('formula-library',(state.formulas || []).map(f => [f.id,f.name + ': ' + (f.valid?f.display:'conferir fórmula')]),state.formulas?.[0]?.id || '');
+  renderVariables();
   options('move-before', destination.filter(([id]) => id !== state.selection), '');
   options('text-before', destination, '');
   options('text-group', (state.text_groups || []).map(g => [g.id, g.occurrences.map(shortText).join(' / ')]), state.text_groups?.[0]?.id || '');
@@ -322,6 +435,23 @@ $('stack').addEventListener('click', () => action('stack', { id: state.selection
 $('restore').addEventListener('click', () => action('restore', {}, 'Apresentação restaurada pela sequência autoral.'));
 $('ratio').addEventListener('input', () => { $('ratio-label').textContent = $('ratio').value + '%'; });
 
+$('create-formula').addEventListener('click',()=> {
+  const inCell=$('formula-target').value==='cell';
+  if(inCell && (!selectedTable() || !state.selected_cell)) {message('Selecione primeiro uma célula da tabela.',true);return;}
+  action('create_formula',{name:$('formula-name').value,source:$('formula-source').value,before:inCell?'':$('formula-before').value,table:inCell?state.selection:'',cell:inCell?state.selected_cell:''},'Fórmula criada. Clique no resultado para editar.');
+});
+$('formula-library').addEventListener('change',()=>{renderVariables();controls();});
+$('edit-formula').addEventListener('click',()=> {
+  const f=libraryFormula();if(!f)return;
+  const use=state.formula_uses.find(u=>u.object===f.id);
+  if(use){openFormula(f.id,use.id);return;}
+  for(const t of state.tables) {const c=t.cells.find(c=>state.formula_cells[c.id]===f.id);if(c){openFormula(f.id,c.id,t.id,c.id);return;}}
+  openFormula(f.id,'library');
+});
+$('execute-formula').addEventListener('click',()=>{const f=libraryFormula();if(f)action('execute_formula',{id:f.id},'Alterações executadas uma vez; resultados dependentes atualizados.');});
+$('attach-formula').addEventListener('click',()=>{const f=libraryFormula();if(f)action('attach_formula',{id:f.id,before:'',table:state.selection,cell:state.selected_cell},'A célula usa o mesmo objeto Fórmula.');});
+$('detach-formula').addEventListener('click',()=>action('detach_formula',{table:state.selection,cell:state.selected_cell},'Fórmula retirada da célula; o texto anterior foi conservado.'));
+
 $('create-table').addEventListener('click', () => action('create_table', { before: $('table-before').value, title: $('table-title').value, header: $('table-header').checked, cells: ['Lugar', 'Imagem', 'Nota', 'Margem', 'Verde', 'Memória 🙂'] }, 'Tabela inserida. Clique em uma célula para editar.'));
 $('remove').addEventListener('click', () => action('remove', { id: state.selection }, 'Uso removido. Os recursos foram conservados; Desfazer restaura o uso.'));
 $('undo').addEventListener('click', () => action('undo', {}, 'Operação desfeita.'));
@@ -341,7 +471,7 @@ $('reopen-working').addEventListener('click', () => {
 });
 $('visual-tab').addEventListener('click', () => { mode = 'visual'; render(); });
 $('reading-tab').addEventListener('click', () => { mode = 'reading'; render(); });
-window.addEventListener('beforeunload', event => { if (hasDrafts() || (state?.dirty && state.profile !== 'P2-C') || state?.persistence_status === 'uncertain' || state?.persistence_status === 'error') { event.preventDefault(); event.returnValue = ''; } });
+window.addEventListener('beforeunload', event => { if (hasDrafts() || (state?.dirty && !['P2-C','P2-D'].includes(state.profile)) || state?.persistence_status === 'uncertain' || state?.persistence_status === 'error') { event.preventDefault(); event.returnValue = ''; } });
 (async () => {
   try {
     const response = await fetchApi('/api/state'), result = await response.json();

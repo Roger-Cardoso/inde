@@ -24,6 +24,7 @@ class HttpPilot(unittest.TestCase):
         self.process = subprocess.Popen([sys.executable, str(SERVER), '--binary', str(BINARY),
                                          '--workspace', str(Path(self.tmp.name) / 'fixture'), '--profile', self.profile,
                                          '--ready-file', str(self.ready)], stdout=self.log, stderr=self.log)
+        self.addCleanup(self.cleanup_server)
         for _ in range(300):
             if self.ready.is_file():
                 break
@@ -37,7 +38,7 @@ class HttpPilot(unittest.TestCase):
         self.authority = parsed.netloc
         self.token = parsed.fragment
 
-    def tearDown(self):
+    def cleanup_server(self):
         if self.process.poll() is None:
             self.process.send_signal(signal.SIGINT)
         self.process.wait(timeout=20)

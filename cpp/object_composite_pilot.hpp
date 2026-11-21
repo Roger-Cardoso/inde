@@ -8,7 +8,7 @@ namespace inde::objects::pilot {
 // The owner serializer uses default stream precision. Pilot geometry requires
 // round-trippable doubles; this isolated codec preserves max_digits10.
 [[nodiscard]] std::string encode_json(const persistence::json::Value &);
-enum class Profile { P2A, P2B, P2C };
+enum class Profile { P2A, P2B, P2C, P2D };
 enum class PersistenceStage {
   BeforeWrite,
   AfterBlobs,
@@ -19,7 +19,7 @@ enum class PersistenceStage {
 using PersistenceHook = std::function<void(std::string_view, PersistenceStage)>;
 // Synthetic, authoring-private pilot. P2-B adds tables and bounded live
 // history; the default P2-A format stays unchanged. No canonical writer or
-// recovery.
+// P2-C/D add auxiliary working recovery, without a canonical project writer.
 class Session final {
 public:
   explicit Session(const std::filesystem::path &workspace,

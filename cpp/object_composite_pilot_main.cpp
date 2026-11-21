@@ -22,10 +22,13 @@ int main(int argc, char **argv) {
       const std::string value = argv[++i];
       if (arg == "--workspace")
         workspace = value;
-      else if (arg == "--seed-p2a" || arg == "--seed-p2b") {
+      else if (arg == "--seed-p2a" || arg == "--seed-p2b" ||
+               arg == "--seed-p2c") {
         seed = value;
         seed_option = arg;
-      } else if (arg == "--profile" && value == "p2c")
+      } else if (arg == "--profile" && value == "p2d")
+        profile = inde::objects::pilot::Profile::P2D;
+      else if (arg == "--profile" && value == "p2c")
         profile = inde::objects::pilot::Profile::P2C;
       else if (arg == "--profile" && value == "p2b")
         profile = inde::objects::pilot::Profile::P2B;
@@ -40,8 +43,11 @@ int main(int argc, char **argv) {
     }
     if (workspace.empty())
       throw std::runtime_error("workspace_required");
-    if (!seed.empty() && ((seed_option == "--seed-p2b") !=
-                          (profile == inde::objects::pilot::Profile::P2C)))
+    const auto expected_seed =
+        profile == inde::objects::pilot::Profile::P2D   ? "--seed-p2c"
+        : profile == inde::objects::pilot::Profile::P2C ? "--seed-p2b"
+                                                        : "--seed-p2a";
+    if (!seed.empty() && seed_option != expected_seed)
       throw std::runtime_error("invalid_seed_profile");
 #ifdef OBJ01_TEST_FAULTS
     hook = [&](std::string_view op,

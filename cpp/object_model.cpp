@@ -20,6 +20,7 @@ bool known_object_kind(const ObjectKind kind) {
     case ObjectKind::Container:
     case ObjectKind::TextBlock:
     case ObjectKind::TextReference:
+    case ObjectKind::Formula:
       return true;
   }
   return false;
