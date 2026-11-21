@@ -113,3 +113,7 @@ O [corte de protocolo](SALVAMENTO-RECOVERY-OBJ-01.md) confirmou três pontos na 
 ## Complemento: durabilidade e lease
 
 O [store de laboratório](ARMAZENAMENTO-RECOVERY-OBJ-01.md) distingue arquivo temporário, geração publicada visível e publicação sincronizada. O lease por descritor impede acesso cooperante simultâneo ao mesmo store e é liberado na morte do processo; não substitui CAS autoral. Retenção remove somente versões antigas explicitamente selecionadas, com resultado parcial/indeterminado declarado em falha. Seis fronteiras de interrupção foram ensaiadas em processos novos, preservando a geração anterior. [Validação](../validacao/VALIDACAO-OBJ-01-ARMAZENAMENTO.md).
+
+## Reconciliação de prioridade — 2026-11-21
+
+A [matriz atual M01–M22](RECONCILIACAO-OBJ-01.md) separa capacidades implementadas de contratos e entregas pendentes. O inventário histórico permanece válido no escopo observado, mas não prova conteúdo multimídia, integração visual ou recursos compartilhados. O [contrato mínimo](CONTRATO-DOCUMENTO-COMPOSTO-OBJ-01.md) e o [piloto](PILOTO-DOCUMENTO-COMPOSTO-OBJ-01.md) passam a orientar os próximos cortes. Infraestrutura adicional não é requisito geral sem vínculo demonstrado a um caso de aceitação.

@@ -65,3 +65,7 @@ Os testes mínimos também executam processos novos, interrupções nas seis fro
 Continuam futuros: coordenação automática de escritor/checkpoint/ack, manutenção de temporários, política de retenção/exportação voltada ao autor, integração com recovery antigo/leases editoriais, interface e aceite humano. A restauração continua abrindo nova sessão sem undo/redo ou tickets antigos; nenhuma migração, integração GTK, publicação ou arquivo único `.inde` foi iniciada.
 
 Ver [validação](../validacao/VALIDACAO-OBJ-01-ARMAZENAMENTO.md), [protocolo de save/recovery](SALVAMENTO-RECOVERY-OBJ-01.md) e [inventário](INVENTARIO-OBJ-01.md).
+
+## Prioridade após a reconciliação
+
+A [reconciliação de 2026-11-21](RECONCILIACAO-OBJ-01.md) preserva este store como laboratório e congela sua expansão automática. Coordenador, exportação/manutenção de incompletos e integração de produto não são pré-requisitos gerais do primeiro documento composto. Uma nova intervenção precisa demonstrar bloqueio do piloto e receber escopo confirmado. O store não deve ser convertido em banco autoral do documento.

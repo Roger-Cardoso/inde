@@ -7,6 +7,13 @@
 
 ## Núcleo experimental de objetos
 
+A prioridade futura é governada pela reconciliação abaixo. Relatórios de infraestrutura comprovam apenas seus próprios cortes; o documento multimídia ainda não foi implementado.
+
+- [Reconciliação, matriz de situação e fechamento contratual da Fase 1](arquitetura/RECONCILIACAO-OBJ-01.md).
+- [Contrato mínimo de conteúdo e autoria composta](arquitetura/CONTRATO-DOCUMENTO-COMPOSTO-OBJ-01.md).
+- [Primeiro experimento autoral e aceitação P01–P14](arquitetura/PILOTO-DOCUMENTO-COMPOSTO-OBJ-01.md).
+- [Validação da reconciliação](validacao/VALIDACAO-OBJ-01-RECONCILIACAO.md).
+
 - [Fundação OBJ-01 e comandos](arquitetura/INDE-OBJ-01.md).
 - [Auditoria aprofundada das bases](arquitetura/INVENTARIO-OBJ-01.md).
 - [Ponte somente de leitura do Documento](arquitetura/ADAPTADOR-DOCUMENTO-OBJ-01.md).

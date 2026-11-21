@@ -1,0 +1,134 @@
+{
+  "date": "2026-11-21",
+  "branch": "feature/inde-obj-01-foundation",
+  "base_commit": "09eb932efb880736e72c52ca31ed7715f87e14ec",
+  "scope": "documentary reconciliation and Phase 1 contract preparation only; no Phase 2 implementation or functional acceptance",
+  "local_checks": {
+    "matrix_ids": [
+      "M01",
+      "M02",
+      "M03",
+      "M04",
+      "M05",
+      "M06",
+      "M07",
+      "M08",
+      "M09",
+      "M10",
+      "M11",
+      "M12",
+      "M13",
+      "M14",
+      "M15",
+      "M16",
+      "M17",
+      "M18",
+      "M19",
+      "M20",
+      "M21",
+      "M22"
+    ],
+    "contract_ids": [
+      "C01",
+      "C02",
+      "C03",
+      "C04",
+      "C05",
+      "C06"
+    ],
+    "pilot_ids": [
+      "P01",
+      "P02",
+      "P03",
+      "P04",
+      "P05",
+      "P06",
+      "P07",
+      "P08",
+      "P09",
+      "P10",
+      "P11",
+      "P12",
+      "P13",
+      "P14"
+    ],
+    "all_pilot_cases": "pending implementation/proof",
+    "local_link_count": 85,
+    "all_local_links_resolve": true,
+    "git_diff_check": "passed",
+    "historical_evidence_manifest": "9/9 passed"
+  },
+  "document_sha256": {
+    "docs/README.md": "3c2d038d9278ab1e77ae37ac7391ba2f3afb0caae73b26a5fbf2691ece86367f",
+    "docs/arquitetura/ARMAZENAMENTO-RECOVERY-OBJ-01.md": "9c20c41eae21408625ac8e815e8646d67398dce7e6fe0155040e6cbb8a4f0589",
+    "docs/arquitetura/INDE-OBJ-01.md": "6f79d148c626750eb177804aa4e7a943415c17330123d1e85ff3acd482fe0242",
+    "docs/arquitetura/INVENTARIO-OBJ-01.md": "19bf93227562342d258f612bbbbac97080304843ed391966e295234f017b853b",
+    "docs/arquitetura/RECONCILIACAO-OBJ-01.md": "7ffc50771a04cee5f801dfc0ba29029998cf4fa9a0d9964acf4b4f7e532aa9df",
+    "docs/arquitetura/CONTRATO-DOCUMENTO-COMPOSTO-OBJ-01.md": "da8f9dfe16b0b41e31d54c5b4b45f5528ffec5db476c072e45e10a84997e85b3",
+    "docs/arquitetura/PILOTO-DOCUMENTO-COMPOSTO-OBJ-01.md": "0326acebfd64ff4c9202fc506d3f280428c2dcdab98c76e59cdebb5679429932",
+    "docs/validacao/VALIDACAO-OBJ-01-RECONCILIACAO.md": "0cdb4a18475af6f93adba16738edeae193551d7441ad5e8e5da4cad36e1d3dab"
+  },
+  "inspected_source_sha256": {
+    "cpp/object_change_plan.hpp": "94d9237bd8a69c0ce2d74a78eadc4d368821a6cfecd100ebe3762b189a4a372f",
+    "cpp/object_change_session.hpp": "c2137c9ae3643af14f891cc8b91accde1e89fb502b7eded5148ac2d0a0a0d505",
+    "cpp/object_checkpoint_store.hpp": "0d2ab1222e8636714402b0bc682516f20c4a4f5df9708b1f97a117060b9fcb87",
+    "cpp/object_commands.hpp": "e92290f810d730fc35f988b3862b348ee8d650f957b950543eb508ec1ca9895a",
+    "cpp/object_composition_adapter.hpp": "fd3baf5aa6fe97e33418b9813e6832027c80faecc52c4d3c9cf9101c0dc1711c",
+    "cpp/object_document_adapter.hpp": "80aedf5a5635f0d64704ed51bbfbbc6a0bc6397a4bafae51f9479bea30dbb44f",
+    "cpp/object_model.hpp": "208b529a61ef2cc870976b103438cfd908b84bc4dd531eadbdcf94f649e44f79",
+    "cpp/object_session_checkpoint.hpp": "78c896d11de39e4e9309346a42ab4a6241dadf5fcfbc4ba3fc61569f1e06fd96",
+    "cpp/object_source_capture.hpp": "4da87ac5225b17f6a69ec82139bc95596e3cd4f250003e44c1924635c12ebf38",
+    "docs/validacao/evidencias-obj01-armazenamento/resultados.json": "2b37f1357b43082938e766f0f1b521b5cfd8fb564c6b467f864e05964750bfc6"
+  },
+  "baseline_trees": {
+    "cpp": "623a350aeacb1dc72fc02f44ab46657b131e5643",
+    "tests": "9c4262217b1a73cf993e943cbb1f695e9a23e1db",
+    ".github": "9169bf7c2d23d9a4cc5a60ab78cbc46e28e32b91",
+    "fontes": "13a1b7f877af5313c99b2e82c0d6cb8fbe4a8bef",
+    "metadata": "85a3e85846296d00d8ef877db55cf95206137ca1"
+  },
+  "runtime_code_changed": false,
+  "test_code_changed": false,
+  "build_or_workflows_changed": false,
+  "schema_or_archives_changed": false,
+  "authorial_projects_changed": false,
+  "original_main": {
+    "head": "d41a5c9b9809ca7d40beb6ff10f22f1a5b451e0b",
+    "status_preserved": " M Preparar-ponte.sh",
+    "preexisting_change": "mode 100644 -> 100755 Preparar-ponte.sh"
+  },
+  "local_native_ctest": {
+    "run_this_cut": false,
+    "reason": "documentation-only changes; no new executable behavior"
+  },
+  "historical_validation": {
+    "source": "docs/validacao/evidencias-obj01-armazenamento/resultados.json",
+    "implementation_commit": "06e62253187bb90c815c238634ac4b8e937c62f3",
+    "native_full": {
+      "passed": 61,
+      "total": 61,
+      "seconds": 164.77
+    },
+    "ci": {
+      "run_id": 44902673000,
+      "url": "https://github.com/Roger-Cardoso/inde/actions/runs/44902673000",
+      "head_sha": "06e62253187bb90c815c238634ac4b8e937c62f3",
+      "jobs": 21,
+      "passed": 21,
+      "conclusion": "success"
+    },
+    "scope": "prior checkpoint-store laboratory; not new multimedia acceptance"
+  },
+  "contract_review": "prepared; human acceptance separate and pending",
+  "next_candidate": "P2-A text and PNG; not started; requires concrete scope and express authorization",
+  "limits": [
+    "no new content payloads/importer/renderer/database implemented",
+    "P01-P14 remain pending",
+    "no GTK integration",
+    "no migration or unified .inde",
+    "no merge to main or real publication"
+  ],
+  "ci_this_cut": {
+    "status": "pending remote execution after documentary commit"
+  }
+}

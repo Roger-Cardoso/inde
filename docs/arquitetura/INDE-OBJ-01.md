@@ -2,6 +2,12 @@
 
 Versão **0.8 experimental — fundação, sessões e armazenamento de recovery em laboratório**, 2026-11-20. Escopo: **Fase 1**, C++20 em memória. Implementação: `cpp/object_model.{hpp,cpp}` e `cpp/object_commands.{hpp,cpp}`. O núcleo de comandos permanece isolado. Bibliotecas separadas fazem leitura do Documento (`object_document_adapter.*`) e da Composição persistida (`object_composition_adapter.*`), sem escrita, GTK, alterações SQLite ou arquivo único `.inde`. Ver [ponte documental](ADAPTADOR-DOCUMENTO-OBJ-01.md), [ponte da Composição](ADAPTADOR-COMPOSICAO-OBJ-01.md) e [planos de alterações](PLANO-ALTERACOES-OBJ-01.md). O planejador separado traduz prévias autorais conservadoras pelo motor existente; não aplica alterações na fonte.
 
+## Prioridade e status após a reconciliação — 2026-11-21
+
+A versão 0.8 acima descreve implementação experimental existente, não fechamento funcional de um documento multimídia. A [reconciliação](RECONCILIACAO-OBJ-01.md) passa a governar a prioridade futura: conservar a infraestrutura entregue, concluir a revisão contratual e voltar à prova autoral de texto, imagem e tabela. O [contrato mínimo 1.0](CONTRATO-DOCUMENTO-COMPOSTO-OBJ-01.md) é normativo para revisão e ainda não está implementado. O [piloto P01–P14](PILOTO-DOCUMENTO-COMPOSTO-OBJ-01.md) define a prova futura; seus casos não são aprovados pelos testes históricos.
+
+Este corte não muda `Object`, `Resource`, comandos, schemas ou APIs. Conteúdo de imagem/tabela/equação, inserção/remoção e adaptação de histórico/persistência ao agregado composto permanecem implementação pendente. Coordenador/limpeza do store deixam de ser o próximo trabalho automático; só podem ser propostos por bloqueio demonstrado do piloto. A Fase 2 depende de corte explícito e confirmação de execução.
+
 ## Autoridades e identidades
 
 Objeto tem identidade e tipo lógico (Paragraph, Image, Table, Equation, Container, TextBlock, TextReference). Ocorrência é um uso identificado do objeto em uma composição. O mesmo objeto pode ter diversas ocorrências; mover uma delas não modifica as demais. Recursos são metadados lógicos (ID, SHA-256 declarado, MIME, tamanho), sem caminhos autoritativos nem bytes incorporados.
