@@ -1,3 +1,120 @@
+/* Version 2 presentation: editable authored text and protected result spans. */
+let richTextEditing = null;
+function richProfile() { return typeof state !== 'undefined' && state?.profile === 'P2-D2'; }
+function richModel(key) { return state?.formula_text?.[key]; }
+function richDomRuns(node) {
+  return [...node.children].map(n => n.dataset.kind === 'result' ? {kind:'result',formula:n.dataset.result} : {kind:'text',text:n.innerText.replace(/\r\n/g,'\n')});
+}
+function richSameRuns(a,b) { return Array.isArray(a)&&Array.isArray(b)&&a.length===b.length&&a.every((r,i)=>r.kind===b[i].kind&&(r.kind==='text'?r.text===b[i].text:r.formula===b[i].formula)); }
+function richPending() {
+  const pending=[];
+  if(!richProfile())return pending;
+  for(const n of document.querySelectorAll('.rich-flow')) {
+    const runs=richDomRuns(n), key=n.dataset.target;
+    if(!richSameRuns(runs,richModel(key)?.runs))pending.push({target:key,runs});
+  }
+  if(richTextEditing && !richSameRuns(richTextEditing.runs,richModel(richTextEditing.key)?.runs)) {
+    const at=pending.findIndex(p=>p.target===richTextEditing.key);if(at>=0)pending.splice(at,1);
+    pending.push({target:richTextEditing.key,runs:structuredClone(richTextEditing.runs)});
+  }
+  return pending;
+}
+function richDrafts() { return richPending().length>0; }
+function richControls() {
+  if(!richProfile())return;
+  const uncertain=state.persistence_status==='uncertain';
+  for(const n of document.querySelectorAll('.rich-literal'))n.contentEditable=String(state.context==='text'&&!uncertain&&(!busy||['edit_formula_text','select','select_cell'].includes(activeOperation)));
+  for(const n of document.querySelectorAll('.rich-control'))n.disabled=busy||uncertain;
+  for(const n of document.querySelectorAll('.rich-builder input,.rich-builder textarea,.rich-builder select'))n.disabled=busy||uncertain;
+}
+function richChoose(key,table,cell) {
+  if(table)return action('select_cell',{id:table,cell});
+  return action('select',{id:key});
+}
+async function richEditPhrase(id,key,table,cell) {
+  if(state.context!=='text'&&!await action('set_context',{context:'text'}))return;
+  if(!await richChoose(key,table,cell))return;
+  richTextEditing={id,key,table,cell,runs:structuredClone(richModel(key).runs)};formulaEditing=null;render();
+  document.querySelector('.rich-builder textarea')?.focus({preventScroll:true});
+}
+function richButton(label,fn) {
+  const b=document.createElement('button');b.type='button';b.textContent=label;b.className='rich-control';b.addEventListener('click',fn);return b;
+}
+function richBuilder(wrapper,id,key,table,cell) {
+  wrapper.classList.add('rich-builder');
+  const heading=document.createElement('p');heading.textContent='Texto com resultados';wrapper.append(heading);
+  const editor=richTextEditing;
+  const rebuild=()=>{render();controls();};
+  editor.runs.forEach((r,index)=>{
+    const row=document.createElement('div');row.className='rich-run-row';
+    const label=document.createElement('label');label.textContent=r.kind==='text'?'Texto':'Resultado de';
+    let field;
+    if(r.kind==='text') {
+      field=document.createElement('textarea');field.value=r.text;field.rows=2;field.setAttribute('aria-label',`Texto da frase ${index+1}`);
+      field.addEventListener('input',()=>{editor.runs[index]={kind:'text',text:field.value};controls();});
+    } else {
+      field=document.createElement('select');field.setAttribute('aria-label',`Resultado da frase ${index+1}`);
+      for(const f of state.formulas.filter(f=>!f.command&&!f.consumed)) {const o=document.createElement('option');o.value=f.id;o.textContent=f.name;field.append(o);}
+      field.value=r.formula;field.addEventListener('change',()=>{editor.runs[index]={kind:'result',formula:field.value};controls();});
+    }
+    label.append(field);row.append(label);
+    const up=richButton('Subir trecho',()=>{if(index){[editor.runs[index-1],editor.runs[index]]=[editor.runs[index],editor.runs[index-1]];rebuild();}});up.disabled=index===0;
+    const remove=richButton('Retirar trecho',()=>{editor.runs.splice(index,1);rebuild();});
+    row.append(up,remove);wrapper.append(row);
+  });
+  wrapper.append(richButton('Acrescentar texto',()=>{editor.runs.push({kind:'text',text:''});rebuild();}),richButton('Acrescentar resultado',()=>{editor.runs.push({kind:'result',formula:id});rebuild();}));
+  wrapper.append(richButton('Aplicar frase',async()=>{if(await action('edit_formula_text',{target:key,runs:structuredClone(editor.runs)},'Frase aplicada; resultados continuam ligados às fórmulas.')){richTextEditing=null;render();}}),richButton('Cancelar frase',()=>{richTextEditing=null;render();}));
+}
+async function richExecute(id) {
+  if(state.context!=='text'&&!await action('set_context',{context:'text'}))return;
+  return action('execute_formula',{id},'Valor fixado na fonte; comando consumido.');
+}
+function richFormulaItem(id,key,table='',cell='') {
+  const f=state.formulas.find(f=>f.id===id),wrapper=document.createElement('div');wrapper.className='formula-box rich-formula';wrapper.dataset.formula=id;wrapper.dataset.target=key;
+  if(f.command) {
+    wrapper.classList.add('rich-command');
+    const label=document.createElement('p');label.textContent=f.source;wrapper.append(label);
+    wrapper.append(richButton('Executar alteração',()=>richExecute(id)),
+      richButton('Editar comando',()=>openFormula(id,key,table,cell)));
+    if(!f.valid){const e=document.createElement('p');e.className='formula-error';e.textContent=formulaError(f);wrapper.append(e);}
+    return wrapper;
+  }
+  if(richTextEditing?.key===key){richBuilder(wrapper,id,key,table,cell);return wrapper;}
+  const p=richModel(key);
+  if(!p){wrapper.textContent='A apresentação precisa ser conferida.';return wrapper;}
+  const flow=document.createElement('div');flow.className='paragraph rich-flow';flow.dataset.target=key;
+  p.runs.forEach((r,index)=>{
+    if(r.kind==='result') {
+      const value=state.formulas.find(f=>f.id===r.formula),span=document.createElement('span');
+      span.dataset.kind='result';span.dataset.result=r.formula;span.className='rich-result';span.tabIndex=0;span.contentEditable='false';
+      span.textContent=value.valid?value.display:formulaError(value);span.classList.toggle('formula-error',!value.valid);
+      span.setAttribute('role','button');span.setAttribute('aria-label',`Editar fórmula ${value.name}: ${value.valid?value.display:'conferir fonte'}`);span.title=`Editar fonte de ${value.name}`;
+      if(cell)span.dataset.cell=cell;
+      const open=()=>openFormula(value.id,key,table,cell);
+      span.addEventListener('click',open);span.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();open();}});flow.append(span);
+    } else {
+      const span=document.createElement('span');span.className='rich-literal';span.dataset.kind='text';span.dataset.index=String(index);span.textContent=r.text;
+      span.setAttribute('role','textbox');span.setAttribute('aria-label',`Texto de ${f.name}, trecho ${index+1}`);span.setAttribute('aria-multiline','true');span.tabIndex=0;span.spellcheck=true;
+      span.addEventListener('focus',()=>{if(state.context==='text'&&(state.selection!==(table||key)||(cell&&state.selected_cell!==cell)))richChoose(key,table,cell);});
+      const protect=()=>{if(span.contentEditable==='true'&&!richSameRuns(richDomRuns(flow),richModel(key)?.runs))action('edit_formula_text',{target:key,runs:richDomRuns(flow)});};
+      span.addEventListener('input',e=>{controls();if(!e.isComposing)protect();});span.addEventListener('compositionend',protect);
+      const insertText=value=>{
+        const selection=window.getSelection();if(!selection?.rangeCount)return;
+        const range=selection.getRangeAt(0);if(!span.contains(range.commonAncestorContainer))return;
+        range.deleteContents();const node=document.createTextNode(value);range.insertNode(node);range.setStartAfter(node);range.collapse(true);selection.removeAllRanges();selection.addRange(range);protect();
+      };
+      span.addEventListener('paste',e=>{e.preventDefault();insertText(e.clipboardData.getData('text/plain'));});
+      span.addEventListener('beforeinput',e=>{if(e.inputType==='insertParagraph'||e.inputType==='insertLineBreak'){e.preventDefault();insertText('\n');}});
+      flow.append(span);
+    }
+  });
+  wrapper.append(flow);
+  const tools=document.createElement('div');tools.className='rich-tools';
+  tools.append(richButton(`Editar fonte de ${f.name}`,()=>openFormula(id,key,table,cell)),richButton(`Editar frase de ${f.name}`,()=>richEditPhrase(id,key,table,cell)));
+  wrapper.append(tools);
+  return wrapper;
+}
+
 'use strict';
 const $ = id => document.getElementById(id);
 const token = location.hash.slice(1) || sessionStorage.getItem('obj01-p2a-token') || '';
@@ -6,6 +123,20 @@ if (location.hash) history.replaceState(null, '', location.pathname);
 let state, upload, uploadName = '', mode = 'visual', busy = false, generation = 0, activeOperation = '';
 const imageCache = new Map();
 const errors = {
+  formula_command_must_be_alone: 'O comando alterar deve ficar sozinho: uma instrução, sem declarações, resultado, frase ou usos compartilhados.',
+  formula_command_consumed: 'Esse comando já foi executado e consumido. Desfazer pode restaurá-lo.',
+  formula_command_has_no_value: 'Um comando alterar não oferece resultado para outra fórmula. Consulte a variável alterada.',
+  formula_type: 'A operação recebeu um tipo incompatível. Use números nas contas e & para juntar texto.',
+  formula_text_limit: 'O resultado textual excede 4.096 bytes neste experimento.',
+  formula_output_limit: 'O conjunto de resultados excede o limite de texto deste experimento.',
+  formula_text_owner_result_missing: 'Mantenha na frase pelo menos um resultado da fórmula principal.',
+  formula_text_reference_invalid: 'Um trecho da frase aponta para um objeto que não fornece resultado.',
+  formula_literal_limit: 'Um trecho de texto excede 4.096 caracteres. A frase anterior foi conservada.',
+  formula_text_run_limit: 'A frase precisa ter entre 1 e 32 trechos de texto ou resultado.',
+  formula_current_undeclared: 'Declare a variável antes de registrar seu valor atual.',
+  formula_duplicate_current: 'Uma variável tem mais de uma atribuição atual na fonte. Mantenha uma só.',
+  formula_string_syntax: 'Confira as aspas e os escapes do texto na fórmula.',
+
   formula_identity: 'Use um nome único, sem espaços, com letras de A a Z, números ou sublinhado; comece por uma letra ou sublinhado.',
   formula_source_limit: 'A fonte da fórmula excede o limite de 16 KiB ou contém texto inválido.',
   formula_expression: 'Há uma expressão incompleta. Confira os números e operadores.',
@@ -86,7 +217,7 @@ async function fetchApi(path, options = {}) {
 function cellData(tableId, cellId) { return state?.tables?.find(t => t.id === tableId)?.cells.find(c => c.id === cellId); }
 let formulaEditing = null;
 function formulaDraft() { return formulaEditing && formulaEditing.draft !== state?.formulas?.find(f => f.id === formulaEditing.id)?.source; }
-function hasDrafts() { return formulaDraft() || [...document.querySelectorAll('.cell-editor')].some(n => n.value !== cellData(n.dataset.table, n.dataset.cell)?.text); }
+function hasDrafts() { return formulaDraft() || richDrafts() || [...document.querySelectorAll('.cell-editor')].some(n => n.value !== cellData(n.dataset.table, n.dataset.cell)?.text); }
 function updateSelection() {
   for (const node of $('document').querySelectorAll('.item')) {
     const selected = state.selection === node.dataset.occurrence;
@@ -105,7 +236,7 @@ async function sendOperation(op, values, success) {
   const result = await response.json();
   if (result.state) {
     state = result.state;
-    if (op === 'edit_cell' || op === 'select_cell') updateSelection();
+    if (op === 'edit_cell' || op === 'select_cell' || op === 'edit_formula_text' || (op === 'select' && richProfile() && document.activeElement?.classList.contains('rich-literal'))) updateSelection();
     else {
       render();
       if (op === 'select') [...$('document').querySelectorAll('.item')].find(n => n.dataset.occurrence === state.selection)?.focus({ preventScroll: true });
@@ -120,6 +251,9 @@ function action(op, values = {}, success = '') {
     if (!state) return false;
     busy = true; activeOperation = op; controls();
     try {
+      if (!['edit_formula_text','reopen','reopen_working'].includes(op) && richDrafts()) {
+        for (const p of richPending()) if (!await sendOperation('edit_formula_text',p)) return false;
+      }
       if (!['edit_formula','reopen','reopen_working'].includes(op) && formulaDraft()) {
         if (!await sendOperation('edit_formula',{id:formulaEditing.id,source:formulaEditing.draft})) return false;
       }
@@ -166,6 +300,7 @@ function options(id, values, fallback = '') {
 }
 function controls() {
   if (!state) return;
+  richControls();
   for (const n of document.querySelectorAll('.cell-editor')) n.readOnly = busy && !['edit_cell', 'select_cell'].includes(activeOperation);
   for (const id of ['save', 'reopen', 'sample', 'file', 'caption', 'alt', 'decorative', 'intent', 'insert-before', 'move-before', 'paragraph', 'ratio', 'restore', 'table-title', 'table-header', 'table-before', 'create-table']) $(id).disabled = busy;
   $('import').disabled = busy || !upload;
@@ -180,7 +315,7 @@ function controls() {
   $('alt').disabled = busy || $('decorative').checked;
   $('save-status').textContent = hasDrafts() ? 'Célula em edição' : state.dirty ? 'Alterações em memória' : 'Salvo localmente';
   $('save-status').className = state.dirty ? 'dirty' : '';
-  if (['P2-C','P2-D'].includes(state.profile)) {
+  if (['P2-C','P2-D','P2-D2'].includes(state.profile)) {
     for (const id of ['reorder-text', 'text-group', 'text-before', 'publication-check', 'reopen-working']) $(id).disabled = busy;
     $('reopen-working').disabled = false;
     const context = state.context;
@@ -195,7 +330,7 @@ function controls() {
     $('recovery-note').textContent = state.persistence_status === 'uncertain' ? 'Reabra o trabalho para conferir a gravação. O candidato foi retido; novas alterações estão bloqueadas.' : state.recovered_on_open ? 'Trabalho não salvo recuperado. Conteúdo e seleção foram reconstruídos; o histórico desta sessão começa vazio.' : 'Cada operação confirmada é registrada para recuperação. Salvar confirma o estado autoral; o histórico não sobrevive ao reinício.';
   }
 
-  if (state.profile === 'P2-D') {
+  if (['P2-D','P2-D2'].includes(state.profile)) {
     const uncertain = state.persistence_status === 'uncertain';
     for (const id of ['formula-name','formula-source','formula-target','formula-before','formula-library']) $(id).disabled = busy || uncertain;
     $('create-formula').disabled = busy || uncertain || state.context !== 'structure';
@@ -245,7 +380,7 @@ function tableItem(t) {
         return Promise.resolve(true);
       };
       input.addEventListener('change', commit);
-      const protect = () => { if (['P2-C','P2-D'].includes(state.profile) && input.value !== cellData(t.id,cell.id)?.text) action('edit_cell',{id:t.id,cell:cell.id,text:input.value}); };
+      const protect = () => { if (['P2-C','P2-D','P2-D2'].includes(state.profile) && input.value !== cellData(t.id,cell.id)?.text) action('edit_cell',{id:t.id,cell:cell.id,text:input.value}); };
       input.addEventListener('input', event => { controls(); if (!event.isComposing) protect(); });
       input.addEventListener('compositionend', protect);
       input.addEventListener('keydown', async event => {
@@ -256,7 +391,7 @@ function tableItem(t) {
         const next = ordered.findIndex(c => c.id === cell.id) + (event.shiftKey ? -1 : 1);
         if (next < 0) { wrapper.focus(); return; }
         if (next >= ordered.length) { exit.focus(); return; }
-        [...wrapper.querySelectorAll('.cell-editor, .formula-result')].find(n => n.dataset.cell === ordered[next].id)?.focus();
+        [...wrapper.querySelectorAll('.cell-editor, .formula-result, .rich-result')].find(n => n.dataset.cell === ordered[next].id)?.focus();
       });
       holder.append(input); tr.append(holder);
     }
@@ -277,10 +412,10 @@ function renderVariables() {
   const target = $('formula-variables'); target.replaceChildren();
   const f = libraryFormula();
   if (!f) return;
-  const summary = document.createElement('p'); summary.textContent = f.valid ? `Resultado de ${f.name}: ${f.display}` : formulaError(f); target.append(summary);
+  const summary = document.createElement('p'); summary.textContent = f.command ? 'Comando de uso único: será retirado depois de uma execução bem-sucedida.' : f.valid ? `Resultado de ${f.name}: ${f.display}` : formulaError(f); target.append(summary);
   for (const v of f.variables) {
     const row = document.createElement('p');
-    row.textContent = `${v.name}: inicial ${v.initial ?? 'indisponível'} · atual ${v.current}${v.overridden ? ' · alterado por execução' : ''}`;
+    row.textContent = `${v.name}: inicial ${richProfile()?v.initial_display:(v.initial ?? 'indisponível')} · atual ${richProfile()?v.current_display:v.current}${v.overridden ? ' · alterado por execução' : ''}`;
     if (v.overridden) {
       const reset = document.createElement('button'); reset.textContent = `Restaurar inicial de ${v.name}`; reset.className='formula-reset';
       reset.disabled = busy || state.context !== 'text' || state.persistence_status === 'uncertain';
@@ -304,6 +439,8 @@ async function openFormula(id,key,table='',cell='') {
   document.querySelector('.formula-editor')?.focus({preventScroll:true});
 }
 function formulaItem(id,key,table='',cell='') {
+  if(richProfile() && formulaEditing?.key !== key) return richFormulaItem(id,key,table,cell);
+  if(richProfile() && formulaEditing?.key === key) id=formulaEditing.id;
   const f=state.formulas.find(f=>f.id===id), wrapper=document.createElement('div');
   wrapper.className='formula-box'; wrapper.dataset.formula=id;
   if (formulaEditing?.id === id && formulaEditing.key === key) {
@@ -360,10 +497,14 @@ function item(id, currentGeneration) {
 }
 function render() {
   const currentGeneration = ++generation;
-  const p2c = ['P2-C','P2-D'].includes(state.profile);
-  const p2d = state.profile === 'P2-D';
+  const p2c = ['P2-C','P2-D','P2-D2'].includes(state.profile);
+  const p2d = ['P2-D','P2-D2'].includes(state.profile);
+  const p2d2=richProfile();document.body.classList.toggle('has-rich-formulas',p2d2);
+  document.querySelectorAll('.p2d2-only').forEach(n=>{n.hidden=!p2d2;});
   document.body.classList.toggle('has-formulas',p2d);
-  if (state.context !== 'text') formulaEditing = null;
+  if (state.context !== 'text') { formulaEditing = null; richTextEditing = null; }
+  if (formulaEditing && state.formulas?.find(f=>f.id===formulaEditing.id)?.consumed) formulaEditing=null;
+  if (richTextEditing && !state.formula_text?.[richTextEditing.key]) richTextEditing=null;
   const p2b = state.profile !== 'P2-A';
   document.querySelectorAll('.p2d-only').forEach(n => { n.hidden = !p2d; });
   document.querySelectorAll('.p2c-only').forEach(n => { n.hidden = !p2c; });
@@ -373,12 +514,13 @@ function render() {
   document.querySelector('.bottom span:last-child').textContent = p2c ? 'Operações confirmadas ficam protegidas para recuperação. Salvar confirma o estado autoral. Nenhuma publicação é realizada.' : 'Salve antes de encerrar o servidor. Nenhuma publicação é realizada.';
   if (p2c) {document.title = 'INDE · Trabalho recuperável'; document.querySelector('h1').textContent = 'Seu trabalho continua aqui.'; document.querySelector('.paper-footer').textContent = 'INDE · EXPERIMENTO AUTORAL P2-C'; $('limits').textContent = 'Células em Texto, objetos em Estrutura, arranjos em Composição. Operações confirmadas são recuperáveis; o histórico reinicia.';}
   if (p2d) { document.title = 'INDE · Fórmulas vivas'; document.querySelector('h1').textContent = 'Resultados que acompanham sua história.'; document.querySelector('.paper-footer').textContent = 'INDE · EXPERIMENTO AUTORAL P2-D'; $('limits').textContent = 'Fórmulas numéricas com variáveis e dependências. Alterações de variáveis exigem execução; resultados recalculam automaticamente.'; }
+  if(p2d2) { document.title='INDE · Texto e fórmulas'; document.querySelector('h1').textContent='A conta faz parte da escrita.'; document.querySelector('.intro p:not(.eyebrow)').textContent='Escreva a frase, deixe os resultados acompanharem as mudanças.'; $('limits').textContent='Texto livre e resultados protegidos no mesmo parágrafo. O comando alterar age uma vez e é consumido.'; document.querySelector('.paper-footer').textContent='INDE · EXPERIMENTO AUTORAL P2-D2'; }
   const destination = state.author_order.filter(id => !state.rows.some(r => r.children[1] === id) && (state.figures.some(f => f.id === id) || state.tables?.some(t => t.id === id) || state.formula_uses?.some(u => u.id === id) || state.reading_groups.some(g => g[0] === id))).map(id => [id, shortText(id)]);
   destination.push(['', 'Fim do documento']);
   options('insert-before', destination, state.paragraphs[1]?.id || '');
   options('table-before', destination, '');
   options('formula-before',destination,'');
-  options('formula-library',(state.formulas || []).map(f => [f.id,f.name + ': ' + (f.valid?f.display:'conferir fórmula')]),state.formulas?.[0]?.id || '');
+  options('formula-library',(state.formulas || []).filter(f=>!f.consumed).map(f => [f.id,f.name + ': ' + (f.valid?f.display:'conferir fórmula')]),state.formulas?.[0]?.id || '');
   renderVariables();
   options('move-before', destination.filter(([id]) => id !== state.selection), '');
   options('text-before', destination, '');
@@ -438,7 +580,9 @@ $('ratio').addEventListener('input', () => { $('ratio-label').textContent = $('r
 $('create-formula').addEventListener('click',()=> {
   const inCell=$('formula-target').value==='cell';
   if(inCell && (!selectedTable() || !state.selected_cell)) {message('Selecione primeiro uma célula da tabela.',true);return;}
-  action('create_formula',{name:$('formula-name').value,source:$('formula-source').value,before:inCell?'':$('formula-before').value,table:inCell?state.selection:'',cell:inCell?state.selected_cell:''},'Fórmula criada. Clique no resultado para editar.');
+  const source=$('formula-source').value;const command=/^\s*(?:\{\s*)?alterar\b/.test(source);
+  const presentation=richProfile()?{prefix:command?'':$('formula-prefix').value,suffix:command?'':$('formula-suffix').value}:{};
+  action('create_formula',{name:$('formula-name').value,source,before:inCell?'':$('formula-before').value,table:inCell?state.selection:'',cell:inCell?state.selected_cell:'',...presentation},'Fórmula criada. Clique no resultado para editar.');
 });
 $('formula-library').addEventListener('change',()=>{renderVariables();controls();});
 $('edit-formula').addEventListener('click',()=> {
@@ -471,7 +615,7 @@ $('reopen-working').addEventListener('click', () => {
 });
 $('visual-tab').addEventListener('click', () => { mode = 'visual'; render(); });
 $('reading-tab').addEventListener('click', () => { mode = 'reading'; render(); });
-window.addEventListener('beforeunload', event => { if (hasDrafts() || (state?.dirty && !['P2-C','P2-D'].includes(state.profile)) || state?.persistence_status === 'uncertain' || state?.persistence_status === 'error') { event.preventDefault(); event.returnValue = ''; } });
+window.addEventListener('beforeunload', event => { if (hasDrafts() || (state?.dirty && !['P2-C','P2-D','P2-D2'].includes(state.profile)) || state?.persistence_status === 'uncertain' || state?.persistence_status === 'error') { event.preventDefault(); event.returnValue = ''; } });
 (async () => {
   try {
     const response = await fetchApi('/api/state'), result = await response.json();

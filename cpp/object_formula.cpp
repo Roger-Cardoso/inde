@@ -417,8 +417,14 @@ public:
             initial = expression(r, e);
           } catch (const Error &) {
           }
-          result.variables.push_back(
-              {name, initial, current, r.overrides.contains(name)});
+          result.variables.push_back({name,
+                                      initial,
+                                      current,
+                                      r.overrides.contains(name),
+                                      {},
+                                      {},
+                                      "number",
+                                      "number"});
         }
         result.valid = true;
       } catch (const Error &e) {
@@ -478,8 +484,17 @@ void validate(const std::vector<Record> &records) {
             return target.id == id && target.name == name;
           }))
         fail("formula_binding_identity");
+  for (const auto &r : records)
+    if (r.advanced != records.front().advanced || (!r.advanced && r.consumed))
+      fail("formula_language_mismatch");
+  if (!records.empty() && records.front().advanced)
+    rich::validate(records);
 }
 void bind(Record &r, const std::vector<Record> &records) {
+  if (r.advanced) {
+    rich::bind(r, records);
+    return;
+  }
   // Invalid drafts keep their previous bindings/overrides for later repair.
   Program p;
   try {
@@ -507,11 +522,15 @@ void bind(Record &r, const std::vector<Record> &records) {
 }
 std::map<std::string, Result> evaluate(const std::vector<Record> &records) {
   validate(records);
+  if (!records.empty() && records.front().advanced)
+    return rich::evaluate(records);
   return Evaluation(records).all();
 }
 std::vector<Record> execute(const std::vector<Record> &records,
                             const std::string &id) {
   validate(records);
+  if (!records.empty() && records.front().advanced)
+    return rich::execute(records, id);
   Evaluation evaluation(records);
   const auto before = evaluation.all();
   if (!before.contains(id) || !before.at(id).valid)

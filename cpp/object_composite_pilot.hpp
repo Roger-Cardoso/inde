@@ -8,7 +8,7 @@ namespace inde::objects::pilot {
 // The owner serializer uses default stream precision. Pilot geometry requires
 // round-trippable doubles; this isolated codec preserves max_digits10.
 [[nodiscard]] std::string encode_json(const persistence::json::Value &);
-enum class Profile { P2A, P2B, P2C, P2D };
+enum class Profile { P2A, P2B, P2C, P2D, P2D2 };
 enum class PersistenceStage {
   BeforeWrite,
   AfterBlobs,

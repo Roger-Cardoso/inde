@@ -23,10 +23,12 @@ int main(int argc, char **argv) {
       if (arg == "--workspace")
         workspace = value;
       else if (arg == "--seed-p2a" || arg == "--seed-p2b" ||
-               arg == "--seed-p2c") {
+               arg == "--seed-p2c" || arg == "--seed-p2d") {
         seed = value;
         seed_option = arg;
-      } else if (arg == "--profile" && value == "p2d")
+      } else if (arg == "--profile" && value == "p2d2")
+        profile = inde::objects::pilot::Profile::P2D2;
+      else if (arg == "--profile" && value == "p2d")
         profile = inde::objects::pilot::Profile::P2D;
       else if (arg == "--profile" && value == "p2c")
         profile = inde::objects::pilot::Profile::P2C;
@@ -44,7 +46,8 @@ int main(int argc, char **argv) {
     if (workspace.empty())
       throw std::runtime_error("workspace_required");
     const auto expected_seed =
-        profile == inde::objects::pilot::Profile::P2D   ? "--seed-p2c"
+        profile == inde::objects::pilot::Profile::P2D2  ? "--seed-p2d"
+        : profile == inde::objects::pilot::Profile::P2D ? "--seed-p2c"
         : profile == inde::objects::pilot::Profile::P2C ? "--seed-p2b"
                                                         : "--seed-p2a";
     if (!seed.empty() && seed_option != expected_seed)

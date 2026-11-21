@@ -428,20 +428,54 @@ struct Table {
 struct FormulaUse {
   std::string occurrence, object;
 };
+struct FormulaTextRun {
+  std::string text, formula;
+};
+struct FormulaText {
+  std::string object;
+  std::vector<FormulaTextRun> runs;
+};
 struct State {
   std::string project, source, source_hash, selection;
   std::vector<std::string> author, visual;
   std::vector<Figure> figures, archived_figures;
   std::vector<Table> tables, archived_tables;
   std::string selected_cell;
-  bool p2b = false, p2c = false, p2d = false;
+  bool p2b = false, p2c = false, p2d = false, p2d2 = false;
   std::string working_text, context = "structure";
   std::vector<formula::Record> formulas;
-  std::vector<FormulaUse> formula_uses;
+  std::vector<FormulaUse> formula_uses, retired_formula_uses;
+  std::map<std::string, FormulaText> formula_text;
   std::map<std::string, std::string> formula_cells;
   std::vector<Row> rows;
   std::map<std::string, std::shared_ptr<const Bytes>> blobs;
 };
+void sync_formula_text(State &s) {
+  if (!s.p2d2)
+    return;
+  const auto evaluated = formula::evaluate(s.formulas);
+  const auto sync = [&](const std::string &key, const std::string &id) {
+    if (evaluated.at(id).command) {
+      const auto at = s.formula_text.find(key);
+      if (at != s.formula_text.end()) {
+        if (std::any_of(at->second.runs.begin(), at->second.runs.end(),
+                        [&](const auto &r) {
+                          return r.formula.empty() ? !r.text.empty()
+                                                   : r.formula != id;
+                        }))
+          fail("formula_command_must_be_alone");
+        s.formula_text.erase(at);
+      }
+    } else if (!s.formula_text.contains(key) ||
+               s.formula_text.at(key).object != id)
+      s.formula_text[key] = {id, {{{}, id}}};
+  };
+  for (const auto *uses : {&s.formula_uses, &s.retired_formula_uses})
+    for (const auto &u : *uses)
+      sync(u.occurrence, u.object);
+  for (const auto &[cell, id] : s.formula_cells)
+    sync(cell, id);
+}
 std::unique_ptr<compat::DocumentReadProjection> projection(const State &s) {
   auto d =
       persistence::decode_document_snapshot(s.p2c ? s.working_text : s.source);
@@ -722,6 +756,84 @@ void validate(const State &s, bool decode_media = true) {
       fail("formula_cell_binding_invalid");
     string_bytes += cell.size() + id.size();
   }
+  if (!s.p2d2 && (!s.formula_text.empty() || !s.retired_formula_uses.empty()))
+    fail("p2d2_profile_required");
+  for (const auto &f : s.formulas)
+    if (f.advanced != s.p2d2)
+      fail("formula_language_mismatch");
+  if (s.p2d2) {
+    if (s.formula_uses.size() + s.retired_formula_uses.size() > 256 ||
+        s.formula_text.size() > 2304)
+      fail("formula_use_limit");
+    const auto evaluated = formula::evaluate(s.formulas);
+    std::map<std::string, std::string> targets;
+    std::map<std::string, std::size_t> active_counts;
+    for (const auto *uses : {&s.formula_uses, &s.retired_formula_uses})
+      for (const auto &u : *uses) {
+        if (!formula_ids.contains(u.object))
+          fail("formula_occurrence_invalid");
+        if (!targets.emplace(u.occurrence, u.object).second)
+          fail("formula_occurrence_invalid");
+      }
+    for (const auto &u : s.formula_uses)
+      ++active_counts[u.object];
+    for (const auto &u : s.retired_formula_uses) {
+      text(u.occurrence, 256);
+      if (u.occurrence.empty() || !nested_ids.insert(u.occurrence).second)
+        fail("retired_occurrence_collision");
+      string_bytes += u.occurrence.size() + u.object.size();
+    }
+    for (const auto &[cell, id] : s.formula_cells) {
+      targets.emplace(cell, id);
+      if (std::any_of(s.tables.begin(), s.tables.end(), [&](const auto &t) {
+            return std::any_of(t.cells.begin(), t.cells.end(),
+                               [&](const auto &c) { return c.id == cell; });
+          }))
+        ++active_counts[id];
+    }
+    for (const auto &[id, result] : evaluated) {
+      if (result.error == "formula_command_must_be_alone")
+        fail("formula_command_must_be_alone");
+      if (result.command && active_counts[id] > 1)
+        fail("formula_command_must_be_alone");
+      if (result.consumed && active_counts[id] != 0)
+        fail("formula_consumed_still_active");
+    }
+    for (const auto &[key, p] : s.formula_text) {
+      text(key, 256);
+      if (!formula_ids.contains(p.object) ||
+          (targets.contains(key) ? targets.at(key) != p.object
+                                 : !cell_ids.contains(key)))
+        fail("formula_text_target_invalid");
+      if (p.runs.empty() || p.runs.size() > 32 ||
+          evaluated.at(p.object).command)
+        fail("formula_text_run_limit");
+      bool own = false;
+      string_bytes += key.size() + p.object.size();
+      for (const auto &r : p.runs) {
+        if (r.formula.empty()) {
+          text(r.text, 16384);
+          if (g_utf8_strlen(r.text.data(), static_cast<gssize>(r.text.size())) >
+              4096)
+            fail("formula_literal_limit");
+          string_bytes += r.text.size();
+        } else {
+          text(r.formula, 256);
+          if (!r.text.empty() || !formula_ids.contains(r.formula) ||
+              evaluated.at(r.formula).command ||
+              evaluated.at(r.formula).consumed)
+            fail("formula_text_reference_invalid");
+          own = own || r.formula == p.object;
+          string_bytes += r.formula.size();
+        }
+      }
+      if (!own)
+        fail("formula_text_owner_result_missing");
+    }
+    for (const auto &[key, id] : targets)
+      if (!evaluated.at(id).command && !s.formula_text.contains(key))
+        fail("formula_text_missing");
+  }
   if (string_bytes > 8 * mib)
     fail("document_string_limit");
   if (!s.selected_cell.empty()) {
@@ -864,16 +976,31 @@ V formula_value(const formula::Record &f) {
     bindings.emplace(name, id);
   for (const auto &[name, value] : f.overrides)
     overrides.emplace(name, value);
-  return V::Object{{"id", f.id},
-                   {"name", f.name},
-                   {"source", f.source},
-                   {"revision", f.revision},
-                   {"bindings", std::move(bindings)},
-                   {"overrides", std::move(overrides)}};
+  V::Object out{{"id", f.id},
+                {"name", f.name},
+                {"source", f.source},
+                {"revision", f.revision},
+                {"bindings", std::move(bindings)},
+                {"overrides", std::move(overrides)}};
+  if (f.advanced) {
+    out.emplace("language", 2);
+    out.emplace("consumed", f.consumed);
+  }
+  return out;
 }
-formula::Record decode_formula(const V &v) {
-  fields(v, {"id", "name", "source", "revision", "bindings", "overrides"});
+formula::Record decode_formula(const V &v, bool advanced = false) {
+  if (advanced)
+    fields(v, {"id", "name", "source", "revision", "bindings", "overrides",
+               "language", "consumed"});
+  else
+    fields(v, {"id", "name", "source", "revision", "bindings", "overrides"});
   formula::Record r;
+  r.advanced = advanced;
+  if (advanced) {
+    if (v.at("language").as_integer() != 2)
+      fail("formula_language_mismatch");
+    r.consumed = v.at("consumed").as_boolean();
+  }
   r.id = v.at("id").as_string();
   r.name = v.at("name").as_string();
   r.source = v.at("source").as_string();
@@ -887,6 +1014,31 @@ formula::Record decode_formula(const V &v) {
     r.overrides.emplace(name, real(value));
   return r;
 }
+V runs_value(const std::vector<FormulaTextRun> &runs) {
+  V::Array out;
+  for (const auto &r : runs)
+    out.emplace_back(
+        r.formula.empty()
+            ? V(V::Object{{"kind", "text"}, {"text", r.text}})
+            : V(V::Object{{"kind", "result"}, {"formula", r.formula}}));
+  return out;
+}
+std::vector<FormulaTextRun> decode_runs(const V &v) {
+  if (v.as_array().empty() || v.as_array().size() > 32)
+    fail("formula_text_run_limit");
+  std::vector<FormulaTextRun> runs;
+  for (const auto &r : v.as_array()) {
+    if (r.at("kind").as_string() == "text") {
+      fields(r, {"kind", "text"});
+      runs.push_back({r.at("text").as_string(), {}});
+    } else if (r.at("kind").as_string() == "result") {
+      fields(r, {"kind", "formula"});
+      runs.push_back({{}, r.at("formula").as_string()});
+    } else
+      fail("formula_text_run_kind");
+  }
+  return runs;
+}
 V encode(const State &s) {
   V::Array figures, rows;
   for (const auto &f : s.figures)
@@ -899,7 +1051,8 @@ V encode(const State &s) {
                                 {"first", r.first},
                                 {"second", r.second},
                                 {"gap", r.gap}});
-  V::Object result{{"format", s.p2d   ? "INDE-OBJ01-COMPOSITE-P2D-1"
+  V::Object result{{"format", s.p2d2  ? "INDE-OBJ01-COMPOSITE-P2D2-1"
+                              : s.p2d ? "INDE-OBJ01-COMPOSITE-P2D-1"
                               : s.p2c ? "INDE-OBJ01-COMPOSITE-P2C-1"
                               : s.p2b ? "INDE-OBJ01-COMPOSITE-P2B-1"
                                       : "INDE-OBJ01-COMPOSITE-P2A-1"},
@@ -930,7 +1083,7 @@ V encode(const State &s) {
   }
   if (s.p2d) {
     V::Array formulas, uses;
-    V::Object cells;
+    V::Object cells, texts;
     for (const auto &f : s.formulas)
       formulas.push_back(formula_value(f));
     for (const auto &f : s.formula_uses)
@@ -941,6 +1094,18 @@ V encode(const State &s) {
     result.emplace("formulas", std::move(formulas));
     result.emplace("formula_uses", std::move(uses));
     result.emplace("formula_cells", std::move(cells));
+  }
+  if (s.p2d2) {
+    V::Object texts;
+    V::Array retired;
+    for (const auto &[key, p] : s.formula_text)
+      texts.emplace(
+          key, V::Object{{"object", p.object}, {"runs", runs_value(p.runs)}});
+    for (const auto &u : s.retired_formula_uses)
+      retired.emplace_back(
+          V::Object{{"occurrence", u.occurrence}, {"object", u.object}});
+    result.emplace("formula_text", std::move(texts));
+    result.emplace("retired_formula_uses", std::move(retired));
   }
   return result;
 }
@@ -967,12 +1132,24 @@ State decode(const std::string &bytes) {
   const auto v = persistence::json::parse(bytes);
   const auto format = v.at("format").as_string();
   State s;
-  s.p2d = format == "INDE-OBJ01-COMPOSITE-P2D-1";
+  s.p2d2 = format == "INDE-OBJ01-COMPOSITE-P2D2-1";
+  s.p2d = s.p2d2 || format == "INDE-OBJ01-COMPOSITE-P2D-1";
   s.p2c = s.p2d || format == "INDE-OBJ01-COMPOSITE-P2C-1";
   s.p2b = s.p2c || format == "INDE-OBJ01-COMPOSITE-P2B-1";
   if (!s.p2b && format != "INDE-OBJ01-COMPOSITE-P2A-1")
     fail("unsupported_snapshot_version");
-  if (s.p2d)
+  if (s.p2d2)
+    fields(v, {"format",        "project",
+               "source",        "source_sha256",
+               "author_order",  "visual_order",
+               "figures",       "rows",
+               "selection",     "archived_figures",
+               "tables",        "archived_tables",
+               "selected_cell", "working_text",
+               "context",       "formulas",
+               "formula_uses",  "formula_cells",
+               "formula_text",  "retired_formula_uses"});
+  else if (s.p2d)
     fields(v,
            {"format", "project", "source", "source_sha256", "author_order",
             "visual_order", "figures", "rows", "selection", "archived_figures",
@@ -1034,7 +1211,7 @@ State decode(const std::string &bytes) {
         v.at("formula_cells").as_object().size() > 2048)
       fail("formula_use_limit");
     for (const auto &f : v.at("formulas").as_array())
-      s.formulas.push_back(decode_formula(f));
+      s.formulas.push_back(decode_formula(f, s.p2d2));
     for (const auto &f : v.at("formula_uses").as_array()) {
       fields(f, {"occurrence", "object"});
       s.formula_uses.push_back(
@@ -1042,6 +1219,21 @@ State decode(const std::string &bytes) {
     }
     for (const auto &[cell, id] : v.at("formula_cells").as_object())
       s.formula_cells.emplace(cell, id.as_string());
+  }
+  if (s.p2d2) {
+    if (v.at("formula_text").as_object().size() > 2304 ||
+        v.at("retired_formula_uses").as_array().size() > 256)
+      fail("formula_use_limit");
+    for (const auto &[key, p] : v.at("formula_text").as_object()) {
+      fields(p, {"object", "runs"});
+      s.formula_text.emplace(key, FormulaText{p.at("object").as_string(),
+                                              decode_runs(p.at("runs"))});
+    }
+    for (const auto &u : v.at("retired_formula_uses").as_array()) {
+      fields(u, {"occurrence", "object"});
+      s.retired_formula_uses.push_back(
+          {u.at("occurrence").as_string(), u.at("object").as_string()});
+    }
   }
   return s;
 }
@@ -1119,6 +1311,21 @@ void retain_assets(State &target, const State &current) {
     if (std::none_of(target.formulas.begin(), target.formulas.end(),
                      [&](const auto &v) { return v.id == f.id; }))
       target.formulas.push_back(f);
+  if (current.p2d2) {
+    for (const auto *uses :
+         {&current.formula_uses, &current.retired_formula_uses})
+      for (const auto &u : *uses)
+        if (std::none_of(
+                target.formula_uses.begin(), target.formula_uses.end(),
+                [&](const auto &v) { return v.occurrence == u.occurrence; }) &&
+            std::none_of(target.retired_formula_uses.begin(),
+                         target.retired_formula_uses.end(), [&](const auto &v) {
+                           return v.occurrence == u.occurrence;
+                         }))
+          target.retired_formula_uses.push_back(u);
+    for (const auto &[key, p] : current.formula_text)
+      target.formula_text.try_emplace(key, p);
+  }
   for (const auto &t : current.tables)
     remember_table(t);
   for (const auto &t : current.archived_tables)
@@ -1133,7 +1340,7 @@ struct Session::Impl {
   State working;
   std::string saved_hash, saved_bytes;
   std::int64_t persisted = 0, revision = 0;
-  bool p2b = false, p2c = false, p2d = false, recovered = false,
+  bool p2b = false, p2c = false, p2d = false, p2d2 = false, recovered = false,
        uncertain = false, storage_error = false;
   std::int64_t generation = 0;
   std::string journal_hash;
@@ -1147,8 +1354,10 @@ struct Session::Impl {
       : workspace(
             std::filesystem::absolute(std::move(path)).lexically_normal()),
         p2b(profile != Profile::P2A),
-        p2c(profile == Profile::P2C || profile == Profile::P2D),
-        p2d(profile == Profile::P2D), hook(std::move(callback)) {
+        p2c(profile == Profile::P2C || profile == Profile::P2D ||
+            profile == Profile::P2D2),
+        p2d(profile == Profile::P2D || profile == Profile::P2D2),
+        p2d2(profile == Profile::P2D2), hook(std::move(callback)) {
     for (const auto &part : workspace)
       if (part.extension() == ".inde")
         fail("legacy_project_path_forbidden");
@@ -1187,13 +1396,30 @@ struct Session::Impl {
           fail("unsafe_seed_directory");
         Db original(source_path / "obj01-piloto.sqlite3", true);
         original.exec("BEGIN");
-        auto copied = read_saved(original, source_path, p2d ? 3 : p2c ? 2 : 1);
+        auto copied = read_saved(original, source_path,
+                                 p2d2  ? 4
+                                 : p2d ? 3
+                                 : p2c ? 2
+                                       : 1);
         original.exec("ROLLBACK");
         working = std::move(copied.state);
       }
       working.p2b = p2b;
       working.p2c = p2c;
       working.p2d = p2d;
+      working.p2d2 = p2d2;
+      if (p2d2) {
+        for (auto &f : working.formulas)
+          formula::rich::materialize_legacy(f);
+        const auto evaluated = formula::evaluate(working.formulas);
+        for (const auto &u : working.formula_uses)
+          if (!evaluated.at(u.object).command)
+            working.formula_text.emplace(
+                u.occurrence, FormulaText{u.object, {{{}, u.object}}});
+        for (const auto &[cell, id] : working.formula_cells)
+          if (!evaluated.at(id).command)
+            working.formula_text.emplace(cell, FormulaText{id, {{{}, id}}});
+      }
       if (p2c) {
         if (working.working_text.empty())
           working.working_text = working.source;
@@ -1206,7 +1432,8 @@ struct Session::Impl {
       db->exec("PRAGMA synchronous=FULL");
       Tx tx(*db);
       db->exec(
-          p2d   ? "PRAGMA application_id=1329744433; PRAGMA user_version=4;"
+          p2d2  ? "PRAGMA application_id=1329744433; PRAGMA user_version=5;"
+          : p2d ? "PRAGMA application_id=1329744433; PRAGMA user_version=4;"
           : p2c ? "PRAGMA application_id=1329744433; PRAGMA user_version=3;"
           : p2b ? "PRAGMA application_id=1329744433; PRAGMA user_version=2;"
                 : "PRAGMA application_id=1329744433; PRAGMA user_version=1;");
@@ -1291,7 +1518,7 @@ struct Session::Impl {
     if (sha(bytes) != hash)
       fail("saved_hash_mismatch");
     State s = decode(bytes);
-    if ((s.p2d ? 4 : s.p2c ? 3 : s.p2b ? 2 : 1) != version)
+    if ((s.p2d2 ? 5 : s.p2d ? 4 : s.p2c ? 3 : s.p2b ? 2 : 1) != version)
       fail("profile_snapshot_mismatch");
     if (read_file(origin / "origem-documento.json") != s.source)
       fail("frozen_source_changed");
@@ -1323,10 +1550,15 @@ struct Session::Impl {
     return {std::move(s), std::move(bytes), std::move(hash), rev};
   }
   Loaded load() {
-    return read_saved(*db, workspace, p2d ? 4 : p2c ? 3 : p2b ? 2 : 1);
+    return read_saved(*db, workspace,
+                      p2d2  ? 5
+                      : p2d ? 4
+                      : p2c ? 3
+                      : p2b ? 2
+                            : 1);
   }
   Loaded read_work(std::int64_t base = -1, const std::string &hash = {}) {
-    auto loaded = read_saved(*db, workspace, p2d ? 4 : 3, true);
+    auto loaded = read_saved(*db, workspace, p2d2 ? 5 : p2d ? 4 : 3, true);
     Query q(*db, "SELECT base_revision,base_sha256 FROM working WHERE id=1");
     if (!q.step() || q.integer(0) != (base < 0 ? persisted : base) ||
         q.string(1) != (base < 0 ? saved_hash : hash))
@@ -1542,20 +1774,44 @@ struct Session::Impl {
       text_groups.emplace_back(V::Object{
           {"id", g.source_block_id}, {"occurrences", array(g.occurrence_ids)}});
     V::Array formulas, uses;
-    V::Object cells;
+    V::Object cells, texts;
     if (p2d) {
       const auto evaluated = formula::evaluate(working.formulas);
       for (const auto &f : working.formulas) {
         const auto &r = evaluated.at(f.id);
         auto value = formula_value(f).as_object();
         V::Array variables;
-        for (const auto &var : r.variables)
-          variables.emplace_back(
-              V::Object{{"name", var.name},
-                        {"initial", var.initial ? V(*var.initial) : V{}},
-                        {"current", var.current},
-                        {"overridden", var.overridden}});
+        for (const auto &var : r.variables) {
+          const auto typed = [](const std::string &kind,
+                                const std::string &display,
+                                double number) -> V {
+            if (kind == "text")
+              return display;
+            if (kind == "boolean")
+              return display == "verdadeiro";
+            if (kind == "number")
+              return number;
+            return V{};
+          };
+          variables.emplace_back(V::Object{
+              {"name", var.name},
+              {"initial", p2d2 ? typed(var.initial_type, var.initial_display,
+                                       var.initial.value_or(0))
+                          : var.initial ? V(*var.initial)
+                                        : V{}},
+              {"current",
+               p2d2 ? typed(var.current_type, var.current_display, var.current)
+                    : V(var.current)},
+              {"overridden", var.overridden},
+              {"initial_display", var.initial_display},
+              {"current_display", var.current_display}});
+        }
         value.emplace("valid", r.valid);
+        if (p2d2) {
+          value.emplace("command", r.command);
+          value.emplace("consumed", r.consumed);
+          value.emplace("type", r.type);
+        }
         value.emplace("display", r.valid ? r.display : "");
         value.emplace("error", r.error);
         value.emplace("offset", number(r.offset));
@@ -1569,12 +1825,18 @@ struct Session::Impl {
       for (const auto &[cell, id] : working.formula_cells)
         cells.emplace(cell, id);
     }
+    if (p2d2)
+      for (const auto &[key, p] : working.formula_text)
+        texts.emplace(
+            key, V::Object{{"object", p.object}, {"runs", runs_value(p.runs)}});
     return V::Object{
+        {"formula_text", std::move(texts)},
         {"formulas", std::move(formulas)},
         {"formula_uses", std::move(uses)},
         {"formula_cells", std::move(cells)},
         {"text_groups", std::move(text_groups)},
-        {"profile", p2d   ? "P2-D"
+        {"profile", p2d2  ? "P2-D2"
+                    : p2d ? "P2-D"
                     : p2c ? "P2-C"
                     : p2b ? "P2-B"
                           : "P2-A"},
@@ -1636,6 +1898,7 @@ struct Session::Impl {
     return meta <= history_bytes && blobs <= 32 * mib;
   }
   void publish(State candidate, bool remember) {
+    sync_formula_text(candidate);
     validate(candidate);
     if (p2b) {
       auto past = undo, future = redo;
@@ -1746,6 +2009,7 @@ struct Session::Impl {
       if (p2c) {
         const bool text_edit = op == "edit_cell" || op == "edit_formula" ||
                                op == "execute_formula" ||
+                               op == "edit_formula_text" ||
                                op == "reset_formula_variable";
         const bool structure = op == "create_table" || op == "import" ||
                                op == "duplicate" || op == "move" ||
@@ -1890,6 +2154,33 @@ struct Session::Impl {
           candidate.visual = candidate.author;
           candidate.selection = group->occurrence_ids.front();
           candidate.selected_cell.clear();
+        } else if (op == "edit_formula_text") {
+          if (!p2d2)
+            fail("p2d2_profile_required");
+          fields(v, {"op", "expected", "target", "runs"});
+          const auto target = v.at("target").as_string();
+          const auto use = std::find_if(
+              candidate.formula_uses.begin(), candidate.formula_uses.end(),
+              [&](const auto &u) { return u.occurrence == target; });
+          const auto cell = candidate.formula_cells.find(target);
+          bool active_cell = false;
+          for (const auto &t : candidate.tables)
+            for (const auto &c : t.cells)
+              if (c.id == target) {
+                active_cell = true;
+                candidate.selection = t.occurrence;
+                candidate.selected_cell = c.id;
+              }
+          if (use == candidate.formula_uses.end() &&
+              (cell == candidate.formula_cells.end() || !active_cell))
+            fail("formula_text_target_invalid");
+          const auto id =
+              use != candidate.formula_uses.end() ? use->object : cell->second;
+          if (use != candidate.formula_uses.end()) {
+            candidate.selection = target;
+            candidate.selected_cell.clear();
+          }
+          candidate.formula_text[target] = {id, decode_runs(v.at("runs"))};
         } else if (op == "create_formula" || op == "attach_formula" ||
                    op == "detach_formula" || op == "edit_formula" ||
                    op == "execute_formula" || op == "reset_formula_variable") {
@@ -1910,7 +2201,10 @@ struct Session::Impl {
           };
           if (op == "create_formula" || op == "attach_formula" ||
               op == "detach_formula") {
-            if (op == "create_formula")
+            if (op == "create_formula" && p2d2)
+              fields(v, {"op", "expected", "name", "source", "before", "table",
+                         "cell", "prefix", "suffix"});
+            else if (op == "create_formula")
               fields(v, {"op", "expected", "name", "source", "before", "table",
                          "cell"});
             else if (op == "attach_formula")
@@ -1923,12 +2217,14 @@ struct Session::Impl {
               f.id = project::new_uuid();
               f.name = v.at("name").as_string();
               f.source = v.at("source").as_string();
+              f.advanced = p2d2;
               object = f.id;
               candidate.formulas.push_back(std::move(f));
               for (auto &r : candidate.formulas)
                 formula::bind(r, candidate.formulas);
             } else if (op == "attach_formula")
               object = find_formula(v.at("id").as_string())->id;
+            std::string presentation_target;
             const auto table = v.at("table").as_string(),
                        cell = v.at("cell").as_string();
             if (table.empty() && cell.empty() && op != "detach_formula") {
@@ -1937,6 +2233,7 @@ struct Session::Impl {
               const auto occurrence = project::new_uuid();
               insert_id(candidate, occurrence, v.at("before").as_string());
               candidate.formula_uses.push_back({occurrence, object});
+              presentation_target = occurrence;
             } else {
               if (op != "detach_formula" && !v.at("before").as_string().empty())
                 fail("formula_cell_destination");
@@ -1956,9 +2253,24 @@ struct Session::Impl {
               bump(t->payload_revision);
               candidate.selection = table;
               candidate.selected_cell = cell;
+              presentation_target = cell;
+            }
+            if (p2d2 && op == "create_formula") {
+              const auto result =
+                  formula::evaluate(candidate.formulas).at(object);
+              const auto prefix = v.at("prefix").as_string(),
+                         suffix = v.at("suffix").as_string();
+              if (result.command) {
+                if (!prefix.empty() || !suffix.empty())
+                  fail("formula_command_must_be_alone");
+              } else
+                candidate.formula_text[presentation_target] = {
+                    object, {{prefix, {}}, {{}, object}, {suffix, {}}}};
             }
           } else {
             const auto f = find_formula(v.at("id").as_string());
+            if (p2d2 && f->consumed)
+              fail("formula_command_consumed");
             if (op == "edit_formula") {
               fields(v, {"op", "expected", "id", "source"});
               f->source = v.at("source").as_string();
@@ -1967,12 +2279,40 @@ struct Session::Impl {
                 formula::bind(r, candidate.formulas);
             } else if (op == "execute_formula") {
               fields(v, {"op", "expected", "id"});
-              candidate.formulas = formula::execute(candidate.formulas, f->id);
+              const auto command_id = f->id;
+              candidate.formulas =
+                  formula::execute(candidate.formulas, command_id);
+              if (p2d2) {
+                std::vector<std::string> removed;
+                for (const auto &u : candidate.formula_uses)
+                  if (u.object == command_id) {
+                    removed.push_back(u.occurrence);
+                    candidate.retired_formula_uses.push_back(u);
+                  }
+                for (const auto &id : removed) {
+                  unpair(candidate, id);
+                  std::erase(candidate.author, id);
+                  std::erase(candidate.visual, id);
+                  if (candidate.selection == id) {
+                    candidate.selection.clear();
+                    candidate.selected_cell.clear();
+                  }
+                }
+                std::erase_if(candidate.formula_uses, [&](const auto &u) {
+                  return u.object == command_id;
+                });
+                std::erase_if(candidate.formula_cells, [&](const auto &v) {
+                  return v.second == command_id;
+                });
+              }
             } else {
               fields(v, {"op", "expected", "id", "variable"});
-              if (f->overrides.erase(v.at("variable").as_string()) != 1)
+              if (p2d2)
+                formula::rich::reset(*f, v.at("variable").as_string());
+              else if (f->overrides.erase(v.at("variable").as_string()) != 1)
                 fail("formula_override_missing");
-              bump(f->revision);
+              if (!p2d2)
+                bump(f->revision);
             }
           }
         } else if (op == "create_table") {
@@ -2055,6 +2395,8 @@ struct Session::Impl {
                          candidate.formula_uses.end(),
                          [&](const auto &u) { return u.occurrence == id; });
                      use != candidate.formula_uses.end()) {
+            if (p2d2)
+              candidate.retired_formula_uses.push_back(*use);
             candidate.formula_uses.erase(use);
           } else
             fail("source_removal_out_of_scope");

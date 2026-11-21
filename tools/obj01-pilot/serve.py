@@ -44,7 +44,7 @@ def sample_png():
 class Engine:
     def __init__(self, binary, workspace, profile='p2a', seed=None):
         args=[str(binary),'--workspace',str(workspace),'--profile',profile]
-        if seed is not None: args += ['--seed-p2c' if profile=='p2d' else '--seed-p2b' if profile=='p2c' else '--seed-p2a',str(seed)]
+        if seed is not None: args += ['--seed-p2d' if profile=='p2d2' else '--seed-p2c' if profile=='p2d' else '--seed-p2b' if profile=='p2c' else '--seed-p2a',str(seed)]
         self.process = subprocess.Popen(args,
                                         stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=sys.stderr)
         try:
@@ -151,7 +151,7 @@ class Handler(BaseHTTPRequestHandler):
             if len(raw) != size:
                 return self.reply(400, {'accepted': False, 'error': 'incomplete_request'})
             data = json.loads(raw)
-            if not isinstance(data, dict) or data.get('op') not in {'import', 'duplicate', 'move', 'arrange', 'stack', 'restore', 'save', 'reopen', 'select', 'create_table', 'edit_cell', 'select_cell', 'remove', 'undo', 'redo', 'set_context', 'reorder_text', 'reopen_working', 'export_legacy', 'create_formula', 'edit_formula', 'execute_formula', 'reset_formula_variable', 'attach_formula', 'detach_formula'}:
+            if not isinstance(data, dict) or data.get('op') not in {'import', 'duplicate', 'move', 'arrange', 'stack', 'restore', 'save', 'reopen', 'select', 'create_table', 'edit_cell', 'select_cell', 'remove', 'undo', 'redo', 'set_context', 'reorder_text', 'reopen_working', 'export_legacy', 'create_formula', 'edit_formula', 'execute_formula', 'reset_formula_variable', 'attach_formula', 'detach_formula', 'edit_formula_text'}:
                 return self.reply(400, {'accepted': False, 'error': 'unsupported_operation'})
             self.reply(200, self.server.engine.request(data))
         except (ValueError, UnicodeError, RecursionError):
@@ -167,20 +167,21 @@ def main():
     parser = argparse.ArgumentParser(description='Abrir o experimento isolado INDE P2-A')
     parser.add_argument('--binary', type=Path, default=ROOT / 'build-obj01-p2a/inde_object_composite_pilot')
     parser.add_argument('--workspace', type=Path)
-    parser.add_argument('--profile', choices=['p2a','p2b','p2c','p2d'], default='p2a')
+    parser.add_argument('--profile', choices=['p2a','p2b','p2c','p2d','p2d2'], default='p2a')
     parser.add_argument('--seed-p2a', type=Path, help='Copiar estado salvo de uma fixture P2-A para uma pasta P2-B nova')
     parser.add_argument('--seed-p2b', type=Path, help='Copiar estado salvo de uma fixture P2-B para P2-C novo')
     parser.add_argument('--seed-p2c', type=Path, help='Copiar estado salvo de P2-C para P2-D novo')
+    parser.add_argument('--seed-p2d', type=Path, help='Copiar cálculo salvo de P2-D para P2-D2 novo; comandos mistos incompatíveis são recusados')
     parser.add_argument('--port', type=int, default=0)
     parser.add_argument('--ready-file', type=Path, help=argparse.SUPPRESS)
     args = parser.parse_args()
     if not args.binary.is_file():
         parser.error('Compile o piloto conforme o README antes de abrir a demonstração.')
     workspace = args.workspace.resolve() if args.workspace else Path(tempfile.mkdtemp(prefix='inde-obj01-'+args.profile+'-'))
-    if sum(bool(s) for s in [args.seed_p2a,args.seed_p2b,args.seed_p2c]) > 1: parser.error('Escolha somente uma origem experimental.')
-    if (args.seed_p2a and args.profile != 'p2b') or (args.seed_p2b and args.profile != 'p2c') or (args.seed_p2c and args.profile != 'p2d'):
+    if sum(bool(s) for s in [args.seed_p2a,args.seed_p2b,args.seed_p2c,args.seed_p2d]) > 1: parser.error('Escolha somente uma origem experimental.')
+    if (args.seed_p2a and args.profile != 'p2b') or (args.seed_p2b and args.profile != 'p2c') or (args.seed_p2c and args.profile != 'p2d') or (args.seed_p2d and args.profile != 'p2d2'):
         parser.error('A origem deve corresponder ao perfil experimental de destino.')
-    engine = Engine(args.binary.resolve(), workspace, args.profile, args.seed_p2c or args.seed_p2b or args.seed_p2a)
+    engine = Engine(args.binary.resolve(), workspace, args.profile, args.seed_p2d or args.seed_p2c or args.seed_p2b or args.seed_p2a)
     try:
         with HTTPServer(('127.0.0.1', args.port), Handler) as server:
             server.engine = engine
@@ -202,7 +203,7 @@ def main():
                     os.unlink(pending)
             print('Demo '+args.profile.upper()+': ' + ready['url'], flush=True)
             print('Dados experimentais: ' + str(workspace), flush=True)
-            print('Ctrl+C encerra. Operações confirmadas são recuperáveis neste perfil; Salvar confirma o estado autoral.' if args.profile in ['p2c','p2d'] else 'Ctrl+C encerra. Alterações em memória precisam ser salvas antes de encerrar.', flush=True)
+            print('Ctrl+C encerra. Operações confirmadas são recuperáveis neste perfil; Salvar confirma o estado autoral.' if args.profile in ['p2c','p2d','p2d2'] else 'Ctrl+C encerra. Alterações em memória precisam ser salvas antes de encerrar.', flush=True)
             try:
                 server.serve_forever()
             except KeyboardInterrupt:
