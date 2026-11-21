@@ -1,6 +1,6 @@
 # INDE-OBJ-01 — Contrato da fundação de objetos e operações
 
-Versão **0.7 experimental — pontes, planos, sessões e protocolo de save/recovery de laboratório**, 2026-11-20. Escopo: **Fase 1**, C++20 em memória. Implementação: `cpp/object_model.{hpp,cpp}` e `cpp/object_commands.{hpp,cpp}`. O núcleo de comandos permanece isolado. Bibliotecas separadas fazem leitura do Documento (`object_document_adapter.*`) e da Composição persistida (`object_composition_adapter.*`), sem escrita, GTK, alterações SQLite ou arquivo único `.inde`. Ver [ponte documental](ADAPTADOR-DOCUMENTO-OBJ-01.md), [ponte da Composição](ADAPTADOR-COMPOSICAO-OBJ-01.md) e [planos de alterações](PLANO-ALTERACOES-OBJ-01.md). O planejador separado traduz prévias autorais conservadoras pelo motor existente; não aplica alterações na fonte.
+Versão **0.8 experimental — fundação, sessões e armazenamento de recovery em laboratório**, 2026-11-20. Escopo: **Fase 1**, C++20 em memória. Implementação: `cpp/object_model.{hpp,cpp}` e `cpp/object_commands.{hpp,cpp}`. O núcleo de comandos permanece isolado. Bibliotecas separadas fazem leitura do Documento (`object_document_adapter.*`) e da Composição persistida (`object_composition_adapter.*`), sem escrita, GTK, alterações SQLite ou arquivo único `.inde`. Ver [ponte documental](ADAPTADOR-DOCUMENTO-OBJ-01.md), [ponte da Composição](ADAPTADOR-COMPOSICAO-OBJ-01.md) e [planos de alterações](PLANO-ALTERACOES-OBJ-01.md). O planejador separado traduz prévias autorais conservadoras pelo motor existente; não aplica alterações na fonte.
 
 ## Autoridades e identidades
 
@@ -86,3 +86,5 @@ O requisito de plano explícito está implementado de forma limitada e verificá
 A aplicação controlada desses candidatos agora existe em [sessões privadas de memória](SESSOES-OBJ-01.md), com tickets vinculados à revisão, conferência da origem e histórico conjunto. Não aplica alterações a serviços, arquivos ou bancos. [Validação](../validacao/VALIDACAO-OBJ-01-SESSOES.md).
 
 O [protocolo de save/readback e checkpoint de laboratório](SALVAMENTO-RECOVERY-OBJ-01.md) agora permite reconhecer gravações pelos serviços existentes e ensaiar reinício em fixtures. A biblioteca continua sem escrita em arquivos/bancos; o teste nativo é o único executor de escrita deste corte. [Validação](../validacao/VALIDACAO-OBJ-01-SALVAMENTO.md).
+
+O [armazenamento Linux separado](ARMAZENAMENTO-RECOVERY-OBJ-01.md) acrescenta gerações imutáveis, publicação com sync, lease e retenção explícita em diretórios dedicados novos. Não é aberto pelo aplicativo nem substitui o journal ou os bancos existentes. [Validação](../validacao/VALIDACAO-OBJ-01-ARMAZENAMENTO.md).

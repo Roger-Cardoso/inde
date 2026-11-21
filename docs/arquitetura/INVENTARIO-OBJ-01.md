@@ -109,3 +109,7 @@ O driver GTK P03b `ui_document_visibility_smoke.cpp` ainda procura um segundo `T
 ## Complemento: save/readback e recovery de laboratório
 
 O [corte de protocolo](SALVAMENTO-RECOVERY-OBJ-01.md) confirmou três pontos na implementação real: o CAS precisa permanecer dentro das transações proprietárias; o readback documental pode ordenar spans por posição sem mudar seu estado autoral; o journal documental não representa apresentação ou Composição OBJ-01. O reconhecimento usa igualdade proprietária e adota o readback, preservando o histórico com timestamp reservado. Dois processos ensaiam commit antes de ack e interrupção entre autoridades independentes. Não se promove esse ensaio a store de produção, lease, atomicidade conjunta ou migração. [Evidências](../validacao/VALIDACAO-OBJ-01-SALVAMENTO.md).
+
+## Complemento: durabilidade e lease
+
+O [store de laboratório](ARMAZENAMENTO-RECOVERY-OBJ-01.md) distingue arquivo temporário, geração publicada visível e publicação sincronizada. O lease por descritor impede acesso cooperante simultâneo ao mesmo store e é liberado na morte do processo; não substitui CAS autoral. Retenção remove somente versões antigas explicitamente selecionadas, com resultado parcial/indeterminado declarado em falha. Seis fronteiras de interrupção foram ensaiadas em processos novos, preservando a geração anterior. [Validação](../validacao/VALIDACAO-OBJ-01-ARMAZENAMENTO.md).

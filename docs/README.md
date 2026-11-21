@@ -23,3 +23,6 @@
 
 - [Protocolo de salvamento e recovery em laboratório](arquitetura/SALVAMENTO-RECOVERY-OBJ-01.md).
 - [Validação de save/recovery](validacao/VALIDACAO-OBJ-01-SALVAMENTO.md).
+
+- [Armazenamento durável de checkpoints em laboratório](arquitetura/ARMAZENAMENTO-RECOVERY-OBJ-01.md).
+- [Validação do armazenamento](validacao/VALIDACAO-OBJ-01-ARMAZENAMENTO.md).

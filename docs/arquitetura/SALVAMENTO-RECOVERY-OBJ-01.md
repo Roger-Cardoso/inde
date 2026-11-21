@@ -71,3 +71,7 @@ Um processo novo via `fork`/`exec` executa os serviços e encerra com `_exit` de
 O journal antigo `DocumentRecoveryStore` armazena Documento/seleção, mas não representa o grafo nem a Composição integral OBJ-01. Este corte não altera esse journal, não marca a apresentação como salva por ele e não migra seu schema. Um armazenamento durável de produção ainda exige gerações/atualização atômica do checkpoint, lease, retenção, exclusão/exportação, integração com o coordenador real e tratamento completo de I/O/resultado incerto. GTK, obras reais, publicação e arquivo único `.inde` permanecem fora do corte.
 
 Ver [validação](../validacao/VALIDACAO-OBJ-01-SALVAMENTO.md), [sessões](SESSOES-OBJ-01.md) e [inventário](INVENTARIO-OBJ-01.md).
+
+## Continuidade: armazenamento dedicado
+
+O corte seguinte implementou [store durável de laboratório](ARMAZENAMENTO-RECOVERY-OBJ-01.md) para esses bytes, com gerações, lease, sync e retenção explícita. Os checkpoints continuam privados e a biblioteca de sessões permanece sem escritor de arquivos/bancos. Coordenação automática, manutenção de incompletos, interface e obras reais continuam fora da integração.
