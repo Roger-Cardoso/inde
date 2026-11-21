@@ -14,6 +14,9 @@ on:
       - tests/object_change_session/**
       - tests/object_save_protocol/**
       - tests/object_checkpoint_store/**
+      - tests/object_composite_pilot/**
+      - tools/obj01-pilot/**
+      - scripts/demos/Abrir-demo-obj01-p2a.sh
       - tests/audit_obj01_sources.py
       - tests/test_obj01_source_audit.py
       - fontes/*.tar.gz
@@ -34,6 +37,9 @@ on:
       - tests/object_change_session/**
       - tests/object_save_protocol/**
       - tests/object_checkpoint_store/**
+      - tests/object_composite_pilot/**
+      - tools/obj01-pilot/**
+      - scripts/demos/Abrir-demo-obj01-p2a.sh
       - tests/audit_obj01_sources.py
       - tests/test_obj01_source_audit.py
       - fontes/*.tar.gz
@@ -46,6 +52,34 @@ permissions:
   contents: read
 
 jobs:
+  composite-p2a:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    strategy:
+      matrix:
+        compiler: [g++, clang++]
+        sanitize: ["OFF", "ON"]
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+      - name: Install isolated document, PNG and SQLite dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install --yes libglib2.0-dev libgdk-pixbuf-2.0-dev libsqlite3-dev zlib1g-dev uuid-dev ninja-build
+      - name: Extract verified owner source without migration
+        run: python3 verificar_base.py --integrado --extrair
+      - name: Configure P2-A without GTK or canonical SQLite repositories
+        run: >-
+          cmake -S tests/object_composite_pilot -B build-obj01-p2a -G Ninja
+          -DCMAKE_CXX_COMPILER=${{ matrix.compiler }}
+          -DOBJ01_SANITIZE=${{ matrix.sanitize }}
+          -DCMAKE_BUILD_TYPE=Debug
+      - name: Compile real pilot and owner codecs
+        run: cmake --build build-obj01-p2a --parallel 2
+      - name: Verify document, PNG, transactions, restart and loopback controller
+        env:
+          ASAN_OPTIONS: detect_leaks=1:halt_on_error=1
+          UBSAN_OPTIONS: halt_on_error=1:print_stacktrace=1
+        run: ctest --test-dir build-obj01-p2a --output-on-failure
   pinned-sources:
     runs-on: ubuntu-24.04
     timeout-minutes: 5
