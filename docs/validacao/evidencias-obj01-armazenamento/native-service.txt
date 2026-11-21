@@ -1,0 +1,16 @@
+14/61 Testing: inde_object_checkpoint_store_service_tests
+14/61 Test: inde_object_checkpoint_store_service_tests
+Command: "/home/roger/Documents/Projects/GitHub/INDE/obj01-audit/build-nativo/inde_object_checkpoint_store_service_tests"
+Directory: /home/roger/Documents/Projects/GitHub/INDE/obj01-audit/build-nativo
+"inde_object_checkpoint_store_service_tests" start time: Nov 21 09:09 -03
+Output:
+----------------------------------------------------------
+INDE-OBJ-01: durable store + real repository integration passed; pre-CAS and post-ack generations, independent Document/Composition stores, checkpoint-failure write barrier and schema37 integrity verified
+<end of output>
+Test time =   0.58 sec
+----------------------------------------------------------
+Test Passed.
+"inde_object_checkpoint_store_service_tests" end time: Nov 21 09:09 -03
+"inde_object_checkpoint_store_service_tests" time elapsed: 00:00:00
+----------------------------------------------------------
+

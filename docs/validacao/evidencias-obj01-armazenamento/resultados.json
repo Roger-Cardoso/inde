@@ -1,0 +1,131 @@
+{
+  "date": "2026-11-21",
+  "branch": "feature/inde-obj-01-foundation",
+  "base_commit": "b5c9c820bd75beba2596a7b0328e5465c09df05b",
+  "implementation_commit": "06e62253187bb90c815c238634ac4b8e937c62f3",
+  "scope": "OBJ-01 Phase 1 dedicated Linux durable checkpoint laboratory; no automatic application/project integration",
+  "implementation_sha256": {
+    "cpp/object_checkpoint_store.cpp": "3c216536ce8b1336cc4e7ce9a4877d4ff4b579cfa098a5790e8cc6431fced096",
+    "cpp/object_checkpoint_store.hpp": "0d2ab1222e8636714402b0bc682516f20c4a4f5df9708b1f97a117060b9fcb87",
+    "cpp/object_checkpoint_store_tests.cpp": "091492d09bcd749b9e0576ad455913d37ea663cec1f5e505f28b29bc57c3c88a",
+    "cpp/object_checkpoint_store_service_tests.cpp": "32407aa483da174d8f2597aedaa72c56f765d090db8670122709a1c0ed30c72c",
+    "cpp/CMakeLists.txt": "8c2ca6a9892fbf923d3605b9f3b31d0c7634a1f9fc32a3c40e7f8fb359c6a5e4",
+    "tests/object_document/CMakeLists.txt": "ff10a7987232da73b664bf6d12543d2d091a1db9455e0ffecfd25b171e5d34f9",
+    "tests/object_checkpoint_store/CMakeLists.txt": "5d2c209f2c2df56c5ee7ba1db546a0a3ada6c5d97c25f694b7cb363cba520fce",
+    ".github/workflows/obj-01.yml": "8a2bcd26182c50b209866c55fd0c4e1dc3122a581419e256bc975711ff26940d"
+  },
+  "minimal": {
+    "gcc": "15.2.0",
+    "clang": "18.1.8",
+    "programs_passed_per_build": 6,
+    "groups": 52,
+    "owner_units": 26,
+    "asan_ubsan": "passed",
+    "local_lsan": false,
+    "ci_lsan": true
+  },
+  "new_store_groups": 6,
+  "process_crash_windows": [
+    "BeforeCreate",
+    "Created",
+    "Written",
+    "FileSynced",
+    "Published",
+    "DirectorySynced"
+  ],
+  "injected_io_failures": [
+    "Write ENOSPC",
+    "Write EINTR retry",
+    "FileSync EIO",
+    "Publish EIO",
+    "DirectorySync EIO",
+    "Remove EIO after earlier removal",
+    "RetentionSync EIO after deletion"
+  ],
+  "failed_open_descriptor_checks": 20,
+  "native_full": {
+    "passed": 61,
+    "total": 61,
+    "seconds": 164.77
+  },
+  "repository_proof": {
+    "temporary_new_project_only": true,
+    "document_and_composition_scoped_stores": true,
+    "durable_generation_before_CAS": true,
+    "post_ack_generation_preserves_previous": true,
+    "publication_ENOSPC_prevents_authorial_writer": true,
+    "schema": 37,
+    "integrity_check": "ok",
+    "foreign_key_check": "empty"
+  },
+  "archives": [
+    {
+      "label": "schema28",
+      "path": "fontes/inde-schema28-89b47f27.tar.gz",
+      "sha256": "3d6bee4c60dbecc602a56881b1957f90b55798dbc711c9c290701e2ad8a6e97e",
+      "files": 641,
+      "manifest_match": true
+    },
+    {
+      "label": "original37",
+      "path": "fontes/inde-P03c-schema37-original.tar.gz",
+      "sha256": "2e97a15ddcda56b8f5892d033c9a7427d6102bcf650454678491c50ff5459ef2",
+      "files": 757,
+      "manifest_match": true
+    },
+    {
+      "label": "integrated37",
+      "path": "fontes/inde-integrado-schema37.tar.gz",
+      "sha256": "554623abec5d7c3c175dab2aa6bbabc8a95abd6e3d98a27191cea0260a4965c4",
+      "files": 758,
+      "manifest_match": true
+    }
+  ],
+  "archive_verifier_tests": 5,
+  "store": {
+    "format": "INDE-OBJ01-STORE-LAB-1",
+    "generation_format": "INDE-OBJ01-GENERATION-LAB-1",
+    "root_mode": "0700",
+    "file_mode": "0600",
+    "exclusive_advisory_flock": true,
+    "no_follow_components": true,
+    "atomic_publish": "renameat2 RENAME_NOREPLACE",
+    "file_and_directory_fsync": true,
+    "default_data_files": 64,
+    "default_data_bytes": 268435456,
+    "max_data_files": 128,
+    "max_data_bytes": 536870912,
+    "minimum_retention_generations": 2,
+    "incomplete_auto_cleanup": false,
+    "implicit_corrupt_latest_fallback": false
+  },
+  "not_implemented": [
+    "automatic checkpoint/writer/ack coordinator",
+    "incomplete generation maintenance/export/discard",
+    "source-global lease",
+    "cross-store or SQLite atomicity",
+    "hostile same-UID authentication",
+    "restart undo/redo history",
+    "GTK",
+    "schema/project migration",
+    "single-file .inde",
+    "publication integration"
+  ],
+  "not_tested": [
+    "power loss",
+    "hardware fsync compliance",
+    "all syscall fault points",
+    "short-write injection",
+    "allocation-failure injection",
+    "broad concurrent stress",
+    "interactive latency/RSS benchmark"
+  ],
+  "ci": {
+    "run_id": 44902673000,
+    "url": "https://github.com/Roger-Cardoso/inde/actions/runs/44902673000",
+    "head_sha": "06e62253187bb90c815c238634ac4b8e937c62f3",
+    "jobs": 21,
+    "passed": 21,
+    "conclusion": "success"
+  }
+}

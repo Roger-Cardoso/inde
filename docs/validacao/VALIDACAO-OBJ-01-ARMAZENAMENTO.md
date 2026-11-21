@@ -79,3 +79,20 @@ Temporários e evidência inválida não são removidos automaticamente; manuten
 Os 92 testes Python do aplicativo e percursos GTK/publicação não foram reexecutados, pois não houve integração nessas camadas. O próximo gate é coordenar escritor, gerações pendentes/reconhecidas, resultado incerto e manutenção segura no laboratório. Não se promove o corte a escrita em obras reais, migração, GTK ou arquivo único `.inde`.
 
 Ver [contrato](../arquitetura/ARMAZENAMENTO-RECOVERY-OBJ-01.md), [protocolo anterior](VALIDACAO-OBJ-01-SALVAMENTO.md) e [inventário](../arquitetura/INVENTARIO-OBJ-01.md). Resultados/evidências são consolidados abaixo.
+
+## Resultados registrados
+
+Implementação e contrato: `06e62253187bb90c815c238634ac4b8e937c62f3`. A consolidação posterior acrescenta somente evidências/documentação.
+
+| Verificação | Resultado | Evidência |
+| --- | --- | --- |
+| GCC 15.2.0, mínimo | 6/6 programas aprovados, 52 grupos | [gcc.txt](evidencias-obj01-armazenamento/gcc.txt) |
+| Clang 18.1.8, mínimo | 6/6 aprovados | [clang.txt](evidencias-obj01-armazenamento/clang.txt) |
+| ASan/UBSan locais, incluindo 26 unidades proprietárias | 6/6 aprovados; sem diagnósticos, LSan local desativado | [asan-ubsan.txt](evidencias-obj01-armazenamento/asan-ubsan.txt) |
+| CI, incluindo LSan remoto | **21/21 jobs aprovados** | [execução 44902673000](https://github.com/Roger-Cardoso/inde/actions/runs/44902673000), [ci.json](evidencias-obj01-armazenamento/ci.json) |
+| CTest nativo completo | **61/61 aprovados**, em 164,77 s | [native-ctest.txt](evidencias-obj01-armazenamento/native-ctest.txt) |
+| Store + CAS/readback reais | Aprovado, com barreira de falha de checkpoint e schema37 íntegro | [native-service.txt](evidencias-obj01-armazenamento/native-service.txt) |
+| Três pacotes de fontes/manifests | Hashes/inventários conferidos: 641 / 757 / 758 arquivos | [fontes.json](evidencias-obj01-armazenamento/fontes.json) |
+| Recusas do verificador de fontes | 5/5 testes Python aprovados | [fontes-tests.txt](evidencias-obj01-armazenamento/fontes-tests.txt) |
+
+O [resumo estruturado](evidencias-obj01-armazenamento/resultados.json) identifica commit, hashes de implementação, cobertura e limites. Logs/JSON possuem [SHA256SUMS](evidencias-obj01-armazenamento/SHA256SUMS), verificáveis nessa pasta com `sha256sum -c SHA256SUMS`. São checksums de conteúdo, não atestação externa. A CI registrada corresponde à implementação; a consolidação mantém o mesmo código.

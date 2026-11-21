@@ -1,0 +1,36 @@
+
+/tmp/obj01-store-clang-configure.log
+{
+  "schema": 37,
+  "arquivos_conferidos": 758,
+  "arquivo_sha256": "554623abec5d7c3c175dab2aa6bbabc8a95abd6e3d98a27191cea0260a4965c4",
+  "resultado": "ok"
+}
+-- Configuring done (1.6s)
+-- Generating done (0.1s)
+-- Build files have been written to: /home/roger/Documents/Projects/GitHub/INDE/obj01-audit/build-obj01-plan-clang
+
+/tmp/obj01-store-clang-final-build.log
+[1/4] Building CXX object document-domain/CMakeFiles/inde_object_checkpoint_store_tests.dir/home/roger/Documents/Projects/GitHub/INDE/obj01-audit/cpp/object_checkpoint_store_tests.cpp.o
+[2/4] Building CXX object document-domain/CMakeFiles/inde_object_checkpoint_store.dir/home/roger/Documents/Projects/GitHub/INDE/obj01-audit/cpp/object_checkpoint_store.cpp.o
+[3/4] Linking CXX static library document-domain/libinde_object_checkpoint_store.a
+[4/4] Linking CXX executable document-domain/inde_object_checkpoint_store_tests
+
+/tmp/obj01-store-clang-final-ctest.log
+Test project /home/roger/Documents/Projects/GitHub/INDE/obj01-audit/build-obj01-plan-clang
+    Start 1: inde_object_document_adapter_tests
+1/6 Test #1: inde_object_document_adapter_tests ......   Passed    2.88 sec
+    Start 2: inde_object_composition_adapter_tests
+2/6 Test #2: inde_object_composition_adapter_tests ...   Passed    4.11 sec
+    Start 3: inde_object_change_plan_tests
+3/6 Test #3: inde_object_change_plan_tests ...........   Passed    7.06 sec
+    Start 4: inde_object_change_session_tests
+4/6 Test #4: inde_object_change_session_tests ........   Passed    3.12 sec
+    Start 5: inde_object_save_protocol_tests
+5/6 Test #5: inde_object_save_protocol_tests .........   Passed    3.17 sec
+    Start 6: inde_object_checkpoint_store_tests
+6/6 Test #6: inde_object_checkpoint_store_tests ......   Passed    2.13 sec
+
+100% tests passed out of 6
+
+Total Test time (real) =  22.47 sec
