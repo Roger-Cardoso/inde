@@ -1,0 +1,13 @@
+Test project /home/roger/Documents/Projects/GitHub/INDE/obj01-audit/build-obj01-p2a
+    Start 1: inde_object_composite_pilot_tests
+1/4 Test #1: inde_object_composite_pilot_tests ....   Passed    1.28 sec
+    Start 2: inde_object_composite_p2b_tests
+2/4 Test #2: inde_object_composite_p2b_tests ......   Passed    6.16 sec
+    Start 3: inde_object_composite_p2c_tests
+3/4 Test #3: inde_object_composite_p2c_tests ......   Passed    4.04 sec
+    Start 4: inde_object_document_adapter_tests
+4/4 Test #4: inde_object_document_adapter_tests ...   Passed    2.23 sec
+
+100% tests passed out of 4
+
+Total Test time (real) =  13.71 sec

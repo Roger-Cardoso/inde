@@ -1,0 +1,372 @@
+{
+  "date": "2026-11-21",
+  "branch": "feature/inde-obj-01-foundation",
+  "base_commit": "b1ae38fbcc47962c33ca74e8bcdca2e72ae64cca",
+  "implementation_commit": "b637d0bfcdc82437902fbc786549541ad68267fe",
+  "scope": "P2-C complete aggregate working recovery, owner group reorder, minimum shared editing contexts and local publication refusal; canonical publisher integration remains pending",
+  "code_sha256": {
+    ".github/workflows/obj-01.yml": "410e1417c1182bf3f1cbb1d4c2ce6e5de5caca3deeccab79094cc2bc5caba5e4",
+    "cpp/object_composite_pilot.cpp": "55685e2412715785fe384fa1fa7de32795abed49c09adcd6af63b9ae39a84e4e",
+    "cpp/object_composite_pilot.hpp": "3d7e645b08dc2563fb9f72fbf342b72153d4d69439096230c85a55a7ab64f35f",
+    "cpp/object_composite_pilot_main.cpp": "80c4c706a0e5b91aea3e44e4e9c8c74388cdf6b5219f28dc35fdd09a64256638",
+    "scripts/demos/Abrir-demo-obj01-p2c.sh": "9f823ce732dd8cb9748c96564ecb05233297c445b00f53b8b838d62be451522c",
+    "tests/object_composite_pilot/CMakeLists.txt": "451122b84cf8dc9415ff249b76608297a9e8c256b261903dd4624a6b14b9f076",
+    "tests/object_composite_pilot/test_http_p2c.py": "fd5b5441aec4423f913a0616f0ab5e6155be082c1fbe753276e92b7823579d1a",
+    "tests/object_composite_pilot/test_p2c.py": "8ea572edd39a8d3d298e1af65cbd1a8e6a925114c14b05a47441c8f990b8d946",
+    "tests/object_composite_pilot/test_pilot.py": "03d6cf05f41c3cdfa7ef9c23dc94ce6ba396268eae152c6c2fa6781afbe97562",
+    "tools/obj01-pilot/P2C.md": "a69aa12531748321169971fed6f298a16172201604262844038f02503e715b7d",
+    "tools/obj01-pilot/app.js": "b132101e8e5e432156d4400dcf6c9c67379cfd9cad7370ffea53784c5e86178e",
+    "tools/obj01-pilot/index.html": "4b3b39150b44bbfac00f2b955e3ccfaef348acfbeffc5beb4b30a589e32224ee",
+    "tools/obj01-pilot/serve.py": "ac56732bb64b286e7c34dbceef3975c9d18ec3018378c9e7d85fdfc3386e2a90",
+    "tools/obj01-pilot/style.css": "8af974d820f0ad4b75ef69e76f95d574a6d9467ae94685b2099740bb11c0cb04"
+  },
+  "document_sha256": {
+    "docs/README.md": "6b7e08f959c197ddf98c191ae330f4c10a954684fac859f151426fc212f2b5e2",
+    "docs/arquitetura/INDE-OBJ-01.md": "edcedfd9f0a2900b7ffa16545162486001550ecb25ca55e742fb61758ed0bb4f",
+    "docs/arquitetura/RECONCILIACAO-OBJ-01.md": "1f3f98755d2f8d436a560e9e07bd5b0ee2d37df67d2e6b77cc71293c8a52f149",
+    "docs/arquitetura/CONTRATO-DOCUMENTO-COMPOSTO-OBJ-01.md": "e251a30df87cc5527b1b792633ccf7ca6b35e9d152902cccddcf440c4a4c9e5c",
+    "docs/arquitetura/PILOTO-DOCUMENTO-COMPOSTO-OBJ-01.md": "3e05451333a5275acca5e99454f0adc54744f295172eaa60a994c1e255db46a1",
+    "docs/arquitetura/P2C-DOCUMENTO-COMPOSTO-OBJ-01.md": "3b89a5e133b4e6ee41c7dc474d2b005b66c5a7847958f39658cfd584b3b70802",
+    "docs/validacao/VALIDACAO-OBJ-01-P2C.md": "39231115f1917b87014361839f9553e0bcb246ba1979c7b4a6ae9b6d6c172606",
+    "tools/obj01-pilot/README.md": "04c9d1c58868180eef4b652ee7dc418cfb50fd48d36f3e8f49b31771ec878c30",
+    "tools/obj01-pilot/P2C.md": "a69aa12531748321169971fed6f298a16172201604262844038f02503e715b7d"
+  },
+  "local": {
+    "variants": [
+      "GCC 15.2 Debug",
+      "Clang 18.1 Debug",
+      "GCC ASan+UBSan",
+      "Clang ASan+UBSan"
+    ],
+    "programs_per_variant": 7,
+    "domain_programs": 4,
+    "http_programs": 3,
+    "p2a_core_cases": 19,
+    "p2a_http_cases": 4,
+    "p2b_core_cases": 12,
+    "p2b_http_cases": 6,
+    "p2c_core_cases": 16,
+    "p2c_http_cases": 7,
+    "http_inherited_common_cases_per_profile": 4,
+    "owner_adapter_groups": 9,
+    "local_lsan": false,
+    "test_names": {
+      "test_pilot.py": [
+        "test_p01_capture_and_private_layers",
+        "test_p02_real_png_and_distinct_identities",
+        "test_p03_insert_between_complete_groups",
+        "test_p04_row_profile_and_stack",
+        "test_p05_reuse_and_move_only_selected_use",
+        "test_visual_intent_requires_explicit_restore",
+        "test_row_move_preserves_other_use_and_source",
+        "test_p09_save_new_process_without_external_png",
+        "test_fractional_profile_roundtrips_without_precision_loss",
+        "test_failed_sqlite_write_rolls_back_blobs_and_snapshot",
+        "test_missing_blob_refuses_open_without_partial_state",
+        "test_unknown_snapshot_version_is_not_overwritten",
+        "test_unsaved_reopen_requires_confirmation",
+        "test_invalid_png_crc_and_animation_are_atomic",
+        "test_stale_revision_and_unknown_operation",
+        "test_cas_conflict_does_not_overwrite",
+        "test_corrupt_blob_refuses_reopen_without_partial_state",
+        "test_unknown_database_version_and_frozen_source_are_preserved",
+        "test_exclusive_workspace_lease_and_legacy_path_refusal"
+      ],
+      "test_http.py": [
+        "test_token_and_origin_guards_preserve_document",
+        "test_static_interface_and_safety_headers",
+        "test_real_import_save_reopen_and_resource_bytes",
+        "test_invalid_request_has_no_effect"
+      ],
+      "test_p2b.py": [
+        "test_p06_table_and_cell_identities",
+        "test_p07_cell_selection_is_typed_and_does_not_invalidate_redo",
+        "test_p08_move_remove_undo_redo_conserves_table_and_selection",
+        "test_p08_last_figure_resource_survives_remove_save_restart",
+        "test_undo_import_after_save_keeps_resource_and_can_save_again",
+        "test_p09_tables_images_profiles_new_process_roundtrip",
+        "test_new_edit_after_undo_clears_redo",
+        "test_history_is_bounded_and_revision_monotonic",
+        "test_limits_and_group_refusals_are_atomic",
+        "test_p2a_seed_is_readonly_and_keeps_ids_and_bytes",
+        "test_profiles_do_not_implicitly_upgrade_each_other",
+        "test_invalid_persisted_table_rejected_without_replacing_work"
+      ],
+      "test_http_p2b.py": [
+        "test_table_cells_history_and_reopen",
+        "test_invalid_cell_has_no_effect"
+      ],
+      "test_p2c.py": [
+        "test_p13_unsaved_complete_work_survives_sigkill",
+        "test_save_promotes_work_but_keeps_live_history",
+        "test_explicit_saved_discard_and_verified_unclaimed_blob",
+        "test_checkpoint_failure_rolls_back_and_preserves_work_and_history",
+        "test_lost_checkpoint_ack_requires_reopen_and_recovers_candidate",
+        "test_lost_save_ack_reopens_committed_saved_state",
+        "test_undo_checkpoint_is_recovered_after_sigkill",
+        "test_working_base_and_resource_corruption_fail_closed",
+        "test_real_checkpoint_crash_windows",
+        "test_real_save_crash_windows",
+        "test_work_generation_conflict_and_reload",
+        "test_corrupt_work_fails_closed_without_saved_fallback",
+        "test_p10_owner_group_reorder_and_undo_conserve_original",
+        "test_partial_group_and_interval_owner_refusal_are_atomic",
+        "test_p14_context_keeps_target_and_publication_is_refused",
+        "test_p2b_seed_readonly_and_profiles_preserved"
+      ],
+      "test_http_p2c.py": [
+        "test_table_work_is_durable_without_promoting_saved",
+        "test_instruments_preserve_target_and_guard_wrong_operation",
+        "test_complete_text_group_move_uses_owner_order_and_frozen_hash"
+      ]
+    },
+    "real_crash_windows": {
+      "checkpoint": [
+        "before_write",
+        "after_blobs",
+        "after_snapshot",
+        "before_commit",
+        "after_commit"
+      ],
+      "save": [
+        "before_write",
+        "after_blobs",
+        "after_snapshot",
+        "before_commit",
+        "after_commit"
+      ]
+    },
+    "additional_faults": [
+      "SIGKILL after mixed unsaved state",
+      "SIGKILL after undo",
+      "throw before commit",
+      "lost checkpoint acknowledgement",
+      "lost save acknowledgement",
+      "working generation conflict",
+      "working base corruption",
+      "working snapshot hash corruption",
+      "blob corruption"
+    ]
+  },
+  "native_release": {
+    "passed": 61,
+    "total": 61,
+    "seconds": 209.31
+  },
+  "source_auditor_negative_tests": 5,
+  "archives": [
+    {
+      "label": "schema28",
+      "path": "fontes/inde-schema28-89b47f27.tar.gz",
+      "sha256": "3d6bee4c60dbecc602a56881b1957f90b55798dbc711c9c290701e2ad8a6e97e",
+      "files": 641,
+      "manifest_match": true
+    },
+    {
+      "label": "original37",
+      "path": "fontes/inde-P03c-schema37-original.tar.gz",
+      "sha256": "2e97a15ddcda56b8f5892d033c9a7427d6102bcf650454678491c50ff5459ef2",
+      "files": 757,
+      "manifest_match": true
+    },
+    {
+      "label": "integrated37",
+      "path": "fontes/inde-integrado-schema37.tar.gz",
+      "sha256": "554623abec5d7c3c175dab2aa6bbabc8a95abd6e3d98a27191cea0260a4965c4",
+      "files": 758,
+      "manifest_match": true
+    }
+  ],
+  "extracted_bytes_match": true,
+  "ci": {
+    "run_id": 44926925635,
+    "url": "https://github.com/Roger-Cardoso/inde/actions/runs/44926925635",
+    "head_sha": "b637d0bfcdc82437902fbc786549541ad68267fe",
+    "jobs": 25,
+    "passed": 25,
+    "remote_lsan": true,
+    "conclusion": "success"
+  },
+  "acceptance": {
+    "P01_P09": "previous-profile regression preserved; native PNG chooser visual flow remains unconfirmed",
+    "P10": "passed for complete owner group reorder and recovery",
+    "P11_P12": "new refusal and persistence faults passed",
+    "P13": "passed for complete aggregate working recovery; persistent undo deliberately unavailable",
+    "P14": "minimum shared contexts, private-layer conservation and pilot admission refusal passed; canonical publisher integration pending",
+    "human_acceptance": "separate, pending",
+    "phase_2_complete": false,
+    "phase_3_started": false
+  },
+  "browser": {
+    "observed": [
+      "text instrument cell edit acknowledged without Save",
+      "structure instrument owner whole-group reorder",
+      "unaffected Row kept",
+      "undo and redo group move",
+      "composition instrument preserved target",
+      "publication compatibility refusal",
+      "real engine SIGKILL and new-process reopen",
+      "unsaved recovery banner",
+      "same six cells and text IDs",
+      "empty new-session history"
+    ],
+    "restart": {
+      "saved_revision": 0,
+      "saved_sha256": "af2ff6420bcca4ae25e20a4942788d4a525369b2c19b9ec8be062d559398be1e",
+      "working_generation": 7,
+      "working_sha256": "825616f45a7e639d24dab08323b90c39c1814cf02a864c161b5a308709a1c22e",
+      "source_sha256": "437e42e01ba700d9fbc6d415cb2d572eb190aa00ff89a193a9667f8eaca38d7e",
+      "working_text_sha256": "b1fe0b1e69fdf2bae2d65201cf30cccbdfdbe1002b47c18523f67d8d7b0a0177",
+      "figures": 2,
+      "tables": 1,
+      "rows": 1,
+      "selection": "obj01/occurrence/c9cd0957-c4a7-46d7-8ac7-e6d4263f7dfc/49ea3771-d1ab-4c03-b9c7-1ceadc7ee37c/31517f72-9bde-406a-8750-e0e44da13361",
+      "selected_cell": "",
+      "context": "composition",
+      "integrity_check": "ok",
+      "foreign_key_check": [],
+      "snapshot_equal_after_SIGKILL": true,
+      "saved_not_promoted": true,
+      "engine_signal": "SIGKILL",
+      "server_shutdown": "SIGINT after controlled engine crash; expected engine_failed=-9",
+      "distinct_blobs": 1
+    },
+    "final_cells": [
+      {
+        "cell": "df4ad7db-1a0c-41c6-99ed-fe84660e9b1f",
+        "selected": false,
+        "table": "af7ec39c-9325-46db-ac01-36b1ee6c49e6",
+        "text": "Lugar"
+      },
+      {
+        "cell": "77498478-4502-499b-89f1-9627f95b3903",
+        "selected": false,
+        "table": "af7ec39c-9325-46db-ac01-36b1ee6c49e6",
+        "text": "Imagem"
+      },
+      {
+        "cell": "fd62a92f-6131-40b4-83c5-4e6199a09a3c",
+        "selected": false,
+        "table": "af7ec39c-9325-46db-ac01-36b1ee6c49e6",
+        "text": "Nota"
+      },
+      {
+        "cell": "dc6b364d-9ff7-4d98-828a-a39bb596d78f",
+        "selected": false,
+        "table": "af7ec39c-9325-46db-ac01-36b1ee6c49e6",
+        "text": "Margem do rio"
+      },
+      {
+        "cell": "6838d124-0ce7-402a-a5c8-9d0329fbc340",
+        "selected": false,
+        "table": "af7ec39c-9325-46db-ac01-36b1ee6c49e6",
+        "text": "Verde, água e luz"
+      },
+      {
+        "cell": "68900124-435f-4434-8759-a6900c33601e",
+        "selected": false,
+        "table": "af7ec39c-9325-46db-ac01-36b1ee6c49e6",
+        "text": "Trabalho protegido sem Salvar · água, memória 漢🙂"
+      }
+    ],
+    "p2a_file_chooser_gap": "not promoted to passed"
+  },
+  "preservation": {
+    "original_demo_hashes": {
+      "dados/obj01-piloto-p2a/origem-documento.json": "437e42e01ba700d9fbc6d415cb2d572eb190aa00ff89a193a9667f8eaca38d7e",
+      "dados/obj01-piloto-p2a/obj01-piloto.sqlite3": "389f80901b561bcad3ceb1ce48dd6c747fe19cd33ec614cb72b340885d901805",
+      "dados/obj01-piloto-p2b/origem-documento.json": "437e42e01ba700d9fbc6d415cb2d572eb190aa00ff89a193a9667f8eaca38d7e",
+      "dados/obj01-piloto-p2b/obj01-piloto.sqlite3": "84af38b84e6ce62a05f3a62632152e341cf02dbfb0c4ba07b31925ea6cebe4f5"
+    },
+    "p2a_p2b_unchanged": true,
+    "main_head": "d41a5c9b9809ca7d40beb6ff10f22f1a5b451e0b",
+    "main_preexisting_status": " M Preparar-ponte.sh",
+    "main_preexisting_mode_change": "mode change 100644 => 100755 Preparar-ponte.sh",
+    "protected_paths_verified": [
+      "fontes",
+      "metadata",
+      "verificar_base.py",
+      "cpp/CMakeLists.txt",
+      "cpp/object_model.cpp",
+      "cpp/object_model.hpp",
+      "cpp/object_commands.cpp",
+      "cpp/object_commands.hpp",
+      "cpp/object_document_adapter.cpp",
+      "cpp/object_document_adapter.hpp",
+      "cpp/object_composition_adapter.cpp",
+      "cpp/object_composition_adapter.hpp",
+      "cpp/object_change_plan.cpp",
+      "cpp/object_change_plan.hpp",
+      "cpp/object_change_session.cpp",
+      "cpp/object_change_session.hpp",
+      "cpp/object_save_protocol.cpp",
+      "cpp/object_save_protocol.hpp",
+      "cpp/object_checkpoint_store.cpp",
+      "cpp/object_checkpoint_store.hpp"
+    ],
+    "canonical_sources_and_archives_unchanged": true,
+    "canonical_schema_migration": false,
+    "authorial_projects_written": false,
+    "gtk_or_single_file_inde": false,
+    "merge_or_authorial_publication": false,
+    "historical_manifests": [
+      {
+        "profile": "p2a",
+        "commit": "8ea6c233f50529de9c9894a62b925d90941157a1",
+        "entries_verified": 37
+      },
+      {
+        "profile": "p2b",
+        "commit": "b1ae38fbcc47962c33ca74e8bcdca2e72ae64cca",
+        "entries_verified": 39
+      }
+    ]
+  },
+  "format": {
+    "p2a_user_version": 1,
+    "p2b_user_version": 2,
+    "p2c_user_version": 3,
+    "p2c_snapshot": "INDE-OBJ01-COMPOSITE-P2C-1",
+    "implicit_upgrade": false,
+    "seed_connection": "READONLY + consistent transaction",
+    "history_entries_cap": 32,
+    "history_metadata_bytes_including_current": 33554432,
+    "immutable_blob_union_bytes": 33554432,
+    "unicode_scalars_per_cell": 4096,
+    "aggregate_string_bytes": 8388608,
+    "snapshot_bytes": 25165824,
+    "reorder_validation_groups_cap": 256,
+    "unsaved_recovery": true,
+    "persistent_undo": false,
+    "protection_boundary": "acknowledged core operation after known commit; DOM-only draft excluded",
+    "test_faults_exposed_in_production": false
+  },
+  "checks": {
+    "local_links_resolve": 112,
+    "git_diff_check": "passed",
+    "demo_integrity_check": "ok",
+    "demo_foreign_key_check": "empty"
+  },
+  "continuity": "user revoked routine per-cut confirmation; follow discussed plan and preservation constraints",
+  "not_implemented": [
+    "canonical publisher integration",
+    "row/column editing",
+    "formulas/equations/merged cells/rich text",
+    "shared table usages",
+    "free paragraph editing",
+    "persistent undo",
+    "generic drag/resize/snap",
+    "Comic migration",
+    "GTK",
+    "real project migration",
+    "single-file .inde"
+  ],
+  "not_proven": [
+    "full native PNG file chooser flow",
+    "all syscall faults/power loss/storage hardware faults",
+    "broad concurrency",
+    "latency/RSS benchmark",
+    "all viewport sizes",
+    "human acceptance"
+  ]
+}

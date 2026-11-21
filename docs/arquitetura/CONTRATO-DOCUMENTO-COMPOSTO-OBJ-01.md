@@ -135,3 +135,7 @@ O contrato fica pronto para revisão quando todas as decisões C01–C06 possuem
 ## Registro P2-B
 
 [Implementação de tabela e histórico vivo](P2B-DOCUMENTO-COMPOSTO-OBJ-01.md): perfil experimental 2 separado de P2-A; IDs de células e revisão de conteúdo; remoção de usos com biblioteca conservada; histórico limitado em memória. O perfil 1 não é migrado. P13 e histórico entre reinícios continuam pendentes.
+
+## Registro P2-C
+
+[Implementação de trabalho recuperável e reordenação textual](P2C-DOCUMENTO-COMPOSTO-OBJ-01.md): perfil auxiliar 3, sem migrar perfis 1/2 nem schema canônico; gravação do agregado antes da confirmação de cada operação, promoção atômica ao Salvar, falhas e confirmação incerta, contexto compartilhado e movimento integral pelo motor existente. P13 tem prova em processo novo; o histórico continua exclusivamente vivo. A recusa de publicação é do piloto e não substitui integração ao publicador principal.

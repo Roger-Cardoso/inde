@@ -1,6 +1,6 @@
 # OBJ-01 — Primeiro experimento autoral e seus critérios de aceitação
 
-Especificação inicial: 2026-11-21, preparada no fechamento documental da Fase 1. Referências normativas: [reconciliação](RECONCILIACAO-OBJ-01.md) e [contrato mínimo 1.0](CONTRATO-DOCUMENTO-COMPOSTO-OBJ-01.md). **Atualização posterior: P2-A foi autorizado expressamente e implementado**, com [arquitetura própria](P2A-DOCUMENTO-COMPOSTO-OBJ-01.md), [demo utilizável](../../tools/obj01-pilot/README.md) e [validação](../validacao/VALIDACAO-OBJ-01-P2A.md). P2-B foi implementado depois, com [tabela e histórico vivo](P2B-DOCUMENTO-COMPOSTO-OBJ-01.md) e [validação própria](../validacao/VALIDACAO-OBJ-01-P2B.md). P2-C permanece como marco técnico seguinte. O usuário dispensou a confirmação ritual por corte, mantendo os limites de preservação.
+Especificação inicial: 2026-11-21, preparada no fechamento documental da Fase 1. Referências normativas: [reconciliação](RECONCILIACAO-OBJ-01.md) e [contrato mínimo 1.0](CONTRATO-DOCUMENTO-COMPOSTO-OBJ-01.md). **Atualização posterior: P2-A foi autorizado expressamente e implementado**, com [arquitetura própria](P2A-DOCUMENTO-COMPOSTO-OBJ-01.md), [demo utilizável](../../tools/obj01-pilot/README.md) e [validação](../validacao/VALIDACAO-OBJ-01-P2A.md). P2-B foi implementado depois, com [tabela e histórico vivo](P2B-DOCUMENTO-COMPOSTO-OBJ-01.md) e [validação própria](../validacao/VALIDACAO-OBJ-01-P2B.md). P2-C acrescentou [trabalho recuperável e reordenação textual](P2C-DOCUMENTO-COMPOSTO-OBJ-01.md), com [validação própria](../validacao/VALIDACAO-OBJ-01-P2C.md); a integração canônica de publicação de P14 e o aceite humano ainda não estão concluídos. O usuário dispensou a confirmação ritual por corte, mantendo os limites de preservação.
 
 ## Resultado observável
 
@@ -30,7 +30,7 @@ Cada corte registra arquivos/áreas, teste observável, riscos, limites e condi�
 
 ## Casos de aceitação P01–P14
 
-Os casos abaixo definem o piloto completo. P01–P05 têm prova técnica no perfil P2-A; P06–P08 têm prova de tabela e histórico vivo no perfil P2-B. P09 inclui agora texto, PNG, células, ordens, perfis e seleção por ID em processo novo. P11/P12 possuem provas parciais dos perfis; P10, P13 e o contexto/publicação completos de P14 continuam pendentes. Os relatórios identificam os limites, incluindo o seletor de PNG não confirmado pela automação visual. Aprovação técnica e aceite humano continuam distintos.
+Os casos abaixo definem o piloto completo. P01–P05 têm prova técnica no perfil P2-A; P06–P08 têm prova de tabela e histórico vivo no perfil P2-B. P09 inclui agora texto, PNG, células, ordens, perfis e seleção por ID em processo novo. P11/P12 possuem provas parciais dos perfis; P10/P13 têm implementação e prova técnica em P2-C; P14 tem contexto e recusa na fronteira do piloto, com integração ao publicador canônico ainda pendente. Os relatórios identificam os limites, incluindo o seletor de PNG não confirmado pela automação visual. Aprovação técnica e aceite humano continuam distintos.
 
 | ID | Ação / condição | Resultado exigido | Evidência futura |
 | --- | --- | --- | --- |

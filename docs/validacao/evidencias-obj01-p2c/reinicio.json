@@ -1,0 +1,21 @@
+{
+  "saved_revision": 0,
+  "saved_sha256": "af2ff6420bcca4ae25e20a4942788d4a525369b2c19b9ec8be062d559398be1e",
+  "working_generation": 7,
+  "working_sha256": "825616f45a7e639d24dab08323b90c39c1814cf02a864c161b5a308709a1c22e",
+  "source_sha256": "437e42e01ba700d9fbc6d415cb2d572eb190aa00ff89a193a9667f8eaca38d7e",
+  "working_text_sha256": "b1fe0b1e69fdf2bae2d65201cf30cccbdfdbe1002b47c18523f67d8d7b0a0177",
+  "figures": 2,
+  "tables": 1,
+  "rows": 1,
+  "selection": "obj01/occurrence/c9cd0957-c4a7-46d7-8ac7-e6d4263f7dfc/49ea3771-d1ab-4c03-b9c7-1ceadc7ee37c/31517f72-9bde-406a-8750-e0e44da13361",
+  "selected_cell": "",
+  "context": "composition",
+  "integrity_check": "ok",
+  "foreign_key_check": [],
+  "snapshot_equal_after_SIGKILL": true,
+  "saved_not_promoted": true,
+  "engine_signal": "SIGKILL",
+  "server_shutdown": "SIGINT after controlled engine crash; expected engine_failed=-9",
+  "distinct_blobs": 1
+}

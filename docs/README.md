@@ -7,8 +7,10 @@
 
 ## Núcleo experimental de objetos
 
-A prioridade é governada pela reconciliação abaixo. Após autorização expressa, **P2-A foi implementado como piloto isolado de texto/PNG**, com demonstração local e persistência própria. P2-B acrescentou tabela e histórico vivo em perfil separado. Edição textual e recuperação de trabalho não salvo seguem pendentes; a Fase 2 inteira não está concluída.
+A prioridade é governada pela reconciliação abaixo. Após autorização expressa, **P2-A foi implementado como piloto isolado de texto/PNG**, com demonstração local e persistência própria. P2-B acrescentou tabela e histórico vivo em perfil separado. P2-C acrescenta recuperação do trabalho composto ainda não salvo, reordenação de grupos pelo motor textual e instrumentos mínimos. A edição livre dos parágrafos e a integração com o publicador principal seguem pendentes; a Fase 2 inteira não está concluída.
 
+- [Abrir e experimentar P2-C — recuperação e ordem textual](../tools/obj01-pilot/P2C.md).
+- [Implementação P2-C](arquitetura/P2C-DOCUMENTO-COMPOSTO-OBJ-01.md) e [validação](validacao/VALIDACAO-OBJ-01-P2C.md).
 - [Abrir e experimentar P2-B — tabela e desfazer/refazer](../tools/obj01-pilot/P2B.md).
 - [Validação de P2-B](validacao/VALIDACAO-OBJ-01-P2B.md).
 - [Abrir e experimentar P2-A](../tools/obj01-pilot/README.md).

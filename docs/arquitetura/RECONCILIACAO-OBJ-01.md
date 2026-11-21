@@ -113,3 +113,7 @@ O usuário autorizou posteriormente o corte específico de texto/PNG e interface
 ## Atualização P2-B
 
 P2-B acrescenta tabela estruturada, seleção por célula, edição e histórico vivo, com perfil próprio e cópia somente de leitura de P2-A. Ver [implementação](P2B-DOCUMENTO-COMPOSTO-OBJ-01.md) e [validação](../validacao/VALIDACAO-OBJ-01-P2B.md). P2-C continua como marco técnico seguinte; não há confirmação ritual por corte.
+
+## Atualização P2-C
+
+[P2-C](P2C-DOCUMENTO-COMPOSTO-OBJ-01.md) registra trabalho composto ainda não salvo, move grupos textuais pelo motor proprietário e acrescenta instrumentos mínimos. A [validação](../validacao/VALIDACAO-OBJ-01-P2C.md) distingue recuperação técnica, demonstração e aceite humano. A recusa de publicação é local ao piloto; a integração com o publicador principal continua pendente. A Fase 2 inteira e a Fase 3 não são declaradas concluídas/iniciadas por essa atualização.
