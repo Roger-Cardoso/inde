@@ -1,0 +1,437 @@
+{
+  "date": "2026-11-21",
+  "branch": "feature/inde-obj-01-foundation",
+  "base_commit": "1560cfe3c490ab1d4090c0e53857789ff2f648cf",
+  "implementation_commit": "70b809d3f8165c42b6e5860aa80113eba4577dfb",
+  "scope": "authorized isolated Formula refinement: editable mixed text, typed conditional results, current value in source, solitary consumed command and atomic undo/recovery",
+  "code_sha256": {
+    ".github/workflows/obj-01.yml": "777642524032a046d1414fa56f969ec932ddcda48249a5baffccc74480c3e24d",
+    "cpp/object_composite_pilot.cpp": "4b8c0b910e8e7762e148f80049fe6fa397d1f8b08925dccebcccbfb21b1e3b68",
+    "cpp/object_composite_pilot.hpp": "4fa968366c45884970f07e32d290ae53a37ce95af0b9fa9de1815696b6a57511",
+    "cpp/object_composite_pilot_main.cpp": "d8ba67fedf92a72078b40ce125bed12e89784774322211ccfdc06eb6be59f15e",
+    "cpp/object_formula.cpp": "4d7a1d64ac4c9f733c10543ed4da5ac40132b472f1bfce816448090a10b54c9b",
+    "cpp/object_formula.hpp": "aa003d4f1c1276fb55576f913a116bacdef5124ec47eaf97e3687964afb8a43b",
+    "cpp/object_formula_rich.cpp": "e9223748ec1a5dff9b50738f2d773536e9e5c6c046089bb03732674c1a461a72",
+    "scripts/demos/Abrir-demo-obj01-p2d2.sh": "45589e72b58a5ef8cdc0c3836681b6c80a4dbd1498f937be174c8d5784402cb0",
+    "tests/object_composite_pilot/CMakeLists.txt": "d592770118e052b3cc52a5b2c1ba4c1c6c2b022ba7e43306f22a70cc39330a01",
+    "tests/object_composite_pilot/test_http_p2d2.py": "2901a1cc56d9bdede6f26d9e8dea793a9a05b2d1ee0b95e7bc8da1f2a44e4a99",
+    "tests/object_composite_pilot/test_p2d2.py": "685e9c2261ac06b750a6475a3a03f8eb96fa72f44bbdcf0da3f98ef4fe5b4335",
+    "tests/object_composite_pilot/test_pilot.py": "1351c4c1b01016fa39c9a4da1d35df7c72534bef1d1dd8aaf89eafce77e213d6",
+    "tools/obj01-pilot/P2D2.md": "9907d8029881e2fab43ca19beb19356e92fee21dcd038c1271fe3836bec7c968",
+    "tools/obj01-pilot/app.js": "511112e4d71f9116907ac47e3f39dafacc7ff46a731fd3c1b22fafac1f8cf72c",
+    "tools/obj01-pilot/index.html": "39b625aa2b404c35efce567eeefe99cdfc3fe2213a70aa532eb6019d07d91b66",
+    "tools/obj01-pilot/serve.py": "ec5a9843ee903890bd8373c89b929fc52ad829092e9518f24040379ef6d12025",
+    "tools/obj01-pilot/style.css": "dc186305a8a6e48bb43928a6de394c089964035c559f5237fde63d1c40cb5eb0"
+  },
+  "document_sha256": {
+    "docs/README.md": "e6c6d726174cac0c6803a7380a2e5fab172f8f55c6962b408444cafd1bd3629f",
+    "docs/arquitetura/INDE-OBJ-01.md": "6d419be6043f6e9bdeb89e729991a662237e8833cc35a99b8be3ebcac9d2c07f",
+    "docs/arquitetura/RECONCILIACAO-OBJ-01.md": "6b59125ff688527b1a076d3cabd682d80de54649796e113b55f51ee2f936ce3c",
+    "docs/arquitetura/CONTRATO-DOCUMENTO-COMPOSTO-OBJ-01.md": "521d7ce161fa5d412fb26ec0064f56e222d6d506f5ce15e1e005137bbdea2bad",
+    "docs/arquitetura/PILOTO-DOCUMENTO-COMPOSTO-OBJ-01.md": "94ed94c64ace86856962759038cff9eb83519d050a792e7242f1508f4f9cda3a",
+    "docs/arquitetura/FORMULAS-OBJ-01.md": "e297b8b99302c439b624a23df1b135e59e520e080c9c51dce86bd6b628ec46f9",
+    "docs/arquitetura/FORMULAS-TEXTO-OBJ-01.md": "80c8cc5c684818e357bff42ac8def5be815a3fd73b93b5cc13c8bc12d00d8031",
+    "docs/validacao/VALIDACAO-OBJ-01-P2D2.md": "cbf4f260f9121d098e872957843be46bae91b4f553181f30044dcc7473800f38",
+    "tools/obj01-pilot/README.md": "45c1dc1db779d92c3928e6c65e34c7719b3040f7ca7bc44eaf246018df1418c7",
+    "tools/obj01-pilot/P2D2.md": "9907d8029881e2fab43ca19beb19356e92fee21dcd038c1271fe3836bec7c968"
+  },
+  "local": {
+    "variants": [
+      "GCC Debug",
+      "Clang Debug",
+      "GCC ASan+UBSan",
+      "Clang ASan+UBSan"
+    ],
+    "programs_per_variant": 11,
+    "seconds": [
+      89.25,
+      85.69,
+      248.26,
+      202.16
+    ],
+    "p2a_core_http": [
+      19,
+      4
+    ],
+    "p2b_core_http": [
+      12,
+      6
+    ],
+    "p2c_core_http": [
+      16,
+      7
+    ],
+    "p2d_core_http": [
+      19,
+      7
+    ],
+    "p2d2_core_http": [
+      23,
+      7
+    ],
+    "common_http_inherited": 4,
+    "owner_adapter_groups": 9,
+    "local_lsan": false,
+    "test_names": {
+      "test_pilot.py": [
+        "test_p01_capture_and_private_layers",
+        "test_p02_real_png_and_distinct_identities",
+        "test_p03_insert_between_complete_groups",
+        "test_p04_row_profile_and_stack",
+        "test_p05_reuse_and_move_only_selected_use",
+        "test_visual_intent_requires_explicit_restore",
+        "test_row_move_preserves_other_use_and_source",
+        "test_p09_save_new_process_without_external_png",
+        "test_fractional_profile_roundtrips_without_precision_loss",
+        "test_failed_sqlite_write_rolls_back_blobs_and_snapshot",
+        "test_missing_blob_refuses_open_without_partial_state",
+        "test_unknown_snapshot_version_is_not_overwritten",
+        "test_unsaved_reopen_requires_confirmation",
+        "test_invalid_png_crc_and_animation_are_atomic",
+        "test_stale_revision_and_unknown_operation",
+        "test_cas_conflict_does_not_overwrite",
+        "test_corrupt_blob_refuses_reopen_without_partial_state",
+        "test_unknown_database_version_and_frozen_source_are_preserved",
+        "test_exclusive_workspace_lease_and_legacy_path_refusal"
+      ],
+      "test_http.py": [
+        "test_token_and_origin_guards_preserve_document",
+        "test_static_interface_and_safety_headers",
+        "test_real_import_save_reopen_and_resource_bytes",
+        "test_invalid_request_has_no_effect"
+      ],
+      "test_p2b.py": [
+        "test_p06_table_and_cell_identities",
+        "test_p07_cell_selection_is_typed_and_does_not_invalidate_redo",
+        "test_p08_move_remove_undo_redo_conserves_table_and_selection",
+        "test_p08_last_figure_resource_survives_remove_save_restart",
+        "test_undo_import_after_save_keeps_resource_and_can_save_again",
+        "test_p09_tables_images_profiles_new_process_roundtrip",
+        "test_new_edit_after_undo_clears_redo",
+        "test_history_is_bounded_and_revision_monotonic",
+        "test_limits_and_group_refusals_are_atomic",
+        "test_p2a_seed_is_readonly_and_keeps_ids_and_bytes",
+        "test_profiles_do_not_implicitly_upgrade_each_other",
+        "test_invalid_persisted_table_rejected_without_replacing_work"
+      ],
+      "test_http_p2b.py": [
+        "test_table_cells_history_and_reopen",
+        "test_invalid_cell_has_no_effect"
+      ],
+      "test_p2c.py": [
+        "test_p13_unsaved_complete_work_survives_sigkill",
+        "test_save_promotes_work_but_keeps_live_history",
+        "test_explicit_saved_discard_and_verified_unclaimed_blob",
+        "test_checkpoint_failure_rolls_back_and_preserves_work_and_history",
+        "test_lost_checkpoint_ack_requires_reopen_and_recovers_candidate",
+        "test_lost_save_ack_reopens_committed_saved_state",
+        "test_undo_checkpoint_is_recovered_after_sigkill",
+        "test_working_base_and_resource_corruption_fail_closed",
+        "test_real_checkpoint_crash_windows",
+        "test_real_save_crash_windows",
+        "test_work_generation_conflict_and_reload",
+        "test_corrupt_work_fails_closed_without_saved_fallback",
+        "test_p10_owner_group_reorder_and_undo_conserve_original",
+        "test_partial_group_and_interval_owner_refusal_are_atomic",
+        "test_p14_context_keeps_target_and_publication_is_refused",
+        "test_p2b_seed_readonly_and_profiles_preserved"
+      ],
+      "test_http_p2c.py": [
+        "test_table_work_is_durable_without_promoting_saved",
+        "test_instruments_preserve_target_and_guard_wrong_operation",
+        "test_complete_text_group_move_uses_owner_order_and_frozen_hash"
+      ],
+      "test_p2d.py": [
+        "test_multiline_user_example_and_excel_style_expression",
+        "test_cross_formula_variables_results_and_recalculation",
+        "test_formula_born_in_cell_drives_document_and_reverse",
+        "test_explicit_assignment_updates_chain_once_and_keeps_initial",
+        "test_simultaneous_assignments_undo_redo_and_reset",
+        "test_command_cannot_break_dependency_or_partially_write",
+        "test_duplicate_assignment_and_missing_targets_are_atomic",
+        "test_cycles_and_forward_references_report_and_repair",
+        "test_invalid_draft_is_saved_recovered_and_repairable",
+        "test_syntax_functions_number_and_depth_diagnostics",
+        "test_generated_arithmetic_matches_independent_values",
+        "test_bound_cell_text_protected_and_detach_undo_keeps_plain_text",
+        "test_move_remove_undo_keeps_formula_identity_and_dependents",
+        "test_shared_formula_document_and_cell_use",
+        "test_sigkill_recovers_formula_state_bindings_cells_and_results",
+        "test_checkpoint_faults_preserve_atomic_formula_cascade",
+        "test_names_limits_context_revision_and_publication_guards",
+        "test_corrupt_binding_identity_fails_closed_without_rebinding",
+        "test_p2c_seed_preserves_reordered_owner_and_prior_files"
+      ],
+      "test_http_p2d.py": [
+        "test_mutation_cascade_is_durable_and_save_promotes",
+        "test_formula_created_in_cell_drives_document_result",
+        "test_invalid_formula_is_an_editable_diagnostic_and_actions_guarded"
+      ],
+      "test_p2d2.py": [
+        "test_local_current_assignment_and_reset_are_real_source",
+        "test_command_writes_fixed_value_and_removes_own_occurrence",
+        "test_undo_redo_restores_command_source_state_and_phrase_together",
+        "test_repeated_commands_replace_current_line_and_keep_comments",
+        "test_mixed_or_multiple_commands_are_refused_atomically",
+        "test_command_with_authored_phrase_is_refused",
+        "test_failed_command_keeps_itself_and_all_values",
+        "test_conditional_text_and_aliases_are_lazy_and_typed",
+        "test_text_current_assignment_is_fixed_and_consumed",
+        "test_authored_text_survives_recalculation_and_multiple_values",
+        "test_each_shared_use_keeps_its_own_literal_text",
+        "test_cell_command_is_consumed_restoring_plain_cell_text",
+        "test_literal_admission_identity_and_context_guards",
+        "test_commands_cannot_be_shared_or_interpolated",
+        "test_sigkill_recovers_fixed_source_text_and_consumption",
+        "test_checkpoint_failure_and_lost_ack_do_not_half_consume",
+        "test_real_crash_windows_keep_source_and_consumption_atomic",
+        "test_unknown_language_and_hidden_override_refuse_startup",
+        "test_numeric_string_depth_and_cycle_diagnostics_are_bounded",
+        "test_boolean_current_is_typed_fixed_and_not_reexecuted",
+        "test_unknown_language_and_forged_consumption_fail_closed",
+        "test_explicit_seed_materializes_old_current_without_writing_original",
+        "test_seed_with_legacy_mixed_command_is_refused_without_source_write"
+      ],
+      "test_http_p2d2.py": [
+        "test_fixed_source_and_consumption_are_one_durable_change",
+        "test_typed_word_and_literal_phrase_survive_restart_record",
+        "test_cell_uses_same_model_and_mixed_command_is_refused"
+      ]
+    },
+    "new_crash_windows": [
+      "after_blobs",
+      "after_snapshot",
+      "before_commit",
+      "after_commit"
+    ],
+    "additional_faults": [
+      "SIGKILL",
+      "throw before commit",
+      "lost ack after commit"
+    ]
+  },
+  "native_release": {
+    "passed": 61,
+    "total": 61,
+    "seconds": 291.85
+  },
+  "source_auditor_negative_tests": 5,
+  "archives": [
+    {
+      "label": "schema28",
+      "path": "fontes/inde-schema28-89b47f27.tar.gz",
+      "sha256": "3d6bee4c60dbecc602a56881b1957f90b55798dbc711c9c290701e2ad8a6e97e",
+      "files": 641,
+      "manifest_match": true
+    },
+    {
+      "label": "original37",
+      "path": "fontes/inde-P03c-schema37-original.tar.gz",
+      "sha256": "2e97a15ddcda56b8f5892d033c9a7427d6102bcf650454678491c50ff5459ef2",
+      "files": 757,
+      "manifest_match": true
+    },
+    {
+      "label": "integrated37",
+      "path": "fontes/inde-integrado-schema37.tar.gz",
+      "sha256": "554623abec5d7c3c175dab2aa6bbabc8a95abd6e3d98a27191cea0260a4965c4",
+      "files": 758,
+      "manifest_match": true
+    }
+  ],
+  "extracted_bytes_match": true,
+  "ci": {
+    "run_id": 44941896304,
+    "url": "https://github.com/Roger-Cardoso/inde/actions/runs/44941896304",
+    "head_sha": "70b809d3f8165c42b6e5860aa80113eba4577dfb",
+    "jobs": 25,
+    "passed": 25,
+    "remote_lsan": true,
+    "conclusion": "success"
+  },
+  "acceptance": {
+    "current_source": "declaration initial and assignment current; no hidden overrides",
+    "mixed_text": "editable author literals with protected multiple results; per use",
+    "typed_logic": "SE/IF E/AND OU/OR NAO/NOT short circuit; string/bool/number",
+    "command": "one solitary external alteration evaluated once, target literal and consumption atomic",
+    "undo": "source, values, text and command occurrence restored together",
+    "restart": "Working generation 19 and snapshot hash identical after SIGKILL without Save",
+    "compatibility": "formats 1-4 unchanged; language2 explicit profile; no in-place migration",
+    "human_acceptance": "pending",
+    "phase_3_started": false,
+    "canonical_integration": false
+  },
+  "browser": {
+    "runtime_commit": "70b809d3f8165c42b6e5860aa80113eba4577dfb",
+    "observed": [
+      "create Combate and Estado",
+      "edit literal text directly",
+      "compose five runs with two results",
+      "create formula in cell",
+      "execute Golpe once",
+      "undo/redo command and source together",
+      "inspect real HP80 source",
+      "SIGKILL own engine without Save",
+      "restart same snapshot and text; no command reexecuted",
+      "same computed typography as source and plain cells"
+    ],
+    "restart": {
+      "saved_revision": 0,
+      "saved_sha256": "3fc9aa71cc76fcd7c2725527c15de92c4afcb7c383a68cd53f2e1ee965a209df",
+      "working_generation": 19,
+      "working_sha256": "813eacc3630a98b70faf2d157c4b6b61c45f93e275dd7f39b0ee99a5dcb4f00e",
+      "source_sha256": "15795cc6bfd7f5492cee1fd292678b29ecf97570adf370a5416944ae499d1d1c",
+      "format": "INDE-OBJ01-COMPOSITE-P2D2-1",
+      "sources": {
+        "Combate": "declara HP = 100\nHP = 80\ndeclara DanoEspada = 10\nresultado HP - 2 × DanoEspada",
+        "Estado": "resultado SE(Combate.HP <= 0; \"caído\"; SE(E(Combate.HP > 0; Combate.HP < 90); \"ferido\"; \"de pé\"))",
+        "Planilha": "resultado Combate.HP",
+        "Golpe": "alterar Combate.HP = Combate.HP - 20"
+      },
+      "consumed": [
+        "Golpe"
+      ],
+      "active_document_formula_uses": 2,
+      "active_cell_formula_uses": 1,
+      "retired_formula_uses": 1,
+      "presentations": 3,
+      "snapshot_equal_after_SIGKILL": true,
+      "saved_not_promoted": true,
+      "hidden_overrides_empty": true,
+      "commands_not_reexecuted": true,
+      "integrity_check": "ok",
+      "foreign_key_check": [],
+      "engine_signal": "SIGKILL to own synthetic engine",
+      "server_exit_after_crash": "expected engine_failed=-9"
+    },
+    "text_before_after_identical": true,
+    "screenshot": "demonstracao.jpg"
+  },
+  "preservation": {
+    "original_demo_hashes": {
+      "dados/obj01-piloto-p2a/origem-documento.json": "437e42e01ba700d9fbc6d415cb2d572eb190aa00ff89a193a9667f8eaca38d7e",
+      "dados/obj01-piloto-p2a/obj01-piloto.sqlite3": "389f80901b561bcad3ceb1ce48dd6c747fe19cd33ec614cb72b340885d901805",
+      "dados/obj01-piloto-p2b/origem-documento.json": "437e42e01ba700d9fbc6d415cb2d572eb190aa00ff89a193a9667f8eaca38d7e",
+      "dados/obj01-piloto-p2b/obj01-piloto.sqlite3": "84af38b84e6ce62a05f3a62632152e341cf02dbfb0c4ba07b31925ea6cebe4f5",
+      "dados/obj01-piloto-p2c/origem-documento.json": "437e42e01ba700d9fbc6d415cb2d572eb190aa00ff89a193a9667f8eaca38d7e",
+      "dados/obj01-piloto-p2c/obj01-piloto.sqlite3": "efda4b962d8aaf0fcb9270fcdd934a5d599e1e4172236bcc31e7df2723f4976f",
+      "dados/obj01-piloto-p2d/origem-documento.json": "437e42e01ba700d9fbc6d415cb2d572eb190aa00ff89a193a9667f8eaca38d7e",
+      "dados/obj01-piloto-p2d/obj01-piloto.sqlite3": "a18ccdbd8e0a5af541da0ed379e6a1f08c8bcfbdd2a96263561b88d2d65fc2d5"
+    },
+    "p2a_p2b_p2c_p2d_unchanged": true,
+    "main_head": "d41a5c9b9809ca7d40beb6ff10f22f1a5b451e0b",
+    "main_preexisting_status": " M Preparar-ponte.sh",
+    "protected_paths_verified": [
+      "fontes",
+      "metadata",
+      "verificar_base.py",
+      "cpp/CMakeLists.txt",
+      "cpp/object_model.cpp",
+      "cpp/object_model.hpp",
+      "cpp/object_commands.cpp",
+      "cpp/object_commands.hpp",
+      "cpp/object_document_adapter.cpp",
+      "cpp/object_document_adapter.hpp",
+      "cpp/object_composition_adapter.cpp",
+      "cpp/object_composition_adapter.hpp",
+      "cpp/object_change_plan.cpp",
+      "cpp/object_change_plan.hpp",
+      "cpp/object_change_session.cpp",
+      "cpp/object_change_session.hpp",
+      "cpp/object_save_protocol.cpp",
+      "cpp/object_save_protocol.hpp",
+      "cpp/object_checkpoint_store.cpp",
+      "cpp/object_checkpoint_store.hpp"
+    ],
+    "canonical_sources_and_archives_unchanged": true,
+    "canonical_schema_migration": false,
+    "authorial_projects_written": false,
+    "gtk_or_single_file_inde": false,
+    "merge_or_authorial_publication": false,
+    "historical_manifests": [
+      {
+        "profile": "p2a",
+        "commit": "8ea6c233f50529de9c9894a62b925d90941157a1",
+        "entries_verified": 37
+      },
+      {
+        "profile": "p2b",
+        "commit": "b1ae38fbcc47962c33ca74e8bcdca2e72ae64cca",
+        "entries_verified": 39
+      },
+      {
+        "profile": "p2c",
+        "commit": "347be9dfea7ea7442fdd7606e469ac9c1d3d6928",
+        "entries_verified": 44
+      },
+      {
+        "profile": "p2d",
+        "commit": "1560cfe3c490ab1d4090c0e53857789ff2f648cf",
+        "entries_verified": 49
+      }
+    ],
+    "historical_entries_verified": 169
+  },
+  "format": {
+    "profile_user_version": 5,
+    "snapshot": "INDE-OBJ01-COMPOSITE-P2D2-1",
+    "formula_language": 2,
+    "implicit_upgrade": false,
+    "seed": "explicit P2-D Saved READONLY into new directory; old overrides materialized, mixed commands refused",
+    "current_state": "source assignment; overrides must be empty",
+    "command_execution": "explicit once, literal source update and consumed marker in same checkpoint",
+    "consumption": "active use removed; private records retained and counted",
+    "formula_objects_including_consumed": 64,
+    "document_uses_including_retired": 256,
+    "cell_bindings": 2048,
+    "source_bytes_per_formula": 16384,
+    "variables_per_formula": 32,
+    "presentation_runs": 32,
+    "literal_unicode_scalars": 4096,
+    "literal_utf8_bytes": 16384,
+    "calculated_string_bytes": 4096,
+    "exposed_text_bytes_budget": 524288,
+    "tokens": 2048,
+    "expression_nodes": 512,
+    "parser_depth": 48,
+    "evaluation_depth": 64,
+    "evaluation_visits_budget": 200000,
+    "number_abs_cap": 1000000000000.0,
+    "number_type": "finite IEEE double; not decimal exact",
+    "display_significant_digits": 12,
+    "expression_continuation_across_lines": false,
+    "persistent_undo": false
+  },
+  "fixes_found": [
+    "JSON field ordering caused phantom pending presentation draft: compare semantic runs",
+    "bundle mixed-text UI in app.js for older server asset compatibility",
+    "clear stale inline editors on context change/consumption"
+  ],
+  "checks": {
+    "local_links_resolve": 150,
+    "git_diff_check": "passed",
+    "demo_integrity_check": "ok",
+    "demo_foreign_key_check": "empty"
+  },
+  "not_implemented": [
+    "inline editing in canonical Document.content/GTK",
+    "canonical publication",
+    "full Excel compatibility/A1/ranges",
+    "custom functions",
+    "automatic command triggers",
+    "multiline continuation within expressions",
+    "persistent undo",
+    "definitive GC of consumed records",
+    "decimal exact arithmetic",
+    "real project migration",
+    "single-file .inde"
+  ],
+  "not_proven": [
+    "all power/storage/syscall faults",
+    "broad concurrency",
+    "latency/RSS benchmark",
+    "all viewports/input methods",
+    "full native PNG chooser",
+    "human acceptance"
+  ]
+}

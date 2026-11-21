@@ -121,3 +121,7 @@ P2-B acrescenta tabela estruturada, seleção por célula, edição e histórico
 ## Extensão aprovada P2-D — Fórmula
 
 Após a proposta do usuário e sua aprovação expressa, o [objeto Fórmula](FORMULAS-OBJ-01.md) foi acrescentado ao piloto: cálculo comum no documento/células, variáveis/referências, atribuições explícitas, histórico e recuperação. [Validação própria](../validacao/VALIDACAO-OBJ-01-P2D.md). Não transforma a Fase 3 ou a publicação canônica em trabalho iniciado/concluído.
+
+## Refinamento aprovado P2-D2
+
+[Texto misto e comando consumível](FORMULAS-TEXTO-OBJ-01.md), com [validação própria](../validacao/VALIDACAO-OBJ-01-P2D2.md): valor atual real na fonte, palavras editáveis ao redor de resultados, lógica textual e consumo atômico do alterar solitário. Perfil novo preserva o numérico anterior. Origem somente leitura e publicação/GTK permanecem fora da integração entregue.

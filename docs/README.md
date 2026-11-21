@@ -7,8 +7,10 @@
 
 ## Núcleo experimental de objetos
 
-A prioridade é governada pela reconciliação abaixo. Após autorização expressa, **P2-A foi implementado como piloto isolado de texto/PNG**, com demonstração local e persistência própria. P2-B acrescentou tabela e histórico vivo em perfil separado. P2-C acrescenta recuperação do trabalho composto ainda não salvo, reordenação de grupos pelo motor textual e instrumentos mínimos. Após aprovação da proposta de Fórmula, P2-D acrescentou cálculo numérico comum ao documento e às células, variáveis e alterações explícitas em cadeia. A edição livre dos parágrafos e a integração com o publicador principal seguem pendentes; a Fase 2 inteira não está concluída.
+A prioridade é governada pela reconciliação abaixo. Após autorização expressa, **P2-A foi implementado como piloto isolado de texto/PNG**, com demonstração local e persistência própria. P2-B acrescentou tabela e histórico vivo em perfil separado. P2-C acrescenta recuperação do trabalho composto ainda não salvo, reordenação de grupos pelo motor textual e instrumentos mínimos. Após aprovação da proposta de Fórmula, P2-D acrescentou cálculo numérico comum ao documento e às células, variáveis e alterações explícitas em cadeia. P2-D2 acrescentou texto editável ao redor dos resultados, condições textuais e comandos de uso único com valor atual na fonte. A edição livre dos parágrafos de origem e a integração com o publicador principal seguem pendentes; a Fase 2 inteira não está concluída.
 
+- [Texto misto e comando consumível — P2-D2](../tools/obj01-pilot/P2D2.md).
+- [Contrato do refinamento](arquitetura/FORMULAS-TEXTO-OBJ-01.md) e [validação P2-D2](validacao/VALIDACAO-OBJ-01-P2D2.md).
 - [Fórmulas no documento e nas células — P2-D](../tools/obj01-pilot/P2D.md).
 - [Contrato de Fórmula](arquitetura/FORMULAS-OBJ-01.md) e [validação P2-D](validacao/VALIDACAO-OBJ-01-P2D.md).
 - [Abrir e experimentar P2-C — recuperação e ordem textual](../tools/obj01-pilot/P2C.md).

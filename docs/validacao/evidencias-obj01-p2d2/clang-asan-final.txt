@@ -1,0 +1,27 @@
+Test project /home/roger/Documents/Projects/GitHub/INDE/obj01-audit/build-obj01-p2a-clang-asan
+      Start  1: inde_object_composite_pilot_tests
+ 1/11 Test  #1: inde_object_composite_pilot_tests .......   Passed    6.12 sec
+      Start  2: inde_object_composite_http_tests
+ 2/11 Test  #2: inde_object_composite_http_tests ........   Passed    2.75 sec
+      Start  3: inde_object_composite_p2b_tests
+ 3/11 Test  #3: inde_object_composite_p2b_tests .........   Passed   34.39 sec
+      Start  4: inde_object_composite_http_p2b_tests
+ 4/11 Test  #4: inde_object_composite_http_p2b_tests ....   Passed    5.32 sec
+      Start  5: inde_object_composite_p2c_tests
+ 5/11 Test  #5: inde_object_composite_p2c_tests .........   Passed   20.21 sec
+      Start  6: inde_object_composite_http_p2c_tests
+ 6/11 Test  #6: inde_object_composite_http_p2c_tests ....   Passed    7.29 sec
+      Start  7: inde_object_composite_p2d_tests
+ 7/11 Test  #7: inde_object_composite_p2d_tests .........   Passed   63.15 sec
+      Start  8: inde_object_composite_http_p2d_tests
+ 8/11 Test  #8: inde_object_composite_http_p2d_tests ....   Passed    7.67 sec
+      Start  9: inde_object_composite_p2d2_tests
+ 9/11 Test  #9: inde_object_composite_p2d2_tests ........   Passed   39.63 sec
+      Start 10: inde_object_composite_http_p2d2_tests
+10/11 Test #10: inde_object_composite_http_p2d2_tests ...   Passed    6.67 sec
+      Start 11: inde_object_document_adapter_tests
+11/11 Test #11: inde_object_document_adapter_tests ......   Passed    8.95 sec
+
+100% tests passed out of 11
+
+Total Test time (real) = 202.16 sec

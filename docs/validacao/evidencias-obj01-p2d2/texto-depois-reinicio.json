@@ -1,0 +1,68 @@
+[
+  {
+    "runs": [
+      {
+        "kind": "text",
+        "text": "Após os ataques, restaram "
+      },
+      {
+        "kind": "result",
+        "result": "46b21e21-7d3b-4c93-9464-bd6a85527b5c",
+        "text": "60"
+      },
+      {
+        "kind": "text",
+        "text": " pontos de vida; o estado é "
+      },
+      {
+        "kind": "result",
+        "result": "71896ef3-34ef-4817-b246-cc66028f36d1",
+        "text": "ferido"
+      },
+      {
+        "kind": "text",
+        "text": "."
+      }
+    ],
+    "target": "e28b190b-29d6-408e-a649-ee1097f6cbf0",
+    "text": "Após os ataques, restaram 60 pontos de vida; o estado é ferido."
+  },
+  {
+    "runs": [
+      {
+        "kind": "text",
+        "text": "O personagem permanece "
+      },
+      {
+        "kind": "result",
+        "result": "71896ef3-34ef-4817-b246-cc66028f36d1",
+        "text": "ferido"
+      },
+      {
+        "kind": "text",
+        "text": "."
+      }
+    ],
+    "target": "2e8bc534-fdef-4322-8ea6-77a2d373a3b5",
+    "text": "O personagem permanece ferido."
+  },
+  {
+    "runs": [
+      {
+        "kind": "text",
+        "text": "HP atual: "
+      },
+      {
+        "kind": "result",
+        "result": "d884397e-c858-48f7-aa91-b4dbcaf45903",
+        "text": "80"
+      },
+      {
+        "kind": "text",
+        "text": ""
+      }
+    ],
+    "target": "4fef1b2e-c332-41c3-b15b-b0c6d5d87942",
+    "text": "HP atual: 80"
+  }
+]

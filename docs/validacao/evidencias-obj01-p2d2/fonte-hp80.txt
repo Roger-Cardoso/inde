@@ -1,0 +1,4 @@
+declara HP = 100
+HP = 80
+declara DanoEspada = 10
+resultado HP - 2 × DanoEspada

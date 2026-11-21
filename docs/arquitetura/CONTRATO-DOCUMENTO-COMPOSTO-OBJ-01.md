@@ -143,3 +143,7 @@ O contrato fica pronto para revisão quando todas as decisões C01–C06 possuem
 ## Extensão aprovada — Fórmula / P2-D
 
 O usuário aprovou objeto Fórmula com fonte de várias linhas recolhida fora da edição, variáveis e resultados referenciáveis, mudanças explícitas de estado e usos tanto no documento quanto nas células. O [contrato e implementação P2-D](FORMULAS-OBJ-01.md) define um motor comum, ligação por identidade, cálculo automático e atribuições executadas em transação, com histórico/recuperação. Essa extensão acrescenta capacidade ao perfil auxiliar 4; não reescreve a delimitação histórica de tabela textual dos perfis iniciais nem declara implementada Equação. Compatibilidade Excel completa, gatilhos automáticos e integração do publicador permanecem pendentes.
+
+## Refinamento aprovado — Texto e comando consumível / P2-D2
+
+O usuário autorizou [atribuição atual na fonte, texto misto, lógica textual e alterar solitário consumido](FORMULAS-TEXTO-OBJ-01.md). Perfil auxiliar 5/linguagem 2 separado: texto por uso não é substituído pelo recálculo; execução fixa literal na fonte e retira o comando na mesma unidade de histórico/checkpoint. O consumo é reversível no histórico vivo, com metadados conservados. Perfis anteriores, origem proprietária e projetos reais permanecem preservados.

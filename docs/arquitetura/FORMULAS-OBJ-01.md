@@ -79,3 +79,7 @@ Fonte apenas digitada no editor ainda é rascunho do navegador. Aplicar/Ctrl+Ent
 Implementados os cálculos numéricos, variáveis/referências, mudanças explícitas, usos no documento/células, fonte recolhível, diagnósticos, histórico e recuperação. Tabelas continuam no perfil inicial 2 × 3 da demonstração, sem edição de linhas/colunas.
 
 Permanecem fora: compatibilidade XLSX, biblioteca completa Excel, referências A1/intervalos, resultados textuais/datas, renomear símbolos, funções próprias, gatilhos automáticos, iteração, cálculo distribuído e motor financeiro decimal. O publicador canônico ainda não recebe esse agregado; a fronteira do piloto recusa publicação. Equações, GTK, schemas reais e `.inde` único não são promovidos a implementados. A demonstração técnica não substitui aceite humano.
+
+## Atualização posterior aprovada — P2-D2
+
+O [refinamento de texto misto e comando consumível](FORMULAS-TEXTO-OBJ-01.md) implementa a proposta posterior do usuário em linguagem/perfil próprios. Valores atuais ficam na fonte; a frase tem trechos autorais e resultados protegidos; condições retornam texto; alterar fica sozinho e é retirado após execução confirmada. O perfil numérico P2-D descrito acima conserva seu comportamento e formato. [Validação P2-D2](../validacao/VALIDACAO-OBJ-01-P2D2.md).

@@ -1,0 +1,29 @@
+{
+  "saved_revision": 0,
+  "saved_sha256": "3fc9aa71cc76fcd7c2725527c15de92c4afcb7c383a68cd53f2e1ee965a209df",
+  "working_generation": 19,
+  "working_sha256": "813eacc3630a98b70faf2d157c4b6b61c45f93e275dd7f39b0ee99a5dcb4f00e",
+  "source_sha256": "15795cc6bfd7f5492cee1fd292678b29ecf97570adf370a5416944ae499d1d1c",
+  "format": "INDE-OBJ01-COMPOSITE-P2D2-1",
+  "sources": {
+    "Combate": "declara HP = 100\nHP = 80\ndeclara DanoEspada = 10\nresultado HP - 2 × DanoEspada",
+    "Estado": "resultado SE(Combate.HP <= 0; \"caído\"; SE(E(Combate.HP > 0; Combate.HP < 90); \"ferido\"; \"de pé\"))",
+    "Planilha": "resultado Combate.HP",
+    "Golpe": "alterar Combate.HP = Combate.HP - 20"
+  },
+  "consumed": [
+    "Golpe"
+  ],
+  "active_document_formula_uses": 2,
+  "active_cell_formula_uses": 1,
+  "retired_formula_uses": 1,
+  "presentations": 3,
+  "snapshot_equal_after_SIGKILL": true,
+  "saved_not_promoted": true,
+  "hidden_overrides_empty": true,
+  "commands_not_reexecuted": true,
+  "integrity_check": "ok",
+  "foreign_key_check": [],
+  "engine_signal": "SIGKILL to own synthetic engine",
+  "server_exit_after_crash": "expected engine_failed=-9"
+}

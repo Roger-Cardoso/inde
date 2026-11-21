@@ -1,0 +1,90 @@
+[
+  {
+    "cell": false,
+    "font": "Georgia, serif",
+    "lineHeight": "34.2px",
+    "rich": true,
+    "size": "19px",
+    "text": "Após os ataques, restaram 60 pontos de vida; o estado é ferido."
+  },
+  {
+    "cell": false,
+    "font": "Georgia, serif",
+    "lineHeight": "34.2px",
+    "rich": true,
+    "size": "19px",
+    "text": "O personagem permanece ferido."
+  },
+  {
+    "cell": true,
+    "font": "system-ui, sans-serif",
+    "lineHeight": "21px",
+    "rich": false,
+    "size": "14px",
+    "text": "Lugar"
+  },
+  {
+    "cell": true,
+    "font": "system-ui, sans-serif",
+    "lineHeight": "21px",
+    "rich": false,
+    "size": "14px",
+    "text": "Imagem"
+  },
+  {
+    "cell": true,
+    "font": "system-ui, sans-serif",
+    "lineHeight": "21px",
+    "rich": false,
+    "size": "14px",
+    "text": "Nota"
+  },
+  {
+    "cell": true,
+    "font": "system-ui, sans-serif",
+    "lineHeight": "21px",
+    "rich": false,
+    "size": "14px",
+    "text": "Margem"
+  },
+  {
+    "cell": true,
+    "font": "system-ui, sans-serif",
+    "lineHeight": "21px",
+    "rich": false,
+    "size": "14px",
+    "text": "Verde"
+  },
+  {
+    "cell": true,
+    "font": "system-ui, sans-serif",
+    "lineHeight": "21px",
+    "rich": true,
+    "size": "14px",
+    "text": "HP atual: 80"
+  },
+  {
+    "cell": false,
+    "font": "Georgia, serif",
+    "lineHeight": "34.2px",
+    "rich": false,
+    "size": "19px",
+    "text": "Água, luz e memória."
+  },
+  {
+    "cell": false,
+    "font": "Georgia, serif",
+    "lineHeight": "34.2px",
+    "rich": false,
+    "size": "19px",
+    "text": "O horizonte abre uma passagem."
+  },
+  {
+    "cell": false,
+    "font": "Georgia, serif",
+    "lineHeight": "34.2px",
+    "rich": false,
+    "size": "19px",
+    "text": "A casa guarda outra história 🙂."
+  }
+]

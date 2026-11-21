@@ -72,3 +72,7 @@ Se uma dessas frentes parecer necessária, registrar qual caso P01–P14 bloquei
 ## Extensão posterior aprovada: P2-D
 
 O usuário propôs e aprovou Fórmula como objeto calculável no documento e nas células, com variáveis, referências e alterações explícitas de estado. O [contrato de Fórmula](FORMULAS-OBJ-01.md) e a [validação P2-D](../validacao/VALIDACAO-OBJ-01-P2D.md) registram esse acréscimo sem alterar o que os cortes P2-A/B/C provaram. Fórmula e Equação têm contratos distintos. Integração de publicação de P14 e aceite humano permanecem separados.
+
+## Refinamento posterior aprovado: P2-D2
+
+O [contrato de texto misto e comando consumível](FORMULAS-TEXTO-OBJ-01.md) e a [validação P2-D2](../validacao/VALIDACAO-OBJ-01-P2D2.md) registram o pedido posterior do usuário: atual na fonte, frase editável, resultados textuais condicionais e alterar solitário retirado após agir. As provas anteriores continuam vinculadas aos próprios perfis; aceite humano e publicação canônica permanecem separados.
