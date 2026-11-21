@@ -121,7 +121,7 @@ function options(id, values, fallback = '') {
     const option = document.createElement('option'); option.value = value; option.textContent = label;
     $(id).append(option);
   }
-  $(id).value = values.some(v => v[0] === selected) ? selected : fallback;
+  $(id).value = values.some(v => v[0] === selected) ? selected : values.some(v => v[0] === fallback) ? fallback : values.some(v => v[0] === '') ? '' : (values[0]?.[0] || '');
 }
 function controls() {
   if (!state) return;
