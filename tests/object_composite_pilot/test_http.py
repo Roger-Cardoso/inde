@@ -11,17 +11,18 @@ import time
 from urllib.parse import urlsplit
 import unittest
 
-BINARY = Path(sys.argv.pop(1)).resolve()
+BINARY = Path(sys.argv.pop(1)).resolve() if __name__ == '__main__' else None
 SERVER = Path(__file__).resolve().parents[2] / 'tools/obj01-pilot/serve.py'
 
 
 class HttpPilot(unittest.TestCase):
+    profile = 'p2a'
     def setUp(self):
         self.tmp = tempfile.TemporaryDirectory(prefix='obj01-p2a-http-')
         self.ready = Path(self.tmp.name) / 'ready.json'
         self.log = tempfile.TemporaryFile()
         self.process = subprocess.Popen([sys.executable, str(SERVER), '--binary', str(BINARY),
-                                         '--workspace', str(Path(self.tmp.name) / 'fixture'),
+                                         '--workspace', str(Path(self.tmp.name) / 'fixture'), '--profile', self.profile,
                                          '--ready-file', str(self.ready)], stdout=self.log, stderr=self.log)
         for _ in range(300):
             if self.ready.is_file():

@@ -291,9 +291,10 @@ class Db {
   sqlite3 *db_{};
 
 public:
-  explicit Db(const std::filesystem::path &p) {
+  explicit Db(const std::filesystem::path &p, bool readonly = false) {
     Fd f;
-    f.n = ::open(p.c_str(), O_RDWR | O_NOFOLLOW | O_CLOEXEC);
+    f.n = ::open(p.c_str(),
+                 (readonly ? O_RDONLY : O_RDWR) | O_NOFOLLOW | O_CLOEXEC);
     if (f.n < 0)
       fail("database_missing");
     secure_file(f.n);
@@ -301,7 +302,10 @@ public:
     if (::fstat(f.n, &st) != 0 || st.st_size > 80 * static_cast<off_t>(mib))
       fail("database_size_limit");
     const int rc = sqlite3_open_v2(
-        p.c_str(), &db_, SQLITE_OPEN_READWRITE | SQLITE_OPEN_NOFOLLOW, nullptr);
+        p.c_str(), &db_,
+        (readonly ? SQLITE_OPEN_READONLY : SQLITE_OPEN_READWRITE) |
+            SQLITE_OPEN_NOFOLLOW,
+        nullptr);
     if (rc != SQLITE_OK) {
       if (db_)
         sqlite3_close(db_);
@@ -409,12 +413,25 @@ struct Row {
   std::vector<std::string> children;
   double first = .5, second = .5, gap = 20;
 };
+struct Cell {
+  std::string id, row, column, text;
+};
+struct Table {
+  std::string occurrence, object, title;
+  bool header = true;
+  std::int64_t payload_revision = 0;
+  std::vector<std::string> rows, columns;
+  std::vector<Cell> cells;
+};
 struct State {
   std::string project, source, source_hash, selection;
   std::vector<std::string> author, visual;
-  std::vector<Figure> figures;
+  std::vector<Figure> figures, archived_figures;
+  std::vector<Table> tables, archived_tables;
+  std::string selected_cell;
+  bool p2b = false;
   std::vector<Row> rows;
-  std::map<std::string, Bytes> blobs;
+  std::map<std::string, std::shared_ptr<const Bytes>> blobs;
 };
 std::unique_ptr<compat::DocumentReadProjection> projection(const State &s) {
   auto d = persistence::decode_document_snapshot(s.source);
@@ -435,15 +452,27 @@ Composition graph(const State &s,
                   const compat::DocumentReadProjection &source) {
   Composition g = source.graph();
   std::set<std::string> objects, resources;
-  for (const auto &f : s.figures) {
+  auto assets = s.figures;
+  assets.insert(assets.end(), s.archived_figures.begin(),
+                s.archived_figures.end());
+  for (const auto &f : assets) {
     if (objects.insert(f.object).second)
       g.objects.push_back({f.object, ObjectKind::Image, f.resource, {}});
     if (resources.insert(f.resource).second)
       g.resources.push_back(
           {f.resource, f.hash, "image/png",
-           static_cast<std::uint64_t>(s.blobs.at(f.hash).size())});
-    g.occurrences.push_back({f.occurrence, f.object, {}});
+           static_cast<std::uint64_t>(s.blobs.at(f.hash)->size())});
+    if (std::any_of(s.figures.begin(), s.figures.end(), [&](const auto &a) {
+          return a.occurrence == f.occurrence;
+        }))
+      g.occurrences.push_back({f.occurrence, f.object, {}});
   }
+  for (const auto &t : s.tables) {
+    g.objects.push_back({t.object, ObjectKind::Table, {}, {}});
+    g.occurrences.push_back({t.occurrence, t.object, {}});
+  }
+  for (const auto &t : s.archived_tables)
+    g.objects.push_back({t.object, ObjectKind::Table, {}, {}});
   auto &children = g.layouts.front().children;
   children.clear();
   for (const auto &id : s.visual) {
@@ -462,8 +491,11 @@ Composition graph(const State &s,
   }
   return g;
 }
-void validate(const State &s) {
-  if (s.figures.size() > 256 || s.rows.size() > 128 || s.blobs.size() > 64)
+V encode(const State &s);
+void validate(const State &s, bool decode_media = true) {
+  if (s.figures.size() + s.archived_figures.size() > 256 ||
+      s.tables.size() + s.archived_tables.size() > 64 || s.rows.size() > 128 ||
+      s.blobs.size() > 64)
     fail("entity_limit");
   text(s.source, 16 * mib);
   text(s.selection, 256);
@@ -483,8 +515,30 @@ void validate(const State &s) {
   std::map<std::string, std::string> resource_links;
   std::map<std::string, std::pair<int, int>> decoded;
   std::set<std::string> hashes;
-  std::size_t string_bytes = s.source.size() + s.selection.size();
-  for (const auto &f : s.figures) {
+  std::size_t string_bytes = s.source.size() + s.selection.size() +
+                             s.selected_cell.size() + s.project.size() +
+                             s.source_hash.size();
+  for (const auto &id : s.author)
+    string_bytes += id.size();
+  for (const auto &id : s.visual)
+    string_bytes += id.size();
+  for (const auto &r : s.rows) {
+    string_bytes += r.layout.size() + r.object.size() + r.occurrence.size();
+    for (const auto &id : r.children)
+      string_bytes += id.size();
+  }
+  for (const auto &[hash, bytes] : s.blobs) {
+    (void)bytes;
+    string_bytes += hash.size();
+  }
+  if (!s.p2b && (!s.tables.empty() || !s.archived_tables.empty() ||
+                 !s.archived_figures.empty() || !s.selected_cell.empty()))
+    fail("p2b_profile_required");
+  auto assets = s.figures;
+  assets.insert(assets.end(), s.archived_figures.begin(),
+                s.archived_figures.end());
+  std::set<std::string> figure_ids;
+  for (const auto &f : assets) {
     for (const auto *v : {&f.occurrence, &f.object, &f.resource}) {
       text(*v, 256);
       if (v->empty())
@@ -499,7 +553,7 @@ void validate(const State &s) {
     if (!f.decorative && f.alt.empty())
       fail("alt_text_required");
     if (f.occurrence == f.object || f.object == f.resource ||
-        f.occurrence == f.resource || !expected.insert(f.occurrence).second)
+        f.occurrence == f.resource || !figure_ids.insert(f.occurrence).second)
       fail("identity_collision");
     const auto [obj, inserted] =
         object_links.emplace(f.object, std::pair{f.resource, f.hash});
@@ -511,20 +565,99 @@ void validate(const State &s) {
     hashes.insert(f.hash);
     if (!s.blobs.contains(f.hash))
       fail("blob_missing");
-    if (!decoded.contains(f.hash)) {
-      const auto &b = s.blobs.at(f.hash);
+    if (decode_media && !decoded.contains(f.hash)) {
+      const auto &b = *s.blobs.at(f.hash);
       if (sha(b) != f.hash)
         fail("blob_hash_mismatch");
       decoded.emplace(f.hash, png(b));
     }
-    if (decoded.at(f.hash) != std::pair{f.width, f.height})
+    if (decode_media && decoded.at(f.hash) != std::pair{f.width, f.height})
       fail("png_dimensions_mismatch");
+  }
+  for (const auto &f : s.figures)
+    if (!expected.insert(f.occurrence).second)
+      fail("identity_collision");
+  std::set<std::string> nested_ids = expected;
+  for (const auto &o : p->graph().objects)
+    nested_ids.insert(o.id);
+  for (const auto &l : p->graph().layouts)
+    nested_ids.insert(l.id);
+  for (const auto &f : assets) {
+    nested_ids.insert(f.object);
+    nested_ids.insert(f.resource);
+  }
+  for (const auto &r : s.rows) {
+    nested_ids.insert(r.layout);
+    nested_ids.insert(r.object);
+    nested_ids.insert(r.occurrence);
+  }
+  for (const auto &f : s.archived_figures) {
+    if (!nested_ids.insert(f.occurrence).second)
+      fail("retired_occurrence_collision");
+  }
+  const auto table_check = [&](const Table &t, bool active) {
+    const auto identity = [&](const std::string &id) {
+      text(id, 256);
+      if (id.empty() || !nested_ids.insert(id).second)
+        fail("table_identity_collision");
+    };
+    identity(t.occurrence);
+    identity(t.object);
+    text(t.title);
+    if (t.payload_revision < 0 || t.rows.empty() || t.rows.size() > 64 ||
+        t.columns.empty() || t.columns.size() > 32 ||
+        t.cells.size() != t.rows.size() * t.columns.size())
+      fail("invalid_table_shape");
+    for (const auto &id : t.rows) {
+      identity(id);
+      string_bytes += id.size();
+    }
+    for (const auto &id : t.columns) {
+      identity(id);
+      string_bytes += id.size();
+    }
+    std::set<std::pair<std::string, std::string>> coordinates;
+    string_bytes += t.title.size() + t.occurrence.size() + t.object.size();
+    for (const auto &c : t.cells) {
+      identity(c.id);
+      text(c.text, 16384);
+      if (g_utf8_strlen(c.text.data(), static_cast<gssize>(c.text.size())) >
+          4096)
+        fail("cell_text_limit");
+      if (std::find(t.rows.begin(), t.rows.end(), c.row) == t.rows.end() ||
+          std::find(t.columns.begin(), t.columns.end(), c.column) ==
+              t.columns.end() ||
+          !coordinates.emplace(c.row, c.column).second)
+        fail("invalid_cell_coordinates");
+      string_bytes +=
+          c.id.size() + c.row.size() + c.column.size() + c.text.size();
+      if (string_bytes > 8 * mib)
+        fail("document_string_limit");
+    }
+    if (active && !expected.insert(t.occurrence).second)
+      fail("identity_collision");
+  };
+  for (const auto &t : s.tables)
+    table_check(t, true);
+  for (const auto &t : s.archived_tables)
+    table_check(t, false);
+  if (string_bytes > 8 * mib)
+    fail("document_string_limit");
+  if (!s.selected_cell.empty()) {
+    const auto t =
+        std::find_if(s.tables.begin(), s.tables.end(), [&](const auto &t) {
+          return t.occurrence == s.selection;
+        });
+    if (t == s.tables.end() ||
+        std::none_of(t->cells.begin(), t->cells.end(),
+                     [&](const auto &c) { return c.id == s.selected_cell; }))
+      fail("cell_selection_not_found");
   }
   std::size_t total = 0;
   for (const auto &[hash, b] : s.blobs) {
     if (!hashes.contains(hash))
       fail("unreferenced_blob");
-    total += b.size();
+    total += b->size();
     if (total > 32 * mib)
       fail("blob_total_limit");
   }
@@ -584,19 +717,70 @@ void validate(const State &s) {
     fail("selection_not_found");
   if (!objects::validate(graph(s, *p)).empty())
     fail("invalid_object_graph");
+  if (encode_json(encode(s)).size() > 24 * mib)
+    fail("snapshot_byte_limit");
+}
+V figure_value(const Figure &f) {
+  return V::Object{{"occurrence", f.occurrence}, {"object", f.object},
+                   {"resource", f.resource},     {"sha256", f.hash},
+                   {"caption", f.caption},       {"alt", f.alt},
+                   {"decorative", f.decorative}, {"width", f.width},
+                   {"height", f.height}};
+}
+Figure decode_figure(const V &f) {
+  fields(f, {"occurrence", "object", "resource", "sha256", "caption", "alt",
+             "decorative", "width", "height"});
+  const auto w = f.at("width").as_integer(), h = f.at("height").as_integer();
+  if (w <= 0 || h <= 0 || w > 8192 || h > 8192)
+    fail("png_dimensions_limit");
+  return {f.at("occurrence").as_string(),
+          f.at("object").as_string(),
+          f.at("resource").as_string(),
+          f.at("sha256").as_string(),
+          f.at("caption").as_string(),
+          f.at("alt").as_string(),
+          f.at("decorative").as_boolean(),
+          static_cast<int>(w),
+          static_cast<int>(h)};
+}
+V table_value(const Table &t) {
+  V::Array cells;
+  for (const auto &c : t.cells)
+    cells.emplace_back(V::Object{
+        {"id", c.id}, {"row", c.row}, {"column", c.column}, {"text", c.text}});
+  return V::Object{{"occurrence", t.occurrence},
+                   {"object", t.object},
+                   {"title", t.title},
+                   {"header", t.header},
+                   {"payload_revision", t.payload_revision},
+                   {"row_ids", array(t.rows)},
+                   {"column_ids", array(t.columns)},
+                   {"cells", std::move(cells)}};
+}
+Table decode_table(const V &v) {
+  fields(v, {"occurrence", "object", "title", "header", "payload_revision",
+             "row_ids", "column_ids", "cells"});
+  Table t;
+  t.occurrence = v.at("occurrence").as_string();
+  t.object = v.at("object").as_string();
+  t.title = v.at("title").as_string();
+  t.header = v.at("header").as_boolean();
+  t.payload_revision = v.at("payload_revision").as_integer();
+  t.rows = strings(v.at("row_ids"), 64);
+  t.columns = strings(v.at("column_ids"), 32);
+  if (v.at("cells").as_array().size() > 2048)
+    fail("invalid_table_shape");
+  for (const auto &c : v.at("cells").as_array()) {
+    fields(c, {"id", "row", "column", "text"});
+    t.cells.push_back({c.at("id").as_string(), c.at("row").as_string(),
+                       c.at("column").as_string(), c.at("text").as_string()});
+  }
+  return t;
 }
 V encode(const State &s) {
   V::Array figures, rows;
   for (const auto &f : s.figures)
-    figures.emplace_back(V::Object{{"occurrence", f.occurrence},
-                                   {"object", f.object},
-                                   {"resource", f.resource},
-                                   {"sha256", f.hash},
-                                   {"caption", f.caption},
-                                   {"alt", f.alt},
-                                   {"decorative", f.decorative},
-                                   {"width", f.width},
-                                   {"height", f.height}});
+    figures.push_back(figure_value(f));
   for (const auto &r : s.rows)
     rows.emplace_back(V::Object{{"layout", r.layout},
                                 {"object", r.object},
@@ -605,7 +789,8 @@ V encode(const State &s) {
                                 {"first", r.first},
                                 {"second", r.second},
                                 {"gap", r.gap}});
-  return V::Object{{"format", "INDE-OBJ01-COMPOSITE-P2A-1"},
+  V::Object result{{"format", s.p2b ? "INDE-OBJ01-COMPOSITE-P2B-1"
+                                    : "INDE-OBJ01-COMPOSITE-P2A-1"},
                    {"project", s.project},
                    {"source", s.source},
                    {"source_sha256", s.source_hash},
@@ -614,10 +799,23 @@ V encode(const State &s) {
                    {"figures", std::move(figures)},
                    {"rows", std::move(rows)},
                    {"selection", s.selection}};
+  if (s.p2b) {
+    V::Array archived, tables, retired;
+    for (const auto &f : s.archived_figures)
+      archived.push_back(figure_value(f));
+    for (const auto &t : s.tables)
+      tables.push_back(table_value(t));
+    for (const auto &t : s.archived_tables)
+      retired.push_back(table_value(t));
+    result.emplace("archived_figures", std::move(archived));
+    result.emplace("tables", std::move(tables));
+    result.emplace("archived_tables", std::move(retired));
+    result.emplace("selected_cell", s.selected_cell);
+  }
+  return result;
 }
 State decode(const std::string &bytes) {
   text(bytes, 24 * mib);
-  // The format is shallow, including the owner snapshot as an opaque string.
   int depth = 0;
   bool quoted = false, escaped = false;
   for (char c : bytes) {
@@ -637,11 +835,19 @@ State decode(const std::string &bytes) {
       --depth;
   }
   const auto v = persistence::json::parse(bytes);
-  fields(v, {"format", "project", "source", "source_sha256", "author_order",
-             "visual_order", "figures", "rows", "selection"});
-  if (v.at("format").as_string() != "INDE-OBJ01-COMPOSITE-P2A-1")
-    fail("unsupported_snapshot_version");
+  const auto format = v.at("format").as_string();
   State s;
+  s.p2b = format == "INDE-OBJ01-COMPOSITE-P2B-1";
+  if (!s.p2b && format != "INDE-OBJ01-COMPOSITE-P2A-1")
+    fail("unsupported_snapshot_version");
+  if (s.p2b)
+    fields(v,
+           {"format", "project", "source", "source_sha256", "author_order",
+            "visual_order", "figures", "rows", "selection", "archived_figures",
+            "tables", "archived_tables", "selected_cell"});
+  else
+    fields(v, {"format", "project", "source", "source_sha256", "author_order",
+               "visual_order", "figures", "rows", "selection"});
   s.project = v.at("project").as_string();
   s.source = v.at("source").as_string();
   s.source_hash = v.at("source_sha256").as_string();
@@ -651,19 +857,8 @@ State decode(const std::string &bytes) {
   if (v.at("figures").as_array().size() > 256 ||
       v.at("rows").as_array().size() > 128)
     fail("entity_limit");
-  for (const auto &f : v.at("figures").as_array()) {
-    fields(f, {"occurrence", "object", "resource", "sha256", "caption", "alt",
-               "decorative", "width", "height"});
-    const auto w = f.at("width").as_integer(), h = f.at("height").as_integer();
-    if (w <= 0 || h <= 0 || w > 8192 || h > 8192)
-      fail("png_dimensions_limit");
-    s.figures.push_back(
-        {f.at("occurrence").as_string(), f.at("object").as_string(),
-         f.at("resource").as_string(), f.at("sha256").as_string(),
-         f.at("caption").as_string(), f.at("alt").as_string(),
-         f.at("decorative").as_boolean(), static_cast<int>(w),
-         static_cast<int>(h)});
-  }
+  for (const auto &f : v.at("figures").as_array())
+    s.figures.push_back(decode_figure(f));
   for (const auto &r : v.at("rows").as_array()) {
     fields(r, {"layout", "object", "occurrence", "children", "first", "second",
                "gap"});
@@ -671,6 +866,20 @@ State decode(const std::string &bytes) {
                       r.at("occurrence").as_string(),
                       strings(r.at("children"), 2), real(r.at("first")),
                       real(r.at("second")), real(r.at("gap"))});
+  }
+  if (s.p2b) {
+    if (v.at("archived_figures").as_array().size() > 256 ||
+        v.at("tables").as_array().size() > 64 ||
+        v.at("archived_tables").as_array().size() > 64)
+      fail("entity_limit");
+    s.selected_cell = v.at("selected_cell").as_string();
+    text(s.selected_cell, 256);
+    for (const auto &f : v.at("archived_figures").as_array())
+      s.archived_figures.push_back(decode_figure(f));
+    for (const auto &t : v.at("tables").as_array())
+      s.tables.push_back(decode_table(t));
+    for (const auto &t : v.at("archived_tables").as_array())
+      s.archived_tables.push_back(decode_table(t));
   }
   return s;
 }
@@ -717,6 +926,39 @@ void unpair(State &s, const std::string &id) {
            r.children.end();
   });
 }
+// Undo changes active occurrences, not the existence of immutable resources.
+// Retained records are library entries, never hidden reading-order items.
+void retain_assets(State &target, const State &current) {
+  for (const auto &[hash, bytes] : current.blobs)
+    target.blobs.emplace(hash, bytes);
+  const auto remember_figure = [&](const Figure &f) {
+    const auto same = [&](const auto &a) {
+      return a.occurrence == f.occurrence;
+    };
+    if (std::none_of(target.figures.begin(), target.figures.end(), same) &&
+        std::none_of(target.archived_figures.begin(),
+                     target.archived_figures.end(), same))
+      target.archived_figures.push_back(f);
+  };
+  for (const auto &f : current.figures)
+    remember_figure(f);
+  for (const auto &f : current.archived_figures)
+    remember_figure(f);
+  const auto remember_table = [&](const Table &t) {
+    const auto same = [&](const auto &a) {
+      return a.occurrence == t.occurrence;
+    };
+    if (std::none_of(target.tables.begin(), target.tables.end(), same) &&
+        std::none_of(target.archived_tables.begin(),
+                     target.archived_tables.end(), same))
+      target.archived_tables.push_back(t);
+  };
+  for (const auto &t : current.tables)
+    remember_table(t);
+  for (const auto &t : current.archived_tables)
+    remember_table(t);
+}
+
 } // namespace
 struct Session::Impl {
   std::filesystem::path workspace;
@@ -725,10 +967,15 @@ struct Session::Impl {
   State working;
   std::string saved_hash, saved_bytes;
   std::int64_t persisted = 0, revision = 0;
+  bool p2b = false;
+  std::vector<State> undo, redo;
+  static constexpr std::size_t history_limit = 32, history_bytes = 32 * mib;
 
-  explicit Impl(std::filesystem::path path)
+  explicit Impl(std::filesystem::path path, Profile profile,
+                const std::filesystem::path &seed)
       : workspace(
-            std::filesystem::absolute(std::move(path)).lexically_normal()) {
+            std::filesystem::absolute(std::move(path)).lexically_normal()),
+        p2b(profile == Profile::P2B) {
     for (const auto &part : workspace)
       if (part.extension() == ".inde")
         fail("legacy_project_path_forbidden");
@@ -750,20 +997,49 @@ struct Session::Impl {
     secure_file(lease.n);
     if (::flock(lease.n, LOCK_EX | LOCK_NB) != 0)
       fail("workspace_already_open");
+    if (!seed.empty() && (!p2b || exists))
+      fail("seed_requires_new_p2b_workspace");
     if (!exists) {
-      working = fixture();
+      if (seed.empty())
+        working = fixture();
+      else {
+        const auto source_path =
+            std::filesystem::absolute(seed).lexically_normal();
+        for (const auto &part : source_path)
+          if (part.extension() == ".inde")
+            fail("legacy_project_path_forbidden");
+        struct stat src {};
+        if (::lstat(source_path.c_str(), &src) != 0 || !S_ISDIR(src.st_mode) ||
+            src.st_uid != ::geteuid() || (src.st_mode & 077) != 0)
+          fail("unsafe_seed_directory");
+        Db original(source_path / "obj01-piloto.sqlite3", true);
+        original.exec("BEGIN");
+        auto copied = read_saved(original, source_path, false);
+        original.exec("ROLLBACK");
+        working = std::move(copied.state);
+      }
+      working.p2b = p2b;
+      validate(working);
       create_file(workspace / "origem-documento.json", working.source);
       create_file(database, "");
       db = std::make_unique<Db>(database);
       db->exec("PRAGMA synchronous=FULL");
       Tx tx(*db);
-      db->exec("PRAGMA application_id=1329744433; PRAGMA user_version=1;");
+      db->exec(
+          p2b ? "PRAGMA application_id=1329744433; PRAGMA user_version=2;"
+              : "PRAGMA application_id=1329744433; PRAGMA user_version=1;");
       db->exec("CREATE TABLE saved(id INTEGER PRIMARY KEY CHECK(id=1), "
                "revision INTEGER NOT NULL CHECK(revision>=0), sha256 TEXT NOT "
                "NULL, snapshot TEXT NOT NULL); CREATE TABLE blobs(sha256 TEXT "
                "PRIMARY KEY, data BLOB NOT NULL);");
       saved_bytes = encode_json(encode(working));
       saved_hash = sha(saved_bytes);
+      for (const auto &[hash, bytes] : working.blobs) {
+        Query blob(*db, "INSERT INTO blobs VALUES(?,?)");
+        blob.bind(1, hash);
+        blob.bind(2, *bytes);
+        (void)blob.step();
+      }
       Query q(*db, "INSERT INTO saved VALUES(1,0,?,?)");
       q.bind(1, saved_hash);
       q.bind(2, saved_bytes);
@@ -787,18 +1063,20 @@ struct Session::Impl {
     std::string bytes, hash;
     std::int64_t rev;
   };
-  Loaded load() {
-    Query app(*db, "PRAGMA application_id");
+  static Loaded read_saved(Db &database, const std::filesystem::path &origin,
+                           bool p2b) {
+    Query app(database, "PRAGMA application_id");
     if (!app.step() || app.integer(0) != application_id)
       fail("not_a_pilot_database");
-    Query ver(*db, "PRAGMA user_version");
-    if (!ver.step() || ver.integer(0) != 1)
+    Query ver(database, "PRAGMA user_version");
+    if (!ver.step() || ver.integer(0) != (p2b ? 2 : 1))
       fail("unsupported_database_version");
-    Query journal(*db, "PRAGMA journal_mode");
+    Query journal(database, "PRAGMA journal_mode");
     if (!journal.step() || journal.string(0) != "delete")
       fail("unsupported_journal_mode");
-    Query q(*db, "SELECT revision, sha256, length(CAST(snapshot AS BLOB)), "
-                 "snapshot FROM saved WHERE id=1");
+    Query q(database,
+            "SELECT revision, sha256, length(CAST(snapshot AS BLOB)), "
+            "snapshot FROM saved WHERE id=1");
     if (!q.step())
       fail("saved_document_missing");
     const auto rev = q.integer(0), size = q.integer(2);
@@ -809,27 +1087,31 @@ struct Session::Impl {
     if (sha(bytes) != hash)
       fail("saved_hash_mismatch");
     State s = decode(bytes);
-    if (read_file(workspace / "origem-documento.json") != s.source)
+    if (s.p2b != p2b)
+      fail("profile_snapshot_mismatch");
+    if (read_file(origin / "origem-documento.json") != s.source)
       fail("frozen_source_changed");
-    Query count(*db,
+    Query count(database,
                 "SELECT count(*), COALESCE(sum(length(data)),0) FROM blobs");
     if (!count.step() || count.integer(0) > 64 ||
         count.integer(1) > 32 * static_cast<std::int64_t>(mib))
       fail("blob_total_limit");
-    Query blob(*db, "SELECT sha256, length(data), data FROM blobs");
+    Query blob(database, "SELECT sha256, length(data), data FROM blobs");
     while (blob.step()) {
       const auto n = blob.integer(1);
       if (n <= 0 || n > 8 * static_cast<std::int64_t>(mib))
         fail("png_byte_limit");
-      s.blobs.emplace(blob.string(0), blob.bytes(2));
+      s.blobs.emplace(blob.string(0),
+                      std::make_shared<const Bytes>(blob.bytes(2)));
     }
     validate(s);
     return {std::move(s), std::move(bytes), std::move(hash), rev};
   }
+  Loaded load() { return read_saved(*db, workspace, p2b); }
   bool dirty() const { return encode_json(encode(working)) != saved_bytes; }
   V view() const {
     const auto p = projection(working);
-    V::Array paragraphs, figures, rows, groups;
+    V::Array paragraphs, figures, rows, groups, tables;
     for (const auto &b : p->paragraphs())
       paragraphs.emplace_back(V::Object{
           {"id", b.occurrence_id},
@@ -847,7 +1129,7 @@ struct Session::Impl {
                     {"decorative", f.decorative},
                     {"width", f.width},
                     {"height", f.height},
-                    {"bytes", number(working.blobs.at(f.hash).size())}});
+                    {"bytes", number(working.blobs.at(f.hash)->size())}});
     for (const auto &r : working.rows)
       rows.emplace_back(V::Object{{"id", r.layout},
                                   {"occurrence", r.occurrence},
@@ -857,7 +1139,20 @@ struct Session::Impl {
                                   {"gap", r.gap}});
     for (const auto &g : p->reading_groups())
       groups.emplace_back(array(g.occurrence_ids));
+    for (const auto &t : working.tables) {
+      auto v = table_value(t).as_object();
+      v.emplace("id", t.occurrence);
+      tables.emplace_back(std::move(v));
+    }
     return V::Object{
+        {"profile", p2b ? "P2-B" : "P2-A"},
+        {"tables", std::move(tables)},
+        {"selected_cell", working.selected_cell},
+        {"can_undo", !undo.empty()},
+        {"can_redo", !redo.empty()},
+        {"history_entries", number(undo.size() + redo.size())},
+        {"retained_figures", number(working.archived_figures.size())},
+        {"retained_tables", number(working.archived_tables.size())},
         {"revision", revision},
         {"saved_revision", persisted},
         {"dirty", dirty()},
@@ -876,6 +1171,97 @@ struct Session::Impl {
         {"visibility_profiles",
          number(p->source_snapshot().visibility_profiles.size())},
         {"unsaved_recovery", false}};
+  }
+  static bool fits(const State &current, const std::vector<State> &past,
+                   const std::vector<State> &future) {
+    if (past.size() + future.size() > history_limit)
+      return false;
+    std::size_t meta = 0;
+    std::map<std::string, std::size_t> resources;
+    const auto account = [&](const State &s) {
+      meta += encode_json(encode(s)).size();
+      for (const auto &[h, b] : s.blobs)
+        resources.emplace(h, b->size());
+    };
+    account(current);
+    for (const auto &s : past)
+      account(s);
+    for (const auto &s : future)
+      account(s);
+    std::size_t blobs = 0;
+    for (const auto &[hash, size] : resources) {
+      (void)hash;
+      blobs += size;
+    }
+    return meta <= history_bytes && blobs <= 32 * mib;
+  }
+  void publish(State candidate, bool remember) {
+    validate(candidate);
+    if (p2b) {
+      auto past = undo, future = redo;
+      if (remember &&
+          encode_json(encode(candidate)) != encode_json(encode(working))) {
+        past.push_back(working);
+        future.clear();
+      }
+      // Keep every advertised history entry valid under the retained library.
+      // Media bytes are immutable and were verified on admission/load; only
+      // this trusted private-history path can skip decoding them again.
+      const auto normalize = [&](std::vector<State> &entries) {
+        std::size_t discard = 0;
+        for (std::size_t i = 0; i < entries.size(); ++i) {
+          retain_assets(entries[i], candidate);
+          try {
+            validate(entries[i], false);
+          } catch (const std::bad_alloc &) {
+            throw;
+          } catch (const std::exception &) {
+            discard = i + 1;
+          }
+        }
+        entries.erase(entries.begin(),
+                      entries.begin() + static_cast<std::ptrdiff_t>(discard));
+      };
+      normalize(past);
+      normalize(future);
+      while (!fits(candidate, past, future)) {
+        if (!past.empty())
+          past.erase(past.begin());
+        else if (!future.empty())
+          future.erase(future.begin());
+        else
+          fail("history_budget_limit");
+      }
+      working = std::move(candidate);
+      undo.swap(past);
+      redo.swap(future);
+    } else
+      working = std::move(candidate);
+    increment();
+  }
+  void replay(bool forward) {
+    if (!p2b)
+      fail("p2b_profile_required");
+    const auto &source = forward ? redo : undo;
+    if (source.empty())
+      fail(forward ? "redo_empty" : "undo_empty");
+    State candidate = source.back();
+    retain_assets(candidate, working);
+    validate(candidate);
+    auto past = undo, future = redo;
+    if (forward) {
+      future.pop_back();
+      past.push_back(working);
+    } else {
+      past.pop_back();
+      future.push_back(working);
+    }
+    if (!fits(candidate, past, future))
+      fail("history_budget_limit");
+    working = std::move(candidate);
+    undo.swap(past);
+    redo.swap(future);
+    increment();
   }
   void increment() {
     if (revision == std::numeric_limits<std::int64_t>::max())
@@ -904,12 +1290,15 @@ struct Session::Impl {
         return V::Object{{"accepted", true},
                          {"mime", "image/png"},
                          {"sha256", it->hash},
-                         {"data", base64(working.blobs.at(it->hash))}};
+                         {"data", base64(*working.blobs.at(it->hash))}};
       }
       expected(v);
       if (revision == std::numeric_limits<std::int64_t>::max())
         fail("revision_limit");
-      if (op == "save") {
+      if (op == "undo" || op == "redo") {
+        fields(v, {"op", "expected"});
+        replay(op == "redo");
+      } else if (op == "save") {
         fields(v, {"op", "expected"});
         validate(working);
         auto bytes = encode_json(encode(working));
@@ -927,7 +1316,7 @@ struct Session::Impl {
           Query insert(*db, "INSERT INTO blobs(sha256,data) VALUES(?,?) ON "
                             "CONFLICT(sha256) DO NOTHING");
           insert.bind(1, h);
-          insert.bind(2, b);
+          insert.bind(2, *b);
           (void)insert.step();
         }
         Query update(*db, "UPDATE saved SET revision=?,sha256=?,snapshot=? "
@@ -957,10 +1346,96 @@ struct Session::Impl {
         saved_bytes = std::move(current.bytes);
         saved_hash = std::move(current.hash);
         persisted = current.rev;
+        undo.clear();
+        redo.clear();
         increment();
       } else {
         State candidate = working;
-        if (op == "import") {
+        bool remember = true;
+        if (op == "create_table") {
+          if (!p2b)
+            fail("p2b_profile_required");
+          fields(v, {"op", "expected", "before", "title", "header", "cells"});
+          if (candidate.author != candidate.visual)
+            fail("authorial_requires_alignment");
+          if (v.at("cells").as_array().size() != 6)
+            fail("initial_table_requires_2x3");
+          Table t;
+          t.occurrence = project::new_uuid();
+          t.object = project::new_uuid();
+          t.title = v.at("title").as_string();
+          t.header = v.at("header").as_boolean();
+          for (int i = 0; i < 2; ++i)
+            t.rows.push_back(project::new_uuid());
+          for (int i = 0; i < 3; ++i)
+            t.columns.push_back(project::new_uuid());
+          std::size_t index = 0;
+          for (const auto &row : t.rows)
+            for (const auto &column : t.columns)
+              t.cells.push_back(
+                  {project::new_uuid(), row, column,
+                   v.at("cells").as_array()[index++].as_string()});
+          insert_id(candidate, t.occurrence, v.at("before").as_string());
+          candidate.tables.push_back(std::move(t));
+          candidate.selected_cell.clear();
+        } else if (op == "edit_cell" || op == "select_cell") {
+          if (!p2b)
+            fail("p2b_profile_required");
+          if (op == "edit_cell")
+            fields(v, {"op", "expected", "id", "cell", "text"});
+          else
+            fields(v, {"op", "expected", "id", "cell"});
+          const auto id = v.at("id").as_string(),
+                     cell = v.at("cell").as_string();
+          const auto t =
+              std::find_if(candidate.tables.begin(), candidate.tables.end(),
+                           [&](const auto &t) { return t.occurrence == id; });
+          if (t == candidate.tables.end())
+            fail("table_not_found");
+          const auto c =
+              std::find_if(t->cells.begin(), t->cells.end(),
+                           [&](const auto &c) { return c.id == cell; });
+          if (c == t->cells.end())
+            fail("cell_not_found");
+          if (op == "edit_cell" && c->text != v.at("text").as_string()) {
+            if (t->payload_revision == std::numeric_limits<std::int64_t>::max())
+              fail("revision_limit");
+            c->text = v.at("text").as_string();
+            ++t->payload_revision;
+          } else
+            remember = false;
+          candidate.selection = id;
+          candidate.selected_cell = cell;
+        } else if (op == "remove") {
+          if (!p2b)
+            fail("p2b_profile_required");
+          fields(v, {"op", "expected", "id"});
+          if (candidate.author != candidate.visual)
+            fail("authorial_requires_alignment");
+          const auto id = v.at("id").as_string();
+          const auto f =
+              std::find_if(candidate.figures.begin(), candidate.figures.end(),
+                           [&](const auto &f) { return f.occurrence == id; });
+          const auto t =
+              std::find_if(candidate.tables.begin(), candidate.tables.end(),
+                           [&](const auto &t) { return t.occurrence == id; });
+          if (f != candidate.figures.end()) {
+            candidate.archived_figures.push_back(*f);
+            candidate.figures.erase(f);
+          } else if (t != candidate.tables.end()) {
+            candidate.archived_tables.push_back(*t);
+            candidate.tables.erase(t);
+          } else
+            fail("source_removal_out_of_scope");
+          unpair(candidate, id);
+          std::erase(candidate.author, id);
+          std::erase(candidate.visual, id);
+          if (candidate.selection == id) {
+            candidate.selection.clear();
+            candidate.selected_cell.clear();
+          }
+        } else if (op == "import") {
+
           fields(v, {"op", "expected", "data", "before", "caption", "alt",
                      "decorative"});
           if (candidate.author != candidate.visual)
@@ -978,7 +1453,8 @@ struct Session::Impl {
                    w,
                    h};
           insert(candidate, f, v.at("before").as_string());
-          candidate.blobs.emplace(hash, std::move(bytes));
+          candidate.blobs.emplace(
+              hash, std::make_shared<const Bytes>(std::move(bytes)));
         } else if (op == "duplicate") {
           fields(v, {"op", "expected", "id", "before"});
           if (candidate.author != candidate.visual)
@@ -991,7 +1467,10 @@ struct Session::Impl {
           const auto id = v.at("id").as_string(),
                      before = v.at("before").as_string(),
                      intent = v.at("intent").as_string();
-          (void)figure(candidate, id);
+          if (!p2b ||
+              std::none_of(candidate.tables.begin(), candidate.tables.end(),
+                           [&](const auto &t) { return t.occurrence == id; }))
+            (void)figure(candidate, id);
           if (intent != "authorial" && intent != "visual")
             fail("invalid_intent");
           if (intent == "authorial" && candidate.author != candidate.visual)
@@ -1031,6 +1510,8 @@ struct Session::Impl {
           }
           if (intent == "authorial")
             candidate.author = candidate.visual;
+          if (candidate.selection != id)
+            candidate.selected_cell.clear();
           candidate.selection = id;
         } else if (op == "arrange") {
           fields(v, {"op", "expected", "id", "paragraph", "first", "second",
@@ -1072,11 +1553,11 @@ struct Session::Impl {
         } else if (op == "select") {
           fields(v, {"op", "expected", "id"});
           candidate.selection = v.at("id").as_string();
+          candidate.selected_cell.clear();
+          remember = false;
         } else
           fail("unsupported_operation");
-        validate(candidate);
-        working = std::move(candidate);
-        increment();
+        publish(std::move(candidate), remember);
       }
       return V::Object{{"accepted", true}, {"state", view()}};
     } catch (const std::exception &e) {
@@ -1084,7 +1565,8 @@ struct Session::Impl {
           {"accepted", false}, {"error", e.what()}, {"state", view()}};
     }
   }
-  static void insert(State &s, const Figure &f, const std::string &before) {
+  static void insert_id(State &s, const std::string &id,
+                        const std::string &before) {
     const auto at = before.empty()
                         ? s.visual.end()
                         : std::find(s.visual.begin(), s.visual.end(), before);
@@ -1093,14 +1575,19 @@ struct Session::Impl {
     for (const auto &r : s.rows)
       if (r.children[1] == before)
         fail("destination_inside_row");
-    s.visual.insert(at, f.occurrence);
+    s.visual.insert(at, id);
     s.author = s.visual;
+    s.selection = id;
+    s.selected_cell.clear();
+  }
+  static void insert(State &s, const Figure &f, const std::string &before) {
+    insert_id(s, f.occurrence, before);
     s.figures.push_back(f);
-    s.selection = f.occurrence;
   }
 };
-Session::Session(const std::filesystem::path &path)
-    : impl_(std::make_unique<Impl>(path)) {}
+Session::Session(const std::filesystem::path &path, Profile profile,
+                 const std::filesystem::path &seed)
+    : impl_(std::make_unique<Impl>(path, profile, seed)) {}
 Session::~Session() = default;
 persistence::json::Value Session::request(const persistence::json::Value &v) {
   return impl_->request(v);

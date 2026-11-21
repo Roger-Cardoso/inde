@@ -4,13 +4,28 @@
 #include <string>
 
 int main(int argc, char **argv) {
-  if (argc != 3 || std::string(argv[1]) != "--workspace") {
-    std::cerr
-        << "Uso: inde_object_composite_pilot --workspace PASTA_EXPERIMENTAL\n";
-    return 2;
-  }
   try {
-    inde::objects::pilot::Session session(argv[2]);
+    std::filesystem::path workspace, seed;
+    auto profile = inde::objects::pilot::Profile::P2A;
+    for (int i = 1; i < argc; ++i) {
+      const std::string arg = argv[i];
+      if (i + 1 >= argc)
+        throw std::runtime_error("missing_argument");
+      const std::string value = argv[++i];
+      if (arg == "--workspace")
+        workspace = value;
+      else if (arg == "--seed-p2a")
+        seed = value;
+      else if (arg == "--profile" && value == "p2b")
+        profile = inde::objects::pilot::Profile::P2B;
+      else if (arg == "--profile" && value == "p2a")
+        profile = inde::objects::pilot::Profile::P2A;
+      else
+        throw std::runtime_error("invalid_argument");
+    }
+    if (workspace.empty())
+      throw std::runtime_error("workspace_required");
+    inde::objects::pilot::Session session(workspace, profile, seed);
     std::string line;
     while (true) {
       line.clear();
@@ -58,7 +73,7 @@ int main(int argc, char **argv) {
                 << std::flush;
     }
   } catch (const std::exception &e) {
-    std::cerr << "P2-A: " << e.what() << '\n';
+    std::cerr << "OBJ-01: " << e.what() << '\n';
     return 1;
   }
 }

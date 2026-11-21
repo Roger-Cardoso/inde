@@ -42,8 +42,10 @@ def sample_png():
 
 
 class Engine:
-    def __init__(self, binary, workspace):
-        self.process = subprocess.Popen([str(binary), '--workspace', str(workspace)],
+    def __init__(self, binary, workspace, profile='p2a', seed=None):
+        args=[str(binary),'--workspace',str(workspace),'--profile',profile]
+        if seed is not None: args += ['--seed-p2a',str(seed)]
+        self.process = subprocess.Popen(args,
                                         stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=sys.stderr)
         try:
             self.request({'op': 'view'})
@@ -149,7 +151,7 @@ class Handler(BaseHTTPRequestHandler):
             if len(raw) != size:
                 return self.reply(400, {'accepted': False, 'error': 'incomplete_request'})
             data = json.loads(raw)
-            if not isinstance(data, dict) or data.get('op') not in {'import', 'duplicate', 'move', 'arrange', 'stack', 'restore', 'save', 'reopen', 'select'}:
+            if not isinstance(data, dict) or data.get('op') not in {'import', 'duplicate', 'move', 'arrange', 'stack', 'restore', 'save', 'reopen', 'select', 'create_table', 'edit_cell', 'select_cell', 'remove', 'undo', 'redo'}:
                 return self.reply(400, {'accepted': False, 'error': 'unsupported_operation'})
             self.reply(200, self.server.engine.request(data))
         except (ValueError, UnicodeError, RecursionError):
@@ -165,25 +167,27 @@ def main():
     parser = argparse.ArgumentParser(description='Abrir o experimento isolado INDE P2-A')
     parser.add_argument('--binary', type=Path, default=ROOT / 'build-obj01-p2a/inde_object_composite_pilot')
     parser.add_argument('--workspace', type=Path)
+    parser.add_argument('--profile', choices=['p2a','p2b'], default='p2a')
+    parser.add_argument('--seed-p2a', type=Path, help='Copiar estado salvo de uma fixture P2-A para uma pasta P2-B nova')
     parser.add_argument('--port', type=int, default=0)
     parser.add_argument('--ready-file', type=Path, help=argparse.SUPPRESS)
     args = parser.parse_args()
     if not args.binary.is_file():
         parser.error('Compile o piloto conforme o README antes de abrir a demonstração.')
-    workspace = args.workspace.resolve() if args.workspace else Path(tempfile.mkdtemp(prefix='inde-obj01-p2a-'))
-    engine = Engine(args.binary.resolve(), workspace)
+    workspace = args.workspace.resolve() if args.workspace else Path(tempfile.mkdtemp(prefix='inde-obj01-'+args.profile+'-'))
+    engine = Engine(args.binary.resolve(), workspace, args.profile, args.seed_p2a)
     try:
         with HTTPServer(('127.0.0.1', args.port), Handler) as server:
             server.engine = engine
             server.token = secrets.token_urlsafe(32)
             server.authority = '127.0.0.1:' + str(server.server_port)
             server.sample = sample_png()
-            ready = {'url': 'http://' + server.authority + '/#' + server.token, 'workspace': str(workspace)}
+            ready = {'url': 'http://' + server.authority + '/#' + server.token, 'workspace': str(workspace), 'profile': args.profile, 'pid': os.getpid()}
             if args.ready_file:
                 fd = os.open(args.ready_file, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o600)
                 with os.fdopen(fd, 'w') as file:
                     json.dump(ready, file)
-            print('Demo P2-A: ' + ready['url'], flush=True)
+            print('Demo '+args.profile.upper()+': ' + ready['url'], flush=True)
             print('Dados experimentais: ' + str(workspace), flush=True)
             print('Ctrl+C encerra. Alterações em memória precisam ser salvas antes de encerrar.', flush=True)
             try:

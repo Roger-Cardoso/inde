@@ -27,3 +27,8 @@ add_test(NAME inde_object_composite_pilot_tests COMMAND ${Python3_EXECUTABLE} ${
 set_tests_properties(inde_object_composite_pilot_tests PROPERTIES TIMEOUT 180)
 add_test(NAME inde_object_composite_http_tests COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_LIST_DIR}/test_http.py $<TARGET_FILE:inde_object_composite_pilot>)
 set_tests_properties(inde_object_composite_http_tests PROPERTIES TIMEOUT 180)
+
+add_test(NAME inde_object_composite_p2b_tests COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_LIST_DIR}/test_p2b.py $<TARGET_FILE:inde_object_composite_pilot>)
+set_tests_properties(inde_object_composite_p2b_tests PROPERTIES TIMEOUT 180)
+add_test(NAME inde_object_composite_http_p2b_tests COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_LIST_DIR}/test_http_p2b.py $<TARGET_FILE:inde_object_composite_pilot>)
+set_tests_properties(inde_object_composite_http_p2b_tests PROPERTIES TIMEOUT 180)

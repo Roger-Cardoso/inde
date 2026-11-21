@@ -12,7 +12,7 @@ import tempfile
 import unittest
 import zlib
 
-BINARY = str(Path(sys.argv.pop(1)).resolve())
+BINARY = str(Path(sys.argv.pop(1)).resolve()) if __name__ == '__main__' else None
 
 
 def chunk(kind, data):
@@ -27,9 +27,12 @@ def png(width=80, height=48, color=(70, 128, 126, 255)):
 
 
 class Client:
-    def __init__(self, folder):
+    def __init__(self, folder, profile='p2a', seed=None):
         self.folder = Path(folder)
-        self.process = subprocess.Popen([BINARY, '--workspace', str(folder)], stdin=subprocess.PIPE,
+        args = [BINARY, '--workspace', str(folder), '--profile', profile]
+        if seed is not None:
+            args += ['--seed-p2a', str(seed)]
+        self.process = subprocess.Popen(args, stdin=subprocess.PIPE,
                                         stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, encoding='utf-8')
         self.state = self.send({'op': 'view'})['state']
 
