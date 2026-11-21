@@ -102,10 +102,14 @@ Não são condições de encerramento contratual: novo coordenador durável gen�
 
 Cada corte deve identificar entrega observável, arquivos/áreas, testes, limites, condição de parada e relação com um caso do piloto. Uma descoberta deve ser classificada como bloqueio demonstrado desse caso ou pendência posterior. A pendência não vira automaticamente o próximo corte.
 
-A aceitação documental deste fechamento não é autorização implícita para executar o piloto. O próximo corte executável precisa ser apresentado e autorizado expressamente; mensagens ambíguas não substituem essa confirmação. Este trabalho termina na documentação, verificação de consistência e publicação na branch.
+O corte documental original terminou na documentação, verificação de consistência e envio à branch. Posteriormente, o usuário esclareceu que a confirmação precavida servia à discussão do planejamento e autorizou a continuidade sem repetir esse procedimento por corte. A execução segue o planejamento discutido, registrando escopo, evidência e limites. Preservação de obras, main, schemas reais e demais restrições continua vigente; aceite humano e aprovação técnica permanecem distintos.
 
 Ver [validação desta reconciliação](../validacao/VALIDACAO-OBJ-01-RECONCILIACAO.md). Relatórios históricos permanecem evidência dos respectivos cortes; esta reconciliação passa a governar a prioridade futura.
 
 ## Atualização após autorização de P2-A
 
 O usuário autorizou posteriormente o corte específico de texto/PNG e interface local sem GTK. Sua implementação e limites estão em [P2A-DOCUMENTO-COMPOSTO-OBJ-01](P2A-DOCUMENTO-COMPOSTO-OBJ-01.md), com [validação própria](../validacao/VALIDACAO-OBJ-01-P2A.md). A matriz acima continua sendo o retrato da base identificada no início deste documento; o novo relatório registra a evolução sem apagar as faltas históricas. A autorização não se estende a P2-B ou à Fase 2 inteira.
+
+## Atualização P2-B
+
+P2-B acrescenta tabela estruturada, seleção por célula, edição e histórico vivo, com perfil próprio e cópia somente de leitura de P2-A. Ver [implementação](P2B-DOCUMENTO-COMPOSTO-OBJ-01.md) e [validação](../validacao/VALIDACAO-OBJ-01-P2B.md). P2-C continua como marco técnico seguinte; não há confirmação ritual por corte.

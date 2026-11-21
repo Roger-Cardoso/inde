@@ -130,4 +130,8 @@ Alternativas/folhas privadas, rascunhos e origens permanecem privados. Visibilid
 
 ## 10. Critério de uso deste contrato
 
-O contrato fica pronto para revisão quando todas as decisões C01–C06 possuem regra e seus casos de aceitação estão definidos. Ele não prova implementação. O primeiro código do piloto deve ligar cada operação e limitação a [P01–P14](PILOTO-DOCUMENTO-COMPOSTO-OBJ-01.md), registrar testes e parar no escopo autorizado. Mudança de autoridade, formato, fonte protegida ou fase requer explicação e confirmação expressa antes de execução.
+O contrato fica pronto para revisão quando todas as decisões C01–C06 possuem regra e seus casos de aceitação estão definidos. Ele não prova implementação. O primeiro código do piloto deve ligar cada operação e limitação a [P01–P14](PILOTO-DOCUMENTO-COMPOSTO-OBJ-01.md), registrar testes e parar no escopo autorizado. Mudanças de autoridade, formato ou escopo precisam ser explicadas e registradas, respeitando as fontes protegidas e os limites do trabalho. O usuário dispensou a confirmação ritual por corte após a discussão do planejamento.
+
+## Registro P2-B
+
+[Implementação de tabela e histórico vivo](P2B-DOCUMENTO-COMPOSTO-OBJ-01.md): perfil experimental 2 separado de P2-A; IDs de células e revisão de conteúdo; remoção de usos com biblioteca conservada; histórico limitado em memória. O perfil 1 não é migrado. P13 e histórico entre reinícios continuam pendentes.

@@ -1,6 +1,6 @@
 # OBJ-01 — Primeiro experimento autoral e seus critérios de aceitação
 
-Especificação inicial: 2026-11-21, preparada no fechamento documental da Fase 1. Referências normativas: [reconciliação](RECONCILIACAO-OBJ-01.md) e [contrato mínimo 1.0](CONTRATO-DOCUMENTO-COMPOSTO-OBJ-01.md). **Atualização posterior: P2-A foi autorizado expressamente e implementado**, com [arquitetura própria](P2A-DOCUMENTO-COMPOSTO-OBJ-01.md), [demo utilizável](../../tools/obj01-pilot/README.md) e [validação](../validacao/VALIDACAO-OBJ-01-P2A.md). P2-B e P2-C permanecem futuros e não autorizados.
+Especificação inicial: 2026-11-21, preparada no fechamento documental da Fase 1. Referências normativas: [reconciliação](RECONCILIACAO-OBJ-01.md) e [contrato mínimo 1.0](CONTRATO-DOCUMENTO-COMPOSTO-OBJ-01.md). **Atualização posterior: P2-A foi autorizado expressamente e implementado**, com [arquitetura própria](P2A-DOCUMENTO-COMPOSTO-OBJ-01.md), [demo utilizável](../../tools/obj01-pilot/README.md) e [validação](../validacao/VALIDACAO-OBJ-01-P2A.md). P2-B foi implementado depois, com [tabela e histórico vivo](P2B-DOCUMENTO-COMPOSTO-OBJ-01.md) e [validação própria](../validacao/VALIDACAO-OBJ-01-P2B.md). P2-C permanece como marco técnico seguinte. O usuário dispensou a confirmação ritual por corte, mantendo os limites de preservação.
 
 ## Resultado observável
 
@@ -20,17 +20,17 @@ A fixture schema 37 é origem congelada. O experimento não instala migrador, al
 
 ## Cortes propostos e condições de parada
 
-| Corte futuro | Entrega concreta | Dependências mínimas | Parada |
+| Corte | Entrega concreta | Dependências mínimas | Parada |
 | --- | --- | --- | --- |
 | P2-A — Texto e figura | Parágrafos + PNG no experimento, inserção entre grupos e lado a lado, recurso armazenado, save/reabertura | Adaptador do agregado, importação PNG mínima, persistência auxiliar e visualização experimental estritamente necessárias | Demonstração verificável de P01–P05 e partes de P09; sem tabelas/serviço universal nem expansão genérica de recovery |
 | P2-B — Tabela real | Inserir tabela 2 × 3, editar células/navegar por teclado, mover e reabrir | Payload de tabela e operações focadas; mesmo documento/armazenamento | P06–P08, com regressão do percurso da figura |
 | P2-C — Documento composto completo | Unir o percurso, undo/redo, falhas e reinício, contexto mínimo dos instrumentos | Reaproveitar validações/planos/histórico pertinentes; completar o registro recuperável do agregado | P01–P14 comprovados e demonstração humana; registrar limitações, não começar Fase 3 automaticamente |
 
-Antes de executar qualquer corte, apresentar arquivos/áreas, teste observável, riscos, limites e condição de parada para confirmação expressa. A divisão acima não é autorização automática. P2-A deve produzir uma prova autoral visível; um novo framework de infraestrutura sozinho não encerra esse corte.
+Cada corte registra arquivos/áreas, teste observável, riscos, limites e condição de parada. A orientação atual do usuário autoriza continuidade pelo planejamento discutido sem confirmação ritual por corte. P2-A deve produzir uma prova autoral visível; um novo framework de infraestrutura sozinho não encerra esse corte.
 
 ## Casos de aceitação P01–P14
 
-Os casos abaixo definem o piloto completo. **P01–P05 têm prova técnica no perfil P2-A; P09 está comprovado para texto/PNG, sem células.** P11/P12 possuem provas parciais desse perfil; os demais continuam pendentes no escopo completo. Consulte o relatório de P2-A para os limites, inclusive o seletor de arquivo não confirmado pela automação visual. Os 61 testes históricos não aprovam esses casos por equivalência; a implementação nova possui evidência própria e ainda aguarda aceite humano.
+Os casos abaixo definem o piloto completo. P01–P05 têm prova técnica no perfil P2-A; P06–P08 têm prova de tabela e histórico vivo no perfil P2-B. P09 inclui agora texto, PNG, células, ordens, perfis e seleção por ID em processo novo. P11/P12 possuem provas parciais dos perfis; P10, P13 e o contexto/publicação completos de P14 continuam pendentes. Os relatórios identificam os limites, incluindo o seletor de PNG não confirmado pela automação visual. Aprovação técnica e aceite humano continuam distintos.
 
 | ID | Ação / condição | Resultado exigido | Evidência futura |
 | --- | --- | --- | --- |
@@ -67,4 +67,4 @@ A aprovação técnica habilita revisão da entrega, não merge, publicação, m
 
 Não exigir previamente coordenador genérico do store Linux, limpeza automática de temporários, repositório universal com todos os módulos, migração do Comic, plugin system, renderizador matemático completo, catálogo de símbolos, spans de grade, responsividade total, arquivo único `.inde` ou publicador multimídia completo.
 
-Se uma dessas frentes parecer necessária, registrar qual caso P01–P14 bloqueia, qual é a menor solução e a alternativa de recusa/limitação. Confirmar o novo escopo antes de implementar. Não substituir a demonstração autoral por uma nova sequência indefinida de infraestrutura.
+Se uma dessas frentes parecer necessária, registrar qual caso P01–P14 bloqueia, qual é a menor solução e a alternativa de recusa/limitação. Explicar e registrar o ajuste de escopo, respeitando as restrições de preservação. Não substituir a demonstração autoral por uma nova sequência indefinida de infraestrutura.

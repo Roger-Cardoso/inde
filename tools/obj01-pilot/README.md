@@ -2,6 +2,8 @@
 
 Demonstração local em navegador, controlada por um processo C++20 com o motor documental e os comandos OBJ-01 reais. Python serve os arquivos da interface e encaminha pedidos; não define identidades, ordenação, conteúdo nem gravação. Não usa GTK nem integra o aplicativo principal.
 
+O perfil P2-A abaixo é conservado. Para tabela editável e histórico vivo em dados separados, veja [P2-B](P2B.md).
+
 ## Abrir
 
 Na raiz da **branch de trabalho** `feature/inde-obj-01-foundation`:

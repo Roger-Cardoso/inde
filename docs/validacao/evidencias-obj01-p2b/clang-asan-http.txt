@@ -1,0 +1,9 @@
+Test project /home/roger/Documents/Projects/GitHub/INDE/obj01-audit/build-obj01-p2a-clang-asan
+    Start 2: inde_object_composite_http_tests
+1/2 Test #2: inde_object_composite_http_tests .......   Passed    2.14 sec
+    Start 4: inde_object_composite_http_p2b_tests
+2/2 Test #4: inde_object_composite_http_p2b_tests ...   Passed    3.41 sec
+
+100% tests passed out of 2
+
+Total Test time (real) =   5.56 sec

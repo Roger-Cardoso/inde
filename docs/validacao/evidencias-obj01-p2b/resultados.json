@@ -1,0 +1,262 @@
+{
+  "date": "2026-11-21",
+  "branch": "feature/inde-obj-01-foundation",
+  "base_commit": "8ea6c233f50529de9c9894a62b925d90941157a1",
+  "core_commit": "ee8e297ed99859157075e02ea35c27d8a5a4df70",
+  "implementation_commit": "e0aa9af0269f3be1193006a94192b47cf5d872b8",
+  "scope": "P2-B structured table, typed cell selection, bounded live undo/redo, occurrence removal, versioned auxiliary profile and read-only P2-A seed; no unsaved recovery",
+  "code_sha256": {
+    ".github/workflows/obj-01.yml": "599fd5e0dc879817e9d54f9259ff166a3eababfeef9a76828cb219b79771d39a",
+    "cpp/object_composite_pilot.cpp": "d12eef9c0c49b590738f6e910be712686427f17eec87b387892e925298048281",
+    "cpp/object_composite_pilot.hpp": "ba1a02b8a881b1218dc856d8989bae7ea297493d9dcbcb67b7e8573e4c59e81c",
+    "cpp/object_composite_pilot_main.cpp": "5b9d456c41fd1dc7084ba1be44fdbfa494c382dc777f8bfcdff56941d31f327c",
+    "scripts/demos/Abrir-demo-obj01-p2b.sh": "292be1a0236e6ec544ee2a47c192572f2c6cca6b73cbb6fe57b6532cac1cb3c1",
+    "tests/object_composite_pilot/CMakeLists.txt": "eddcf37e15abc115397b5ef6f4d6b00e119b82965e6f81db2accd5ad61f21529",
+    "tests/object_composite_pilot/test_http.py": "c34237854f15612d7129efa5f3aff202da0e2e32fb179ceed6bc06048bb614c0",
+    "tests/object_composite_pilot/test_http_p2b.py": "9e0821bbab594ab4b434c252f4eb28102d513a79fb4191a60c7a7a095854ea16",
+    "tests/object_composite_pilot/test_p2b.py": "c5aaf885321e56b1b597582b4c645e356d8b08b913d10f5bbd6e822c0a35a4a7",
+    "tests/object_composite_pilot/test_pilot.py": "128df822e2784ad41f79ca8e8f31b72eaae248ce9993213baa22cfb2d397f0b4",
+    "tools/obj01-pilot/app.js": "7d8f6342ad9e46af0ec53d4147e03d76b43078c512c65f0a1bdab57e8d5fe4b4",
+    "tools/obj01-pilot/index.html": "bb885cdb0b12edf612a607a608a7763738319db7794e0e3c31ef557d4a25b7fa",
+    "tools/obj01-pilot/serve.py": "ce0b0f7b85d24e7bfec09e8db652a24f22a1dcf6b7979881dd30bbf300ddd43b",
+    "tools/obj01-pilot/style.css": "a2c2ee3346ba157aeee0f91792729dc6741418252230b34fc993dde2b69ed441"
+  },
+  "document_sha256": {
+    "docs/README.md": "d91c553b727aaeb723f65a4d0e5628659709a2686ca1fc8c3a4c9bdcf7183b83",
+    "docs/arquitetura/INDE-OBJ-01.md": "e3e3311ca2157c577ecee5e4d0f3fcf3b240d93c355b7fb5191e533a7248090c",
+    "docs/arquitetura/RECONCILIACAO-OBJ-01.md": "27562f14868b6f8562fea34e763d484241cd564ce59c17044dd2486d2f12b960",
+    "docs/arquitetura/CONTRATO-DOCUMENTO-COMPOSTO-OBJ-01.md": "fda8df0d1a72801dea77baf9ca20a193fdcdd527d4fafe586635ed6f5b99e64d",
+    "docs/arquitetura/PILOTO-DOCUMENTO-COMPOSTO-OBJ-01.md": "c59cae768fd41e6a4e583e9f90d6d4c2a0280134a3484a239f200a6160ef9266",
+    "docs/arquitetura/P2B-DOCUMENTO-COMPOSTO-OBJ-01.md": "06b06a9d7083f80a3537ec63495c0e69d285f6c3bf95be9fba381eaef2f1c759",
+    "docs/validacao/VALIDACAO-OBJ-01-P2B.md": "df0df03eb71def821931d316128fb8e8ab6344d4261ff9b2200837999efe9fbf",
+    "tools/obj01-pilot/README.md": "8f405c580a50bd89c870921ed1984bf7ec286025c6204e765ca8fbdbed1a15bb",
+    "tools/obj01-pilot/P2B.md": "9a7bd8e4f3d71f34c5efd62706b396e37c17420297e0bca5e9eeb6c3d7b613d2"
+  },
+  "local": {
+    "variants": [
+      "GCC 15.2 Debug",
+      "Clang 18.1 Debug",
+      "GCC ASan+UBSan",
+      "Clang ASan+UBSan"
+    ],
+    "programs_per_variant": 5,
+    "p2a_core_cases": 19,
+    "p2a_http_cases": 4,
+    "p2b_core_cases": 12,
+    "p2b_http_cases": 6,
+    "p2b_http_inherited_common_cases": 4,
+    "owner_adapter_groups": 9,
+    "local_lsan": false,
+    "test_names": {
+      "test_pilot.py": [
+        "test_p01_capture_and_private_layers",
+        "test_p02_real_png_and_distinct_identities",
+        "test_p03_insert_between_complete_groups",
+        "test_p04_row_profile_and_stack",
+        "test_p05_reuse_and_move_only_selected_use",
+        "test_visual_intent_requires_explicit_restore",
+        "test_row_move_preserves_other_use_and_source",
+        "test_p09_save_new_process_without_external_png",
+        "test_fractional_profile_roundtrips_without_precision_loss",
+        "test_failed_sqlite_write_rolls_back_blobs_and_snapshot",
+        "test_missing_blob_refuses_open_without_partial_state",
+        "test_unknown_snapshot_version_is_not_overwritten",
+        "test_unsaved_reopen_requires_confirmation",
+        "test_invalid_png_crc_and_animation_are_atomic",
+        "test_stale_revision_and_unknown_operation",
+        "test_cas_conflict_does_not_overwrite",
+        "test_corrupt_blob_refuses_reopen_without_partial_state",
+        "test_unknown_database_version_and_frozen_source_are_preserved",
+        "test_exclusive_workspace_lease_and_legacy_path_refusal"
+      ],
+      "test_http.py": [
+        "test_token_and_origin_guards_preserve_document",
+        "test_static_interface_and_safety_headers",
+        "test_real_import_save_reopen_and_resource_bytes",
+        "test_invalid_request_has_no_effect"
+      ],
+      "test_p2b.py": [
+        "test_p06_table_and_cell_identities",
+        "test_p07_cell_selection_is_typed_and_does_not_invalidate_redo",
+        "test_p08_move_remove_undo_redo_conserves_table_and_selection",
+        "test_p08_last_figure_resource_survives_remove_save_restart",
+        "test_undo_import_after_save_keeps_resource_and_can_save_again",
+        "test_p09_tables_images_profiles_new_process_roundtrip",
+        "test_new_edit_after_undo_clears_redo",
+        "test_history_is_bounded_and_revision_monotonic",
+        "test_limits_and_group_refusals_are_atomic",
+        "test_p2a_seed_is_readonly_and_keeps_ids_and_bytes",
+        "test_profiles_do_not_implicitly_upgrade_each_other",
+        "test_invalid_persisted_table_rejected_without_replacing_work"
+      ],
+      "test_http_p2b.py": [
+        "test_table_cells_history_and_reopen",
+        "test_invalid_cell_has_no_effect"
+      ]
+    }
+  },
+  "native_release": {
+    "passed": 61,
+    "total": 61,
+    "seconds": 211.13
+  },
+  "archives": [
+    {
+      "label": "schema28",
+      "path": "fontes/inde-schema28-89b47f27.tar.gz",
+      "sha256": "3d6bee4c60dbecc602a56881b1957f90b55798dbc711c9c290701e2ad8a6e97e",
+      "files": 641,
+      "manifest_match": true
+    },
+    {
+      "label": "original37",
+      "path": "fontes/inde-P03c-schema37-original.tar.gz",
+      "sha256": "2e97a15ddcda56b8f5892d033c9a7427d6102bcf650454678491c50ff5459ef2",
+      "files": 757,
+      "manifest_match": true
+    },
+    {
+      "label": "integrated37",
+      "path": "fontes/inde-integrado-schema37.tar.gz",
+      "sha256": "554623abec5d7c3c175dab2aa6bbabc8a95abd6e3d98a27191cea0260a4965c4",
+      "files": 758,
+      "manifest_match": true
+    }
+  ],
+  "extracted_bytes_match": true,
+  "ci": {
+    "run_id": 44923389940,
+    "url": "https://github.com/Roger-Cardoso/inde/actions/runs/44923389940",
+    "head_sha": "e0aa9af0269f3be1193006a94192b47cf5d872b8",
+    "jobs": 25,
+    "passed": 25,
+    "remote_lsan": true,
+    "conclusion": "success"
+  },
+  "acceptance": {
+    "P06": "passed for initial 2x3 table",
+    "P07": "passed for cell IDs and observed Tab/Shift+Tab",
+    "P08": "passed within bounded live history; inactive content retained",
+    "P09": "passed for text/PNG/cells/orders/profiles/ID selection in new process",
+    "P10_P13_P14": "pending in complete scope",
+    "human_acceptance": "separate, pending"
+  },
+  "browser": {
+    "observed": [
+      "table insertion",
+      "Unicode editing",
+      "Tab forward",
+      "Shift+Tab backward",
+      "save with pending cell",
+      "undo/redo cell edit",
+      "move whole table",
+      "remove/undo table",
+      "new-process reopen",
+      "selection restored and history empty",
+      "explicit insertion fallback"
+    ],
+    "final_cells": [
+      {
+        "cell": "df4ad7db-1a0c-41c6-99ed-fe84660e9b1f",
+        "label": "Notas da travessia, linha 1, coluna 1",
+        "selected": false,
+        "table": "af7ec39c-9325-46db-ac01-36b1ee6c49e6",
+        "text": "Lugar"
+      },
+      {
+        "cell": "77498478-4502-499b-89f1-9627f95b3903",
+        "label": "Notas da travessia, linha 1, coluna 2",
+        "selected": false,
+        "table": "af7ec39c-9325-46db-ac01-36b1ee6c49e6",
+        "text": "Imagem"
+      },
+      {
+        "cell": "fd62a92f-6131-40b4-83c5-4e6199a09a3c",
+        "label": "Notas da travessia, linha 1, coluna 3",
+        "selected": false,
+        "table": "af7ec39c-9325-46db-ac01-36b1ee6c49e6",
+        "text": "Nota"
+      },
+      {
+        "cell": "dc6b364d-9ff7-4d98-828a-a39bb596d78f",
+        "label": "Notas da travessia, linha 2, coluna 1",
+        "selected": false,
+        "table": "af7ec39c-9325-46db-ac01-36b1ee6c49e6",
+        "text": "Margem do rio"
+      },
+      {
+        "cell": "6838d124-0ce7-402a-a5c8-9d0329fbc340",
+        "label": "Notas da travessia, linha 2, coluna 2",
+        "selected": false,
+        "table": "af7ec39c-9325-46db-ac01-36b1ee6c49e6",
+        "text": "Verde, água e luz"
+      },
+      {
+        "cell": "68900124-435f-4434-8759-a6900c33601e",
+        "label": "Notas da travessia, linha 2, coluna 3",
+        "selected": true,
+        "table": "af7ec39c-9325-46db-ac01-36b1ee6c49e6",
+        "text": "Memória, voz e silêncio 漢🙂"
+      }
+    ],
+    "final_figures": 2,
+    "final_rows": 2,
+    "distinct_blobs": 1,
+    "p2a_file_chooser_gap": "not promoted to passed"
+  },
+  "preservation": {
+    "p2a_original_file_hashes": {
+      "dados/obj01-piloto-p2a/origem-documento.json": "437e42e01ba700d9fbc6d415cb2d572eb190aa00ff89a193a9667f8eaca38d7e",
+      "dados/obj01-piloto-p2a/obj01-piloto.sqlite3": "389f80901b561bcad3ceb1ce48dd6c747fe19cd33ec614cb72b340885d901805"
+    },
+    "p2a_unchanged": true,
+    "main_head": "d41a5c9b9809ca7d40beb6ff10f22f1a5b451e0b",
+    "main_preexisting_status": " M Preparar-ponte.sh",
+    "canonical_sources_and_archives_unchanged": true,
+    "canonical_schema_migration": false,
+    "authorial_projects_written": false,
+    "gtk_or_single_file_inde": false,
+    "merge_or_authorial_publication": false
+  },
+  "format": {
+    "p2a_user_version": 1,
+    "p2b_user_version": 2,
+    "p2b_snapshot": "INDE-OBJ01-COMPOSITE-P2B-1",
+    "implicit_upgrade": false,
+    "seed_connection": "READONLY + consistent transaction",
+    "history_entries_cap": 32,
+    "history_metadata_bytes_including_current": 33554432,
+    "immutable_blob_union_bytes": 33554432,
+    "unicode_scalars_per_cell": 4096,
+    "aggregate_string_bytes": 8388608,
+    "snapshot_bytes": 25165824,
+    "unsaved_recovery": false,
+    "persistent_undo": false
+  },
+  "checks": {
+    "local_links_resolve": 97,
+    "historical_p2a_manifest_commit": "8ea6c233f50529de9c9894a62b925d90941157a1",
+    "historical_manifest_entries_passed": 37,
+    "demo_integrity_check": "ok",
+    "demo_foreign_key_check": "empty",
+    "git_diff_check": "passed"
+  },
+  "continuity": "user revoked routine per-cut confirmation; follow discussed plan and preservation constraints",
+  "not_implemented": [
+    "row/column editing",
+    "formulas/merged cells/rich text",
+    "shared table usages",
+    "paragraph editing/reorder",
+    "unsaved recovery/persistent history",
+    "GTK",
+    "real project migration",
+    "single-file .inde"
+  ],
+  "not_proven": [
+    "full native file chooser flow",
+    "all syscall faults/power loss",
+    "broad concurrency",
+    "latency/RSS benchmark",
+    "all viewport sizes"
+  ]
+}
