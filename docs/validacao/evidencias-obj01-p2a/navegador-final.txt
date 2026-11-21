@@ -1,0 +1,107 @@
+Browser tab: 2, Title: "INDE · Texto e figura", URL: "http://127.0.0.1:45809/".
+0 AXWebArea INDE · Texto e figura, URL: 127.0.0.1:45809/
+	1 container
+		2 text INDE OFICINA EXPERIMENTAL OBJ-01 / P2-A
+		104 text Salvo localmente
+		4 button Reabrir salvo, ID: reopen
+		5 button Salvar documento, ID: save
+	6 container
+		7 text DOCUMENTO COMPOSTO · TEXTO + FIGURA
+		8 heading Uma imagem na escrita., Value: 1
+			9 text Uma imagem na escrita.
+		10 text Experimente o lugar de uma figura sem perder a ordem da leitura.
+		11 container
+			12 text Dados sintéticos
+			13 text Origem preservada
+		105 text Estado salvo reaberto e conferido.
+		15 container Ferramentas do experimento
+			16 container
+				17 heading 1. Acrescentar uma figura, Value: 2
+					18 text 1. Acrescentar uma figura
+				19 text PNG do seu computador
+				20 button PNG do seu computador, ID: file
+				21 button Usar figura de exemplo, ID: sample
+				22 text Figura sintética do experimento
+				23 text Legenda
+				24 text field (settable) Legenda, Value: Uma passagem na paisagem, ID: caption
+				25 text Descrição para leitura
+				26 text field (settable) Descrição para leitura, Value: Paisagem geométrica sintética em tons de verde, com um círculo dourado no céu., ID: alt
+				27 checkbox (settable, integer) Description: Esta figura é decorativa, Value: 0, ID: decorative
+				28 text Inserir antes de
+				29 pop up button (collapsed, settable) Inserir antes de, Value: Fim do documento, ID: insert-before, Secondary Actions: Expand
+					30 menu
+						106 Figura: Uma passagem na paisagem
+						107 Água, luz e memória.
+						108 Figura: Uma passagem na paisagem
+						109 O horizonte abre uma passagem.
+						110 (selected) Fim do documento
+				36 button Inserir figura, ID: import
+			37 container
+				38 heading 2. Escolher e mover, Value: 2
+					39 text 2. Escolher e mover
+				111 text Figura selecionada: Uma passagem na paisagem
+				41 text O que muda
+				42 pop up button (collapsed, settable) O que muda, Value: A ordem de leitura e a apresentação, ID: intent, Secondary Actions: Expand
+					43 menu
+						44 (selected) A ordem de leitura e a apresentação
+						45 Somente a apresentação
+				46 text Mover antes de
+				47 pop up button (collapsed, settable) Mover antes de, Value: Fim do documento, ID: move-before, Secondary Actions: Expand
+					48 menu
+						112 Figura: Uma passagem na paisagem
+						113 Água, luz e memória.
+						114 O horizonte abre uma passagem.
+						115 (selected) Fim do documento
+				53 button Mover figura selecionada, ID: move
+				54 text Mover leva a figura à coluna principal, desfazendo seu arranjo lado a lado.
+				55 button Criar outro uso da mesma figura, ID: duplicate
+			56 container
+				57 heading 3. Colocar lado a lado, Value: 2
+					58 text 3. Colocar lado a lado
+				59 text Parágrafo vizinho
+				60 pop up button (collapsed, settable) Parágrafo vizinho, Value: O horizonte abre uma passagem., ID: paragraph, Secondary Actions: Expand
+					61 menu
+						116 Água, luz e memória.
+						117 (selected) O horizonte abre uma passagem.
+						118 A casa guarda outra história 🙂.
+				65 text Largura da primeira coluna
+				66 text 50%
+				67 slider (settable, integer) Largura da primeira coluna, Value: 50, ID: ratio
+				68 button Mostrar lado a lado, ID: arrange
+				69 button Voltar à coluna única, ID: stack
+			70 text Texto de origem em leitura neste corte. Tabelas e recuperação de trabalho não salvo ainda não fazem parte do experimento.
+		71 container Documento experimental
+			72 container Modo de visualização
+				73 button Apresentação, ID: visual-tab
+				74 button Ordem de leitura, ID: reading-tab
+			119 text Ordem alinhada
+			76 container
+				77 text ESTUDO DE COMPOSIÇÃO 01
+				78 heading Travessia, Value: 2
+					79 text Travessia
+				80 text Um pequeno documento para experimentar relações entre palavra e imagem.
+				81 container Description: Conteúdo do documento, ID: document
+					120 checkbox Description: Selecionar figura: Uma passagem na paisagem, Value: 0
+						121 text FIGURA
+						122 container
+							123 image Paisagem geométrica sintética em tons de verde, com um círculo dourado no céu.
+							124 text Uma passagem na paisagem
+					125 checkbox Description: Selecionar parágrafo: Água, luz e memória., Value: 0
+						126 text TEXTO DE ORIGEM
+						127 text Água, luz e memória.
+					128 checkbox Description: Selecionar figura: Uma passagem na paisagem, Value: 1
+						129 text FIGURA
+						130 container
+							131 image Paisagem geométrica sintética em tons de verde, com um círculo dourado no céu.
+							132 text Uma passagem na paisagem
+					133 checkbox Description: Selecionar parágrafo: O horizonte abre uma passagem., Value: 0
+						134 text TEXTO DE ORIGEM
+						135 text O horizonte abre uma passagem.
+					136 checkbox Description: Selecionar parágrafo: A casa guarda outra história 🙂., Value: 0
+						137 text TEXTO DE ORIGEM
+						138 text A casa guarda outra história 🙂.
+				101 text INDE · EXPERIMENTO AUTORAL P2-A
+			102 text Autoria integral: as camadas da origem são conservadas. A folha alternativa privada não é exibida nesta demonstração.
+		103 text Gravação local em área experimental separada. Salve antes de encerrar o servidor. Nenhuma publicação é realizada.
+
+The focused UI element is 24 text field (settable) Legenda, Value: Uma passagem na paisagem, ID: caption

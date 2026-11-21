@@ -1,0 +1,44 @@
+[
+  {
+    "children": [
+      {
+        "width": 381,
+        "x": 399
+      },
+      {
+        "width": 381,
+        "x": 800
+      }
+    ],
+    "columns": "381px 381px",
+    "gap": "20px",
+    "images": [
+      {
+        "complete": true,
+        "height": 280,
+        "width": 480
+      }
+    ]
+  },
+  {
+    "children": [
+      {
+        "width": 381,
+        "x": 399
+      },
+      {
+        "width": 381,
+        "x": 800
+      }
+    ],
+    "columns": "381px 381px",
+    "gap": "20px",
+    "images": [
+      {
+        "complete": true,
+        "height": 280,
+        "width": 480
+      }
+    ]
+  }
+]

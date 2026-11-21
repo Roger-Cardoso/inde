@@ -7,7 +7,11 @@
 
 ## Núcleo experimental de objetos
 
-A prioridade futura é governada pela reconciliação abaixo. Relatórios de infraestrutura comprovam apenas seus próprios cortes; o documento multimídia ainda não foi implementado.
+A prioridade é governada pela reconciliação abaixo. Após autorização expressa, **P2-A foi implementado como piloto isolado de texto/PNG**, com demonstração local e persistência própria. Tabela, edição textual e recuperação de trabalho não salvo seguem pendentes; a Fase 2 inteira não está concluída.
+
+- [Abrir e experimentar P2-A](../tools/obj01-pilot/README.md).
+- [Implementação e limites de P2-A](arquitetura/P2A-DOCUMENTO-COMPOSTO-OBJ-01.md).
+- [Validação e demonstração de P2-A](validacao/VALIDACAO-OBJ-01-P2A.md).
 
 - [Reconciliação, matriz de situação e fechamento contratual da Fase 1](arquitetura/RECONCILIACAO-OBJ-01.md).
 - [Contrato mínimo de conteúdo e autoria composta](arquitetura/CONTRATO-DOCUMENTO-COMPOSTO-OBJ-01.md).

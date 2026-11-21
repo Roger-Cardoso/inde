@@ -1,0 +1,12 @@
+[1/12] Building CXX object CMakeFiles/inde_optimization_benchmark.dir/optimization_benchmark.cpp.o
+[2/12] Linking CXX executable inde_optimization_benchmark
+[3/12] Building CXX object CMakeFiles/inde_optimization_equivalence.dir/optimization_equivalence.cpp.o
+[4/12] Linking CXX executable inde_optimization_equivalence
+[5/12] Building CXX object CMakeFiles/inde_object_change_session_service_tests.dir/object_change_session_service_tests.cpp.o
+[6/12] Building CXX object CMakeFiles/inde_object_change_session_tests.dir/object_change_session_tests.cpp.o
+[7/12] Linking CXX executable inde_object_change_session_tests
+[8/12] Linking CXX executable inde_object_change_session_service_tests
+[9/12] Building CXX object CMakeFiles/inde_object_save_protocol_tests.dir/object_save_protocol_tests.cpp.o
+[10/12] Linking CXX executable inde_object_save_protocol_tests
+[11/12] Building CXX object CMakeFiles/inde_object_save_service_tests.dir/object_save_service_tests.cpp.o
+[12/12] Linking CXX executable inde_object_save_service_tests

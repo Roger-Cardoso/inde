@@ -1,0 +1,201 @@
+{
+  "date": "2026-11-21",
+  "branch": "feature/inde-obj-01-foundation",
+  "base_commit": "42a623311db44017634b1504a2b34c0e8bf3da25",
+  "implementation_commit": "f3edd18d2fd448c81dd7fd5ef3dd8c338dafe958",
+  "scope": "P2-A synthetic owner Document + PNG; loopback browser demo backed by real C++ and isolated SQLite; no GTK integration or Phase P2-B",
+  "code_sha256": {
+    ".github/workflows/obj-01.yml": "1b315cbf7dd632600babae2552b3d6a3ce1a674ee1d17f042530f487be3aef08",
+    "cpp/object_composite_pilot.cpp": "d230785d7eb27f721813ec25cf8db1fec6ea94109d331444b14b0364dcd64083",
+    "cpp/object_composite_pilot.hpp": "3d678d8b9343d87fb247055474849d67a0235304f4ff4558fd1cbe31d1ce4caa",
+    "cpp/object_composite_pilot_main.cpp": "1f1d1b032a1c19dcff7575884b7f89339ca0fa320eef5b58e7f39981a8220b3c",
+    "scripts/demos/Abrir-demo-obj01-p2a.sh": "fb0006cd5fd5e651d5f6ca6fbe7ed4768189b22c5e6ba4e2e14fb07d65b6d267",
+    "tests/object_composite_pilot/CMakeLists.txt": "9cc2cbd472744d55f53627a476101d75344b11464a64b50dd0895c56262a511a",
+    "tests/object_composite_pilot/test_http.py": "9d9f5de4f706d600a24c2c39846a54def62b0eef02e5940e146e360e7851148e",
+    "tests/object_composite_pilot/test_pilot.py": "534a5ff6cedc7532b797fe4679b36d424fb9197156560aa88516aee224f9d9b2",
+    "tools/obj01-pilot/README.md": "8e327c8eef501502d091516f73253a8d2a235cbd716e5189a7c2a803753cbc1a",
+    "tools/obj01-pilot/app.js": "b6c480aeb13a468f9bce05158522be301b0354e321e3901f8fbf667a02a34918",
+    "tools/obj01-pilot/index.html": "28e006460c288d44335b5e19fe506fbe00c02a633265e69f0c6b90f0de634e6e",
+    "tools/obj01-pilot/serve.py": "68b9e2a5bf160fdb69fab1ee1eca1d5a59e17dd3adbbf418938ecfe133a30607",
+    "tools/obj01-pilot/style.css": "ca59b09c42c881dbf4bd366a75eff77fd6c3e858f49daeea9120c3ca64962995"
+  },
+  "document_sha256": {
+    "docs/README.md": "c9056819248c9f110a138753d66b4bd466b4c71a2890649c871c6e6d738ba048",
+    "docs/arquitetura/INDE-OBJ-01.md": "644b9773f00a3816ff0205933d4d118c0fd43a001dcf8ff4890722330935721c",
+    "docs/arquitetura/RECONCILIACAO-OBJ-01.md": "17b7af8464899cd6f124e7c418d32cef96a0d1d2962581f0179ba06f3f2f8dcb",
+    "docs/arquitetura/CONTRATO-DOCUMENTO-COMPOSTO-OBJ-01.md": "6f6d79b11f2981dd021262dcffb5e7a011731e1ef3d37b3f4d72ccb180d7a4d0",
+    "docs/arquitetura/PILOTO-DOCUMENTO-COMPOSTO-OBJ-01.md": "b028670401c2074187a0b5b849f5d8dc9c5ff02f1047209ebb1177888e5f07e7",
+    "docs/arquitetura/P2A-DOCUMENTO-COMPOSTO-OBJ-01.md": "1c72915f21e3c9cb6052202dcee6642ff3c159ade5db82adf8441e2eb1063514",
+    "docs/validacao/VALIDACAO-OBJ-01-P2A.md": "b8d851542ce7d64dfe1008ae32a8476677a0f7db1f8f9bd17922039cc2a737ba",
+    "tools/obj01-pilot/README.md": "8e327c8eef501502d091516f73253a8d2a235cbd716e5189a7c2a803753cbc1a"
+  },
+  "local": {
+    "gcc": "15.2.0",
+    "clang": "18.1.8",
+    "configuration": "Debug",
+    "build_variants": [
+      "GCC",
+      "Clang",
+      "GCC ASan+UBSan",
+      "Clang ASan+UBSan"
+    ],
+    "programs_passed_per_variant": 3,
+    "new_core_process_cases": 19,
+    "new_http_cases": 4,
+    "owner_adapter_groups": 9,
+    "owner_units": 18,
+    "local_lsan": false,
+    "tests": {
+      "test_pilot.py": [
+        "test_p01_capture_and_private_layers",
+        "test_p02_real_png_and_distinct_identities",
+        "test_p03_insert_between_complete_groups",
+        "test_p04_row_profile_and_stack",
+        "test_p05_reuse_and_move_only_selected_use",
+        "test_visual_intent_requires_explicit_restore",
+        "test_row_move_preserves_other_use_and_source",
+        "test_p09_save_new_process_without_external_png",
+        "test_fractional_profile_roundtrips_without_precision_loss",
+        "test_failed_sqlite_write_rolls_back_blobs_and_snapshot",
+        "test_missing_blob_refuses_open_without_partial_state",
+        "test_unknown_snapshot_version_is_not_overwritten",
+        "test_unsaved_reopen_requires_confirmation",
+        "test_invalid_png_crc_and_animation_are_atomic",
+        "test_stale_revision_and_unknown_operation",
+        "test_cas_conflict_does_not_overwrite",
+        "test_corrupt_blob_refuses_reopen_without_partial_state",
+        "test_unknown_database_version_and_frozen_source_are_preserved",
+        "test_exclusive_workspace_lease_and_legacy_path_refusal"
+      ],
+      "test_http.py": [
+        "test_token_and_origin_guards_preserve_document",
+        "test_static_interface_and_safety_headers",
+        "test_real_import_save_reopen_and_resource_bytes",
+        "test_invalid_request_has_no_effect"
+      ]
+    }
+  },
+  "native_full": {
+    "configuration": "Release",
+    "passed": 61,
+    "total": 61,
+    "seconds": 183.96
+  },
+  "archives": [
+    {
+      "label": "schema28",
+      "path": "fontes/inde-schema28-89b47f27.tar.gz",
+      "sha256": "3d6bee4c60dbecc602a56881b1957f90b55798dbc711c9c290701e2ad8a6e97e",
+      "files": 641,
+      "manifest_match": true
+    },
+    {
+      "label": "original37",
+      "path": "fontes/inde-P03c-schema37-original.tar.gz",
+      "sha256": "2e97a15ddcda56b8f5892d033c9a7427d6102bcf650454678491c50ff5459ef2",
+      "files": 757,
+      "manifest_match": true
+    },
+    {
+      "label": "integrated37",
+      "path": "fontes/inde-integrado-schema37.tar.gz",
+      "sha256": "554623abec5d7c3c175dab2aa6bbabc8a95abd6e3d98a27191cea0260a4965c4",
+      "files": 758,
+      "manifest_match": true
+    }
+  ],
+  "extracted_bytes_match": true,
+  "archive_verifier_tests": 5,
+  "ci": {
+    "run_id": 44917901238,
+    "head_sha": "f3edd18d2fd448c81dd7fd5ef3dd8c338dafe958",
+    "url": "https://github.com/Roger-Cardoso/inde/actions/runs/44917901238",
+    "jobs": 25,
+    "passed": 25,
+    "conclusion": "success",
+    "remote_lsan": true
+  },
+  "acceptance": {
+    "P01": "passed within synthetic owner Document profile; not a complete schema37 SQLite project",
+    "P02": "core/HTTP and browser synthetic PNG passed; native file chooser automation inconclusive",
+    "P03": "passed",
+    "P04": "passed in observed viewport; no full responsive guarantee",
+    "P05": "passed",
+    "P09": "partial: text/PNG/profiles/selection; new-process reopen independent of external PNG, no cells",
+    "P11_P12": "partial safeguards for this profile only",
+    "P06_P07_P08_P10_P13_P14": "pending in full scope",
+    "human_acceptance": "pending"
+  },
+  "browser": {
+    "backend": "live C++ process",
+    "observed": [
+      "synthetic PNG import",
+      "between-group insertion",
+      "two uses of one resource",
+      "move one use only",
+      "visual/authorial distinction",
+      "authorial alignment refusal",
+      "two Row presentations",
+      "save/reopen",
+      "new process reopened saved fixture",
+      "Enter selection retained focus",
+      "HTML-like caption treated literally"
+    ],
+    "final_rows": 2,
+    "final_figure_uses": 2,
+    "final_distinct_blobs": 1,
+    "file_chooser": "automation interrupted by environment; not claimed as visually verified"
+  },
+  "format": {
+    "snapshot": "INDE-OBJ01-COMPOSITE-P2A-1",
+    "application_id": "0x4f424a31",
+    "user_version": 1,
+    "journal": "DELETE",
+    "synchronous": "FULL",
+    "saved_only": true,
+    "unsaved_recovery": false,
+    "full_precision_geometry": true,
+    "canonical_wrappers_linked": false,
+    "sqlite_wrapper_exception": "OperationCapture and migration/removal dependencies documented; narrow RAII adapter only"
+  },
+  "preservation": {
+    "main_head": "d41a5c9b9809ca7d40beb6ff10f22f1a5b451e0b",
+    "main_preexisting_status": " M Preparar-ponte.sh",
+    "archives_and_metadata_unchanged": true,
+    "existing_core_commands_and_owner_sources_unchanged": true,
+    "canonical_application_cmake_unchanged": true,
+    "schema_migration": false,
+    "authorial_project_writes": false,
+    "gtk_integration": false,
+    "single_file_inde": false,
+    "merge_or_authorial_publication": false
+  },
+  "checks": {
+    "local_links_resolve": 90,
+    "git_diff_check": "passed",
+    "prior_reconciliation_manifest_commit": "42a623311db44017634b1504a2b34c0e8bf3da25",
+    "prior_manifest_entries_passed": 11,
+    "demo_integrity_check": "ok",
+    "demo_foreign_key_check": "empty",
+    "demo_source_unchanged": true
+  },
+  "not_implemented": [
+    "text editing",
+    "table/equation",
+    "occurrence removal",
+    "aggregate undo/redo",
+    "unsaved recovery",
+    "Comic resource service",
+    "GTK integration",
+    "authorial publication",
+    "single-file .inde"
+  ],
+  "not_proven": [
+    "native file chooser browser flow",
+    "power loss and all syscall fault points",
+    "broad concurrency",
+    "latency/RSS benchmark",
+    "all viewport sizes",
+    "complete schema37 project opening"
+  ]
+}

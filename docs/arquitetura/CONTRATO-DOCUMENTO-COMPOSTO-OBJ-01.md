@@ -104,6 +104,8 @@ A prova só implementa os instrumentos necessários ao percurso escolhido. Um fr
 
 ## 8. Persistência experimental — decisão C04
 
+**Registro de implementação P2-A:** a [arquitetura do piloto](P2A-DOCUMENTO-COMPOSTO-OBJ-01.md) documenta a exceção ao reuso dos wrappers canônicos: `SqliteTransaction` depende também de `OperationCapture`/histórico/remoção/migração. O alvo isolado usa adaptador SQLite local com prepared statements e rollback por RAII, conservando as regras transacionais abaixo, sem alterar wrappers originais ou ligar serviços canônicos por stubs. P2-A persiste apenas estado salvo; o registro de trabalho recuperável permanece pendente para P2-C.
+
 Decisão para o piloto: **SQLite auxiliar exclusivo de fixture**, criado novo, fora do `.inde` de origem e sem abertura automática pelo aplicativo. Nome de trabalho: `obj01-piloto.sqlite3`. Tem seu próprio protocolo lógico versão 1; não altera `project.sqlite3`, codecs/migradores do schema 37 nem o formato físico `.inde`.
 
 O modelo lógico persistido possui documento composto, payloads/bindings, sequência autoral, apresentação/seleção, revisão/hash e registro de recursos/blobs. O snapshot da origem schema 37 é congelado e identificado; a cópia de trabalho só muda pelo agregado experimental. JSON versionado legível pode transportar o snapshot privado, e bytes PNG ficam em BLOBs verificados. A definição física das tabelas é tarefa do corte executável, respeitando este contrato e usando os wrappers transacionais existentes.

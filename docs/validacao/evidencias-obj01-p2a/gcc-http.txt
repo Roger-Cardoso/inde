@@ -1,0 +1,7 @@
+Test project /home/roger/Documents/Projects/GitHub/INDE/obj01-audit/build-obj01-p2a
+    Start 2: inde_object_composite_http_tests
+1/1 Test #2: inde_object_composite_http_tests ...   Passed    1.37 sec
+
+100% tests passed out of 1
+
+Total Test time (real) =   1.38 sec

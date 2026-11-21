@@ -105,3 +105,7 @@ Cada corte deve identificar entrega observável, arquivos/áreas, testes, limite
 A aceitação documental deste fechamento não é autorização implícita para executar o piloto. O próximo corte executável precisa ser apresentado e autorizado expressamente; mensagens ambíguas não substituem essa confirmação. Este trabalho termina na documentação, verificação de consistência e publicação na branch.
 
 Ver [validação desta reconciliação](../validacao/VALIDACAO-OBJ-01-RECONCILIACAO.md). Relatórios históricos permanecem evidência dos respectivos cortes; esta reconciliação passa a governar a prioridade futura.
+
+## Atualização após autorização de P2-A
+
+O usuário autorizou posteriormente o corte específico de texto/PNG e interface local sem GTK. Sua implementação e limites estão em [P2A-DOCUMENTO-COMPOSTO-OBJ-01](P2A-DOCUMENTO-COMPOSTO-OBJ-01.md), com [validação própria](../validacao/VALIDACAO-OBJ-01-P2A.md). A matriz acima continua sendo o retrato da base identificada no início deste documento; o novo relatório registra a evolução sem apagar as faltas históricas. A autorização não se estende a P2-B ou à Fase 2 inteira.

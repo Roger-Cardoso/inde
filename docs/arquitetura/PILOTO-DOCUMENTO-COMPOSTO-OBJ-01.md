@@ -1,6 +1,6 @@
 # OBJ-01 — Primeiro experimento autoral e seus critérios de aceitação
 
-Data: 2026-11-21. Especificação de entrega futura, **não implementada nem iniciada neste corte**. Referências normativas: [reconciliação](RECONCILIACAO-OBJ-01.md) e [contrato mínimo 1.0](CONTRATO-DOCUMENTO-COMPOSTO-OBJ-01.md). Pertence à Fase 2 proposta; a autorização atual termina no fechamento documental da Fase 1.
+Especificação inicial: 2026-11-21, preparada no fechamento documental da Fase 1. Referências normativas: [reconciliação](RECONCILIACAO-OBJ-01.md) e [contrato mínimo 1.0](CONTRATO-DOCUMENTO-COMPOSTO-OBJ-01.md). **Atualização posterior: P2-A foi autorizado expressamente e implementado**, com [arquitetura própria](P2A-DOCUMENTO-COMPOSTO-OBJ-01.md), [demo utilizável](../../tools/obj01-pilot/README.md) e [validação](../validacao/VALIDACAO-OBJ-01-P2A.md). P2-B e P2-C permanecem futuros e não autorizados.
 
 ## Resultado observável
 
@@ -30,7 +30,7 @@ Antes de executar qualquer corte, apresentar arquivos/áreas, teste observável,
 
 ## Casos de aceitação P01–P14
 
-Todos estão **pendentes de implementação/prova** na base atual. Os 61 testes históricos não os aprovam por equivalência.
+Os casos abaixo definem o piloto completo. **P01–P05 têm prova técnica no perfil P2-A; P09 está comprovado para texto/PNG, sem células.** P11/P12 possuem provas parciais desse perfil; os demais continuam pendentes no escopo completo. Consulte o relatório de P2-A para os limites, inclusive o seletor de arquivo não confirmado pela automação visual. Os 61 testes históricos não aprovam esses casos por equivalência; a implementação nova possui evidência própria e ainda aguarda aceite humano.
 
 | ID | Ação / condição | Resultado exigido | Evidência futura |
 | --- | --- | --- | --- |
