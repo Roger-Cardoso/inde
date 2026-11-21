@@ -1,9 +1,10 @@
 Baseline: 09eb932efb880736e72c52ca31ed7715f87e14ec
 Scope: docs only
 Matrix IDs: M01-M22 OK
+Risk IDs: R01-R10 OK
 Contracts: C01-C06 OK
 Pilot acceptance IDs: P01-P14 OK (all pending)
-Local link targets: 85 OK
+Local link targets: 87 OK
 Historical evidence SHA256SUMS: 9/9 OK
 Tracked source/build/archive/test diff: empty
 git diff --check: OK

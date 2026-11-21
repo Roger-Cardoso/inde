@@ -21,7 +21,7 @@ A evidência histórica mais recente registra **61/61 testes nativos e 21/21 job
 
 | Entrega | Resultado |
 | --- | --- |
-| [Reconciliação e matriz M01–M22](../arquitetura/RECONCILIACAO-OBJ-01.md) | Implementação, contrato, necessidade do piloto e adiamento explicitamente separados; infraestrutura preservada sem dirigir automaticamente a fila |
+| [Reconciliação e matriz M01–M22](../arquitetura/RECONCILIACAO-OBJ-01.md) | Implementação, contrato, necessidade do piloto e adiamento explicitamente separados; dez riscos R01–R10 ligados a invariantes, compatibilidade e provas futuras; infraestrutura preservada sem dirigir automaticamente a fila |
 | [Contrato mínimo 1.0, C01–C06](../arquitetura/CONTRATO-DOCUMENTO-COMPOSTO-OBJ-01.md) | Conteúdos, identidades/revisões, ordenação, operações, contexto, persistência auxiliar e conservação definidos para revisão |
 | [Experimento e P01–P14](../arquitetura/PILOTO-DOCUMENTO-COMPOSTO-OBJ-01.md) | Texto/PNG/tabela, cortes propostos, condição de parada e provas automatizadas/visuais descritas; todos os casos funcionais ainda pendentes |
 | Contrato principal e índice | Passam a apontar para a reconciliação como prioridade futura; implementação experimental anterior permanece descrita separadamente |
@@ -32,9 +32,19 @@ As quotas/perfil de conteúdo são requisitos futuros do piloto, não medições
 
 ## Validação executada e limites
 
-Este é um corte documental. As verificações locais são consistência de IDs C/M/P e referências, resolução de links locais, hashes dos headers e da evidência histórica consultada e `git diff --check`. Os resultados e a lista de arquivos ficam no [resumo estruturado](evidencias-obj01-reconciliacao/resultados.json). Não foram criados testes que apenas repetem o texto do contrato. Os arquivos compactados não foram reextraídos neste corte; a auditoria histórica continua identificada separadamente, e a CI existente os verifica novamente quando executada.
+Este é um corte documental. As verificações locais são consistência de IDs C/M/P/R e referências, resolução de 87 links locais, hashes dos headers e da evidência histórica consultada e `git diff --check`. Os resultados e a lista de arquivos ficam no [resumo estruturado](evidencias-obj01-reconciliacao/resultados.json). Não foram criados testes que apenas repetem o texto do contrato. Os arquivos compactados não foram reextraídos localmente neste corte; a auditoria histórica continua identificada separadamente, e a CI existente os verificou novamente.
 
-Não foi reexecutada localmente a suíte CTest de 61 programas, pois código/configuração de build não foram alterados. A CI existente pode executá-la parcialmente em suas matrizes mínimas por gatilho documental; isso é regressão do código inalterado, **não aprovação funcional do contrato novo**. Resultados da CI deste commit serão registrados separadamente abaixo.
+Não foi reexecutada localmente a suíte CTest nativa de 61 programas, pois código/configuração de build não foram alterados. A CI existente executou suas matrizes mínimas e a verificação de fontes por gatilho documental; isso é regressão do código inalterado, **não aprovação funcional do contrato novo**.
+
+| Verificação deste corte | Resultado / evidência |
+| --- | --- |
+| IDs e referências locais | M01–M22, C01–C06, P01–P14 e R01–R10 consistentes; 87 links resolvidos |
+| Evidência histórica consultada | Nove artefatos conferidos contra seu manifesto SHA-256 |
+| Preservação de implementação e fontes | Diff vazio em `cpp`, `tests`, `.github`, `fontes` e `metadata` contra `09eb932`; somente documentação mudou |
+| CI do commit documental `4bbb4ef22c75448a81f4e105c3c3d250fce3450b` | **21/21 jobs aprovados**; [execução 44908064629](https://github.com/Roger-Cardoso/inde/actions/runs/44908064629), [resultado bruto](evidencias-obj01-reconciliacao/ci.json) |
+| Código novo / aceite do piloto | Não há código novo; P01–P14 continuam pendentes; aceite humano do contrato separado |
+
+O manifesto [SHA256SUMS](evidencias-obj01-reconciliacao/SHA256SUMS) usa caminhos relativos à raiz da worktree. Conferência reproduzível: `sha256sum -c docs/validacao/evidencias-obj01-reconciliacao/SHA256SUMS`. O resultado bruto da CI identifica o commit efetivamente testado; não se atribui a ele um commit documental posterior. O commit final de consolidação recebe sua própria CI pelo mesmo workflow.
 
 Não houve edição de fontes C++, testes executáveis, workflows, arquivos compactados, bancos ou projetos autorais. A `main` local permaneceu em `d41a5c9b9809ca7d40beb6ff10f22f1a5b451e0b`, preservando sua alteração preexistente de permissão em `Preparar-ponte.sh`. Nenhuma migração, implantação ou merge foi realizado.
 

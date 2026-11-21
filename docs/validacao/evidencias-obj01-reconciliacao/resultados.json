@@ -28,6 +28,18 @@
       "M21",
       "M22"
     ],
+    "risk_ids": [
+      "R01",
+      "R02",
+      "R03",
+      "R04",
+      "R05",
+      "R06",
+      "R07",
+      "R08",
+      "R09",
+      "R10"
+    ],
     "contract_ids": [
       "C01",
       "C02",
@@ -53,7 +65,7 @@
       "P14"
     ],
     "all_pilot_cases": "pending implementation/proof",
-    "local_link_count": 85,
+    "local_link_count": 87,
     "all_local_links_resolve": true,
     "git_diff_check": "passed",
     "historical_evidence_manifest": "9/9 passed"
@@ -63,10 +75,10 @@
     "docs/arquitetura/ARMAZENAMENTO-RECOVERY-OBJ-01.md": "9c20c41eae21408625ac8e815e8646d67398dce7e6fe0155040e6cbb8a4f0589",
     "docs/arquitetura/INDE-OBJ-01.md": "6f79d148c626750eb177804aa4e7a943415c17330123d1e85ff3acd482fe0242",
     "docs/arquitetura/INVENTARIO-OBJ-01.md": "19bf93227562342d258f612bbbbac97080304843ed391966e295234f017b853b",
-    "docs/arquitetura/RECONCILIACAO-OBJ-01.md": "7ffc50771a04cee5f801dfc0ba29029998cf4fa9a0d9964acf4b4f7e532aa9df",
-    "docs/arquitetura/CONTRATO-DOCUMENTO-COMPOSTO-OBJ-01.md": "da8f9dfe16b0b41e31d54c5b4b45f5528ffec5db476c072e45e10a84997e85b3",
+    "docs/arquitetura/RECONCILIACAO-OBJ-01.md": "db56c5642eb8a53b3bac3d7f44b7780fc903e96af1a794156219aaefcde5117d",
+    "docs/arquitetura/CONTRATO-DOCUMENTO-COMPOSTO-OBJ-01.md": "7ead40ebef918213692cb92468ebb59df37258c0c55e9fde5789041e6e752980",
     "docs/arquitetura/PILOTO-DOCUMENTO-COMPOSTO-OBJ-01.md": "0326acebfd64ff4c9202fc506d3f280428c2dcdab98c76e59cdebb5679429932",
-    "docs/validacao/VALIDACAO-OBJ-01-RECONCILIACAO.md": "0cdb4a18475af6f93adba16738edeae193551d7441ad5e8e5da4cad36e1d3dab"
+    "docs/validacao/VALIDACAO-OBJ-01-RECONCILIACAO.md": "da6177e0cb64a507977dc7abc308831508b6352e3a8f7a01a27ba68b400263c6"
   },
   "inspected_source_sha256": {
     "cpp/object_change_plan.hpp": "94d9237bd8a69c0ce2d74a78eadc4d368821a6cfecd100ebe3762b189a4a372f",
@@ -129,6 +141,12 @@
     "no merge to main or real publication"
   ],
   "ci_this_cut": {
-    "status": "pending remote execution after documentary commit"
+    "run_id": 44908064629,
+    "head_sha": "4bbb4ef22c75448a81f4e105c3c3d250fce3450b",
+    "url": "https://github.com/Roger-Cardoso/inde/actions/runs/44908064629",
+    "jobs": 21,
+    "passed": 21,
+    "conclusion": "success",
+    "scope": "regression of unchanged code and archive verification; not pilot acceptance"
   }
 }

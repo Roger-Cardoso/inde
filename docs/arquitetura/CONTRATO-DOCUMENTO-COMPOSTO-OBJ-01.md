@@ -42,7 +42,7 @@ Os bytes ficam disponíveis no armazenamento autoral experimental; apagar/mover 
 
 Perfil inicial proposto para implementação e teste: PNG até 8 MiB, lados até 8.192 pixels e até 16.777.216 pixels decodificados; total de blobs referidos pelo documento até 32 MiB. Tabela até 64 linhas × 32 colunas, texto até 4.096 escalares Unicode por célula e strings agregadas do documento até 8 MiB. Não são capacidades medidas nem limites do INDE atual. O código futuro deve validar limites individuais e agregados antes de admitir o candidato, sem truncamento; ajustes exigem justificativa no perfil.
 
-A ponte textual conserva seus limites atuais e pode recusar uma fonte além deles. O limite proprietário de 100.000 identidades de parágrafo não é promessa de admissão pelo piloto/ponte, atualmente limitada a 10.000 parágrafos.
+Todo campo textual exige UTF-8 válido; uma entrada malformada é recusada, sem substituição silenciosa de caracteres. A ponte textual conserva seus limites atuais e pode recusar uma fonte além deles. O limite proprietário de 100.000 identidades de parágrafo não é promessa de admissão pelo piloto/ponte, atualmente limitada a 10.000 parágrafos.
 
 ## 4. Autoridades e ordenação — decisão C02
 

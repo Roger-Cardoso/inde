@@ -44,6 +44,23 @@ Uma linha pode registrar situação atual I parcial e dependência P: o componen
 | M21 | `.inde` único com recursos incorporados | A para Fase 5 | Não converter projetos nem alterar formato físico antes da prova lógica e de recursos | Roteiro abaixo |
 | M22 | Publicação de mídia/tabela/equação e distribuição | P/A conforme fase | Não é implementada pelo grafo; exportador antigo não pode omitir objetos silenciosamente | C01 e Fase 6 |
 
+## Riscos, invariantes e compatibilidade
+
+| Risco | Invariante / recusa exigida | Compatibilidade preservada | Prova futura |
+| --- | --- | --- | --- |
+| R01 — Duas ordens autorais divergirem | Uma sequência composta; projeção de parágrafos igual ao proprietário; alteração autoral transacional ou recusa integral | Corpo, grupos e camadas continuam sob o motor textual | P03, P10, P11 |
+| R02 — Mover um uso ou editar conteúdo atingir outros usos por engano | Posição/legenda são da ocorrência; edição compartilhada exige escopo explícito; remover uso conserva recursos/histórico | Identidades do núcleo e semântica de referências não são confundidas com posição | P05, P08 |
+| R03 — Perder alternativas, privacidade ou coordenadas textuais | Captura completa, bindings explícitos, sem marcadores de mídia inseridos no corpo por aproximação | IDs, folhas, âncoras, semântica, visibilidade e offsets do proprietário | P01, P10, P11, P14 |
+| R04 — Hash declarado ou caminho externo ser tratado como mídia incorporada íntegra | Conferir bytes/decoder/hash antes de referenciar; reabrir pelos blobs verificados; diagnóstico em vez de omissão | `Resource` atual segue metadado lógico; importar bytes é capacidade nova | P02, P09, P12 |
+| R05 — Reconhecer save/recovery parcial como documento completo | Unidade cobre texto, sequência, payloads, recursos e apresentação; codec/versionamento adequados; histórico retém referências | Protocolos antigos continuam válidos para seus tipos; não recebem cobertura multimídia fictícia | P08, P09, P12, P13 |
+| R06 — Experimento alterar schema, origem ou obra | Banco auxiliar novo e isolado; origem congelada; revisão/hash esperados e recusa de conflito | Schema 37, fontes arquivadas, `main` e obras reais preservados | P01, P09, P12 e comparação da origem |
+| R07 — Publicar incompleto ou vazar folhas privadas | Visibilidade/autoria/publicação distintas; exportador sem tradução recusa o composto | Publicação legada continua com seu escopo; nenhum fallback silencioso | P14 |
+| R08 — Percentual, pixel e frame abstrato se confundirem | Perfil Row separado, medidas válidas e conversão definida; sem normalização silenciosa | `Frame` e regras geométricas existentes não são reinterpretados | P04, P12 |
+| R09 — Entrada excedida, inválida ou versão desconhecida corromper candidato | Limites individuais/agregados e UTF-8 válidos antes do commit; recusa sem truncamento | Quotas do proprietário/ponte continuam explícitas, sem promessa de capacidade maior | P11, P12 |
+| R10 — CI e infraestrutura serem promovidas a aceite de produto | Evidências ligadas ao escopo; todos os casos novos pendentes até prova; avanço depende de revisão/autorização | Histórico técnico conservado sem apagar limites ou decisões do usuário | P01–P14 e registro de aceite humano |
+
+Esses casos não foram executados neste corte documental. São obrigações do piloto, além das regressões que já existem. Uma limitação descoberta deve indicar a linha de risco e o caso que bloqueia antes de ampliar o escopo.
+
 ## Decisões de prioridade
 
 1. **Conservar** commits, contratos, validadores, comandos, pontes e testes. Não apagar experimentos úteis por causa da reconciliação.
