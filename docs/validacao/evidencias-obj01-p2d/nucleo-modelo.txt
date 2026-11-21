@@ -1,0 +1,9 @@
+Test project /home/roger/Documents/Projects/GitHub/INDE/obj01-audit/build-obj01
+    Start 1: inde_object_model_tests
+1/2 Test #1: inde_object_model_tests ..........   Passed    0.16 sec
+    Start 2: inde_object_commands_tests
+2/2 Test #2: inde_object_commands_tests .......   Passed    6.52 sec
+
+100% tests passed out of 2
+
+Total Test time (real) =   6.69 sec

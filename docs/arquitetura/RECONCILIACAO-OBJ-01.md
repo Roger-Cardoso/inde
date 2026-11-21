@@ -117,3 +117,7 @@ P2-B acrescenta tabela estruturada, seleção por célula, edição e histórico
 ## Atualização P2-C
 
 [P2-C](P2C-DOCUMENTO-COMPOSTO-OBJ-01.md) registra trabalho composto ainda não salvo, move grupos textuais pelo motor proprietário e acrescenta instrumentos mínimos. A [validação](../validacao/VALIDACAO-OBJ-01-P2C.md) distingue recuperação técnica, demonstração e aceite humano. A recusa de publicação é local ao piloto; a integração com o publicador principal continua pendente. A Fase 2 inteira e a Fase 3 não são declaradas concluídas/iniciadas por essa atualização.
+
+## Extensão aprovada P2-D — Fórmula
+
+Após a proposta do usuário e sua aprovação expressa, o [objeto Fórmula](FORMULAS-OBJ-01.md) foi acrescentado ao piloto: cálculo comum no documento/células, variáveis/referências, atribuições explícitas, histórico e recuperação. [Validação própria](../validacao/VALIDACAO-OBJ-01-P2D.md). Não transforma a Fase 3 ou a publicação canônica em trabalho iniciado/concluído.

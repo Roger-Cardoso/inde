@@ -1,0 +1,68 @@
+{
+  "saved_revision": 0,
+  "saved_sha256": "92436b34845c6a2fdf0b852f05a7ba4b1789462c75a6b0229c5ce47ceb475081",
+  "working_generation": 12,
+  "working_sha256": "7ebc41fa73415d023cc4edf4ac2a0009efcd103b46bc68c847fc1cd614858c84",
+  "source_sha256": "437e42e01ba700d9fbc6d415cb2d572eb190aa00ff89a193a9667f8eaca38d7e",
+  "formula_count": 4,
+  "document_uses": 3,
+  "cell_uses": 1,
+  "names": [
+    "Combate",
+    "Metade",
+    "Golpe",
+    "Bonus"
+  ],
+  "sources": {
+    "Combate": "declara HP = 100\ndeclara DanoEspada = 10\nresultado HP - 2 × DanoEspada",
+    "Metade": "resultado Combate.resultado / 2",
+    "Golpe": "alterar Combate.HP = Combate.HP - 20\nresultado Combate.HP",
+    "Bonus": "resultado Metade.resultado + 5"
+  },
+  "current_overrides": {
+    "Combate": {
+      "HP": 80
+    },
+    "Metade": {},
+    "Golpe": {},
+    "Bonus": {}
+  },
+  "bindings": {
+    "Combate": {},
+    "Metade": {
+      "Combate": "dd52a053-27af-48d8-8190-55206f1d7b46"
+    },
+    "Golpe": {
+      "Combate": "dd52a053-27af-48d8-8190-55206f1d7b46"
+    },
+    "Bonus": {
+      "Metade": "7867bb8b-a289-4c50-9393-2293faa5d7d0"
+    }
+  },
+  "browser_results": [
+    {
+      "name": "Editar fórmula Combate: 60",
+      "value": "60"
+    },
+    {
+      "name": "Editar fórmula Metade: 30",
+      "value": "30"
+    },
+    {
+      "name": "Editar fórmula Golpe: 80",
+      "value": "80"
+    },
+    {
+      "name": "Editar fórmula Bonus: 35",
+      "value": "35"
+    }
+  ],
+  "snapshot_equal_after_SIGKILL": true,
+  "saved_not_promoted": true,
+  "commands_not_reexecuted": true,
+  "signal": "SIGKILL to owned synthetic engine",
+  "server_exit_after_controlled_crash": "expected engine_failed=-9",
+  "integrity_check": "ok",
+  "foreign_key_check": [],
+  "ready_file_mode": "0o600"
+}

@@ -1,0 +1,432 @@
+{
+  "date": "2026-11-21",
+  "branch": "feature/inde-obj-01-foundation",
+  "base_commit": "347be9dfea7ea7442fdd7606e469ac9c1d3d6928",
+  "functional_commit": "bb19da03886f86fd65c12b1dd29784db3d4f5d7f",
+  "implementation_commit": "53b534fca2d20aa49f593676c71c998ba5fe6d4e",
+  "scope": "approved Formula object: shared document/cell numeric evaluator, variables and bound results, explicit simultaneous state changes, undo/recovery; isolated profile 4",
+  "code_sha256": {
+    ".github/workflows/obj-01.yml": "ed16c413ba14b96bf5c6802c806e711645f7d9f11a35729530bf84110477f1d9",
+    "cpp/object_composite_pilot.cpp": "699675413d3b9217371e7628aa41c866de809e342050dad3781d0e2226e99d82",
+    "cpp/object_composite_pilot.hpp": "5834290d59eba0891d43f6d31c95ac698409ac02c1c0178145bc4fc03e3ed3d4",
+    "cpp/object_composite_pilot_main.cpp": "ec32d88385c8c2918485b1f18875a2da582f0eb00b8724181c89b5a65321fc37",
+    "cpp/object_formula.cpp": "a7cef56dcf5c93139674d9b1036f07b3fee3495b3b4a63d2c7e9b74938ebce7e",
+    "cpp/object_formula.hpp": "a31bff73864b9d86eabda692acec186539325f3555a07068133cd399594b44a1",
+    "cpp/object_model.cpp": "c9eb2e9cea16ffc79bb06b1c12f92f19c5d7555c51db3521030bb095c3f46365",
+    "cpp/object_model.hpp": "45f1743876744f878c8e49fac412ce4020c0a1c6684bc894e8b4bfd74f79c718",
+    "scripts/demos/Abrir-demo-obj01-p2d.sh": "635971694e253455d95a240c324733d911ed82815d66f490e5c4e6394813eb36",
+    "tests/object_composite_pilot/CMakeLists.txt": "0a2cc68f5802c3fa1755473e7bc445f52b775b27e9c317c9b8f4c4b255aa277a",
+    "tests/object_composite_pilot/test_http.py": "f2a5fa38eecb24a911a12cfe54901243ed3519daf0eb4890e4d086887f417ad9",
+    "tests/object_composite_pilot/test_http_p2d.py": "765578e4835b6e0479db1812cf6228bc29114fa11acb6b14bc76e9b209de3f15",
+    "tests/object_composite_pilot/test_p2d.py": "756142a98599f1aa8497fc34a57323ccc4350caf6806148223b35c9b7d2aad58",
+    "tests/object_composite_pilot/test_pilot.py": "4021989c598a3f0c80f23f194e94f5a40b53141686e61bce23454ecbe3bb68c5",
+    "tools/obj01-pilot/P2D.md": "525a15c69685fdc7dc7de9fe0a56373b46c0e76dd2ffaa02e6d7accbec8ca7e5",
+    "tools/obj01-pilot/app.js": "bf3674cd1792ba39ebf15e35a69e57edb3a82c97de2159856f36b2c5c2040adb",
+    "tools/obj01-pilot/index.html": "1ce4d67b902cedad61f25b917482f121299fef1e9730b789f4972477bbcb3b50",
+    "tools/obj01-pilot/serve.py": "21af7c672628c4358b985f45f7b769ec538b0c1e2d50bca3d0c5548ae9bffa0f",
+    "tools/obj01-pilot/style.css": "e9571d948f826f4860c6d465f1976f22d1260269dffffe456deff985b2cb78dc"
+  },
+  "document_sha256": {
+    "docs/README.md": "e4a5be56e583faa6df4ba95011d042af2997c1c2d2e17fe67bee8e021af3d970",
+    "docs/arquitetura/INDE-OBJ-01.md": "3b5318a7a44c5ce306a4a542ad58cc2c96c5546c6a8b875cab2e84c35281cccd",
+    "docs/arquitetura/RECONCILIACAO-OBJ-01.md": "476065833f908c297e75478947637b3e11229e4dabcc3d099179cef25cf24bf9",
+    "docs/arquitetura/CONTRATO-DOCUMENTO-COMPOSTO-OBJ-01.md": "fbe1346ffe563f8d69908164934e5c4b2f81a2e4bf5c3b938576e9d786a5c156",
+    "docs/arquitetura/PILOTO-DOCUMENTO-COMPOSTO-OBJ-01.md": "342ef3e570a8571a1b8ac8c23fad49dbaede5d54391d7251d39f7ee606f9b8d4",
+    "docs/arquitetura/FORMULAS-OBJ-01.md": "72d34cf89ab0e824c0038db83f0178b3a40d19fca076a073871f3874fd3ac8fa",
+    "docs/validacao/VALIDACAO-OBJ-01-P2D.md": "808bf922d0e3361c9082f52651dc5d462d76042450e78b6e6eb9e30a9eb98732",
+    "tools/obj01-pilot/README.md": "4cc2197a7cb1346b972d9f623857e5c2ceffa80e70e9267411fd88ffb041ab7a",
+    "tools/obj01-pilot/P2D.md": "525a15c69685fdc7dc7de9fe0a56373b46c0e76dd2ffaa02e6d7accbec8ca7e5"
+  },
+  "local": {
+    "variants": [
+      "GCC 15.2 Debug",
+      "Clang 18.1 Debug",
+      "GCC ASan+UBSan",
+      "Clang ASan+UBSan"
+    ],
+    "programs_per_variant": 9,
+    "p2a_core_cases": 19,
+    "p2a_http_cases": 4,
+    "p2b_core_cases": 12,
+    "p2b_http_cases": 6,
+    "p2c_core_cases": 16,
+    "p2c_http_cases": 7,
+    "p2d_core_cases": 19,
+    "p2d_http_cases": 7,
+    "common_http_inherited": 4,
+    "owner_adapter_groups": 9,
+    "additional_standalone_model_programs": 2,
+    "generated_arithmetic_cases": 40,
+    "local_lsan": false,
+    "test_names": {
+      "test_pilot.py": [
+        "test_p01_capture_and_private_layers",
+        "test_p02_real_png_and_distinct_identities",
+        "test_p03_insert_between_complete_groups",
+        "test_p04_row_profile_and_stack",
+        "test_p05_reuse_and_move_only_selected_use",
+        "test_visual_intent_requires_explicit_restore",
+        "test_row_move_preserves_other_use_and_source",
+        "test_p09_save_new_process_without_external_png",
+        "test_fractional_profile_roundtrips_without_precision_loss",
+        "test_failed_sqlite_write_rolls_back_blobs_and_snapshot",
+        "test_missing_blob_refuses_open_without_partial_state",
+        "test_unknown_snapshot_version_is_not_overwritten",
+        "test_unsaved_reopen_requires_confirmation",
+        "test_invalid_png_crc_and_animation_are_atomic",
+        "test_stale_revision_and_unknown_operation",
+        "test_cas_conflict_does_not_overwrite",
+        "test_corrupt_blob_refuses_reopen_without_partial_state",
+        "test_unknown_database_version_and_frozen_source_are_preserved",
+        "test_exclusive_workspace_lease_and_legacy_path_refusal"
+      ],
+      "test_http.py": [
+        "test_token_and_origin_guards_preserve_document",
+        "test_static_interface_and_safety_headers",
+        "test_real_import_save_reopen_and_resource_bytes",
+        "test_invalid_request_has_no_effect"
+      ],
+      "test_p2b.py": [
+        "test_p06_table_and_cell_identities",
+        "test_p07_cell_selection_is_typed_and_does_not_invalidate_redo",
+        "test_p08_move_remove_undo_redo_conserves_table_and_selection",
+        "test_p08_last_figure_resource_survives_remove_save_restart",
+        "test_undo_import_after_save_keeps_resource_and_can_save_again",
+        "test_p09_tables_images_profiles_new_process_roundtrip",
+        "test_new_edit_after_undo_clears_redo",
+        "test_history_is_bounded_and_revision_monotonic",
+        "test_limits_and_group_refusals_are_atomic",
+        "test_p2a_seed_is_readonly_and_keeps_ids_and_bytes",
+        "test_profiles_do_not_implicitly_upgrade_each_other",
+        "test_invalid_persisted_table_rejected_without_replacing_work"
+      ],
+      "test_http_p2b.py": [
+        "test_table_cells_history_and_reopen",
+        "test_invalid_cell_has_no_effect"
+      ],
+      "test_p2c.py": [
+        "test_p13_unsaved_complete_work_survives_sigkill",
+        "test_save_promotes_work_but_keeps_live_history",
+        "test_explicit_saved_discard_and_verified_unclaimed_blob",
+        "test_checkpoint_failure_rolls_back_and_preserves_work_and_history",
+        "test_lost_checkpoint_ack_requires_reopen_and_recovers_candidate",
+        "test_lost_save_ack_reopens_committed_saved_state",
+        "test_undo_checkpoint_is_recovered_after_sigkill",
+        "test_working_base_and_resource_corruption_fail_closed",
+        "test_real_checkpoint_crash_windows",
+        "test_real_save_crash_windows",
+        "test_work_generation_conflict_and_reload",
+        "test_corrupt_work_fails_closed_without_saved_fallback",
+        "test_p10_owner_group_reorder_and_undo_conserve_original",
+        "test_partial_group_and_interval_owner_refusal_are_atomic",
+        "test_p14_context_keeps_target_and_publication_is_refused",
+        "test_p2b_seed_readonly_and_profiles_preserved"
+      ],
+      "test_http_p2c.py": [
+        "test_table_work_is_durable_without_promoting_saved",
+        "test_instruments_preserve_target_and_guard_wrong_operation",
+        "test_complete_text_group_move_uses_owner_order_and_frozen_hash"
+      ],
+      "test_p2d.py": [
+        "test_multiline_user_example_and_excel_style_expression",
+        "test_cross_formula_variables_results_and_recalculation",
+        "test_formula_born_in_cell_drives_document_and_reverse",
+        "test_explicit_assignment_updates_chain_once_and_keeps_initial",
+        "test_simultaneous_assignments_undo_redo_and_reset",
+        "test_command_cannot_break_dependency_or_partially_write",
+        "test_duplicate_assignment_and_missing_targets_are_atomic",
+        "test_cycles_and_forward_references_report_and_repair",
+        "test_invalid_draft_is_saved_recovered_and_repairable",
+        "test_syntax_functions_number_and_depth_diagnostics",
+        "test_generated_arithmetic_matches_independent_values",
+        "test_bound_cell_text_protected_and_detach_undo_keeps_plain_text",
+        "test_move_remove_undo_keeps_formula_identity_and_dependents",
+        "test_shared_formula_document_and_cell_use",
+        "test_sigkill_recovers_formula_state_bindings_cells_and_results",
+        "test_checkpoint_faults_preserve_atomic_formula_cascade",
+        "test_names_limits_context_revision_and_publication_guards",
+        "test_corrupt_binding_identity_fails_closed_without_rebinding",
+        "test_p2c_seed_preserves_reordered_owner_and_prior_files"
+      ],
+      "test_http_p2d.py": [
+        "test_mutation_cascade_is_durable_and_save_promotes",
+        "test_formula_created_in_cell_drives_document_result",
+        "test_invalid_formula_is_an_editable_diagnostic_and_actions_guarded"
+      ]
+    }
+  },
+  "native_release": {
+    "passed": 61,
+    "total": 61,
+    "seconds": 266.08
+  },
+  "source_auditor_negative_tests": 5,
+  "archives": [
+    {
+      "label": "schema28",
+      "path": "fontes/inde-schema28-89b47f27.tar.gz",
+      "sha256": "3d6bee4c60dbecc602a56881b1957f90b55798dbc711c9c290701e2ad8a6e97e",
+      "files": 641,
+      "manifest_match": true
+    },
+    {
+      "label": "original37",
+      "path": "fontes/inde-P03c-schema37-original.tar.gz",
+      "sha256": "2e97a15ddcda56b8f5892d033c9a7427d6102bcf650454678491c50ff5459ef2",
+      "files": 757,
+      "manifest_match": true
+    },
+    {
+      "label": "integrated37",
+      "path": "fontes/inde-integrado-schema37.tar.gz",
+      "sha256": "554623abec5d7c3c175dab2aa6bbabc8a95abd6e3d98a27191cea0260a4965c4",
+      "files": 758,
+      "manifest_match": true
+    }
+  ],
+  "extracted_bytes_match": true,
+  "ci": {
+    "run_id": 44932366424,
+    "url": "https://github.com/Roger-Cardoso/inde/actions/runs/44932366424",
+    "head_sha": "53b534fca2d20aa49f593676c71c998ba5fe6d4e",
+    "jobs": 25,
+    "passed": 25,
+    "remote_lsan": true,
+    "conclusion": "success"
+  },
+  "acceptance": {
+    "F01": "multiline source in place and collapsed numeric result",
+    "F02": "variables/results shared through stable formula ID bindings",
+    "F03": "formula born in cell drives document and another cell; shared usages",
+    "F04_F06": "explicit changes update results; no assignments on move/save/open/recalculate",
+    "F05": "simultaneous assignments, atomic refusal, undo/redo/reset",
+    "F07": "invalid source persists as editable diagnostic; cycles and forward references repair",
+    "F08": "retained object library, document movement/removal and reversible cell detachment",
+    "F09": "SIGKILL and persistence fault recovery include current values and references",
+    "F10": "forged persisted name/ID binding rejected despite valid outer hash",
+    "F11": "admission, context/revision, syntax and numeric limits",
+    "F12": "previous profiles/owner source preserved; publication admission refused",
+    "human_acceptance": "separate, pending",
+    "canonical_publisher_integration": "pending",
+    "phase_2_complete": false,
+    "phase_3_started": false
+  },
+  "browser": {
+    "observed_runtime_commit": "bb19da03886f86fd65c12b1dd29784db3d4f5d7f",
+    "final_engine_readback_commit": "53b534fca2d20aa49f593676c71c998ba5fe6d4e",
+    "observed": [
+      "create Combate 80",
+      "create dependent Metade 40",
+      "create Golpe with explicit action",
+      "create Bonus 45 in table cell",
+      "edit source inline to damage 15",
+      "apply collapses editor and recalculates 70/35/40",
+      "undo source edit",
+      "execute HP change once",
+      "undo/redo complete cascade",
+      "initial/current values distinct",
+      "SIGKILL and new process recover 60/30/80/35 without Save",
+      "history empty after restart"
+    ],
+    "restart": {
+      "saved_revision": 0,
+      "saved_sha256": "92436b34845c6a2fdf0b852f05a7ba4b1789462c75a6b0229c5ce47ceb475081",
+      "working_generation": 12,
+      "working_sha256": "7ebc41fa73415d023cc4edf4ac2a0009efcd103b46bc68c847fc1cd614858c84",
+      "source_sha256": "437e42e01ba700d9fbc6d415cb2d572eb190aa00ff89a193a9667f8eaca38d7e",
+      "formula_count": 4,
+      "document_uses": 3,
+      "cell_uses": 1,
+      "names": [
+        "Combate",
+        "Metade",
+        "Golpe",
+        "Bonus"
+      ],
+      "sources": {
+        "Combate": "declara HP = 100\ndeclara DanoEspada = 10\nresultado HP - 2 × DanoEspada",
+        "Metade": "resultado Combate.resultado / 2",
+        "Golpe": "alterar Combate.HP = Combate.HP - 20\nresultado Combate.HP",
+        "Bonus": "resultado Metade.resultado + 5"
+      },
+      "current_overrides": {
+        "Combate": {
+          "HP": 80
+        },
+        "Metade": {},
+        "Golpe": {},
+        "Bonus": {}
+      },
+      "bindings": {
+        "Combate": {},
+        "Metade": {
+          "Combate": "dd52a053-27af-48d8-8190-55206f1d7b46"
+        },
+        "Golpe": {
+          "Combate": "dd52a053-27af-48d8-8190-55206f1d7b46"
+        },
+        "Bonus": {
+          "Metade": "7867bb8b-a289-4c50-9393-2293faa5d7d0"
+        }
+      },
+      "browser_results": [
+        {
+          "name": "Editar fórmula Combate: 60",
+          "value": "60"
+        },
+        {
+          "name": "Editar fórmula Metade: 30",
+          "value": "30"
+        },
+        {
+          "name": "Editar fórmula Golpe: 80",
+          "value": "80"
+        },
+        {
+          "name": "Editar fórmula Bonus: 35",
+          "value": "35"
+        }
+      ],
+      "snapshot_equal_after_SIGKILL": true,
+      "saved_not_promoted": true,
+      "commands_not_reexecuted": true,
+      "signal": "SIGKILL to owned synthetic engine",
+      "server_exit_after_controlled_crash": "expected engine_failed=-9",
+      "integrity_check": "ok",
+      "foreign_key_check": [],
+      "ready_file_mode": "0o600"
+    },
+    "final_binary_readback": {
+      "final_binary": "53b534f",
+      "isolated_copy_source": "synthetic P2-D, read-only backup",
+      "results": {
+        "Combate": "60",
+        "Metade": "30",
+        "Golpe": "80",
+        "Bonus": "35"
+      },
+      "all_valid": true,
+      "recovered": true,
+      "saved_revision": 0,
+      "history_empty": true,
+      "no_commands_reexecuted": true
+    },
+    "file_chooser_gap": "unchanged, not promoted to passed"
+  },
+  "preservation": {
+    "original_demo_hashes": {
+      "dados/obj01-piloto-p2a/origem-documento.json": "437e42e01ba700d9fbc6d415cb2d572eb190aa00ff89a193a9667f8eaca38d7e",
+      "dados/obj01-piloto-p2a/obj01-piloto.sqlite3": "389f80901b561bcad3ceb1ce48dd6c747fe19cd33ec614cb72b340885d901805",
+      "dados/obj01-piloto-p2b/origem-documento.json": "437e42e01ba700d9fbc6d415cb2d572eb190aa00ff89a193a9667f8eaca38d7e",
+      "dados/obj01-piloto-p2b/obj01-piloto.sqlite3": "84af38b84e6ce62a05f3a62632152e341cf02dbfb0c4ba07b31925ea6cebe4f5",
+      "dados/obj01-piloto-p2c/origem-documento.json": "437e42e01ba700d9fbc6d415cb2d572eb190aa00ff89a193a9667f8eaca38d7e",
+      "dados/obj01-piloto-p2c/obj01-piloto.sqlite3": "efda4b962d8aaf0fcb9270fcdd934a5d599e1e4172236bcc31e7df2723f4976f"
+    },
+    "p2a_p2b_p2c_unchanged": true,
+    "main_head": "d41a5c9b9809ca7d40beb6ff10f22f1a5b451e0b",
+    "main_preexisting_status": " M Preparar-ponte.sh",
+    "protected_paths_verified": [
+      "fontes",
+      "metadata",
+      "verificar_base.py",
+      "cpp/CMakeLists.txt",
+      "cpp/object_commands.cpp",
+      "cpp/object_commands.hpp",
+      "cpp/object_document_adapter.cpp",
+      "cpp/object_document_adapter.hpp",
+      "cpp/object_composition_adapter.cpp",
+      "cpp/object_composition_adapter.hpp",
+      "cpp/object_change_plan.cpp",
+      "cpp/object_change_plan.hpp",
+      "cpp/object_change_session.cpp",
+      "cpp/object_change_session.hpp",
+      "cpp/object_save_protocol.cpp",
+      "cpp/object_save_protocol.hpp",
+      "cpp/object_checkpoint_store.cpp",
+      "cpp/object_checkpoint_store.hpp"
+    ],
+    "canonical_sources_and_archives_unchanged": true,
+    "object_kind_addition_preserves_old_numeric_values": true,
+    "canonical_schema_migration": false,
+    "authorial_projects_written": false,
+    "gtk_or_single_file_inde": false,
+    "merge_or_authorial_publication": false,
+    "historical_manifests": [
+      {
+        "profile": "p2a",
+        "commit": "8ea6c233f50529de9c9894a62b925d90941157a1",
+        "entries_verified": 37
+      },
+      {
+        "profile": "p2b",
+        "commit": "b1ae38fbcc47962c33ca74e8bcdca2e72ae64cca",
+        "entries_verified": 39
+      },
+      {
+        "profile": "p2c",
+        "commit": "347be9dfea7ea7442fdd7606e469ac9c1d3d6928",
+        "entries_verified": 44
+      }
+    ]
+  },
+  "format": {
+    "profile_user_version": 4,
+    "snapshot": "INDE-OBJ01-COMPOSITE-P2D-1",
+    "implicit_upgrade": false,
+    "seed": "P2-C Saved READONLY, new directory, Structure context",
+    "result_persistence": "derived at load; no assignments on evaluation",
+    "assignments": "explicit execution, simultaneous from one pre-state, atomic commit",
+    "object_binding": "ID plus immutable name; variable symbol by declared name",
+    "source_bytes_per_formula": 16384,
+    "formula_objects_including_retained": 64,
+    "variables_per_formula": 32,
+    "assignments_per_formula": 32,
+    "tokens": 2048,
+    "expression_nodes": 512,
+    "parser_depth": 48,
+    "evaluation_depth": 64,
+    "evaluation_visits_budget": 200000,
+    "number_abs_cap": 1000000000000.0,
+    "number_type": "finite IEEE double; not decimal exact",
+    "display_significant_digits": 12,
+    "source_only_in_browser": "not protected until application acknowledged",
+    "persistent_undo": false
+  },
+  "failure_found": {
+    "initial_log": "falha-inicial-prontidao.txt",
+    "cause": "ready path existed before complete JSON write under load",
+    "fix": "private complete file, fsync, atomic link without overwrite; test cleanup registered before readiness wait",
+    "final_matrix_passed": true,
+    "owned_orphan_test_processes_closed": 1
+  },
+  "checks": {
+    "local_links_resolve": 125,
+    "git_diff_check": "passed",
+    "demo_integrity_check": "ok",
+    "demo_foreign_key_check": "empty",
+    "ready_mode": "0o600"
+  },
+  "not_implemented": [
+    "full Excel/XLSX compatibility",
+    "A1/range addressing",
+    "text/date results",
+    "symbol rename/refactoring",
+    "custom functions",
+    "automatic assignment triggers/iteration",
+    "decimal exact arithmetic",
+    "table row/column editing",
+    "canonical publisher integration",
+    "equation renderer",
+    "GTK",
+    "real project migration",
+    "single-file .inde"
+  ],
+  "not_proven": [
+    "all power/storage/syscall faults",
+    "broad concurrency",
+    "latency/RSS benchmark",
+    "all viewports",
+    "full native PNG chooser",
+    "human acceptance"
+  ]
+}

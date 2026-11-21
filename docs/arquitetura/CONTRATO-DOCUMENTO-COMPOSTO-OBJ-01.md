@@ -139,3 +139,7 @@ O contrato fica pronto para revisão quando todas as decisões C01–C06 possuem
 ## Registro P2-C
 
 [Implementação de trabalho recuperável e reordenação textual](P2C-DOCUMENTO-COMPOSTO-OBJ-01.md): perfil auxiliar 3, sem migrar perfis 1/2 nem schema canônico; gravação do agregado antes da confirmação de cada operação, promoção atômica ao Salvar, falhas e confirmação incerta, contexto compartilhado e movimento integral pelo motor existente. P13 tem prova em processo novo; o histórico continua exclusivamente vivo. A recusa de publicação é do piloto e não substitui integração ao publicador principal.
+
+## Extensão aprovada — Fórmula / P2-D
+
+O usuário aprovou objeto Fórmula com fonte de várias linhas recolhida fora da edição, variáveis e resultados referenciáveis, mudanças explícitas de estado e usos tanto no documento quanto nas células. O [contrato e implementação P2-D](FORMULAS-OBJ-01.md) define um motor comum, ligação por identidade, cálculo automático e atribuições executadas em transação, com histórico/recuperação. Essa extensão acrescenta capacidade ao perfil auxiliar 4; não reescreve a delimitação histórica de tabela textual dos perfis iniciais nem declara implementada Equação. Compatibilidade Excel completa, gatilhos automáticos e integração do publicador permanecem pendentes.

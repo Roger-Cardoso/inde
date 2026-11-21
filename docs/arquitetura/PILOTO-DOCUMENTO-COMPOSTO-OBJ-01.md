@@ -68,3 +68,7 @@ A aprovação técnica habilita revisão da entrega, não merge, publicação, m
 Não exigir previamente coordenador genérico do store Linux, limpeza automática de temporários, repositório universal com todos os módulos, migração do Comic, plugin system, renderizador matemático completo, catálogo de símbolos, spans de grade, responsividade total, arquivo único `.inde` ou publicador multimídia completo.
 
 Se uma dessas frentes parecer necessária, registrar qual caso P01–P14 bloqueia, qual é a menor solução e a alternativa de recusa/limitação. Explicar e registrar o ajuste de escopo, respeitando as restrições de preservação. Não substituir a demonstração autoral por uma nova sequência indefinida de infraestrutura.
+
+## Extensão posterior aprovada: P2-D
+
+O usuário propôs e aprovou Fórmula como objeto calculável no documento e nas células, com variáveis, referências e alterações explícitas de estado. O [contrato de Fórmula](FORMULAS-OBJ-01.md) e a [validação P2-D](../validacao/VALIDACAO-OBJ-01-P2D.md) registram esse acréscimo sem alterar o que os cortes P2-A/B/C provaram. Fórmula e Equação têm contratos distintos. Integração de publicação de P14 e aceite humano permanecem separados.

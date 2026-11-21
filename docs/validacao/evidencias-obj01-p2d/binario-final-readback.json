@@ -1,0 +1,15 @@
+{
+  "final_binary": "53b534f",
+  "isolated_copy_source": "synthetic P2-D, read-only backup",
+  "results": {
+    "Combate": "60",
+    "Metade": "30",
+    "Golpe": "80",
+    "Bonus": "35"
+  },
+  "all_valid": true,
+  "recovered": true,
+  "saved_revision": 0,
+  "history_empty": true,
+  "no_commands_reexecuted": true
+}

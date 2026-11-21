@@ -1,0 +1,47 @@
+Test project /home/roger/Documents/Projects/GitHub/INDE/obj01-audit/build-obj01-p2a-clang
+    Start 2: inde_object_composite_http_tests
+1/4 Test #2: inde_object_composite_http_tests .......   Passed    2.07 sec
+    Start 4: inde_object_composite_http_p2b_tests
+2/4 Test #4: inde_object_composite_http_p2b_tests ...   Passed    2.53 sec
+    Start 6: inde_object_composite_http_p2c_tests
+3/4 Test #6: inde_object_composite_http_p2c_tests ...   Passed    4.38 sec
+    Start 8: inde_object_composite_http_p2d_tests
+4/4 Test #8: inde_object_composite_http_p2d_tests ...***Failed    3.10 sec
+test_formula_created_in_cell_drives_document_result (__main__.FormulaHttp.test_formula_created_in_cell_drives_document_result) ... ok
+test_invalid_formula_is_an_editable_diagnostic_and_actions_guarded (__main__.FormulaHttp.test_invalid_formula_is_an_editable_diagnostic_and_actions_guarded) ... ok
+test_invalid_request_has_no_effect (__main__.FormulaHttp.test_invalid_request_has_no_effect) ... ok
+test_mutation_cascade_is_durable_and_save_promotes (__main__.FormulaHttp.test_mutation_cascade_is_durable_and_save_promotes) ... ERROR
+test_real_import_save_reopen_and_resource_bytes (__main__.FormulaHttp.test_real_import_save_reopen_and_resource_bytes) ... ok
+test_static_interface_and_safety_headers (__main__.FormulaHttp.test_static_interface_and_safety_headers) ... ok
+test_token_and_origin_guards_preserve_document (__main__.FormulaHttp.test_token_and_origin_guards_preserve_document) ... ok
+
+======================================================================
+ERROR: test_mutation_cascade_is_durable_and_save_promotes (__main__.FormulaHttp.test_mutation_cascade_is_durable_and_save_promotes)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/roger/Documents/Projects/GitHub/INDE/obj01-audit/tests/object_composite_pilot/test_http.py", line 35, in setUp
+    ready = json.loads(self.ready.read_text())
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/json/__init__.py", line 346, in loads
+    return _default_decoder.decode(s)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/json/decoder.py", line 337, in decode
+    obj, end = self.raw_decode(s, idx=_w(s, 0).end())
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/json/decoder.py", line 355, in raw_decode
+    raise JSONDecodeError("Expecting value", s, err.value) from None
+json.decoder.JSONDecodeError: Expecting value: line 1 column 1 (char 0)
+
+----------------------------------------------------------------------
+Ran 7 tests in 2.977s
+
+FAILED (errors=1)
+
+
+75% tests passed, 1 tests failed out of 4
+
+Total Test time (real) =  12.09 sec
+
+The following tests FAILED:
+	  8 - inde_object_composite_http_p2d_tests (Failed)
+Errors while running CTest
