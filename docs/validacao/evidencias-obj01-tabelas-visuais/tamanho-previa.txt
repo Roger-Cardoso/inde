@@ -1,0 +1,95 @@
+Browser tab: 4, Title: "INDE · Compor o documento", URL: "http://127.0.0.1:35211/".
+1 AXWebArea INDE · Compor o documento, URL: 127.0.0.1:35211/
+	2 container A tabela do seu jeito., ID: table-design-dialog
+		3 container
+			4 text TABELA · 2 LINHAS / 3 COLUNAS
+			5 heading A tabela do seu jeito., Value: 2, ID: table-design-title
+				6 text A tabela do seu jeito.
+			7 text Escolha um estilo e ajuste os detalhes. Confira o resultado antes de aplicar.
+		8 container
+			9 container Opções da tabela
+				10 checkbox Aparência, Value: 0
+				11 checkbox Tamanho e posição, Value: 1
+				12 checkbox Células, Value: 0
+			13 heading A tabela no documento, Value: 3
+				14 text A tabela no documento
+			15 text Largura da tabela (%)
+			16 stepper (settable, integer) Largura da tabela (%), Value: 90
+			17 text Posição da tabela
+			18 pop up button (collapsed, settable) Description: Posição da tabela, Value: Ao centro, Secondary Actions: Expand
+				19 menu
+					20 À esquerda
+					21 (selected) Ao centro
+					22 À direita
+			23 text Texto da tabela
+			24 pop up button (collapsed, settable) Description: Texto da tabela, Value: À esquerda, Secondary Actions: Expand
+				25 menu
+					26 (selected) À esquerda
+					27 Centralizado
+					28 À direita
+					29 Justificado
+			30 text Tabela na linha lado a lado
+			31 pop up button (collapsed, settable) Description: Tabela na linha lado a lado, Value: No topo, Secondary Actions: Expand
+				32 menu
+					33 (selected) No topo
+					34 No meio
+					35 Na base
+			36 heading Espaço para escrever, Value: 3
+				37 text Espaço para escrever
+			38 text Espaço horizontal nas células
+			39 stepper (settable, integer) Espaço horizontal nas células, Value: 12
+			40 text Espaço vertical nas células
+			41 stepper (settable, integer) Espaço vertical nas células, Value: 12
+			42 text Altura mínima das linhas
+			43 stepper (settable, integer) Altura mínima das linhas, Value: 48
+			44 text Conteúdo na célula
+			45 pop up button (collapsed, settable) Description: Conteúdo na célula, Value: No meio, Secondary Actions: Expand
+				46 menu
+					47 No topo
+					48 (selected) No meio
+					49 Na base
+			50 text A altura cresce quando o conteúdo precisa de mais espaço.
+			51 heading Proporção das colunas, Value: 3
+				52 text Proporção das colunas
+			53 text Coluna 1 (%)
+			54 stepper (settable, float) Coluna 1 (%), Value: 22.5, Details: 22,5
+			55 text Coluna 2 (%)
+			56 stepper (settable, integer) Coluna 2 (%), Value: 55
+			57 text Coluna 3 (%)
+			58 stepper (settable, float) Coluna 3 (%), Value: 22.5, Details: 22,5
+			59 text Ao mudar uma coluna, as outras dividem o espaço restante.
+			60 button Distribuir colunas igualmente
+			61 heading Altura mínima por linha, Value: 3
+				62 text Altura mínima por linha
+			63 text Linha 1
+			64 stepper (settable, integer) Linha 1, Value: 48
+			65 button Usar altura geral · linha 1
+			66 text Linha 2
+			67 stepper (settable, integer) Linha 2, Value: 110
+			68 button Usar altura geral · linha 2
+			69 button Restaurar aparência padrão
+		70 container
+			71 text PRÉVIA
+			72 table Inventário de viagem
+				73 text Inventário de viagem
+				74 row
+					75 cell
+						76 text Objeto
+					77 cell
+						78 text Observação
+					79 cell
+						80 text Quantidade
+				81 row
+					82 cell
+						83 text Espada de prata
+					84 cell
+						85 text A lâmina foi recuperada na ponte; precisa de reparo antes da próxima viagem.
+					86 cell
+						87 text 2
+			88 text O conteúdo e as fórmulas são conservados. A largura é relativa ao espaço da tabela no documento.
+		89 container
+			90 text Prévia local · suas escolhas só entram no documento ao aplicar.
+			91 button Cancelar
+			92 button Aplicar à tabela
+
+The focused UI element is 67 stepper (settable, integer) Linha 2, Value: 110

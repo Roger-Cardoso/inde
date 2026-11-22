@@ -1,0 +1,50 @@
+[
+  {
+    "align": "left",
+    "bold": "700",
+    "contentHeight": 26,
+    "font": "Georgia, serif",
+    "text": "Objeto",
+    "visibleHeight": 26
+  },
+  {
+    "align": "left",
+    "bold": "700",
+    "contentHeight": 26,
+    "font": "Georgia, serif",
+    "text": "Observação",
+    "visibleHeight": 26
+  },
+  {
+    "align": "right",
+    "bold": "700",
+    "contentHeight": 26,
+    "font": "Georgia, serif",
+    "text": "Quantidade",
+    "visibleHeight": 26
+  },
+  {
+    "align": "left",
+    "bold": "400",
+    "contentHeight": 26,
+    "font": "Georgia, serif",
+    "text": "Espada de prata",
+    "visibleHeight": 26
+  },
+  {
+    "align": "left",
+    "bold": "400",
+    "contentHeight": 51,
+    "font": "Georgia, serif",
+    "text": "A lâmina foi recuperada na ponte; precisa de reparo antes da próxima viagem.",
+    "visibleHeight": 51
+  },
+  {
+    "align": "right",
+    "bold": "700",
+    "contentHeight": 26,
+    "font": "Georgia, serif",
+    "text": "2",
+    "visibleHeight": 26
+  }
+]

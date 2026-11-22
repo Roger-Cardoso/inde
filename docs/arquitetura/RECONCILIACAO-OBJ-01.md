@@ -137,3 +137,7 @@ O usuário autorizou o [hub de fórmulas](HUB-FORMULAS-OBJ-01.md): cinco caminho
 ## Atualização — composição comum e remoção, 2026-11-22
 
 Após o pedido do usuário, o [contrato de composição e remoção](COMPOSICAO-REMOCAO-OBJ-01.md) amplia os mesmos instrumentos a texto, figura, tabela e fórmula. [Validação própria](../validacao/VALIDACAO-OBJ-01-COMPOSICAO-EDICAO.md). A revisão privada de snapshot é explícita; o banco auxiliar permanece 5. Origem autoral, grupos protegidos e projetos reais são preservados, sem integração GTK/publicação ou início de Fase 3.
+
+## Atualização — tabelas visuais, 2026-11-22
+
+O pedido do usuário foi implementado no [contrato de tabelas visuais](TABELAS-VISUAIS-OBJ-01.md), com [validação própria](../validacao/VALIDACAO-OBJ-01-TABELAS-VISUAIS.md): aparência, dimensões e detalhes de células em operação atômica. Snapshot privado V3 explícito, auxiliar SQLite 5, sem conversão das demos anteriores, schema real, GTK/publicação ou início de Fase 3.

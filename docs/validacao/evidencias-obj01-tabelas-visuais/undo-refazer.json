@@ -1,0 +1,14 @@
+{
+  "model_keys_identical_after_undo_redo": [
+    "tables",
+    "presentation",
+    "rows",
+    "formula_cells",
+    "formula_text",
+    "source_sha256",
+    "source_body_sha256",
+    "author_order",
+    "visual_order"
+  ],
+  "full_table_design_restored": true
+}

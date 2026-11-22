@@ -1,0 +1,99 @@
+Browser tab: 4, Title: "INDE · Compor o documento", URL: "http://127.0.0.1:42933/".
+1 AXWebArea INDE · Compor o documento, URL: 127.0.0.1:42933/
+	2 container A tabela do seu jeito., ID: table-design-dialog
+		3 container
+			4 text TABELA · 2 LINHAS / 3 COLUNAS
+			5 heading A tabela do seu jeito., Value: 2, ID: table-design-title
+				6 text A tabela do seu jeito.
+			7 text Escolha um estilo e ajuste os detalhes. Confira o resultado antes de aplicar.
+		8 container
+			9 container Opções da tabela
+				10 checkbox Aparência, Value: 1
+				11 checkbox Tamanho e posição, Value: 0
+				12 checkbox Células, Value: 0
+			13 button Editorial
+			14 button Caderno
+			15 button Grade
+			16 button Noite
+			17 text Os modelos conservam as larguras e os detalhes de células já personalizados. Título da tabela
+			18 text field (settable) Título da tabela, Value: Inventário de viagem
+			19 checkbox (settable, integer) Description: Mostrar título, Value: 1
+			20 text Mostrar título
+			21 checkbox (settable, integer) Description: Primeira linha como cabeçalho, Value: 1
+			22 text Primeira linha como cabeçalho Letra
+			23 pop up button (collapsed, settable) Description: Letra da tabela, Value: Livro, Secondary Actions: Expand
+				24 menu
+					25 Clara
+					26 (selected) Livro
+					27 Monoespaçada
+			28 text Tamanho da letra
+			29 stepper (settable, integer) Tamanho da letra, Value: 18
+			30 text Entrelinhas
+			31 stepper (settable, float) Entrelinhas, Value: 1.5, Details: 1,5
+			32 text Fundo
+			33 color well (settable) Fundo, Value: #fcf8ef
+			34 text Texto
+			35 color well (settable) Texto, Value: #243d38
+			36 text Fundo do cabeçalho
+			37 color well (settable) Fundo do cabeçalho, Value: #35574f
+			38 text Texto do cabeçalho
+			39 color well (settable) Texto do cabeçalho, Value: #fff7e8
+			40 text Faixa alternada
+			41 color well (settable) Faixa alternada, Value: #f5efdf
+			42 text Cor das bordas
+			43 color well (settable) Cor das bordas, Value: #d9cfb9
+			44 checkbox (settable, integer) Description: Alternar a cor das linhas, Value: 1
+			45 text Alternar a cor das linhas
+			46 checkbox (settable, integer) Description: Cabeçalho em negrito, Value: 1
+			47 text Cabeçalho em negrito Bordas
+			48 pop up button (collapsed, settable) Description: Bordas da tabela, Value: Grade completa, Secondary Actions: Expand
+				49 menu
+					50 (selected) Grade completa
+					51 Linhas horizontais
+					52 Somente contorno
+					53 Sem bordas
+			54 text Traço
+			55 pop up button (collapsed, settable) Description: Traço das bordas, Value: Contínuo, Secondary Actions: Expand
+				56 menu
+					57 (selected) Contínuo
+					58 Tracejado
+					59 Pontilhado
+			60 text Espessura das bordas
+			61 stepper (settable, integer) Espessura das bordas, Value: 1
+			62 text Posição do título
+			63 pop up button (collapsed, settable) Description: Posição do título, Value: Acima, Secondary Actions: Expand
+				64 menu
+					65 (selected) Acima
+					66 Abaixo
+			67 text Alinhamento do título
+			68 pop up button (collapsed, settable) Description: Alinhamento do título, Value: Centralizado, Secondary Actions: Expand
+				69 menu
+					70 À esquerda
+					71 (selected) Centralizado
+					72 À direita
+			73 button Restaurar aparência padrão
+		74 container
+			75 text PRÉVIA
+			76 table Inventário de viagem
+				77 text Inventário de viagem
+				78 row
+					79 cell
+						80 text Objeto
+					81 cell
+						82 text Observação
+					83 cell
+						84 text Quantidade
+				85 row
+					86 cell
+						87 text Espada de prata
+					88 cell
+						89 text A lâmina foi recuperada na ponte; precisa de reparo antes da próxima viagem.
+					90 cell
+						91 text 2
+			92 text O conteúdo e as fórmulas são conservados. A largura é relativa ao espaço da tabela no documento.
+		93 container
+			94 text Prévia local · suas escolhas só entram no documento ao aplicar.
+			95 button Cancelar
+			96 button Aplicar à tabela
+
+The focused UI element is 18 text field (settable) Título da tabela, Value: Inventário de viagem

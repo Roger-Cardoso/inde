@@ -1,0 +1,43 @@
+Test project /home/roger/Documents/Projects/GitHub/INDE/obj01-audit/build-obj01-p2a
+      Start  1: inde_object_composite_pilot_tests
+ 1/19 Test  #1: inde_object_composite_pilot_tests .........   Passed    1.97 sec
+      Start  2: inde_object_composite_http_tests
+ 2/19 Test  #2: inde_object_composite_http_tests ..........   Passed    2.08 sec
+      Start  3: inde_object_composite_p2b_tests
+ 3/19 Test  #3: inde_object_composite_p2b_tests ...........   Passed    6.68 sec
+      Start  4: inde_object_composite_http_p2b_tests
+ 4/19 Test  #4: inde_object_composite_http_p2b_tests ......   Passed    2.27 sec
+      Start  5: inde_object_composite_p2c_tests
+ 5/19 Test  #5: inde_object_composite_p2c_tests ...........   Passed    3.80 sec
+      Start  6: inde_object_composite_http_p2c_tests
+ 6/19 Test  #6: inde_object_composite_http_p2c_tests ......   Passed    2.68 sec
+      Start  7: inde_object_composite_p2d_tests
+ 7/19 Test  #7: inde_object_composite_p2d_tests ...........   Passed   14.25 sec
+      Start  8: inde_object_composite_http_p2d_tests
+ 8/19 Test  #8: inde_object_composite_http_p2d_tests ......   Passed    3.20 sec
+      Start  9: inde_object_composite_p2d2_tests
+ 9/19 Test  #9: inde_object_composite_p2d2_tests ..........   Passed   24.88 sec
+      Start 10: inde_object_composite_http_p2d2_tests
+10/19 Test #10: inde_object_composite_http_p2d2_tests .....   Passed    7.05 sec
+      Start 11: inde_object_formula_cards_tests
+11/19 Test #11: inde_object_formula_cards_tests ...........   Passed    7.50 sec
+      Start 12: inde_object_formula_cards_http_tests
+12/19 Test #12: inde_object_formula_cards_http_tests ......   Passed    4.84 sec
+      Start 13: inde_object_formula_hub_tests
+13/19 Test #13: inde_object_formula_hub_tests .............   Passed    8.47 sec
+      Start 14: inde_object_formula_hub_http_tests
+14/19 Test #14: inde_object_formula_hub_http_tests ........   Passed    8.44 sec
+      Start 15: inde_object_composition_edit_tests
+15/19 Test #15: inde_object_composition_edit_tests ........   Passed   17.75 sec
+      Start 16: inde_object_composition_edit_http_tests
+16/19 Test #16: inde_object_composition_edit_http_tests ...   Passed    5.03 sec
+      Start 17: inde_object_table_design_tests
+17/19 Test #17: inde_object_table_design_tests ............   Passed    8.63 sec
+      Start 18: inde_object_table_design_http_tests
+18/19 Test #18: inde_object_table_design_http_tests .......   Passed    5.34 sec
+      Start 19: inde_object_document_adapter_tests
+19/19 Test #19: inde_object_document_adapter_tests ........   Passed    2.89 sec
+
+100% tests passed out of 19
+
+Total Test time (real) = 137.83 sec

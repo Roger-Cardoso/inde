@@ -1,0 +1,93 @@
+Browser tab: 4, Title: "INDE · Compor o documento", URL: "http://127.0.0.1:35211/".
+1 AXWebArea INDE · Compor o documento, URL: 127.0.0.1:35211/
+	2 container A tabela do seu jeito., ID: table-design-dialog
+		3 container
+			4 text TABELA · 2 LINHAS / 3 COLUNAS
+			5 heading A tabela do seu jeito., Value: 2, ID: table-design-title
+				6 text A tabela do seu jeito.
+			7 text Escolha um estilo e ajuste os detalhes. Confira o resultado antes de aplicar.
+		8 container
+			9 container Opções da tabela
+				10 checkbox Aparência, Value: 0
+				11 checkbox Tamanho e posição, Value: 0
+				12 checkbox Células, Value: 1
+			13 heading Um detalhe onde ele faz diferença, Value: 3
+				14 text Um detalhe onde ele faz diferença
+			15 text Linha escolhida
+			16 pop up button (collapsed, settable) Description: Linha escolhida, Value: Linha 2, Secondary Actions: Expand
+				17 menu
+					18 Linha 1
+					19 (selected) Linha 2
+			20 text Coluna escolhida
+			21 pop up button (collapsed, settable) Description: Coluna escolhida, Value: Coluna 3, Secondary Actions: Expand
+				22 menu
+					23 Coluna 1
+					24 Coluna 2
+					25 (selected) Coluna 3
+			26 text Aplicar detalhes a
+			27 pop up button (collapsed, settable) Description: Aplicar detalhes a, Value: Somente esta célula, Secondary Actions: Expand
+				28 menu
+					29 (selected) Somente esta célula
+					30 Linha inteira
+					31 Coluna inteira
+			32 text Alinhamento do detalhe
+			33 pop up button (collapsed, settable) Description: Alinhamento do detalhe, Value: À direita, Secondary Actions: Expand
+				34 menu
+					35 Herdar da tabela
+					36 À esquerda
+					37 Centralizado
+					38 (selected) À direita
+					39 Justificado
+			40 text Altura do detalhe
+			41 pop up button (collapsed, settable) Description: Altura do detalhe, Value: Herdar da tabela, Secondary Actions: Expand
+				42 menu
+					43 (selected) Herdar da tabela
+					44 No topo
+					45 No meio
+					46 Na base
+			47 text Negrito
+			48 pop up button (collapsed, settable) Description: Negrito, Value: Sim, Secondary Actions: Expand
+				49 menu
+					50 Herdar da tabela
+					51 (selected) Sim
+					52 Não
+			53 text Itálico
+			54 pop up button (collapsed, settable) Description: Itálico, Value: Herdar da tabela, Secondary Actions: Expand
+				55 menu
+					56 (selected) Herdar da tabela
+					57 Sim
+					58 Não
+			59 checkbox (settable, integer) Description: Fundo próprio, Value: 1
+			60 text Fundo próprio Fundo próprio · cor
+			61 color well (settable) Fundo próprio · cor, Value: #ecddb6
+			62 checkbox (settable, integer) Description: Cor de texto própria, Value: 0
+			63 text Cor de texto própria Cor de texto própria · cor
+			64 color well (disabled, settable) Cor de texto própria · cor, Value: #243d38
+			65 button Retirar detalhes escolhidos
+			66 text Cada detalhe aparece na prévia e conserva as outras escolhas. Aplicar à tabela confirma o conjunto.
+			67 button Restaurar aparência padrão
+		68 container
+			69 text PRÉVIA
+			70 table Inventário de viagem
+				71 text Inventário de viagem
+				72 row
+					73 cell
+						74 text Objeto
+					75 cell
+						76 text Observação
+					77 cell
+						78 text Quantidade
+				79 row
+					80 cell
+						81 text Espada de prata
+					82 cell
+						83 text A lâmina foi recuperada na ponte; precisa de reparo antes da próxima viagem.
+					84 cell
+						85 text 2
+			86 text O conteúdo e as fórmulas são conservados. A largura é relativa ao espaço da tabela no documento.
+		87 container
+			88 text Prévia local · suas escolhas só entram no documento ao aplicar.
+			89 button Cancelar
+			90 button Aplicar à tabela
+
+The focused UI element is 61 color well (settable) Fundo próprio · cor, Value: #ecddb6

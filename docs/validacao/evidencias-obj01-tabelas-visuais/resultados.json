@@ -1,0 +1,387 @@
+{
+  "date": "2026-11-22",
+  "branch": "feature/inde-obj-01-foundation",
+  "base_commit": "08c6e8a1f63aebac77d72316cbe0974c1de78ea0",
+  "implementation_commit": "59d551207f326fd2a827c041c61b8edd99a233f6",
+  "scope": "real table appearance editor, four presets, typed cell/row/column overrides, dimensions and placement with atomic history and recovery",
+  "code_sha256": {
+    ".github/workflows/obj-01.yml": "cb71a8ecce9e4cfa956dff72cab611818742a6f953709e782e1b02454110403b",
+    "cpp/object_composite_pilot.cpp": "7683d6376bb9371affc1b0392d89ffa1b879ed664ffa9d760069a1b97ebbb277",
+    "cpp/object_table_design.cpp": "a618c8ccbf0069ba89f57e5310cd570d8d35a10aca37a966da0cb583d0d72325",
+    "cpp/object_table_design.hpp": "54e048e01f6206d3613e6910dffd04be453d21d67b6f8282f4307f8fb43eb699",
+    "scripts/demos/Abrir-demo-obj01-tabelas.sh": "1a2993e441631acfa0c02480ca483131dda10742d4bca517993b227ef3b63e7e",
+    "tests/object_composite_pilot/CMakeLists.txt": "ed33f9b9fe00690d9e291c73a0d8e80cac7f80dc085b3db92efc9497b82a1c57",
+    "tests/object_composite_pilot/test_http_table_design.py": "54390838530866bef702655b3c90693b89c6f6e4b5fde09712256d3b3eb32eef",
+    "tests/object_composite_pilot/test_table_design.py": "b0a75eedaf126d903122a109f7fee6993040b46baee635acb276d1bfea1dd25d",
+    "tools/obj01-pilot/app.js": "c9f5571555c707e45b3cb7b4b1ee951d264d95098854c031659c7cb329c2432e",
+    "tools/obj01-pilot/serve.py": "00c69c7a6f778cad0cf376bd2af0dab2275107f305c4042e0a9bb9ff241668f5",
+    "tools/obj01-pilot/style.css": "9c1eea695b21540cc7fa66af6472945732646054bc4157917096363b60134bb9"
+  },
+  "document_sha256": {
+    "docs/README.md": "c9008bdba54363285700a65a2fbd541f2fa0c2ea75b87b0783a1895dfbb307b8",
+    "docs/arquitetura/TABELAS-VISUAIS-OBJ-01.md": "c8a6abcafceeac5bd66aa70c870d4314b9820160800fdf23ff59861051ce701c",
+    "docs/arquitetura/RECONCILIACAO-OBJ-01.md": "3ae00cd92e04c0d4a073177cacc97fe96cf8d5237f42f82e7d5e88dd96f2868a",
+    "docs/validacao/VALIDACAO-OBJ-01-TABELAS-VISUAIS.md": "6cc2a93d7535a8c760d206920f0083f8733a8d234a4306d91bc96bec924c7a6a",
+    "tools/obj01-pilot/TABELAS.md": "10d2d256ecb504cc63dc0013820535c0e3e53805aa11e062f586f530ef0fedb5",
+    "tools/obj01-pilot/README.md": "c50c42a3c7f8a78d0552fbba0541f3b14f6043a1bca3e215cf7e260f038578cc"
+  },
+  "local": {
+    "variants": [
+      "GCC Debug",
+      "Clang Debug",
+      "GCC ASan+UBSan",
+      "Clang ASan+UBSan"
+    ],
+    "programs_per_variant": 19,
+    "seconds": [
+      137.83,
+      134.76,
+      374.18,
+      299.74
+    ],
+    "prior_programs_repeated": 17,
+    "new_core_cases": 16,
+    "new_http_cases": 7,
+    "own_http_cases": 3,
+    "inherited_http_cases": 4,
+    "local_lsan": false,
+    "test_names": {
+      "test_table_design.py": [
+        "test_defaults_and_four_presets_are_real_valid_models",
+        "test_title_header_style_and_placement_share_one_undo",
+        "test_colors_fonts_borders_and_sizes_are_closed_and_atomic",
+        "test_column_weights_and_per_row_heights_roundtrip_without_rounding",
+        "test_wrong_column_count_weights_and_row_identity_are_rejected",
+        "test_partial_cell_overrides_and_bold_false_are_preserved",
+        "test_cell_overrides_cannot_point_outside_table_or_inject_styles",
+        "test_scoped_row_column_overrides_keep_formula_and_authored_text",
+        "test_remove_restore_preserves_style_and_column_sizes",
+        "test_style_edit_keeps_existing_side_by_side_arrangement_and_reading",
+        "test_reset_to_defaults_is_reversible_and_does_not_reset_placement",
+        "test_legacy_format_one_and_two_conserved_until_design_and_schema_is_five",
+        "test_context_stale_fields_and_inactive_targets_refuse_atomically",
+        "test_identical_apply_does_not_add_history_or_payload_revisions",
+        "test_sigkill_restores_unsaved_design_and_keeps_saved_revision_zero",
+        "test_four_crash_windows_keep_style_title_header_and_placement_atomic"
+      ],
+      "test_http_table_design.py": [
+        "test_apply_and_reopen_design_title_and_geometry",
+        "test_css_injection_is_refused_without_partial_changes",
+        "test_assets_offer_real_designer_and_cell_sizing"
+      ]
+    },
+    "crash_windows": [
+      "after_blobs",
+      "after_snapshot",
+      "before_commit",
+      "after_commit"
+    ],
+    "syntax_and_diff": "passed"
+  },
+  "ci": {
+    "run_id": 45063533150,
+    "url": "https://github.com/Roger-Cardoso/inde/actions/runs/45063533150",
+    "head_sha": "59d551207f326fd2a827c041c61b8edd99a233f6",
+    "jobs": 25,
+    "passed": 25,
+    "remote_lsan": true,
+    "conclusion": "success"
+  },
+  "archives": [
+    {
+      "label": "schema28",
+      "path": "fontes/inde-schema28-89b47f27.tar.gz",
+      "sha256": "3d6bee4c60dbecc602a56881b1957f90b55798dbc711c9c290701e2ad8a6e97e",
+      "files": 641,
+      "manifest_match": true
+    },
+    {
+      "label": "original37",
+      "path": "fontes/inde-P03c-schema37-original.tar.gz",
+      "sha256": "2e97a15ddcda56b8f5892d033c9a7427d6102bcf650454678491c50ff5459ef2",
+      "files": 757,
+      "manifest_match": true
+    },
+    {
+      "label": "integrated37",
+      "path": "fontes/inde-integrado-schema37.tar.gz",
+      "sha256": "554623abec5d7c3c175dab2aa6bbabc8a95abd6e3d98a27191cea0260a4965c4",
+      "files": 758,
+      "manifest_match": true
+    }
+  ],
+  "extracted_bytes_match": true,
+  "source_auditor_negative_tests": 5,
+  "operation": "edit_table_design",
+  "presets": [
+    "editorial",
+    "notebook",
+    "grid",
+    "night"
+  ],
+  "invariants": {
+    "payload": "appearance never changes cell texts, formulas/bindings or reading order; title/header payload revision only when changed",
+    "atomicity": "title/header, appearance and shared placement are one candidate/checkpoint/undo",
+    "cell_overrides": "known identities only; partial properties preserve others; absence inherits",
+    "dimensions": "positive finite column proportions sum 100; row height is minimum and content may expand",
+    "closed_styles": "local font/enumeration lists and hexadecimal colors, no arbitrary CSS",
+    "preview_cancel": "draft only; real state verified identical after Cancel",
+    "retention": "removed table retains appearance; manual restoration and undo continue to work"
+  },
+  "browser": {
+    "runtime": "real C++/SQLite/authenticated HTTP; new synthetic fixture",
+    "observed": [
+      "fill long table text",
+      "cancel dark preview with identical real state",
+      "Caderno custom palette/grid/title alignment",
+      "90 percent centered table, column weights 22.5/55/22.5 and row minimum 110",
+      "right-align quantity column then set one cell bold/fill preserving other properties",
+      "six textareas show entire content without internal overflow",
+      "undo/redo restores full table design",
+      "independent dark second table with protected formula result 100",
+      "save/reopen keeps designs",
+      "font 17 to 18 unsaved, remove/undo keeps design",
+      "SIGKILL own engine, compare full snapshot and saved immediately after restart",
+      "reopen editor showing recovered size 18"
+    ],
+    "restart": {
+      "snapshot_identical_after_SIGKILL": true,
+      "model_keys_identical": [
+        "tables",
+        "presentation",
+        "rows",
+        "formula_cells",
+        "formula_text",
+        "formulas",
+        "author_order",
+        "visual_order",
+        "selection",
+        "selected_cell",
+        "context",
+        "source_sha256",
+        "source_body_sha256"
+      ],
+      "working_generation": 45,
+      "working_sha256": "6699d7f0daa8d182e33cfcac3a2e9d3adec34a8cd2251cbacc77182a1186305f",
+      "saved_revision": 1,
+      "saved_sha256": "47357966aa1c925e8624528c4b59f78fc424699fcb07ffa25660e5ba7bac551e",
+      "saved_not_promoted": true,
+      "saved_font_size": 17,
+      "recovered_unsaved_font_size": 18,
+      "table_count": 2,
+      "styled_tables": 2,
+      "formula_cells": 1,
+      "formula_result": "100",
+      "snapshot_format": "INDE-OBJ01-COMPOSITE-P2D2-3",
+      "user_version": 5,
+      "integrity_check": "ok",
+      "foreign_key_check": [],
+      "history_entries_after_restart": 0
+    },
+    "measurements": [
+      {
+        "align": "left",
+        "bold": "700",
+        "contentHeight": 26,
+        "font": "Georgia, serif",
+        "text": "Objeto",
+        "visibleHeight": 26
+      },
+      {
+        "align": "left",
+        "bold": "700",
+        "contentHeight": 26,
+        "font": "Georgia, serif",
+        "text": "Observação",
+        "visibleHeight": 26
+      },
+      {
+        "align": "right",
+        "bold": "700",
+        "contentHeight": 26,
+        "font": "Georgia, serif",
+        "text": "Quantidade",
+        "visibleHeight": 26
+      },
+      {
+        "align": "left",
+        "bold": "400",
+        "contentHeight": 26,
+        "font": "Georgia, serif",
+        "text": "Espada de prata",
+        "visibleHeight": 26
+      },
+      {
+        "align": "left",
+        "bold": "400",
+        "contentHeight": 51,
+        "font": "Georgia, serif",
+        "text": "A lâmina foi recuperada na ponte; precisa de reparo antes da próxima viagem.",
+        "visibleHeight": 51
+      },
+      {
+        "align": "right",
+        "bold": "700",
+        "contentHeight": 26,
+        "font": "Georgia, serif",
+        "text": "2",
+        "visibleHeight": 26
+      }
+    ],
+    "human_acceptance": "pending real product review"
+  },
+  "format": {
+    "profile": "P2-D2",
+    "auxiliary_user_version": 5,
+    "formula_language": 2,
+    "old_snapshots_retained": [
+      "INDE-OBJ01-COMPOSITE-P2D2-1",
+      "INDE-OBJ01-COMPOSITE-P2D2-2"
+    ],
+    "new_snapshot": "INDE-OBJ01-COMPOSITE-P2D2-3",
+    "new_field": "composition.table_styles",
+    "canonical_schema_migration": false,
+    "auxiliary_schema_migration": false,
+    "old_engine_refusal": {
+      "old_engine_code_commit": "08c6e8a1f63aebac77d72316cbe0974c1de78ea0",
+      "old_engine_sha256": "3db1a1506968b1a0f75d9f7d559e770ce158ad4a41164f9b3d0aecf347655682",
+      "new_snapshot": "INDE-OBJ01-COMPOSITE-P2D2-3",
+      "old_engine_exit": 1,
+      "old_engine_error": "OBJ-01: unsupported_snapshot_version",
+      "origin_and_db_unchanged": true
+    },
+    "font_size": [
+      10,
+      32
+    ],
+    "line_height": [
+      1,
+      2.2
+    ],
+    "cell_padding": [
+      0,
+      32
+    ],
+    "border_width": [
+      0,
+      4
+    ],
+    "general_row_minimum": [
+      24,
+      240
+    ],
+    "specific_row_minimum": [
+      24,
+      480
+    ],
+    "rows_columns_at_creation": [
+      2,
+      3
+    ]
+  },
+  "preservation": {
+    "old_demo_files": 16,
+    "old_demos": 8,
+    "hashes_unchanged": true,
+    "main_head": "d41a5c9b9809ca7d40beb6ff10f22f1a5b451e0b",
+    "main_preexisting_status": " M Preparar-ponte.sh",
+    "protected_paths": [
+      "fontes",
+      "metadata",
+      "verificar_base.py",
+      "cpp/CMakeLists.txt",
+      "cpp/object_model.cpp",
+      "cpp/object_model.hpp",
+      "cpp/object_commands.cpp",
+      "cpp/object_commands.hpp",
+      "cpp/object_document_adapter.cpp",
+      "cpp/object_document_adapter.hpp",
+      "cpp/object_composition_adapter.cpp",
+      "cpp/object_composition_adapter.hpp",
+      "cpp/object_change_plan.cpp",
+      "cpp/object_change_plan.hpp",
+      "cpp/object_change_session.cpp",
+      "cpp/object_change_session.hpp",
+      "cpp/object_save_protocol.cpp",
+      "cpp/object_save_protocol.hpp",
+      "cpp/object_checkpoint_store.cpp",
+      "cpp/object_checkpoint_store.hpp",
+      "cpp/object_formula_rich.cpp",
+      "cpp/object_formula.cpp",
+      "cpp/object_formula_cards.cpp",
+      "cpp/object_formula_hub.cpp",
+      "docs/validacao/VALIDACAO-OBJ-01-COMPOSICAO.md",
+      "docs/validacao/evidencias-obj01-composicao"
+    ],
+    "canonical_projects_written": false,
+    "publication": false,
+    "gtk": false,
+    "single_file_inde": false,
+    "historical_manifests": [
+      {
+        "profile": "p2a",
+        "commit": "8ea6c233f50529de9c9894a62b925d90941157a1",
+        "entries_verified": 37
+      },
+      {
+        "profile": "p2b",
+        "commit": "b1ae38fbcc47962c33ca74e8bcdca2e72ae64cca",
+        "entries_verified": 39
+      },
+      {
+        "profile": "p2c",
+        "commit": "347be9dfea7ea7442fdd7606e469ac9c1d3d6928",
+        "entries_verified": 44
+      },
+      {
+        "profile": "p2d",
+        "commit": "1560cfe3c490ab1d4090c0e53857789ff2f648cf",
+        "entries_verified": 49
+      },
+      {
+        "profile": "p2d2",
+        "commit": "8ad48d13b32d87fdeb493877e4fdf77c8ae3fb22",
+        "entries_verified": 47
+      },
+      {
+        "profile": "cartoes",
+        "commit": "729404048b5614d86088fdf9730e630110f57c44",
+        "entries_verified": 41
+      },
+      {
+        "profile": "hub",
+        "commit": "93caf049fe575025aaed9f6cb89dc539b2fdeab4",
+        "entries_verified": 48
+      },
+      {
+        "profile": "composicao-edicao",
+        "commit": "08c6e8a1f63aebac77d72316cbe0974c1de78ea0",
+        "entries_verified": 43
+      }
+    ],
+    "historical_entries_verified": 348
+  },
+  "checks": {
+    "local_markdown_links_resolve": 135,
+    "git_diff_check": "passed",
+    "demo_integrity_check": "ok",
+    "demo_foreign_key_check": "empty"
+  },
+  "not_implemented": [
+    "add/remove table rows/columns",
+    "merged cells",
+    "numeric formats",
+    "per-cell borders/dimensions",
+    "resize handles",
+    "canonical GTK/publication/project migration",
+    "single-file .inde"
+  ],
+  "not_proven": [
+    "all viewports/input methods",
+    "broad concurrency",
+    "latency/RSS benchmark",
+    "all storage/power faults",
+    "human acceptance"
+  ],
+  "native_61_tests": "not repeated this cut; old evidence remains historical"
+}
