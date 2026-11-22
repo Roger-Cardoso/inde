@@ -1,0 +1,31 @@
+Test project /home/roger/Documents/Projects/GitHub/INDE/obj01-audit/build-obj01-p2a-asan
+      Start  1: inde_object_composite_pilot_tests
+ 1/13 Test  #1: inde_object_composite_pilot_tests .......   Passed    8.38 sec
+      Start  2: inde_object_composite_http_tests
+ 2/13 Test  #2: inde_object_composite_http_tests ........   Passed    2.65 sec
+      Start  3: inde_object_composite_p2b_tests
+ 3/13 Test  #3: inde_object_composite_p2b_tests .........   Passed   36.80 sec
+      Start  4: inde_object_composite_http_p2b_tests
+ 4/13 Test  #4: inde_object_composite_http_p2b_tests ....   Passed    4.94 sec
+      Start  5: inde_object_composite_p2c_tests
+ 5/13 Test  #5: inde_object_composite_p2c_tests .........   Passed   21.53 sec
+      Start  6: inde_object_composite_http_p2c_tests
+ 6/13 Test  #6: inde_object_composite_http_p2c_tests ....   Passed    6.19 sec
+      Start  7: inde_object_composite_p2d_tests
+ 7/13 Test  #7: inde_object_composite_p2d_tests .........   Passed   70.88 sec
+      Start  8: inde_object_composite_http_p2d_tests
+ 8/13 Test  #8: inde_object_composite_http_p2d_tests ....   Passed    7.83 sec
+      Start  9: inde_object_composite_p2d2_tests
+ 9/13 Test  #9: inde_object_composite_p2d2_tests ........   Passed   41.96 sec
+      Start 10: inde_object_composite_http_p2d2_tests
+10/13 Test #10: inde_object_composite_http_p2d2_tests ...   Passed    7.79 sec
+      Start 11: inde_object_formula_cards_tests
+11/13 Test #11: inde_object_formula_cards_tests .........   Passed   13.83 sec
+      Start 12: inde_object_formula_cards_http_tests
+12/13 Test #12: inde_object_formula_cards_http_tests ....   Passed    5.47 sec
+      Start 13: inde_object_document_adapter_tests
+13/13 Test #13: inde_object_document_adapter_tests ......   Passed    9.97 sec
+
+100% tests passed out of 13
+
+Total Test time (real) = 238.24 sec

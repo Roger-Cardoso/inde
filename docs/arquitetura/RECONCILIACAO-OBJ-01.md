@@ -125,3 +125,7 @@ Após a proposta do usuário e sua aprovação expressa, o [objeto Fórmula](FOR
 ## Refinamento aprovado P2-D2
 
 [Texto misto e comando consumível](FORMULAS-TEXTO-OBJ-01.md), com [validação própria](../validacao/VALIDACAO-OBJ-01-P2D2.md): valor atual real na fonte, palavras editáveis ao redor de resultados, lógica textual e consumo atômico do alterar solitário. Perfil novo preserva o numérico anterior. Origem somente leitura e publicação/GTK permanecem fora da integração entregue.
+
+## Atualização — cartões preenchíveis, 2026-11-22
+
+Após escolha e autorização do usuário, o [editor por cartões](CARTOES-FORMULAS-OBJ-01.md) foi integrado ao piloto P2-D2, com fonte única, prévia no motor e regra/frase atômicas. [Validação própria](../validacao/VALIDACAO-OBJ-01-CARTOES.md). O vínculo com entidades reais, a integração GTK e a publicação canônica permanecem pendentes.

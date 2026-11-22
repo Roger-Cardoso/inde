@@ -1,0 +1,276 @@
+{
+  "date": "2026-11-22",
+  "branch": "feature/inde-obj-01-foundation",
+  "base_commit": "8ad48d13b32d87fdeb493877e4fdf77c8ae3fb22",
+  "implementation_commit": "972cc6a8e7f4a12be3db77e3ec97203ad526a2e4",
+  "scope": "approved visual condition cards in the real isolated pilot, free context and choice text, numeric/exact textual comparison, editable priority/values and shared formula inputs",
+  "code_sha256": {
+    ".github/workflows/obj-01.yml": "a3e501f50d883ecb73ad14a874b847b3be82b4abb475d1d4968c1f34187a3a51",
+    "cpp/object_composite_pilot.cpp": "00896037fdf6cf923ee7ec0b7f1ed14eb23656aba3bebb37f5b692770b8a5aa2",
+    "cpp/object_formula_cards.cpp": "df83017b2d7f5ff94d37b65f9c6938db8eb682c7d09bf77c2e15db0616c4f3c9",
+    "cpp/object_formula_cards.hpp": "dbb44351998dbf973c60d67cb61d4d8f6204f660de6b463c30502901ad0069f9",
+    "cpp/object_formula_rich.cpp": "a46efff52951546bc4a26239e4fd096264981112800cd1c8b6d405b9878a4504",
+    "scripts/demos/Abrir-demo-obj01-cartoes.sh": "4675e58ba81ba87dd4a1ef0840dd00422570a243a47a47d02c23a1ac690766fc",
+    "tests/object_composite_pilot/CMakeLists.txt": "c026d9ee14db2cd8477a548484bbe5cf2e56e082b1969ab4389ede4c0ba32ea4",
+    "tests/object_composite_pilot/test_cards.py": "b275036dc30a0df4003d8b7b0fce4a3db27dbe5ccc2b27561b7b7cdb5520b2bf",
+    "tests/object_composite_pilot/test_http_cards.py": "45cf701fe4b5dcc568eb3f177f6908d4286b76a7885ef788ebe4fd757456eb92",
+    "tools/obj01-pilot/CARTOES.md": "e95ec46ac2f2ca3284e5a4c7efebb2d04cda7adfc46698b4b816d2f03da154ce",
+    "tools/obj01-pilot/README.md": "529e797ab3f17d660a73653b1aa8abe17e7df7ac0eb567b44665c28459efaf31",
+    "tools/obj01-pilot/app.js": "208b3b1e2469f696277db54e7c33612c4e66f24c6d0e2ae1bc6cb647c82134c9",
+    "tools/obj01-pilot/index.html": "ce7d8e491ccc2c6702d7134074405a3f98be0e0804b3fdb6c165a14d895368e9",
+    "tools/obj01-pilot/serve.py": "d32f508ae903d05a0dd817d28bfb8866391d4b21603759bd80b113c5e8d09a4e",
+    "tools/obj01-pilot/style.css": "b5eaa6bc9717f0b810ef50c86d008706d5e9f01ea77433cc83dcd506b0ca4564"
+  },
+  "document_sha256": {
+    "docs/README.md": "b807b46fe4b9f18cf032006cb36413fb07cfe1f4cd2c8d174ca31beea0b076c1",
+    "docs/arquitetura/FORMULAS-TEXTO-OBJ-01.md": "a5e1cbd566b16a74328d64a7e4c432498ebbbc44512d06968bccc56357a9fd6a",
+    "docs/arquitetura/RECONCILIACAO-OBJ-01.md": "8bdbf67a12c561206aaf1c64b490a740ed1cb99e1d81a286eafd6f653f9893ce",
+    "docs/arquitetura/CARTOES-FORMULAS-OBJ-01.md": "8cb195567c17111e151342efe77a42359a24f522bc94b234c4735ede2a533dfd",
+    "docs/validacao/VALIDACAO-OBJ-01-CARTOES.md": "a1508d6925067e7971a062af95d96a9219673db930b0399577e62b7d64b1d573",
+    "tools/obj01-pilot/CARTOES.md": "e95ec46ac2f2ca3284e5a4c7efebb2d04cda7adfc46698b4b816d2f03da154ce",
+    "tools/obj01-pilot/README.md": "529e797ab3f17d660a73653b1aa8abe17e7df7ac0eb567b44665c28459efaf31"
+  },
+  "local": {
+    "variants": [
+      "GCC Debug",
+      "Clang Debug",
+      "GCC ASan+UBSan",
+      "Clang ASan+UBSan"
+    ],
+    "programs_per_variant": 13,
+    "seconds": [
+      111.19,
+      92.11,
+      238.24,
+      190.73
+    ],
+    "new_core_cases": 15,
+    "new_http_cases": 7,
+    "own_http_cases": 3,
+    "inherited_http_cases": 4,
+    "prior_programs_included": 11,
+    "local_lsan": false,
+    "test_names": {
+      "test_cards.py": [
+        "test_numeric_context_and_roundtrip_recoverable",
+        "test_numeric_spelling_and_typed_current_roundtrip",
+        "test_priority_edit_add_remove_and_fallback",
+        "test_text_exact_nonquantitative_and_substrings",
+        "test_quote_escape_and_expression_injection_are_literal",
+        "test_preview_never_changes_database_or_history",
+        "test_atomic_source_phrase_undo_redo_and_save",
+        "test_real_variable_reference_and_external_change",
+        "test_current_assignment_remains_editable_as_cards",
+        "test_cell_target_and_shared_phrase_are_independent",
+        "test_advanced_source_and_complex_phrase_are_preserved",
+        "test_wrong_target_stale_context_and_type_fail_atomically",
+        "test_bounds_unknown_fields_numeric_values_and_strings",
+        "test_sigkill_recovers_whole_rule_and_phrase",
+        "test_fault_windows_never_split_rule_from_phrase"
+      ],
+      "test_http_cards.py": [
+        "test_preview_is_read_only_and_same_evaluator",
+        "test_rule_phrase_undo_and_reopen_are_atomic",
+        "test_cell_context_and_refused_invalid_values"
+      ]
+    },
+    "atomic_edit_crash_windows": [
+      "after_blobs",
+      "after_snapshot",
+      "before_commit",
+      "after_commit"
+    ],
+    "syntax_and_diff": "passed"
+  },
+  "ci": {
+    "run_id": 45050792508,
+    "url": "https://github.com/Roger-Cardoso/inde/actions/runs/45050792508",
+    "head_sha": "972cc6a8e7f4a12be3db77e3ec97203ad526a2e4",
+    "jobs": 25,
+    "passed": 25,
+    "remote_lsan": true,
+    "conclusion": "success"
+  },
+  "archives": [
+    {
+      "label": "schema28",
+      "path": "fontes/inde-schema28-89b47f27.tar.gz",
+      "sha256": "3d6bee4c60dbecc602a56881b1957f90b55798dbc711c9c290701e2ad8a6e97e",
+      "files": 641,
+      "manifest_match": true
+    },
+    {
+      "label": "original37",
+      "path": "fontes/inde-P03c-schema37-original.tar.gz",
+      "sha256": "2e97a15ddcda56b8f5892d033c9a7427d6102bcf650454678491c50ff5459ef2",
+      "files": 757,
+      "manifest_match": true
+    },
+    {
+      "label": "integrated37",
+      "path": "fontes/inde-integrado-schema37.tar.gz",
+      "sha256": "554623abec5d7c3c175dab2aa6bbabc8a95abd6e3d98a27191cea0260a4965c4",
+      "files": 758,
+      "manifest_match": true
+    }
+  ],
+  "extracted_bytes_match": true,
+  "source_auditor_negative_tests": 5,
+  "acceptance": {
+    "card_editor": "create/add/remove/reorder/edit thresholds and output sentences",
+    "context": "free prefix/suffix plus existing rich phrase model",
+    "comparison": "finite numeric and exact textual equality/difference/contains/prefix",
+    "input": "literal value or existing formula variable/result selected from real catalog",
+    "preview": "same C++ evaluator, temporary records, no persisted mutation",
+    "source_authority": "cards reconstructed from strict recognizable source, no stored duplicate rule model",
+    "advanced_source": "unrecognized source remains advanced and cannot be flattened by card edit",
+    "atomicity": "source and selected usage phrase in one candidate/checkpoint, undo/redo/recovery together",
+    "entities": "not implemented; names in examples are literals",
+    "human_acceptance": "pending real product review; concept approved",
+    "phase_3_started": false
+  },
+  "browser": {
+    "observed": [
+      "create numeric price rule",
+      "add condition/change numeric comparison/reorder",
+      "edit context and entry, undo/redo both together",
+      "create textual attitude rule",
+      "create cell using other result",
+      "SIGKILL own engine and reopen without Save",
+      "reopen recovered cards",
+      "numeric empty rejected inside dialog; Cancel preserves prior source"
+    ],
+    "restart": {
+      "snapshot_identical_after_SIGKILL": true,
+      "working_generation": 16,
+      "working_sha256": "793472564ac8edf1c3b95ab99786b91c69cf23f4cfb1c902973c552da8ff02da",
+      "saved_revision": 0,
+      "saved_not_promoted": true,
+      "integrity_check": "ok",
+      "foreign_key_check": [],
+      "formula_count": 3,
+      "document_uses": 2,
+      "cell_uses": 1,
+      "sources": {
+        "Escolha1": "# INDE-CARDS-1 {\"label\":\"o preço\",\"type\":\"number\"}\ndeclara Entrada = 16\nresultado SE(Entrada > 15; \"preço caro\"; SE(Entrada < 5; \"praticamente de graça\"; SE(Entrada == 15; \"vou negociar\"; \"que pechincha\")))",
+        "Escolha2": "# INDE-CARDS-1 {\"label\":\"Atitude\",\"type\":\"text\"}\ndeclara Entrada = \"hostil\"\nresultado SE(Entrada == \"hostil\"; \"ameaçador\"; SE(Entrada == \"amistosa\"; \"receptivo\"; \"indecifrável\"))",
+        "Escolha3": "# INDE-CARDS-1 {\"label\":\"Atitude\",\"type\":\"text\"}\ndeclara Entrada = Escolha2.resultado\nresultado SE(Entrada == \"ameaçador\"; \"atenção\"; \"indecifrável\")"
+      }
+    },
+    "before_after_text_equal": true,
+    "runtime": "real C++/SQLite, synthetic new data"
+  },
+  "format": {
+    "profile": "P2-D2",
+    "auxiliary_user_version": 5,
+    "language": 2,
+    "source_marker": "INDE-CARDS-1",
+    "schema_migration": false,
+    "rule_model_persisted_separately": false,
+    "conditions": 12,
+    "input_label_utf8_bytes": 256,
+    "input_and_choice_utf8_bytes": 4096,
+    "source_utf8_bytes": 16384,
+    "comparison": "case/accent/space/Unicode-representation sensitive; no numeric coercion",
+    "number_type": "finite double, abs<=1e12",
+    "numeric_spelling": "preserved after strict validation",
+    "current_assignment": "optional source literal, recognized separately from initial entry",
+    "cross_version": "new textual functions require updated engine; old binary may diagnose unknown function",
+    "draft_recovery": false,
+    "persistent_undo": false
+  },
+  "preservation": {
+    "old_demo_files": 10,
+    "old_demos": 5,
+    "hashes_unchanged": true,
+    "main_head": "d41a5c9b9809ca7d40beb6ff10f22f1a5b451e0b",
+    "main_preexisting_status": " M Preparar-ponte.sh",
+    "protected_paths": [
+      "fontes",
+      "metadata",
+      "verificar_base.py",
+      "cpp/CMakeLists.txt",
+      "cpp/object_model.cpp",
+      "cpp/object_model.hpp",
+      "cpp/object_commands.cpp",
+      "cpp/object_commands.hpp",
+      "cpp/object_document_adapter.cpp",
+      "cpp/object_document_adapter.hpp",
+      "cpp/object_composition_adapter.cpp",
+      "cpp/object_composition_adapter.hpp",
+      "cpp/object_change_plan.cpp",
+      "cpp/object_change_plan.hpp",
+      "cpp/object_change_session.cpp",
+      "cpp/object_change_session.hpp",
+      "cpp/object_save_protocol.cpp",
+      "cpp/object_save_protocol.hpp",
+      "cpp/object_checkpoint_store.cpp",
+      "cpp/object_checkpoint_store.hpp"
+    ],
+    "canonical_projects_written": false,
+    "publication": false,
+    "gtk": false,
+    "single_file_inde": false,
+    "historical_manifests": [
+      {
+        "profile": "p2a",
+        "commit": "8ea6c233f50529de9c9894a62b925d90941157a1",
+        "entries_verified": 37
+      },
+      {
+        "profile": "p2b",
+        "commit": "b1ae38fbcc47962c33ca74e8bcdca2e72ae64cca",
+        "entries_verified": 39
+      },
+      {
+        "profile": "p2c",
+        "commit": "347be9dfea7ea7442fdd7606e469ac9c1d3d6928",
+        "entries_verified": 44
+      },
+      {
+        "profile": "p2d",
+        "commit": "1560cfe3c490ab1d4090c0e53857789ff2f648cf",
+        "entries_verified": 49
+      },
+      {
+        "profile": "p2d2",
+        "commit": "8ad48d13b32d87fdeb493877e4fdf77c8ae3fb22",
+        "entries_verified": 47
+      }
+    ],
+    "historical_entries_verified": 216
+  },
+  "failures_fixed": [
+    "new HTTP operation allowlist missing",
+    "existing card edit did not enter Text context",
+    "error message behind modal",
+    "Clang signedness warning in control-character validation"
+  ],
+  "environment_limits_resolved": [
+    "HTTP socket creation blocked under restricted execution; final matrix rerun with local access",
+    "failed Clang builds initially led to stale binary runs; final logs require successful build first"
+  ],
+  "checks": {
+    "links_resolve": 112,
+    "git_diff_check": "passed",
+    "demo_integrity_check": "ok",
+    "demo_foreign_key_check": "empty"
+  },
+  "not_implemented": [
+    "entity/alias/pseudonym bindings",
+    "visual All/Any groups",
+    "arbitrary advanced source conversion",
+    "canonical Document.content/GTK editing",
+    "canonical publication",
+    "schema/project migration",
+    "single-file .inde"
+  ],
+  "not_proven": [
+    "all viewports/input methods",
+    "broad concurrency",
+    "latency/RSS benchmark",
+    "all storage/power faults",
+    "human acceptance"
+  ],
+  "native_61_tests": "not repeated this cut; prior P2-D2 evidence remains historical"
+}

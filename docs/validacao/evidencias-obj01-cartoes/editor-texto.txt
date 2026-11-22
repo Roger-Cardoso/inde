@@ -1,0 +1,85 @@
+Browser tab: 1, Title: "INDE · Texto e fórmulas", URL: "http://127.0.0.1:36527/".
+1 AXWebArea INDE · Texto e fórmulas, URL: 127.0.0.1:36527/
+	2 container Criar texto por condições, ID: cards-dialog
+		3 heading Criar texto por condições, Value: 2, ID: cards-title
+			4 text Criar texto por condições
+		5 text A primeira condição atendida escolhe o texto. As palavras ao redor continuam suas.
+		6 container
+			7 text Inserir o trecho em
+			8 pop up button (collapsed, settable) Description: Inserir o trecho em, Value: Documento, Secondary Actions: Expand
+				9 menu
+					10 (selected) Documento
+			11 text Inserir antes de
+			12 pop up button (collapsed, settable) Description: Inserir antes de, Value: Fim do documento, Secondary Actions: Expand
+				13 menu
+					14 Água, luz e memória.
+					15 O horizonte abre uma passagem.
+					16 Fórmula: Escolha1
+					17 (selected) Fim do documento
+		18 container
+			19 heading Entrada para comparar, Value: 3
+				20 text Entrada para comparar
+			21 text Tipo de entrada
+			22 pop up button (collapsed, settable) Description: Tipo de entrada, Value: Texto, Secondary Actions: Expand
+				23 menu
+					24 Número
+					25 (selected) Texto
+			26 text Nome da entrada
+			27 text field (settable) Nome da entrada, Value: Atitude
+			28 text De onde vem a entrada
+			29 pop up button (collapsed, settable) Description: De onde vem a entrada, Value: Valor preenchido aqui, Secondary Actions: Expand
+				30 menu
+					31 (selected) Valor preenchido aqui
+					32 Resultado ou variável existente
+			33 text Valor da entrada
+			34 text field (settable) Valor da entrada, Value: hostil
+		35 container
+			36 heading Frase de contexto, Value: 3
+				37 text Frase de contexto
+			38 text Texto antes do resultado
+			39 text entry area (settable) Texto antes do resultado, Value: O visitante parece
+			40 text Texto depois do resultado
+			41 text entry area (settable) Texto depois do resultado, Value: .
+		42 container
+			43 heading Condições · vale a primeira que servir, Value: 3
+				44 text Condições · vale a primeira que servir
+			45 text Condição 1
+			46 button (disabled) Subir
+			47 button Descer
+			48 button Remover
+			49 text Se Atitude
+			50 pop up button (collapsed, settable) Description: Comparação da condição 1, Value: for igual a, Secondary Actions: Expand
+				51 menu
+					52 (selected) for igual a
+					53 for diferente de
+					54 contiver
+					55 começar com
+			56 text field (settable) Description: Valor da condição 1, Value: hostil
+			57 text Mostrar esta palavra ou frase
+			58 text entry area (settable) Mostrar esta palavra ou frase, Value: ameaçador
+			59 text Condição 2
+			60 button Subir
+			61 button (disabled) Descer
+			62 button Remover
+			63 text Se Atitude
+			64 pop up button (collapsed, settable) Description: Comparação da condição 2, Value: for igual a, Secondary Actions: Expand
+				65 menu
+					66 (selected) for igual a
+					67 for diferente de
+					68 contiver
+					69 começar com
+			70 text field (settable) Description: Valor da condição 2, Value: amistosa
+			71 text Mostrar esta palavra ou frase
+			72 text entry area (settable) Mostrar esta palavra ou frase, Value: receptivo
+			73 button Adicionar condição
+			74 text Se nenhuma condição servir, mostrar
+			75 text entry area (settable) Se nenhuma condição servir, mostrar, Value: indecifrável
+		76 container
+			77 heading Prévia no documento, Value: 3
+				78 text Prévia no documento
+			83 text O visitante parece ameaçador.
+			84 text Prévia calculada pelo núcleo. Aplicar protege o trabalho; Cancelar conserva o estado anterior.
+		81 button Inserir texto por condições
+		82 button Cancelar
+
+The focused UI element is 41 text entry area (settable) Texto depois do resultado, Value: .

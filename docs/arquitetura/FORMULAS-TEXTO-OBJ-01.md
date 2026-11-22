@@ -83,3 +83,7 @@ A interface continua usando os mesmos arquivos estáticos conhecidos pelos servi
 | Fonte ou texto se tornarem HTML executável | Render por textContent, edição/paste como texto | Código de apresentação não interpreta HTML; não se promete auditoria de todos os browsers |
 
 Publicação canônica continua recusada na fronteira do piloto. Não há merge, migração de obras, GTK, `.inde` único, edição livre da origem, biblioteca Excel completa, A1/intervalos, funções próprias ou gatilhos automáticos. O aceite humano continua separado da observação técnica. O corte não conclui a Fase 2 inteira nem inicia Fase 3.
+
+## Atualização — cartões preenchíveis, 2026-11-22
+
+Após escolha e autorização do usuário, o [editor por cartões](CARTOES-FORMULAS-OBJ-01.md) foi integrado ao piloto P2-D2, com fonte única, prévia no motor e regra/frase atômicas. [Validação própria](../validacao/VALIDACAO-OBJ-01-CARTOES.md). O vínculo com entidades reais, a integração GTK e a publicação canônica permanecem pendentes.

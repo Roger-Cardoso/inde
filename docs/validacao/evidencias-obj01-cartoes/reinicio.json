@@ -1,0 +1,17 @@
+{
+  "snapshot_identical_after_SIGKILL": true,
+  "working_generation": 16,
+  "working_sha256": "793472564ac8edf1c3b95ab99786b91c69cf23f4cfb1c902973c552da8ff02da",
+  "saved_revision": 0,
+  "saved_not_promoted": true,
+  "integrity_check": "ok",
+  "foreign_key_check": [],
+  "formula_count": 3,
+  "document_uses": 2,
+  "cell_uses": 1,
+  "sources": {
+    "Escolha1": "# INDE-CARDS-1 {\"label\":\"o preço\",\"type\":\"number\"}\ndeclara Entrada = 16\nresultado SE(Entrada > 15; \"preço caro\"; SE(Entrada < 5; \"praticamente de graça\"; SE(Entrada == 15; \"vou negociar\"; \"que pechincha\")))",
+    "Escolha2": "# INDE-CARDS-1 {\"label\":\"Atitude\",\"type\":\"text\"}\ndeclara Entrada = \"hostil\"\nresultado SE(Entrada == \"hostil\"; \"ameaçador\"; SE(Entrada == \"amistosa\"; \"receptivo\"; \"indecifrável\"))",
+    "Escolha3": "# INDE-CARDS-1 {\"label\":\"Atitude\",\"type\":\"text\"}\ndeclara Entrada = Escolha2.resultado\nresultado SE(Entrada == \"ameaçador\"; \"atenção\"; \"indecifrável\")"
+  }
+}
