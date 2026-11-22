@@ -20,8 +20,19 @@ jobs:
           sudo apt-get update
           sudo apt-get install --yes build-essential cmake ninja-build pkg-config \
             libgtkmm-4.0-dev libsqlite3-dev uuid-dev libicu-dev libhunspell-dev \
-            libenchant-2-2 hunspell-pt-br libwebkitgtk-6.0-dev xauth xvfb
+            libenchant-2-2 hunspell-pt-br libwebkitgtk-6.0-dev xauth xvfb bubblewrap apparmor-profiles
+      - name: Enable Ubuntu Bubblewrap profile for the WebKit sandbox
+        # Allow namespace creation through the distro's restricted profile,
+        # without disabling WebKit isolation or the global AppArmor policy.
+        run: |
+          sudo install -m 0644 /usr/share/apparmor/extra-profiles/bwrap-userns-restrict /etc/apparmor.d/bwrap-userns-restrict
+          sudo apparmor_parser -r /etc/apparmor.d/bwrap-userns-restrict
+          bwrap --unshare-user --uid 0 --gid 0 --unshare-net --ro-bind / / /bin/true
       - name: Build the special edition
         run: sh Preparar-INDE-especial.sh
       - name: Run integration tests
+        env:
+          GSK_RENDERER: cairo
+          LIBGL_ALWAYS_SOFTWARE: "1"
+          GTK_A11Y: none
         run: xvfb-run -a python3 -m unittest discover -s tests -v
