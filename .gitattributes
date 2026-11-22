@@ -1,0 +1,3 @@
+# Preserve imported upstream bytes, including original line endings and spaces.
+# Native dependency provenance is verified by SHA-256, not by reformatting.
+cpp/vendor/** -text -whitespace
