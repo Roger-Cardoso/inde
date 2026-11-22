@@ -70,3 +70,5 @@ ctest --test-dir build-obj01-p2a --output-on-failure
 O alvo configura a ponte e os codecs proprietários isolados, além dos testes do processo C++ e do controlador HTTP real. Os testes HTTP precisam de permissão do ambiente para abrir loopback. A CI repete a suíte em GCC/Clang, com e sem ASan/UBSan, incluindo LeakSanitizer no ambiente remoto. Não confundir esses testes com aceite humano ou conclusão da Fase 2 inteira.
 
 A composição comum e a remoção reversível para texto, figura, tabela e fórmula estão no [roteiro Compor e remover](COMPOSICAO.md).
+
+A edição de aparência, tamanho e detalhes de células está no [roteiro de Tabelas visuais](TABELAS.md).

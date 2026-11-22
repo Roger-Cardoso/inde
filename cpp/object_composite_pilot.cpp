@@ -8,6 +8,7 @@
 #include "object_formula.hpp"
 #include "object_formula_cards.hpp"
 #include "object_formula_hub.hpp"
+#include "object_table_design.hpp"
 #include <algorithm>
 #include <array>
 #include <cerrno>
@@ -457,6 +458,8 @@ struct State {
   // Versioned private composition overlay; the captured owner document stays
   // complete. Old snapshots keep their exact shape until this overlay is used.
   bool composition_v2 = false;
+  bool table_design_v1 = false;
+  std::map<std::string, V> table_styles;
   std::vector<std::string> removed_text;
   std::map<std::string, Presentation> presentation;
   std::map<std::string, std::shared_ptr<const Bytes>> blobs;
@@ -609,6 +612,10 @@ void validate(const State &s, bool decode_media = true) {
   if (sha(s.source) != s.source_hash)
     fail("source_hash_mismatch");
   const auto p = projection(s);
+  if ((!s.p2d2 && s.table_design_v1) ||
+      (s.table_design_v1 && !s.composition_v2) ||
+      (!s.table_design_v1 && !s.table_styles.empty()))
+    fail("table_design_version_required");
   if ((!s.p2d2 && s.composition_v2) ||
       (!s.composition_v2 &&
        (!s.removed_text.empty() || !s.presentation.empty())))
@@ -755,6 +762,22 @@ void validate(const State &s, bool decode_media = true) {
     table_check(t, true);
   for (const auto &t : s.archived_tables)
     table_check(t, false);
+  if (s.table_styles.size() > s.tables.size() + s.archived_tables.size())
+    fail("invalid_table_design");
+  for (const auto &[id, style] : s.table_styles) {
+    const Table *target = nullptr;
+    for (const auto *list : {&s.tables, &s.archived_tables})
+      for (const auto &t : *list)
+        if (t.occurrence == id)
+          target = &t;
+    if (!target)
+      fail("invalid_table_design");
+    std::set<std::string> cell_ids;
+    for (const auto &c : target->cells)
+      cell_ids.insert(c.id);
+    table_design::validate(style, target->rows, target->columns, cell_ids);
+    string_bytes += id.size() + encode_json(style).size();
+  }
   if (!s.p2d && (!s.formulas.empty() || !s.formula_uses.empty() ||
                  !s.formula_cells.empty()))
     fail("p2d_profile_required");
@@ -1111,12 +1134,13 @@ V encode(const State &s) {
                                 {"first", r.first},
                                 {"second", r.second},
                                 {"gap", r.gap}});
-  V::Object result{{"format", s.composition_v2 ? "INDE-OBJ01-COMPOSITE-P2D2-2"
-                              : s.p2d2         ? "INDE-OBJ01-COMPOSITE-P2D2-1"
-                              : s.p2d          ? "INDE-OBJ01-COMPOSITE-P2D-1"
-                              : s.p2c          ? "INDE-OBJ01-COMPOSITE-P2C-1"
-                              : s.p2b          ? "INDE-OBJ01-COMPOSITE-P2B-1"
-                                               : "INDE-OBJ01-COMPOSITE-P2A-1"},
+  V::Object result{{"format", s.table_design_v1  ? "INDE-OBJ01-COMPOSITE-P2D2-3"
+                              : s.composition_v2 ? "INDE-OBJ01-COMPOSITE-P2D2-2"
+                              : s.p2d2           ? "INDE-OBJ01-COMPOSITE-P2D2-1"
+                              : s.p2d            ? "INDE-OBJ01-COMPOSITE-P2D-1"
+                              : s.p2c            ? "INDE-OBJ01-COMPOSITE-P2C-1"
+                              : s.p2b            ? "INDE-OBJ01-COMPOSITE-P2B-1"
+                                      : "INDE-OBJ01-COMPOSITE-P2A-1"},
                    {"project", s.project},
                    {"source", s.source},
                    {"source_sha256", s.source_hash},
@@ -1132,9 +1156,15 @@ V encode(const State &s) {
                                    {"horizontal", p.horizontal},
                                    {"text_align", p.text_align},
                                    {"vertical", p.vertical}});
-    result.emplace("composition",
-                   V::Object{{"removed_text", array(s.removed_text)},
-                             {"presentation", std::move(styles)}});
+    V::Object composition{{"removed_text", array(s.removed_text)},
+                          {"presentation", std::move(styles)}};
+    if (s.table_design_v1) {
+      V::Object tables;
+      for (const auto &[id, style] : s.table_styles)
+        tables.emplace(id, style);
+      composition.emplace("table_styles", std::move(tables));
+    }
+    result.emplace("composition", std::move(composition));
   }
   if (s.p2b) {
     V::Array archived, tables, retired;
@@ -1204,7 +1234,9 @@ State decode(const std::string &bytes) {
   const auto v = persistence::json::parse(bytes);
   const auto format = v.at("format").as_string();
   State s;
-  s.composition_v2 = format == "INDE-OBJ01-COMPOSITE-P2D2-2";
+  s.table_design_v1 = format == "INDE-OBJ01-COMPOSITE-P2D2-3";
+  s.composition_v2 =
+      s.table_design_v1 || format == "INDE-OBJ01-COMPOSITE-P2D2-2";
   s.p2d2 = s.composition_v2 || format == "INDE-OBJ01-COMPOSITE-P2D2-1";
   s.p2d = s.p2d2 || format == "INDE-OBJ01-COMPOSITE-P2D-1";
   s.p2c = s.p2d || format == "INDE-OBJ01-COMPOSITE-P2C-1";
@@ -1215,7 +1247,16 @@ State decode(const std::string &bytes) {
     auto body = v.as_object();
     if (s.composition_v2) {
       const auto &c = v.at("composition");
-      fields(c, {"removed_text", "presentation"});
+      auto composition = c.as_object();
+      if (s.table_design_v1) {
+        const auto &styles = c.at("table_styles").as_object();
+        if (styles.size() > 64)
+          fail("invalid_table_design");
+        for (const auto &[id, style] : styles)
+          s.table_styles.emplace(id, style);
+        composition.erase("table_styles");
+      }
+      fields(V(composition), {"removed_text", "presentation"});
       s.removed_text = strings(c.at("removed_text"), 10000);
       if (c.at("presentation").as_object().size() > 10512)
         fail("presentation_limit");
@@ -1913,6 +1954,10 @@ struct Session::Impl {
     for (const auto &t : working.tables) {
       auto v = table_value(t).as_object();
       v.emplace("id", t.occurrence);
+      if (p2d2)
+        v.emplace("appearance", working.table_styles.contains(t.occurrence)
+                                    ? working.table_styles.at(t.occurrence)
+                                    : table_design::defaults());
       tables.emplace_back(std::move(v));
     }
     V::Array text_groups;
@@ -2029,7 +2074,13 @@ struct Session::Impl {
         {"formula_cards_supported", p2d2},
         {"formula_hub_supported", p2d2},
         {"object_composition_supported", p2d2},
-        {"composition_version", working.composition_v2 ? 2 : 1},
+        {"table_design_supported", p2d2},
+        {"table_design_defaults", p2d2 ? table_design::defaults() : V{}},
+        {"table_design_presets",
+         p2d2 ? table_design::presets() : V(V::Array{})},
+        {"composition_version", working.table_design_v1  ? 3
+                                : working.composition_v2 ? 2
+                                                         : 1},
         {"presentation", std::move(styles)},
         {"removed_items", std::move(removed_items)},
         {"formulas", std::move(formulas)},
@@ -2327,10 +2378,10 @@ struct Session::Impl {
                                op == "remove" || op == "restore_removed" ||
                                op == "reorder_text" || op == "create_formula" ||
                                op == "attach_formula" || op == "detach_formula";
-        const bool composition = op == "arrange" || op == "arrange_objects" ||
-                                 op == "set_presentation" ||
-                                 op == "reset_presentation" || op == "stack" ||
-                                 op == "restore";
+        const bool composition =
+            op == "arrange" || op == "arrange_objects" ||
+            op == "edit_table_design" || op == "set_presentation" ||
+            op == "reset_presentation" || op == "stack" || op == "restore";
         if ((text_edit && working.context != "text") ||
             (structure && working.context != "structure") ||
             (composition && working.context != "composition"))
@@ -2945,6 +2996,36 @@ struct Session::Impl {
                side == "left" ? std::vector<std::string>{id, other}
                               : std::vector<std::string>{other, id},
                real(v.at("first")), real(v.at("second")), real(v.at("gap"))});
+          candidate.selection = id;
+          candidate.selected_cell.clear();
+        } else if (op == "edit_table_design") {
+          if (!p2d2)
+            fail("p2d2_profile_required");
+          fields(v, {"op", "expected", "id", "title", "header", "appearance",
+                     "placement"});
+          const auto id = v.at("id").as_string();
+          const auto t =
+              std::find_if(candidate.tables.begin(), candidate.tables.end(),
+                           [&](const auto &t) { return t.occurrence == id; });
+          if (t == candidate.tables.end())
+            fail("table_not_found");
+          const auto &placement = v.at("placement");
+          fields(placement, {"width", "horizontal", "text_align", "vertical"});
+          const auto title = v.at("title").as_string();
+          const auto header = v.at("header").as_boolean();
+          if (t->title != title || t->header != header) {
+            if (t->payload_revision == std::numeric_limits<std::int64_t>::max())
+              fail("revision_limit");
+            ++t->payload_revision;
+            t->title = title;
+            t->header = header;
+          }
+          candidate.composition_v2 = candidate.table_design_v1 = true;
+          candidate.table_styles[id] = v.at("appearance");
+          candidate.presentation[id] = {real(placement.at("width")),
+                                        placement.at("horizontal").as_string(),
+                                        placement.at("text_align").as_string(),
+                                        placement.at("vertical").as_string()};
           candidate.selection = id;
           candidate.selected_cell.clear();
         } else if (op == "set_presentation" || op == "reset_presentation") {
