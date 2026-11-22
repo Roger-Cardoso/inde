@@ -133,3 +133,7 @@ Após escolha e autorização do usuário, o [editor por cartões](CARTOES-FORMU
 ## Atualização — hub e alterações remotas, 2026-11-22
 
 O usuário autorizou o [hub de fórmulas](HUB-FORMULAS-OBJ-01.md): cinco caminhos, referências alcançáveis e alterações consumíveis tanto por cartões quanto por escrita livre. [Validação própria](../validacao/VALIDACAO-OBJ-01-HUB.md). O formato auxiliar 5 permanece; não há migração de projetos reais, integração GTK ou início de Fase 3.
+
+## Atualização — composição comum e remoção, 2026-11-22
+
+Após o pedido do usuário, o [contrato de composição e remoção](COMPOSICAO-REMOCAO-OBJ-01.md) amplia os mesmos instrumentos a texto, figura, tabela e fórmula. [Validação própria](../validacao/VALIDACAO-OBJ-01-COMPOSICAO-EDICAO.md). A revisão privada de snapshot é explícita; o banco auxiliar permanece 5. Origem autoral, grupos protegidos e projetos reais são preservados, sem integração GTK/publicação ou início de Fase 3.

@@ -1,0 +1,330 @@
+{
+  "date": "2026-11-22",
+  "branch": "feature/inde-obj-01-foundation",
+  "base_commit": "93caf049fe575025aaed9f6cb89dc539b2fdeab4",
+  "implementation_commit": "db217efa28fe3c1d6773e381ecbb276103a30355",
+  "scope": "shared real composition for text/image/table/formula, reversible complete-group text removal and persistent removed-item restoration",
+  "code_sha256": {
+    ".github/workflows/obj-01.yml": "9c17ccff13e093462f515dedbfa9148d21e9fea96f49a75814c708ac40d1fc47",
+    "cpp/object_composite_pilot.cpp": "bf39d5cee8b2e1164f1ebc6d4e2793958a5c769bb4b20eb1b39bbed076f017ee",
+    "scripts/demos/Abrir-demo-obj01-composicao.sh": "c64ea8584c7a4a79c7673a3f44b728d869576c57e9729869da32ce9ef5055e19",
+    "tests/object_composite_pilot/CMakeLists.txt": "847e976baefcbf96997cd751861b0e15f6679763743b3a73cdd135ba1d0ce8ca",
+    "tests/object_composite_pilot/test_composition.py": "ae865184fb311ff42e07c62188af6e0961ca66755c3556cdc3537cc0dae158a8",
+    "tests/object_composite_pilot/test_http_composition.py": "1e994985b304167810cf02a170ed5864ddaf8e4ab54796f0f8869d584e432a0e",
+    "tools/obj01-pilot/app.js": "fe9325102bbfeb119c70f220bbb7e7ca4a0fc45a12436e19e7298b075c281dab",
+    "tools/obj01-pilot/index.html": "66363321f975d4ce5785829105bfb524c364bbdd6d90e72c80e809a757d9906f",
+    "tools/obj01-pilot/serve.py": "71ca209ba901336a08f4944b624085f645d11725c3cf48e9f4d6b31fc50836e5",
+    "tools/obj01-pilot/style.css": "0df7021b5a225fc131a7df1009105978bc35e571bdc9e64c28dc29a3e18903f1"
+  },
+  "documentation_link_fix_after_implementation": [
+    "tools/obj01-pilot/COMPOSICAO.md"
+  ],
+  "document_sha256": {
+    "docs/README.md": "b7e4734ba65a385b4fb6b7e48d1639bf1f9204d59cce7992fb9cd64d0975b131",
+    "docs/arquitetura/COMPOSICAO-REMOCAO-OBJ-01.md": "d0afe6d57252c443b2a8367d4e7a0b5474b22e0f381c21a92417e79c0444e856",
+    "docs/arquitetura/RECONCILIACAO-OBJ-01.md": "c8c79de18f2870cde0ec8081d2bac9586831ff682a8c9bb5118a380c981d2730",
+    "docs/validacao/VALIDACAO-OBJ-01-COMPOSICAO-EDICAO.md": "26312dcadce9aec1a7609977276379c5a474ad239a1158206153323a5c172d56",
+    "tools/obj01-pilot/COMPOSICAO.md": "1fb7c1c29318e2e45089677827ab6b5c5e6a6b7da2e7aa79fd07b1a502643438",
+    "tools/obj01-pilot/README.md": "b0e649ce7b32429c70a92ae14cbc7af4eadfed6a187b07b4d59ee013560c2c3f"
+  },
+  "local": {
+    "variants": [
+      "GCC Debug",
+      "Clang Debug",
+      "GCC ASan+UBSan",
+      "Clang ASan+UBSan"
+    ],
+    "programs_per_variant": 17,
+    "seconds": [
+      74.0,
+      119.98,
+      315.72,
+      269.69
+    ],
+    "prior_programs_repeated": 15,
+    "new_core_cases": 16,
+    "new_http_cases": 7,
+    "own_http_cases": 3,
+    "inherited_http_cases": 4,
+    "local_lsan": false,
+    "test_names": {
+      "test_composition.py": [
+        "test_every_distinct_object_kind_pair_and_order_independence",
+        "test_text_text_including_same_protected_group_and_swap",
+        "test_width_alignment_and_vertical_roundtrip_undo_and_reset",
+        "test_invalid_geometry_types_fields_self_and_inactive_are_atomic",
+        "test_remove_whole_text_group_preserves_source_and_restores",
+        "test_remove_all_text_and_restore_after_reopen_without_physical_deletion",
+        "test_restore_partial_group_destination_is_refused",
+        "test_remove_from_divergent_visual_preserves_other_order_and_styles",
+        "test_remove_restore_image_table_and_formula_keep_content_and_bindings",
+        "test_consumed_command_is_not_a_restorable_removed_item",
+        "test_generic_move_text_authorial_uses_whole_owner_group",
+        "test_visual_text_move_does_not_change_owner_and_remove_then_reorder",
+        "test_old_profile_and_snapshot_shape_conserved_until_extension",
+        "test_context_and_stale_revision_do_not_change_composition",
+        "test_sigkill_keeps_removal_presentation_and_general_rows",
+        "test_crash_windows_removal_and_restore_are_atomic"
+      ],
+      "test_http_composition.py": [
+        "test_text_table_row_style_remove_and_restore",
+        "test_invalid_geometry_is_atomic_and_save_reopen_preserves_v2",
+        "test_assets_expose_removal_restore_and_shared_alignment"
+      ]
+    },
+    "crash_matrix": {
+      "operations": [
+        "remove",
+        "restore_removed"
+      ],
+      "windows": [
+        "after_blobs",
+        "after_snapshot",
+        "before_commit",
+        "after_commit"
+      ],
+      "combinations": 8
+    },
+    "syntax_and_diff": "passed"
+  },
+  "ci": {
+    "run_id": 45060187650,
+    "url": "https://github.com/Roger-Cardoso/inde/actions/runs/45060187650",
+    "head_sha": "db217efa28fe3c1d6773e381ecbb276103a30355",
+    "jobs": 25,
+    "passed": 25,
+    "remote_lsan": true,
+    "conclusion": "success"
+  },
+  "archives": [
+    {
+      "label": "schema28",
+      "path": "fontes/inde-schema28-89b47f27.tar.gz",
+      "sha256": "3d6bee4c60dbecc602a56881b1957f90b55798dbc711c9c290701e2ad8a6e97e",
+      "files": 641,
+      "manifest_match": true
+    },
+    {
+      "label": "original37",
+      "path": "fontes/inde-P03c-schema37-original.tar.gz",
+      "sha256": "2e97a15ddcda56b8f5892d033c9a7427d6102bcf650454678491c50ff5459ef2",
+      "files": 757,
+      "manifest_match": true
+    },
+    {
+      "label": "integrated37",
+      "path": "fontes/inde-integrado-schema37.tar.gz",
+      "sha256": "554623abec5d7c3c175dab2aa6bbabc8a95abd6e3d98a27191cea0260a4965c4",
+      "files": 758,
+      "manifest_match": true
+    }
+  ],
+  "extracted_bytes_match": true,
+  "source_auditor_negative_tests": 5,
+  "operations": [
+    "arrange_objects",
+    "set_presentation",
+    "reset_presentation",
+    "stack",
+    "move",
+    "remove",
+    "restore_removed",
+    "restore"
+  ],
+  "invariants": {
+    "active_orders": "each contains exactly all active uses; owner textual order is filtered complete source projection",
+    "owner_groups": "remove and authorial move operate on whole real reading groups; original source/alternatives/profiles retained",
+    "visual_order": "pairing and individual styles never rewrite owner content or reading order",
+    "removal": "retains resource/payload/bindings/styles; dissolves only affected pairs, allowed with divergent visual order",
+    "manual_restore": "requires aligned order and legal destination; restores individual style and content, not old pairs",
+    "undo": "complete state including previous rows; session history does not survive restart",
+    "consumed_commands": "excluded from restoration catalog; execute undo is sole joint restoration of command/effect",
+    "selection": "whole-object composition clears selected cell"
+  },
+  "browser": {
+    "runtime": "real C++/SQLite and authenticated HTTP; synthetic separate fixture",
+    "observed": [
+      "text/text pair and centered 80% object",
+      "remove/restore text from object actions",
+      "undo restores removed pair",
+      "text/table pair and vertical middle",
+      "edit table cell then remove/restore without text loss",
+      "image 60% right and remove/restore style",
+      "create value through hub, remove/restore formula use",
+      "remove protected two-paragraph group and undo restores three pairs",
+      "reading mode versus presentation, Compor returns to visual",
+      "duplicate same image then remove only duplicate",
+      "SIGKILL own engine, restart unsaved three rows/four styles/removed catalog"
+    ],
+    "restart": {
+      "snapshot_identical_after_SIGKILL": true,
+      "model_keys_identical": [
+        "paragraphs",
+        "figures",
+        "tables",
+        "formulas",
+        "formula_uses",
+        "formula_text",
+        "formula_cells",
+        "rows",
+        "presentation",
+        "removed_items",
+        "author_order",
+        "visual_order",
+        "selection",
+        "context",
+        "source_sha256",
+        "source_body_sha256"
+      ],
+      "working_generation": 53,
+      "working_sha256": "c1f05a54368ca4f6c4a2270e0dc2a8e694d2d9ae78ce388fab87568422e2206c",
+      "saved_revision": 0,
+      "saved_not_promoted": true,
+      "integrity_check": "ok",
+      "foreign_key_check": [],
+      "user_version": 5,
+      "snapshot_format": "INDE-OBJ01-COMPOSITE-P2D2-2",
+      "active_occurrences": 6,
+      "rows": 3,
+      "individual_styles": 4,
+      "restorable_removed_items": 1,
+      "retained_images": 1,
+      "table_cell": "Nota preservada após remover",
+      "history_entries_after_restart": 0,
+      "private_alternatives": 1,
+      "visibility_profiles": 1
+    },
+    "human_acceptance": "pending product review"
+  },
+  "format": {
+    "profile": "P2-D2",
+    "auxiliary_user_version": 5,
+    "formula_language": 2,
+    "legacy_snapshot": "INDE-OBJ01-COMPOSITE-P2D2-1",
+    "extended_snapshot": "INDE-OBJ01-COMPOSITE-P2D2-2",
+    "extension_fields": [
+      "removed_text",
+      "presentation"
+    ],
+    "canonical_schema_migration": false,
+    "auxiliary_schema_migration": false,
+    "old_format_retained_without_extension": true,
+    "old_engine_refusal": {
+      "old_engine_code_commit": "700fb1fe91af472500138400dc755dc639451caf",
+      "old_engine_sha256": "c005ae62ba2bc1efd297838bdd705179aa62c51e8b38b03e8d6878748273eba4",
+      "new_private_snapshot": "INDE-OBJ01-COMPOSITE-P2D2-2",
+      "old_engine_exit": 1,
+      "old_engine_error": "OBJ-01: unsupported_snapshot_version",
+      "origin_and_db_unchanged": true
+    },
+    "row_children": 2,
+    "row_gap_max": 256,
+    "object_width_percent": [
+      20,
+      100
+    ],
+    "arbitrary_nested_rows": false
+  },
+  "preservation": {
+    "old_demo_files": 14,
+    "old_demos": 7,
+    "hashes_unchanged": true,
+    "main_head": "d41a5c9b9809ca7d40beb6ff10f22f1a5b451e0b",
+    "main_preexisting_status": " M Preparar-ponte.sh",
+    "protected_paths": [
+      "fontes",
+      "metadata",
+      "verificar_base.py",
+      "cpp/CMakeLists.txt",
+      "cpp/object_model.cpp",
+      "cpp/object_model.hpp",
+      "cpp/object_commands.cpp",
+      "cpp/object_commands.hpp",
+      "cpp/object_document_adapter.cpp",
+      "cpp/object_document_adapter.hpp",
+      "cpp/object_composition_adapter.cpp",
+      "cpp/object_composition_adapter.hpp",
+      "cpp/object_change_plan.cpp",
+      "cpp/object_change_plan.hpp",
+      "cpp/object_change_session.cpp",
+      "cpp/object_change_session.hpp",
+      "cpp/object_save_protocol.cpp",
+      "cpp/object_save_protocol.hpp",
+      "cpp/object_checkpoint_store.cpp",
+      "cpp/object_checkpoint_store.hpp",
+      "cpp/object_formula_rich.cpp",
+      "cpp/object_formula.cpp",
+      "cpp/object_formula_cards.cpp",
+      "cpp/object_formula_hub.cpp",
+      "docs/validacao/VALIDACAO-OBJ-01-COMPOSICAO.md",
+      "docs/validacao/evidencias-obj01-composicao"
+    ],
+    "canonical_projects_written": false,
+    "publication": false,
+    "gtk": false,
+    "single_file_inde": false,
+    "historical_manifests": [
+      {
+        "profile": "p2a",
+        "commit": "8ea6c233f50529de9c9894a62b925d90941157a1",
+        "entries_verified": 37
+      },
+      {
+        "profile": "p2b",
+        "commit": "b1ae38fbcc47962c33ca74e8bcdca2e72ae64cca",
+        "entries_verified": 39
+      },
+      {
+        "profile": "p2c",
+        "commit": "347be9dfea7ea7442fdd7606e469ac9c1d3d6928",
+        "entries_verified": 44
+      },
+      {
+        "profile": "p2d",
+        "commit": "1560cfe3c490ab1d4090c0e53857789ff2f648cf",
+        "entries_verified": 49
+      },
+      {
+        "profile": "p2d2",
+        "commit": "8ad48d13b32d87fdeb493877e4fdf77c8ae3fb22",
+        "entries_verified": 47
+      },
+      {
+        "profile": "cartoes",
+        "commit": "729404048b5614d86088fdf9730e630110f57c44",
+        "entries_verified": 41
+      },
+      {
+        "profile": "hub",
+        "commit": "93caf049fe575025aaed9f6cb89dc539b2fdeab4",
+        "entries_verified": 48
+      }
+    ],
+    "historical_entries_verified": 305
+  },
+  "checks": {
+    "local_markdown_links_resolve": 126,
+    "git_diff_check": "passed",
+    "demo_integrity_check": "ok",
+    "demo_foreign_key_check": "empty"
+  },
+  "not_implemented": [
+    "canonical paragraph body editing",
+    "partial protected-group deletion",
+    "permanent resource/shared formula deletion or GC",
+    "XY dragging/resize handles",
+    "rotation/overlap",
+    "image contour text wrapping",
+    "arbitrary grids or nested rows",
+    "canonical GTK/publication/project migration",
+    "single-file .inde"
+  ],
+  "not_proven": [
+    "all viewports/input methods",
+    "broad concurrency",
+    "latency/RSS benchmark",
+    "all storage/power faults",
+    "human acceptance"
+  ],
+  "native_61_tests": "not repeated this cut; prior evidence remains historical"
+}

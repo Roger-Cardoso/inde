@@ -1,0 +1,8 @@
+{
+  "old_engine_code_commit": "700fb1fe91af472500138400dc755dc639451caf",
+  "old_engine_sha256": "c005ae62ba2bc1efd297838bdd705179aa62c51e8b38b03e8d6878748273eba4",
+  "new_private_snapshot": "INDE-OBJ01-COMPOSITE-P2D2-2",
+  "old_engine_exit": 1,
+  "old_engine_error": "OBJ-01: unsupported_snapshot_version",
+  "origin_and_db_unchanged": true
+}

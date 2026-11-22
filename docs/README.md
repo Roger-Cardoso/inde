@@ -7,6 +7,7 @@
 
 ## Núcleo experimental de objetos
 
+- [Compor e remover objetos](../tools/obj01-pilot/COMPOSICAO.md), [contrato](arquitetura/COMPOSICAO-REMOCAO-OBJ-01.md) e [validação](validacao/VALIDACAO-OBJ-01-COMPOSICAO-EDICAO.md).
 - [Hub de fórmulas — cinco caminhos](../tools/obj01-pilot/HUB.md), [contrato](arquitetura/HUB-FORMULAS-OBJ-01.md) e [validação](validacao/VALIDACAO-OBJ-01-HUB.md).
 
 - [Texto por cartões preenchíveis](../tools/obj01-pilot/CARTOES.md), [contrato](arquitetura/CARTOES-FORMULAS-OBJ-01.md) e [validação](validacao/VALIDACAO-OBJ-01-CARTOES.md).

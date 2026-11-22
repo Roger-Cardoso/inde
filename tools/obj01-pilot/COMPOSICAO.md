@@ -45,4 +45,4 @@ A primeira operação nova que precisa da camada de composição usa snapshot pr
 
 Este corte trabalha com linhas de dois objetos, largura proporcional e alinhamentos, sem arrasto livre X/Y, rotação, sobreposição, quebra de texto em torno de imagens, linhas aninhadas ou grades arbitrárias. Não torna editável o corpo dos parágrafos de origem. Tabelas continuam com duas linhas/três colunas neste piloto. A exclusão individual de parágrafo dentro de grupo protegido exigirá um corte próprio no motor de texto.
 
-Sem integração GTK, publicação canônica, migração de obras, alteração de schema real, arquivo único `.inde` ou início de Fase 3. [Contrato](../../docs/arquitetura/COMPOSICAO-REMOCAO-OBJ-01.md) e [validação](../../docs/validacao/VALIDACAO-OBJ-01-COMPOSICAO.md).
+Sem integração GTK, publicação canônica, migração de obras, alteração de schema real, arquivo único `.inde` ou início de Fase 3. [Contrato](../../docs/arquitetura/COMPOSICAO-REMOCAO-OBJ-01.md) e [validação](../../docs/validacao/VALIDACAO-OBJ-01-COMPOSICAO-EDICAO.md).
