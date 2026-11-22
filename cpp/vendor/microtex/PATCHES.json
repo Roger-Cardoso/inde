@@ -1,0 +1,14 @@
+{
+  "src/latex.cpp": {
+    "upstream_sha256": "4d0c29a4281270892e7d1f10ada900bcd69a37fc412d7bb3cc8fffd0c0a21ed7",
+    "patched_sha256": "d51719dbe2b766bf91b3656019066a53d4cfc1c651fe455fa2fb991d9be5ec75",
+    "reason": "Construct the HOME search path as std::string; remove unchecked asprintf and mismatched delete of malloc data."
+  },
+  "cairo_bridge": {
+    "files": [
+      "../../object_math_cairo.cpp",
+      "../../object_math_cairo.hpp"
+    ],
+    "reason": "Port GTK3-era enum names to cairomm1.16/pangomm2.48 for GTK4; validate Fontconfig query result."
+  }
+}

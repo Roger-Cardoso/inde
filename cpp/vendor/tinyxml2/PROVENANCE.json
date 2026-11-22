@@ -1,0 +1,9 @@
+{
+  "source": "https://github.com/leethomason/tinyxml2",
+  "commit": "9148bdf719e997d1f474be6bcc7943881046dba1",
+  "files": {
+    "LICENSE.txt": "9332252e9b9e46db8285d4a3f0bf25f139bf1dca6781b956d57f2302efca6432",
+    "tinyxml2.cpp": "95f64e4cb06c9e147d5b12e8860c88898944858dfbc38fed92ebf918f1436554",
+    "tinyxml2.h": "0f3c6e5a91b6d65caca3cc7239926455f21e488cff80ac3d27c74f5262fd2602"
+  }
+}

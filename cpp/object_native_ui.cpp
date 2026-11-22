@@ -1,128 +1,2212 @@
 #include "object_native_ui.hpp"
 #include "object_composite_pilot.hpp"
-#include "inde/persistence/document_snapshot.hpp"
-#include <webkit/webkit.h>
+#include "object_formula_hub.hpp"
+#include "object_math_native.hpp"
+#include "object_native_probe.hpp"
+#include "object_table_design.hpp"
+#include <cerrno>
+#include <charconv>
+#include <cmath>
 #include <fstream>
+#include <glibmm/base64.h>
+#include <map>
 #include <mutex>
+#include <set>
 #include <sys/stat.h>
 #include <unistd.h>
-#include <cerrno>
 namespace inde::ui {
 namespace {
-using V=persistence::json::Value;
-struct Runtime {std::mutex mutex;std::unique_ptr<objects::pilot::Session> session;};
-struct Lifetime {bool alive=true;bool draft=false;unsigned pending=0;};
-struct Work {
-  std::shared_ptr<Runtime> runtime;std::shared_ptr<Lifetime> life;
-  V input;std::string output;
-  WebKitScriptMessageReply *reply;JSCContext *context;
-  ~Work(){webkit_script_message_reply_unref(reply);g_object_unref(context);}
-};
-void private_directory(const std::filesystem::path &p){
-  if(::mkdir(p.c_str(),0700)!=0 && errno!=EEXIST)throw std::runtime_error("Não foi possível criar a pasta dos documentos compostos.");
-  struct stat st{};if(::lstat(p.c_str(),&st)!=0||!S_ISDIR(st.st_mode)||st.st_uid!=::geteuid()||(st.st_mode&077)!=0)throw std::runtime_error("A pasta dos documentos compostos precisa ser privada e não pode ser um link.");
+using V = persistence::json::Value;
+using O = V::Object;
+using A = V::Array;
+std::string text(const V &v, const std::string &key) {
+  return v.at(key).as_string();
 }
-void asset(WebKitURISchemeRequest *request,gpointer){
-  const std::string path=webkit_uri_scheme_request_get_path(request);
-  auto name=path=="/"?std::string("index.html"):path.substr(1);
-  const bool allowed=name=="index.html"||name=="app.js"||name=="native.js"||name=="style.css"||name=="sample.png"||name=="vendor/katex/katex.min.js"||name=="vendor/katex/katex.min.css"||(name.starts_with("vendor/katex/fonts/")&&name.ends_with(".woff2")&&name.find("..") == std::string::npos&&name.find('/',19)==std::string::npos);
-  try{
-    if(!allowed)throw std::runtime_error("Recurso indisponível");
-    auto assets=std::filesystem::path(INDE_OBJECT_UI_DIR);
-    std::error_code error;const auto executable=std::filesystem::read_symlink("/proc/self/exe",error);
-    const auto installed=executable.parent_path()/"../share/inde/objects";
-    if(!error && std::filesystem::is_regular_file(installed/"index.html"))assets=installed;
-    std::ifstream f(assets/name,std::ios::binary);if(!f)throw std::runtime_error("Recurso local ausente");
-    std::string bytes((std::istreambuf_iterator<char>(f)),{});
-    if(name=="index.html"){
-      const auto head=bytes.find("<head>");bytes.insert(head+6,"<meta http-equiv=\"Content-Security-Policy\" content=\"default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' blob:; font-src 'self'; connect-src 'self'; object-src 'none'; frame-src 'none'; base-uri 'none'\">");
-    }
-    const char *mime=name.ends_with(".js")?"text/javascript":name.ends_with(".css")?"text/css":name.ends_with(".woff2")?"font/woff2":name.ends_with(".png")?"image/png":"text/html";
-    auto *stream=g_memory_input_stream_new_from_data(g_memdup2(bytes.data(),bytes.size()),static_cast<gssize>(bytes.size()),g_free);
-    webkit_uri_scheme_request_finish(request,stream,static_cast<gint64>(bytes.size()),mime);g_object_unref(stream);
-  }catch(const std::exception &e){auto *error=g_error_new_literal(G_IO_ERROR,G_IO_ERROR_NOT_FOUND,e.what());webkit_uri_scheme_request_finish_error(request,error);g_error_free(error);}
+double real(const V &v) {
+  if (const auto *d = std::get_if<double>(&v.storage()))
+    return *d;
+  return static_cast<double>(v.as_integer());
 }
+bool has(const V &v, const std::string &key) {
+  return std::holds_alternative<O>(v.storage()) && v.as_object().contains(key);
 }
-struct ObjectDocumentWindow::Impl {
-  Gtk::Box root{Gtk::Orientation::VERTICAL,8};Gtk::Label status;
-  Gtk::Widget *widget{};WebKitWebView *view{};WebKitWebContext *context{};
-  std::filesystem::path project_path;
-  bool closing=false;
-  std::shared_ptr<Runtime> runtime=std::make_shared<Runtime>();
-  std::shared_ptr<Lifetime> life=std::make_shared<Lifetime>();
-  Impl(application::ProjectService &service,ObjectDocumentWindow &window,const std::string &document){
-    const auto *project=service.current();if(!project)throw std::runtime_error("Abra um projeto e selecione um documento na Escrita.");
-    if(document.empty())throw std::runtime_error("Selecione um documento na Escrita antes de abrir Objetos.");
-    project_path=project->path();
-    const auto doc=service.writing().document(document);if(!doc)throw std::runtime_error("O documento selecionado não está disponível.");
-    if(document.find_first_not_of("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-_")!=std::string::npos)throw std::runtime_error("Identidade de documento inválida.");
-    const auto folder=project->path()/"documents"/"composed";private_directory(folder);
-    try{runtime->session=std::make_unique<objects::pilot::Session>(folder/document,project->manifest().project_id,*doc);}
-    catch(const std::exception &e){if(std::string(e.what())=="native_document_source_changed")throw std::runtime_error("O texto de origem mudou na Escrita desde a criação desta composição. A composição existente foi preservada. A reconciliação dessas versões ainda precisa ser implementada.");throw;}
-    window.set_title("INDE · Objetos · "+doc->title);window.set_default_size(1240,820);window.set_size_request(820,560);window.set_child(root);
-    status.set_text("Documento: "+doc->title+" · As operações confirmadas são recuperáveis. Use Salvar documento para confirmar a edição.");status.set_wrap(true);status.set_margin(8);root.append(status);status.set_visible(false);
-    context=webkit_web_context_new();auto *security=webkit_web_context_get_security_manager(context);webkit_security_manager_register_uri_scheme_as_secure(security,"inde");webkit_security_manager_register_uri_scheme_as_cors_enabled(security,"inde");webkit_web_context_register_uri_scheme(context,"inde",asset,nullptr,nullptr);
-    view=WEBKIT_WEB_VIEW(g_object_new(WEBKIT_TYPE_WEB_VIEW,"web-context",context,nullptr));
-    auto *settings=webkit_web_view_get_settings(view);webkit_settings_set_enable_html5_database(settings,FALSE);webkit_settings_set_enable_html5_local_storage(settings,FALSE);
-    auto *manager=webkit_web_view_get_user_content_manager(view);
-    g_signal_connect(manager,"script-message-with-reply-received::inde",G_CALLBACK((+[](WebKitUserContentManager *,JSCValue *value,WebKitScriptMessageReply *reply,gpointer data)->gboolean{
-      auto &self=*static_cast<Impl*>(data);
-      try{
-        if(std::string(webkit_web_view_get_uri(self.view)).rfind("inde://ui/",0)!=0)throw std::runtime_error("Origem recusada");
-        gchar *raw=jsc_value_to_json(value,0);if(!raw)throw std::runtime_error("Pedido inválido");std::string bytes(raw);g_free(raw);if(bytes.size()>12*1024*1024)throw std::runtime_error("Pedido excedido");
-        auto input=persistence::json::parse(bytes);
-        if(input.at("op").as_string()=="native_draft"){
-          self.life->draft=input.at("value").as_boolean();if(!self.life->draft)self.status.set_visible(false);auto *ok=jsc_value_new_boolean(jsc_value_get_context(value),TRUE);webkit_script_message_reply_return_value(reply,ok);g_object_unref(ok);return TRUE;
-        }
-        ++self.life->pending;
-        auto *work=new Work{self.runtime,self.life,std::move(input),{},webkit_script_message_reply_ref(reply),JSC_CONTEXT(g_object_ref(jsc_value_get_context(value)))};
-        auto *task=g_task_new(nullptr,nullptr,+[](GObject *,GAsyncResult *result,gpointer){
-          auto *t=G_TASK(result);auto *w=static_cast<Work*>(g_task_get_task_data(t));--w->life->pending;
-          if(w->life->alive){auto *output=jsc_value_new_from_json(w->context,w->output.c_str());webkit_script_message_reply_return_value(w->reply,output);g_object_unref(output);}
-          else webkit_script_message_reply_return_error_message(w->reply,"Documento fechado");
-        },nullptr);
-        g_task_set_task_data(task,work,+[](gpointer p){delete static_cast<Work*>(p);});
-        g_task_run_in_thread(task,+[](GTask *t,gpointer,gpointer data,GCancellable *){
-          auto &w=*static_cast<Work*>(data);try{std::lock_guard lock(w.runtime->mutex);w.output=objects::pilot::encode_json(w.runtime->session->request(w.input));}catch(const std::exception &e){w.output=objects::pilot::encode_json(V::Object{{"accepted",false},{"error",e.what()}});}g_task_return_boolean(t,TRUE);
-        });g_object_unref(task);return TRUE;
-      }catch(const std::exception &e){webkit_script_message_reply_return_error_message(reply,e.what());return TRUE;}
-    })),this);
-    if(!webkit_user_content_manager_register_script_message_handler_with_reply(manager,"inde",nullptr))throw std::runtime_error("Falha na comunicação do editor");
-    g_signal_connect(view,"decide-policy",G_CALLBACK((+[](WebKitWebView *,WebKitPolicyDecision *decision,WebKitPolicyDecisionType type,gpointer)->gboolean{
-      if(type==WEBKIT_POLICY_DECISION_TYPE_NAVIGATION_ACTION){auto *a=webkit_navigation_policy_decision_get_navigation_action(WEBKIT_NAVIGATION_POLICY_DECISION(decision));const std::string uri=webkit_uri_request_get_uri(webkit_navigation_action_get_request(a));if(uri.rfind("inde://ui/",0)!=0){webkit_policy_decision_ignore(decision);return TRUE;}}return FALSE;
-    })),nullptr);
-    widget=Glib::wrap(GTK_WIDGET(view));widget->set_hexpand(true);widget->set_vexpand(true);root.append(*widget);webkit_web_view_load_uri(view,"inde://ui/");
+const V *find(const V &state, const char *list, const std::string &id) {
+  for (const auto &v : state.at(list).as_array())
+    if (text(v, "id") == id)
+      return &v;
+  return nullptr;
+}
+void clear(Gtk::Box &box) {
+  while (auto *w = box.get_first_child())
+    box.remove(*w);
+}
+Gtk::Label &label(Gtk::Box &box, const std::string &s) {
+  auto *l = Gtk::make_managed<Gtk::Label>(s);
+  l->set_wrap(true);
+  l->set_xalign(0);
+  box.append(*l);
+  return *l;
+}
+Gtk::Button &button(Gtk::Box &box, const std::string &s,
+                    const std::string &name, const std::function<void()> &fn) {
+  auto *b = Gtk::make_managed<Gtk::Button>(s);
+  b->set_name(name);
+  b->signal_clicked().connect(fn);
+  if (auto *l = dynamic_cast<Gtk::Label *>(b->get_child())) {
+    l->set_wrap(true);
+    l->set_max_width_chars(36);
   }
-  ~Impl(){life->alive=false;if(view){g_signal_handlers_disconnect_by_data(webkit_web_view_get_user_content_manager(view),this);root.remove(*widget);}if(context)g_object_unref(context);}
-};
-ObjectDocumentWindow::ObjectDocumentWindow(application::ProjectService &service,Gtk::Window &parent,const std::string &document):impl_(std::make_unique<Impl>(service,*this,document)){set_transient_for(parent);set_application(parent.get_application());set_modal(true);}
-ObjectDocumentWindow::~ObjectDocumentWindow()=default;
-void ObjectDocumentWindow::save_for_project(const std::filesystem::path &project){
-  if(project!=impl_->project_path)return;
-  if(impl_->life->draft||impl_->life->pending||impl_->closing)throw std::runtime_error("Conclua a edição de Objetos antes de salvar o projeto.");
-  std::lock_guard lock(impl_->runtime->mutex);auto &session=*impl_->runtime->session;
-  const auto state=session.request(V::Object{{"op","view"}}).at("state");
-  const auto result=session.request(V::Object{{"op","save"},{"expected",state.at("revision")}});
-  if(!result.at("accepted").as_boolean())throw std::runtime_error("Não foi possível confirmar a composição por objetos: "+result.at("error").as_string());
+  box.append(*b);
+  return *b;
 }
+void limit_choice(Gtk::ComboBoxText &combo) {
+  for (auto *c : combo.get_cells())
+    if (auto *t = dynamic_cast<Gtk::CellRendererText *>(c)) {
+      t->property_ellipsize() = Pango::EllipsizeMode::END;
+      t->property_max_width_chars() = 24;
+      t->property_width_chars() = 10;
+    }
+  combo.signal_changed().connect(
+      [&combo] { combo.set_tooltip_text(combo.get_active_text()); });
+}
+void private_directory(const std::filesystem::path &p) {
+  if (::mkdir(p.c_str(), 0700) != 0 && errno != EEXIST)
+    throw std::runtime_error(
+        "Não foi possível criar a pasta dos documentos compostos.");
+  struct stat st {};
+  if (::lstat(p.c_str(), &st) != 0 || !S_ISDIR(st.st_mode) ||
+      st.st_uid != ::geteuid() || (st.st_mode & 077) != 0)
+    throw std::runtime_error("A pasta dos documentos compostos precisa ser "
+                             "privada e não pode ser um link.");
+}
+// Native GTK layout, with proportional children and height-for-width. Used for
+// both side-by-side objects and table columns; no fixed-width web canvas.
+class FractionRow final : public Gtk::Widget {
+  std::vector<Gtk::Widget *> children_;
+  std::vector<double> weights_;
+  int gap_;
+  sigc::connection disposal_;
+  void release_children() {
+    for (auto *c : children_)
+      c->unparent();
+    children_.clear();
+  }
 
-bool ObjectDocumentWindow::on_close_request(){
-  if(impl_->life->draft||impl_->life->pending){impl_->status.set_text("Aplique ou cancele a edição aberta antes de fechar. Seu trabalho confirmado já está protegido.");impl_->status.set_visible(true);return true;}
-  if(impl_->closing)return true;
-  impl_->closing=true;
-  struct CloseCheck{ObjectDocumentWindow *window;std::shared_ptr<Lifetime> life;};
-  auto *data=new CloseCheck{this,impl_->life};
-  // The synchronous cached notification may still be in transit. Ask the live
-  // editor before closing, so opening a draft and immediately closing is safe.
-  webkit_web_view_evaluate_javascript(impl_->view,"typeof hasDrafts === 'function' && (busy || hasDrafts() || state?.persistence_status === 'uncertain')",-1,nullptr,nullptr,nullptr,+[](GObject *object,GAsyncResult *result,gpointer raw){
-    std::unique_ptr<CloseCheck> d(static_cast<CloseCheck*>(raw));GError *error=nullptr;
-    auto *value=webkit_web_view_evaluate_javascript_finish(WEBKIT_WEB_VIEW(object),result,&error);
-    const bool draft=!value||jsc_value_to_boolean(value);if(value)g_object_unref(value);if(error)g_error_free(error);
-    if(!d->life->alive)return;
-    auto &self=*d->window;self.impl_->closing=false;
-    if(draft||d->life->draft||d->life->pending){self.impl_->status.set_text("Aplique ou cancele a edição aberta antes de fechar. Seu trabalho confirmado já está protegido.");self.impl_->status.set_visible(true);}
-    else self.set_visible(false);
-  },data);
+public:
+  FractionRow(std::vector<Gtk::Widget *> c, std::vector<double> w, int gap)
+      : Glib::ObjectBase("IndeObjectFractionRow"), Gtk::Widget(),
+        children_(std::move(c)), weights_(std::move(w)), gap_(gap) {
+    disposal_ = signal_destroy().connect([this] { release_children(); });
+    for (auto *v : children_)
+      v->set_parent(*this);
+    set_hexpand(true);
+  }
+  ~FractionRow() override {
+    disposal_.disconnect();
+    release_children();
+  }
+
+protected:
+  Gtk::SizeRequestMode get_request_mode_vfunc() const override {
+    return Gtk::SizeRequestMode::HEIGHT_FOR_WIDTH;
+  }
+  void measure_vfunc(Gtk::Orientation o, int size, int &minimum, int &natural,
+                     int &mb, int &nb) const override {
+    minimum = natural = 0;
+    mb = nb = -1;
+    const int n = static_cast<int>(children_.size());
+    for (int i = 0; i < n; ++i) {
+      int a = 0, b = 0, c = 0, d = 0;
+      const int width =
+          size < 0 ? -1
+                   : std::max(1, static_cast<int>(
+                                     (size - gap_ * (n - 1)) *
+                                     weights_[static_cast<std::size_t>(i)]));
+      children_[static_cast<std::size_t>(i)]->measure(
+          o, o == Gtk::Orientation::VERTICAL ? width : -1, a, b, c, d);
+      if (o == Gtk::Orientation::HORIZONTAL) {
+        minimum += a;
+        natural += b;
+      } else {
+        minimum = std::max(minimum, a);
+        natural = std::max(natural, b);
+      }
+    }
+    if (o == Gtk::Orientation::HORIZONTAL) {
+      minimum += gap_ * std::max(n - 1, 0);
+      natural += gap_ * std::max(n - 1, 0);
+    }
+  }
+  void size_allocate_vfunc(int width, int height, int) override {
+    int x = 0;
+    const auto n = children_.size();
+    for (std::size_t i = 0; i < n; ++i) {
+      int w = i + 1 == n
+                  ? width - x
+                  : std::max(1, static_cast<int>(
+                                    (width - gap_ * static_cast<int>(n - 1)) *
+                                    weights_[i]));
+      int minimum = 0, natural = 0, mb = -1, nb = -1;
+      children_[i]->measure(Gtk::Orientation::VERTICAL, w, minimum, natural, mb,
+                            nb);
+      const auto align = children_[i]->get_valign();
+      const int h =
+          align == Gtk::Align::FILL ? height : std::min(height, natural);
+      const int y = align == Gtk::Align::END      ? height - h
+                    : align == Gtk::Align::CENTER ? (height - h) / 2
+                                                  : 0;
+      graphene_point_t p{static_cast<float>(x), static_cast<float>(y)};
+      gtk_widget_allocate(children_[i]->gobj(), w, h, -1,
+                          gsk_transform_translate(nullptr, &p));
+      x += w + gap_;
+    }
+  }
+  void snapshot_vfunc(const Glib::RefPtr<Gtk::Snapshot> &s) override {
+    for (auto *c : children_)
+      gtk_widget_snapshot_child(gobj(), c->gobj(), s->gobj());
+  }
+};
+struct Runtime {
+  std::mutex mutex;
+  std::unique_ptr<objects::pilot::Session> session;
+};
+struct Life {
+  bool alive = true;
+};
+struct Work {
+  std::shared_ptr<Runtime> runtime;
+  std::shared_ptr<Life> life;
+  V input, result;
+  std::string context;
+  std::function<void(const V &)> done;
+};
+const std::map<std::string, std::string> messages = {
+    {"authorial_requires_alignment",
+     "Restaure a apresentação pela ordem de leitura antes de mudar a sequência "
+     "autoral."},
+    {"owner_text_move_refused", "Esse movimento dividiria um grupo textual "
+                                "protegido. Escolha outro destino."},
+    {"formula_symbol_immutable",
+     "A referência dessa variável já está em uso. Conserve sua identificação."},
+    {"formula_cycle",
+     "Há uma dependência circular. Confira as referências da fórmula."},
+    {"formula_reference_missing", "A fórmula referenciada não foi encontrada."},
+    {"formula_variable_missing", "A variável referenciada não foi encontrada."},
+    {"formula_division_zero", "O cálculo tenta dividir por zero."},
+    {"formula_identity", "Use uma identificação única, começando por letra ou "
+                         "sublinhado, sem espaços."},
+    {"formula_cell_already_bound",
+     "A célula já contém uma fórmula. Edite-a ou retire seu uso primeiro."},
+    {"formula_command_must_be_alone",
+     "Uma alteração de uso único deve ficar sozinha, sem frase ou resultado."},
+    {"formula_execution_would_break_dependency",
+     "Essa alteração deixaria outro resultado inválido. Os valores foram "
+     "preservados."},
+    {"formula_cards_invalid", "Confira os campos e as condições preenchidas. "
+                              "São permitidas até 12 condições."},
+    {"invalid_table_design",
+     "Confira as medidas, cores e proporções da tabela."},
+    {"invalid_presentation",
+     "Use largura entre 20 e 100% e confira os alinhamentos escolhidos."},
+    {"invalid_table_dimensions", "Use de 1 a 64 linhas e de 1 a 32 colunas."},
+    {"destination_inside_row", "Esse destino está dentro de um arranjo lado a "
+                               "lado. Desfaça o arranjo antes de mover."},
+    {"persistence_requires_reopen",
+     "Reabra o trabalho para conferir o resultado da gravação antes de "
+     "continuar."},
+    {"alt_text_required", "Descreva a figura ou marque-a como decorativa."}};
+} // namespace
+struct ObjectDocumentWindow::Impl {
+  ObjectDocumentWindow &window;
+  Gtk::Box root{Gtk::Orientation::VERTICAL, 8},
+      toolbar{Gtk::Orientation::HORIZONTAL, 6},
+      sidebar{Gtk::Orientation::VERTICAL, 8},
+      canvas{Gtk::Orientation::VERTICAL, 18},
+      editor{Gtk::Orientation::VERTICAL, 10};
+  Gtk::ScrolledWindow side_scroll, content_scroll, edit_scroll;
+  Gtk::Paned paned{Gtk::Orientation::HORIZONTAL};
+  Gtk::Stack stack;
+  Gtk::Label status;
+  Gtk::ComboBoxText objects, formulas, context;
+  std::shared_ptr<Runtime> runtime = std::make_shared<Runtime>();
+  std::shared_ptr<Life> life = std::make_shared<Life>();
+  V state;
+  std::filesystem::path project_path;
+  bool busy = false, draft = false, rendering = false, choosing_image = false;
+  sigc::connection chooser_response;
+  std::string last_error, selected;
+  Glib::RefPtr<Gtk::CssProvider> css = Gtk::CssProvider::create();
+  std::map<std::string, Glib::RefPtr<Gdk::Texture>> images;
+  std::map<std::string, Gtk::Entry *> fields;
+  std::map<std::string, Gtk::ComboBoxText *> choices;
+  std::map<std::string, Gtk::TextView *> texts;
+  std::map<std::string, Gtk::CheckButton *> checks;
+  struct Rule {
+    Gtk::ComboBoxText *op;
+    Gtk::Entry *value, *result;
+    Gtk::Box *row;
+  };
+  std::vector<Rule> rules;
+  struct Run {
+    Gtk::ComboBoxText *kind, *formula;
+    Gtk::TextView *literal;
+    Gtk::Box *row;
+  };
+  std::vector<Run> runs;
+  Gtk::Box *rule_box = nullptr, *run_box = nullptr;
+  Gtk::Label *preview = nullptr;
+  MathPreview *math_preview = nullptr;
+  V draft_model;
+  std::string editor_id, editor_target, editor_table, editor_cell, editor_kind;
+  std::string image_bytes;
+  Glib::RefPtr<Gtk::FileChooserNative> chooser;
+  Impl(application::ProjectService &service, ObjectDocumentWindow &w,
+       const std::string &document)
+      : window(w) {
+    const auto *project = service.current();
+    if (!project)
+      throw std::runtime_error(
+          "Abra um projeto e selecione um documento na Escrita.");
+    const auto doc = service.writing().document(document);
+    if (!doc)
+      throw std::runtime_error("Selecione um documento na Escrita.");
+    if (document.find_first_not_of("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQ"
+                                   "RSTUVWXYZ0123456789-_") !=
+        std::string::npos)
+      throw std::runtime_error("Identidade de documento inválida.");
+    project_path = project->path();
+    const auto folder = project_path / "documents" / "composed";
+    private_directory(folder);
+    try {
+      runtime->session = std::make_unique<objects::pilot::Session>(
+          folder / document, project->manifest().project_id, *doc);
+    } catch (const std::exception &e) {
+      if (std::string(e.what()) == "native_document_source_changed")
+        throw std::runtime_error(
+            "O texto de origem mudou na Escrita. As duas versões foram "
+            "preservadas; a reconciliação ainda precisa ser implementada.");
+      throw;
+    }
+    state = runtime->session->request(O{{"op", "view"}}).at("state");
+    selected = text(state, "selection");
+    window.set_title("INDE · Objetos · " + doc->title);
+    window.set_default_size(1280, 850);
+    window.set_size_request(900, 600);
+    window.set_child(root);
+    root.set_margin(12);
+    root.append(toolbar);
+    root.append(status);
+    status.set_wrap(true);
+    status.set_xalign(0);
+    status.set_name("native-status");
+    root.append(paned);
+    paned.set_vexpand(true);
+    paned.set_position(300);
+    side_scroll.set_policy(Gtk::PolicyType::NEVER, Gtk::PolicyType::AUTOMATIC);
+    side_scroll.set_child(sidebar);
+    sidebar.set_margin(6);
+    side_scroll.set_size_request(280, -1);
+    paned.set_start_child(side_scroll);
+    paned.set_resize_start_child(false);
+    paned.set_end_child(stack);
+    canvas.set_margin(20);
+    content_scroll.set_child(canvas);
+    content_scroll.set_policy(Gtk::PolicyType::AUTOMATIC,
+                              Gtk::PolicyType::AUTOMATIC);
+    stack.add(content_scroll, "document");
+    editor.set_margin(18);
+    edit_scroll.set_child(editor);
+    stack.add(edit_scroll, "editor");
+    button(toolbar, "Salvar documento", "native-save",
+           [this] { command("save"); });
+    button(toolbar, "Desfazer", "native-undo", [this] { command("undo"); });
+    button(toolbar, "Refazer", "native-redo", [this] { command("redo"); });
+    button(toolbar, "Retomar trabalho", "native-working",
+           [this] { command("reopen_working", {{"discard_unsaved", true}}); });
+    button(toolbar, "Reabrir salvo…", "native-reopen",
+           [this] { confirm_reopen(); });
+    limit_choice(objects);
+    limit_choice(formulas);
+    limit_choice(context);
+    label(sidebar, "Instrumento de edição");
+    context.append("text", "Texto");
+    context.append("structure", "Estrutura");
+    context.append("composition", "Composição");
+    sidebar.append(context);
+    context.signal_changed().connect([this] {
+      if (!rendering)
+        command("set_context", {{"context", context.get_active_id().raw()}});
+    });
+    label(sidebar, "Objeto selecionado");
+    objects.set_name("native-selection");
+    sidebar.append(objects);
+    objects.signal_changed().connect([this] {
+      if (!rendering && !objects.get_active_id().empty()) {
+        selected = objects.get_active_id();
+        command("select", {{"id", selected}});
+      }
+    });
+    button(sidebar, "Inserir equação", "native-new-equation",
+           [this] { equation_editor(); });
+    button(sidebar, "Inserir tabela", "native-new-table",
+           [this] { table_editor(); });
+    button(sidebar, "Inserir figura PNG…", "native-new-image",
+           [this] { pick_image(); });
+    button(sidebar, "Inserir fórmula / cartão", "native-new-formula",
+           [this] { formula_picker(); });
+    label(sidebar, "Biblioteca de fórmulas");
+    formulas.set_name("native-formula-library");
+    sidebar.append(formulas);
+    button(sidebar, "Editar fórmula escolhida", "native-formula-edit", [this] {
+      if (!formulas.get_active_id().empty())
+        formula_editor(formulas.get_active_id());
+    });
+    button(sidebar, "Variáveis e valores atuais", "native-variables",
+           [this] { variables_editor(); });
+    button(sidebar, "Usar fórmula escolhida", "native-formula-attach",
+           [this] { attach_formula(); });
+    button(sidebar, "Mover / colocar lado a lado", "native-layout",
+           [this] { layout_editor(); });
+    button(sidebar, "Aparência da tabela", "native-table-style",
+           [this] { appearance_editor(); });
+    button(sidebar, "Linhas e colunas", "native-table-structure",
+           [this] { axes_editor(); });
+    button(sidebar, "Retirar selecionado", "native-remove",
+           [this] { command("remove", {{"id", selected}}, "structure"); });
+    button(sidebar, "Restaurar itens retirados", "native-restore",
+           [this] { removed_editor(); });
+    button(sidebar, "Restaurar apresentação pela leitura",
+           "native-align-reading",
+           [this] { command("restore", {}, "composition"); });
+    Gtk::StyleContext::add_provider_for_display(
+        window.get_display(), css, GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
+    render();
+  }
+  ~Impl() {
+    life->alive = false;
+    chooser_response.disconnect();
+    if (chooser)
+      chooser->hide();
+    Gtk::StyleContext::remove_provider_for_display(window.get_display(), css);
+  }
+  void error(const std::string &code) {
+    last_error = code;
+    auto at = messages.find(code);
+    status.set_text(at == messages.end()
+                        ? "Não foi possível aplicar. Confira os campos e as "
+                          "referências; o trabalho anterior foi preservado."
+                        : at->second);
+    status.add_css_class("error");
+  }
+  void command(const std::string &op, O args = {},
+               const std::string &required = {},
+               std::function<void(const V &)> after = {}) {
+    if (busy)
+      return;
+    if (draft && op != "preview_formula_hub" && op != "edit_cell" &&
+        op != "edit_formula_text" && op != "create_equation" &&
+        op != "edit_equation" && op != "edit_formula" &&
+        op != "create_table_sized" && op != "create_formula_hub" &&
+        op != "edit_formula_hub" && op != "edit_table_design" &&
+        op != "import" && op != "move" && op != "set_presentation" &&
+        op != "arrange_objects" && op != "stack" && op != "insert_table_axis" &&
+        op != "remove_table_axis" && op != "restore_table_axis" &&
+        op != "restore_removed" && op != "reset_presentation" &&
+        op != "reopen") {
+      status.set_text("Aplique ou cancele a edição aberta antes de continuar.");
+      return;
+    }
+    args.emplace("op", op);
+    args.emplace("expected", state.at("revision"));
+    busy = true;
+    last_error.clear();
+    root.set_sensitive(false);
+    auto *work = new Work{runtime,
+                          life,
+                          V(std::move(args)),
+                          V{},
+                          required,
+                          [this, op, after](const V &result) {
+                            busy = false;
+                            root.set_sensitive(true);
+                            if (has(result, "state"))
+                              state = result.at("state");
+                            if (!result.at("accepted").as_boolean()) {
+                              error(text(result, "error"));
+                              return;
+                            }
+                            if (after)
+                              after(result);
+                            if (op != "preview_formula_hub")
+                              render();
+                          }};
+    auto *task = g_task_new(
+        nullptr, nullptr,
+        +[](GObject *, GAsyncResult *result, gpointer) {
+          auto *work =
+              static_cast<Work *>(g_task_get_task_data(G_TASK(result)));
+          if (work->life->alive)
+            work->done(work->result);
+        },
+        nullptr);
+    g_task_set_task_data(
+        task, work, +[](gpointer p) { delete static_cast<Work *>(p); });
+    g_task_run_in_thread(
+        task, +[](GTask *t, gpointer, gpointer data, GCancellable *) {
+          auto &work = *static_cast<Work *>(data);
+          try {
+            std::lock_guard lock(work.runtime->mutex);
+            if (!work.context.empty()) {
+              const auto view =
+                  work.runtime->session->request(O{{"op", "view"}}).at("state");
+              if (text(view, "context") != work.context) {
+                auto changed = work.runtime->session->request(
+                    O{{"op", "set_context"},
+                      {"expected", view.at("revision")},
+                      {"context", work.context}});
+                if (!changed.at("accepted").as_boolean()) {
+                  work.result = changed;
+                  g_task_return_boolean(t, TRUE);
+                  return;
+                }
+                auto input = work.input.as_object();
+                input["expected"] = changed.at("state").at("revision");
+                work.input = std::move(input);
+              }
+            }
+            work.result = work.runtime->session->request(work.input);
+          } catch (const std::exception &e) {
+            work.result = O{{"accepted", false}, {"error", e.what()}};
+          }
+          g_task_return_boolean(t, TRUE);
+        });
+    g_object_unref(task);
+  }
+  std::string title(const std::string &id) const {
+    for (const auto *kind :
+         {"paragraphs", "figures", "tables", "equations", "formula_uses"})
+      if (const auto *v = find(state, kind, id)) {
+        if (std::string(kind) == "paragraphs")
+          return Glib::ustring(text(*v, "text")).substr(0, 48);
+        if (std::string(kind) == "figures")
+          return "Figura: " + text(*v, "caption");
+        if (std::string(kind) == "tables")
+          return "Tabela: " + text(*v, "title");
+        if (std::string(kind) == "equations")
+          return "Equação: " + text(*v, "label");
+        if (const auto *f = find(state, "formulas", text(*v, "object")))
+          return "Fórmula: " + text(*f, "name");
+      }
+    return id;
+  }
+  void destinations(Gtk::ComboBoxText &c, const std::string &active = "") {
+    c.append("", "Fim do documento");
+    for (const auto &id : state.at("visual_order").as_array())
+      c.append(id.as_string(), title(id.as_string()));
+    c.set_active_id(active);
+  }
+  void render() {
+    if (draft)
+      return;
+    rendering = true;
+    selected = text(state, "selection");
+    context.set_active_id(text(state, "context"));
+    objects.remove_all();
+    for (const auto &id : state.at("visual_order").as_array())
+      objects.append(id.as_string(), title(id.as_string()));
+    objects.set_active_id(selected);
+    const auto old = formulas.get_active_id();
+    formulas.remove_all();
+    for (const auto &f : state.at("formulas").as_array())
+      if (!f.at("consumed").as_boolean())
+        formulas.append(text(f, "id"),
+                        text(f, "name") + " · " + text(f, "display"));
+    if (!formulas.set_active_id(old))
+      formulas.set_active(0);
+    rendering = false;
+    side_scroll.get_hadjustment()->set_value(0);
+    clear(canvas);
+    label(canvas, text(state, "document_title")).add_css_class("title-1");
+    label(canvas, state.at("aligned").as_boolean()
+                      ? "Apresentação acompanha a ordem de leitura."
+                      : "Apresentação independente da ordem de leitura.")
+        .add_css_class("dim-label");
+    std::string styles =
+        ".inde-native-item { padding: 12px; border: 1px solid "
+        "alpha(currentColor, .18); border-radius: 8px; } .inde-native-selected "
+        "{ border-color: #3b806b; } .inde-native-text { font-family: serif; "
+        "font-size: 18px; }";
+    std::set<std::string> paired;
+    for (const auto &id : state.at("visual_order").as_array()) {
+      const auto key = id.as_string();
+      if (paired.contains(key))
+        continue;
+      const V *row = nullptr;
+      for (const auto &r : state.at("rows").as_array())
+        if (r.at("children").as_array()[0].as_string() == key) {
+          row = &r;
+          break;
+        }
+      if (row) {
+        std::vector<Gtk::Widget *> children;
+        for (const auto &c : row->at("children").as_array()) {
+          paired.insert(c.as_string());
+          children.push_back(item(c.as_string(), styles));
+        }
+        auto *view = Gtk::make_managed<FractionRow>(
+            children,
+            std::vector<double>{real(row->at("first")),
+                                real(row->at("second"))},
+            static_cast<int>(real(row->at("gap"))));
+        canvas.append(*view);
+      } else
+        canvas.append(*item(key, styles));
+    }
+    css->load_from_data(styles);
+    status.remove_css_class("error");
+    status.set_text(
+        text(state, "persistence_status") == "uncertain"
+            ? "Gravação incerta: reabra o trabalho antes de editar."
+        : state.at("dirty").as_boolean()
+            ? "Trabalho protegido para recuperação · ainda não salvo"
+            : "Salvo e conferido");
+    stack.set_visible_child("document");
+  }
+  Gtk::Widget *item(const std::string &id, std::string &styles) {
+    auto *box = Gtk::make_managed<Gtk::Box>(Gtk::Orientation::VERTICAL, 8);
+    box->add_css_class("inde-native-item");
+    if (id == selected)
+      box->add_css_class("inde-native-selected");
+    button(*box, find(state, "paragraphs", id) ? "Texto" : title(id),
+           "native-object-" + id,
+           [this, id] {
+             selected = id;
+             command("select", {{"id", id}});
+           })
+        .add_css_class("flat");
+    if (const auto *p = find(state, "paragraphs", id)) {
+      auto &l = label(*box, text(*p, "text"));
+      l.set_selectable(true);
+      l.add_css_class("inde-native-text");
+    } else if (const auto *e = find(state, "equations", id)) {
+      auto *m = Gtk::make_managed<MathPreview>();
+      m->set_name("native-math-" + id);
+      m->set_source(text(*e, "source"), text(*e, "mode") == "inline");
+      box->append(*m);
+      if (!m->error().empty())
+        label(*box, m->error()).add_css_class("error");
+      button(*box, "Editar equação", "native-equation-edit-" + id,
+             [this, id] { equation_editor(id); });
+    } else if (const auto *t = find(state, "tables", id))
+      table_view(*box, *t, styles);
+    else if (const auto *u = find(state, "formula_uses", id))
+      formula_view(*box, text(*u, "object"), id);
+    else if (const auto *f = find(state, "figures", id)) {
+      const auto resource = text(*f, "resource");
+      try {
+        if (!images.contains(resource)) {
+          std::lock_guard lock(runtime->mutex);
+          const auto r = runtime->session->request(
+              O{{"op", "image"}, {"resource", resource}});
+          const auto data = Glib::Base64::decode(text(r, "data"));
+          auto bytes = Glib::Bytes::create(data.data(), data.size());
+          images[resource] = Gdk::Texture::create_from_bytes(bytes);
+        }
+        auto *picture = Gtk::make_managed<Gtk::Picture>(images.at(resource));
+        picture->set_can_shrink(true);
+        picture->set_content_fit(Gtk::ContentFit::CONTAIN);
+        picture->set_size_request(-1, 180);
+        picture->set_alternative_text(text(*f, "alt"));
+        box->append(*picture);
+        label(*box, text(*f, "caption"));
+      } catch (const std::exception &e) {
+        label(*box, e.what());
+      }
+      button(*box, "Duplicar figura", "native-duplicate-" + id, [this, id] {
+        command("duplicate", {{"id", id}, {"before", ""}}, "structure");
+      });
+    }
+    if (state.at("presentation").as_object().contains(id)) {
+      const auto &p = state.at("presentation").at(id);
+      const auto horizontal = text(p, "horizontal");
+      box->set_halign(horizontal == "end"      ? Gtk::Align::END
+                      : horizontal == "center" ? Gtk::Align::CENTER
+                                               : Gtk::Align::START);
+      box->set_halign(Gtk::Align::FILL);
+      const auto vertical = text(p, "vertical");
+      box->set_valign(vertical == "end"      ? Gtk::Align::END
+                      : vertical == "center" ? Gtk::Align::CENTER
+                                             : Gtk::Align::START);
+      const auto ta = text(p, "text_align");
+      for (auto *w = box->get_first_child(); w; w = w->get_next_sibling())
+        if (auto *l = dynamic_cast<Gtk::Label *>(w)) {
+          l->set_xalign(ta == "center" ? .5f : ta == "right" ? 1.f : 0.f);
+          l->set_justify(ta == "center"    ? Gtk::Justification::CENTER
+                         : ta == "right"   ? Gtk::Justification::RIGHT
+                         : ta == "justify" ? Gtk::Justification::FILL
+                                           : Gtk::Justification::LEFT);
+        }
+      const double fraction = real(p.at("width")) / 100.;
+      if (fraction < .999 && horizontal == "center") {
+        auto *left = Gtk::make_managed<Gtk::Box>();
+        auto *right = Gtk::make_managed<Gtk::Box>();
+        return Gtk::make_managed<FractionRow>(
+            std::vector<Gtk::Widget *>{left, box, right},
+            std::vector<double>{(1 - fraction) / 2, fraction,
+                                (1 - fraction) / 2},
+            0);
+      }
+      if (fraction < .999) {
+        auto *space = Gtk::make_managed<Gtk::Box>();
+        auto *slot = Gtk::make_managed<FractionRow>(
+            horizontal == "end" ? std::vector<Gtk::Widget *>{space, box}
+                                : std::vector<Gtk::Widget *>{box, space},
+            horizontal == "end" ? std::vector<double>{1 - fraction, fraction}
+                                : std::vector<double>{fraction, 1 - fraction},
+            0);
+        return slot;
+      }
+    }
+    box->set_hexpand(true);
+    return box;
+  }
+  void formula_view(Gtk::Box &box, const std::string &id,
+                    const std::string &target) {
+    const auto *f = find(state, "formulas", id);
+    if (!f)
+      return;
+    if (f->at("command").as_boolean()) {
+      label(box, "Alteração de uso único · " + text(*f, "name"));
+      button(box, "Aplicar alteração e retirar comando", "native-execute-" + id,
+             [this, id] { command("execute_formula", {{"id", id}}, "text"); });
+    } else {
+      std::string out;
+      if (state.at("formula_text").as_object().contains(target)) {
+        for (const auto &r :
+             state.at("formula_text").at(target).at("runs").as_array())
+          if (text(r, "kind") == "text")
+            out += text(r, "text");
+          else if (const auto *value =
+                       find(state, "formulas", text(r, "formula")))
+            out += value->at("valid").as_boolean() ? text(*value, "display")
+                                                   : "[conferir fórmula]";
+      } else
+        out = text(*f, "display");
+      auto &l = label(box, out);
+      l.set_selectable(true);
+      l.add_css_class("inde-native-text");
+      button(box, "Editar frase ao redor do resultado",
+             "native-phrase-" + target,
+             [this, target] { phrase_editor(target); });
+    }
+    button(box, "Editar fórmula", "native-edit-formula-" + id,
+           [this, id, target] { formula_editor(id, target); });
+    if (!f->at("valid").as_boolean())
+      label(box, "Confira a fonte e as referências da fórmula.")
+          .add_css_class("error");
+  }
+  void table_view(Gtk::Box &box, const V &t, std::string &styles) {
+    const auto id = text(t, "id");
+    const auto &a = t.at("appearance");
+    auto caption = [&] {
+      if (a.at("show_title").as_boolean()) {
+        auto &l = label(box, text(t, "title"));
+        l.set_xalign(text(a, "caption_align") == "right"    ? 1.f
+                     : text(a, "caption_align") == "center" ? .5f
+                                                            : 0.f);
+      }
+    };
+    if (text(a, "caption_side") == "top")
+      caption();
+    const auto &rows = t.at("row_ids").as_array(),
+               &cols = t.at("column_ids").as_array();
+    std::vector<double> weights;
+    for (const auto &w : a.at("column_weights").as_array())
+      weights.push_back(real(w) / 100.);
+    if (weights.empty())
+      weights.assign(cols.size(), 1. / static_cast<double>(cols.size()));
+    std::size_t ri = 0;
+    for (const auto &r : rows) {
+      std::vector<Gtk::Widget *> cells;
+      for (const auto &c : cols) {
+        const V *cell = nullptr;
+        for (const auto &v : t.at("cells").as_array())
+          if (text(v, "row") == r.as_string() &&
+              text(v, "column") == c.as_string()) {
+            cell = &v;
+            break;
+          }
+        if (!cell)
+          continue;
+        const auto cid = text(*cell, "id");
+        auto *b = Gtk::make_managed<Gtk::Button>();
+        b->set_name("native-cell-" + cid);
+        auto *l = Gtk::make_managed<Gtk::Label>();
+        l->set_wrap(true);
+        l->set_selectable(false);
+        l->set_xalign(0);
+        l->set_hexpand(true);
+        std::string value = text(*cell, "text");
+        if (state.at("formula_cells").as_object().contains(cid)) {
+          const auto fid = state.at("formula_cells").at(cid).as_string();
+          if (const auto *f = find(state, "formulas", fid))
+            value = text(*f, "display");
+          if (state.at("formula_text").as_object().contains(cid)) {
+            value.clear();
+            for (const auto &run :
+                 state.at("formula_text").at(cid).at("runs").as_array())
+              if (text(run, "kind") == "text")
+                value += text(run, "text");
+              else if (const auto *f =
+                           find(state, "formulas", text(run, "formula")))
+                value += text(*f, "display");
+          }
+        }
+        l->set_text(value.empty() ? " " : value);
+        b->set_child(*l);
+        b->set_hexpand(true);
+        b->signal_clicked().connect([this, id, cid] {
+          command("select_cell", {{"id", id}, {"cell", cid}}, {},
+                  [this, id, cid](const V &) { cell_editor(id, cid); });
+        });
+        const bool header = ri == 0 && t.at("header").as_boolean();
+        const auto custom = a.at("cells").as_object().find(cid);
+        const V *override = custom == a.at("cells").as_object().end()
+                                ? nullptr
+                                : &custom->second;
+        const auto get = [&](const char *key, const std::string &fallback) {
+          return override && has(*override, key) ? text(*override, key)
+                                                 : fallback;
+        };
+        const auto align = get("align", "left"),
+                   vertical = get("vertical", text(a, "cell_vertical"));
+        l->set_xalign(align == "right" ? 1.f : align == "center" ? .5f : 0.f);
+        l->set_justify(align == "justify" ? Gtk::Justification::FILL
+                                          : Gtk::Justification::LEFT);
+        l->set_valign(vertical == "bottom"   ? Gtk::Align::END
+                      : vertical == "middle" ? Gtk::Align::CENTER
+                                             : Gtk::Align::START);
+        auto *attrs = pango_attr_list_new();
+        pango_attr_list_insert(
+            attrs, pango_attr_line_height_new(real(a.at("line_height"))));
+        gtk_label_set_attributes(l->gobj(), attrs);
+        pango_attr_list_unref(attrs);
+        const auto name = "cell-" + cid;
+        b->add_css_class(name);
+        const auto fill = get("fill",
+                              text(a, header ? "header_fill"
+                                      : a.at("zebra").as_boolean() && ri % 2
+                                          ? "band_fill"
+                                          : "fill_color")),
+                   color = get("color",
+                               text(a, header ? "header_text" : "text_color"));
+        const bool bold = override && has(*override, "bold")
+                              ? override->at("bold").as_boolean()
+                              : header && a.at("header_bold").as_boolean();
+        const bool italic = override && has(*override, "italic") &&
+                            override->at("italic").as_boolean();
+        const auto border = text(a, "border_kind");
+        styles +=
+            "." + name + " { background: " + fill + "; color: " + color +
+            "; font-family: " +
+            (text(a, "font") == "serif"  ? "serif"
+             : text(a, "font") == "mono" ? "monospace"
+                                         : "sans-serif") +
+            "; font-size: " + std::to_string(real(a.at("font_size"))) +
+            "px; font-weight: " + (bold ? "bold" : "normal") +
+            "; font-style: " + (italic ? "italic" : "normal") +
+            "; padding: " + std::to_string(real(a.at("padding_y"))) + "px " +
+            std::to_string(real(a.at("padding_x"))) +
+            "px; border-radius: 0; border: " +
+            std::to_string(border == "none" ? 0 : real(a.at("border_width"))) +
+            "px " + text(a, "border_style") + " " + text(a, "border_color") +
+            "; " +
+            (border == "horizontal"
+                 ? "border-left-width: 0; border-right-width: 0;"
+                 : "") +
+            " }";
+        if (border == "outer") {
+          styles +=
+              "." + name + " { border-top-width: " +
+              std::to_string(ri == 0 ? real(a.at("border_width")) : 0) +
+              "px; border-bottom-width: " +
+              std::to_string(ri + 1 == rows.size() ? real(a.at("border_width"))
+                                                   : 0) +
+              "px; border-left-width: " +
+              std::to_string(c.as_string() == cols.front().as_string()
+                                 ? real(a.at("border_width"))
+                                 : 0) +
+              "px; border-right-width: " +
+              std::to_string(c.as_string() == cols.back().as_string()
+                                 ? real(a.at("border_width"))
+                                 : 0) +
+              "px; }";
+        }
+        auto height = real(a.at("min_row_height"));
+        if (a.at("row_heights").as_object().contains(r.as_string()))
+          height = real(a.at("row_heights").at(r.as_string()));
+        b->set_size_request(35, static_cast<int>(height));
+        cells.push_back(b);
+      }
+      box.append(*Gtk::make_managed<FractionRow>(cells, weights, 0));
+      ++ri;
+    }
+    if (text(a, "caption_side") == "bottom")
+      caption();
+    button(box, "Aparência da tabela", "native-style-" + id, [this, id] {
+      selected = id;
+      appearance_editor();
+    });
+  }
+  void begin_editor(const std::string &heading) {
+    if (busy || draft)
+      return;
+    draft = true;
+    status.set_text("Edição aberta · Aplique para registrar os campos ou "
+                    "cancele para conservar a versão anterior.");
+    fields.clear();
+    choices.clear();
+    texts.clear();
+    checks.clear();
+    rules.clear();
+    runs.clear();
+    clear(editor);
+    label(editor, heading).add_css_class("title-2");
+    stack.set_visible_child("editor");
+    sidebar.set_sensitive(false);
+    toolbar.set_sensitive(false);
+    preview = nullptr;
+    math_preview = nullptr;
+  }
+  Gtk::Entry &entry(const std::string &name, const std::string &caption,
+                    const std::string &value = "") {
+    auto &caption_label = label(editor, caption);
+    auto *v = Gtk::make_managed<Gtk::Entry>();
+    caption_label.set_mnemonic_widget(*v);
+    v->set_text(value);
+    v->set_name("native-field-" + name);
+    editor.append(*v);
+    fields[name] = v;
+    return *v;
+  }
+  Gtk::ComboBoxText &
+  choice(const std::string &name, const std::string &caption,
+         const std::vector<std::pair<std::string, std::string>> &options,
+         const std::string &value = "") {
+    auto &caption_label = label(editor, caption);
+    auto *v = Gtk::make_managed<Gtk::ComboBoxText>();
+    limit_choice(*v);
+    caption_label.set_mnemonic_widget(*v);
+    for (const auto &[id, t] : options)
+      v->append(id, t);
+    v->set_active_id(value);
+    if (v->get_active_row_number() < 0)
+      v->set_active(0);
+    v->set_name("native-field-" + name);
+    editor.append(*v);
+    choices[name] = v;
+    return *v;
+  }
+  Gtk::CheckButton &check(const std::string &name, const std::string &caption,
+                          bool value) {
+    auto *v = Gtk::make_managed<Gtk::CheckButton>(caption);
+    v->set_active(value);
+    v->set_name("native-field-" + name);
+    editor.append(*v);
+    checks[name] = v;
+    return *v;
+  }
+  Gtk::TextView &source(const std::string &name, const std::string &caption,
+                        const std::string &value) {
+    auto &caption_label = label(editor, caption);
+    auto *v = Gtk::make_managed<Gtk::TextView>();
+    caption_label.set_mnemonic_widget(*v);
+    v->set_name("native-field-" + name);
+    v->set_wrap_mode(Gtk::WrapMode::WORD_CHAR);
+    v->get_buffer()->set_text(value);
+    auto *scroll = Gtk::make_managed<Gtk::ScrolledWindow>();
+    scroll->set_min_content_height(120);
+    scroll->set_child(*v);
+    editor.append(*scroll);
+    texts[name] = v;
+    return *v;
+  }
+  std::string field(const std::string &name) const {
+    return fields.at(name)->get_text();
+  }
+  std::string chosen(const std::string &name) const {
+    return choices.at(name)->get_active_id();
+  }
+  std::string source_text(const std::string &name) const {
+    return texts.at(name)->get_buffer()->get_text();
+  }
+  static std::string numeric_text(double value) {
+    return objects::pilot::encode_json(V(value));
+  }
+  static double parse_number(std::string s) {
+    if (s.find('.') == s.npos)
+      std::replace(s.begin(), s.end(), ',', '.');
+    double value = 0;
+    auto result = std::from_chars(s.data(), s.data() + s.size(), value);
+    if (s.empty() || result.ec != std::errc{} ||
+        result.ptr != s.data() + s.size() || !std::isfinite(value))
+      throw std::runtime_error("invalid_table_design");
+    return value;
+  }
+  double number(const std::string &name) const {
+    return parse_number(field(name));
+  }
+  void guard(const std::function<void()> &fn) {
+    try {
+      fn();
+    } catch (const std::exception &e) {
+      error(e.what());
+    }
+  }
+  void cancel() {
+    if (busy)
+      return;
+    draft = false;
+    last_error.clear();
+    sidebar.set_sensitive(true);
+    toolbar.set_sensitive(true);
+    render();
+  }
+  void finish() {
+    draft = false;
+    sidebar.set_sensitive(true);
+    toolbar.set_sensitive(true);
+  }
+  void footer(const std::function<void()> &apply) {
+    auto *row = Gtk::make_managed<Gtk::Box>(Gtk::Orientation::HORIZONTAL, 8);
+    editor.append(*row);
+    button(*row, "Aplicar", "native-apply", [this, apply] {
+      guard(apply);
+    }).add_css_class("suggested-action");
+    button(*row, "Cancelar", "native-cancel", [this] { cancel(); });
+  }
+  void confirm_reopen() {
+    begin_editor("Reabrir a versão salva?");
+    label(editor, "O trabalho aplicado depois do último salvamento será "
+                  "substituído pela versão salva. Cancele para conservá-lo.");
+    footer([this] {
+      command("reopen", {{"discard_unsaved", true}}, {},
+              [this](const V &) { finish(); });
+    });
+  }
+  void equation_editor(const std::string &id = "") {
+    begin_editor(id.empty() ? "Inserir equação" : "Editar equação");
+    const auto *e = find(state, "equations", id);
+    entry("label", "Nome da equação", e ? text(*e, "label") : "Equação");
+    choice("mode", "Apresentação",
+           {{"block", "Em destaque"}, {"inline", "Compacta"}},
+           e ? text(*e, "mode") : "block");
+    auto &templates = choice("template", "Modelos",
+                             {{"none", "Escolha um modelo"},
+                              {"fraction", "Fração"},
+                              {"root", "Raiz"},
+                              {"sum", "Somatório"},
+                              {"integral", "Integral"},
+                              {"matrix", "Matriz"},
+                              {"system", "Sistema"}},
+                             "none");
+    auto &s = source("source", "Fonte LaTeX",
+                     e ? text(*e, "source")
+                       : R"(x = \frac{-b\pm\sqrt{b^2-4ac}}{2a})");
+    math_preview = Gtk::make_managed<MathPreview>();
+    editor.append(*math_preview);
+    preview = &label(editor, "");
+    auto update = [this] {
+      math_preview->set_source(source_text("source"),
+                               chosen("mode") == "inline");
+      preview->set_text(math_preview->error());
+    };
+    s.get_buffer()->signal_changed().connect(update);
+    choices["mode"]->signal_changed().connect(update);
+    templates.signal_changed().connect([this] {
+      static const std::map<std::string, std::string> values = {
+          {"fraction", R"(\frac{a+b}{c})"},
+          {"root", R"(\sqrt{x^2+y^2})"},
+          {"sum", R"(\sum_{i=1}^{n} i = \frac{n(n+1)}{2})"},
+          {"integral", R"(\int_0^1 x^2\,dx = \frac{1}{3})"},
+          {"matrix", R"(\begin{pmatrix} a & b \\ c & d \end{pmatrix})"},
+          {"system", R"(\begin{aligned} x+y &= 3 \\ x-y &= 1 \end{aligned})"}};
+      if (values.contains(chosen("template")))
+        texts["source"]->get_buffer()->set_text(values.at(chosen("template")));
+    });
+    update();
+    if (id.empty()) {
+      auto &before = choice("before", "Inserir antes de", {}, "");
+      destinations(before);
+    }
+    footer([this, id] {
+      O args{{"source", source_text("source")},
+             {"mode", chosen("mode")},
+             {"label", field("label")}};
+      if (id.empty())
+        args.emplace("before", chosen("before"));
+      else
+        args.emplace("id", id);
+      command(id.empty() ? "create_equation" : "edit_equation", args,
+              id.empty() ? "structure" : "text",
+              [this](const V &) { finish(); });
+    });
+  }
+  void table_editor() {
+    begin_editor("Inserir tabela");
+    entry("title", "Título", "Tabela");
+    entry("rows", "Linhas (1–64)", "2");
+    entry("columns", "Colunas (1–32)", "3");
+    check("header", "Primeira linha é cabeçalho", true);
+    auto &b = choice("before", "Inserir antes de", {}, "");
+    destinations(b);
+    footer([this] {
+      const auto r = number("rows"), c = number("columns");
+      if (r != std::floor(r) || c != std::floor(c) || r < 1 || r > 64 ||
+          c < 1 || c > 32)
+        throw std::runtime_error("invalid_table_dimensions");
+      command("create_table_sized",
+              {{"title", field("title")},
+               {"rows", static_cast<std::int64_t>(r)},
+               {"columns", static_cast<std::int64_t>(c)},
+               {"header", checks.at("header")->get_active()},
+               {"before", chosen("before")}},
+              "structure", [this](const V &) { finish(); });
+    });
+  }
+  void pick_image() {
+    if (busy || draft)
+      return;
+    chooser_response.disconnect();
+    choosing_image = true;
+    chooser = Gtk::FileChooserNative::create("Inserir figura PNG", window,
+                                             Gtk::FileChooser::Action::OPEN,
+                                             "Escolher", "Cancelar");
+    auto filter = Gtk::FileFilter::create();
+    filter->set_name("PNG estático");
+    filter->add_mime_type("image/png");
+    chooser->add_filter(filter);
+    chooser->set_modal(true);
+    chooser_response = chooser->signal_response().connect([this](int response) {
+      choosing_image = false;
+      chooser->hide();
+      if (response != static_cast<int>(Gtk::ResponseType::ACCEPT))
+        return;
+      guard([this] {
+        auto file = chooser->get_file();
+        if (!file)
+          return;
+        const auto path = file->get_path();
+        const auto size = std::filesystem::file_size(path);
+        if (size > 8 * 1024 * 1024)
+          throw std::runtime_error("png_byte_limit");
+        std::ifstream in(path, std::ios::binary);
+        image_bytes.assign(std::istreambuf_iterator<char>(in), {});
+        begin_editor("Inserir figura");
+        entry("caption", "Legenda",
+              std::filesystem::path(path).filename().string());
+        entry("alt", "Descrição para leitura alternativa");
+        check("decorative", "Figura decorativa", false);
+        auto &b = choice("before", "Inserir antes de", {}, "");
+        destinations(b);
+        footer([this] {
+          command("import",
+                  {{"data", Glib::Base64::encode(image_bytes)},
+                   {"caption", field("caption")},
+                   {"alt", field("alt")},
+                   {"decorative", checks.at("decorative")->get_active()},
+                   {"before", chosen("before")}},
+                  "structure", [this](const V &) {
+                    finish();
+                    image_bytes.clear();
+                  });
+        });
+      });
+    });
+    chooser->show();
+  }
+  void cell_editor(const std::string &table, const std::string &cell) {
+    editor_table = table;
+    editor_cell = cell;
+    const auto *t = find(state, "tables", table);
+    if (!t)
+      return;
+    const V *c = nullptr;
+    for (const auto &v : t->at("cells").as_array())
+      if (text(v, "id") == cell)
+        c = &v;
+    if (!c)
+      return;
+    begin_editor("Editar célula · " + text(*t, "title"));
+    if (state.at("formula_cells").as_object().contains(cell)) {
+      const auto fid = state.at("formula_cells").at(cell).as_string();
+      formula_view(editor, fid, cell);
+      button(editor, "Retirar uso da fórmula", "native-detach",
+             [this, table, cell] {
+               finish();
+               command("detach_formula", {{"table", table}, {"cell", cell}},
+                       "structure");
+             });
+      button(editor, "Voltar", "native-cancel", [this] { cancel(); });
+    } else {
+      source("cell", "Texto da célula", text(*c, "text"));
+      button(editor, "Inserir fórmula nesta célula", "native-cell-formula",
+             [this] {
+               const auto table = editor_table, cell = editor_cell;
+               command("edit_cell",
+                       {{"id", table},
+                        {"cell", cell},
+                        {"text", source_text("cell")}},
+                       "text", [this, table, cell](const V &) {
+                         finish();
+                         formula_picker(table, cell);
+                       });
+             });
+      auto &existing =
+          choice("existing-formula", "Ou usar fórmula existente", {}, "");
+      for (const auto &f : state.at("formulas").as_array())
+        if (!f.at("command").as_boolean() && !f.at("consumed").as_boolean())
+          existing.append(text(f, "id"), text(f, "name"));
+      existing.set_active(0);
+      button(editor, "Usar fórmula escolhida nesta célula",
+             "native-cell-attach", [this, table, cell] {
+               const auto id = chosen("existing-formula");
+               if (id.empty())
+                 return;
+               command("edit_cell",
+                       {{"id", table},
+                        {"cell", cell},
+                        {"text", source_text("cell")}},
+                       "text", [this, table, cell, id](const V &) {
+                         finish();
+                         command("attach_formula",
+                                 {{"id", id},
+                                  {"before", ""},
+                                  {"table", table},
+                                  {"cell", cell}},
+                                 "structure");
+                       });
+             });
+      footer([this, table, cell] {
+        command("edit_cell",
+                {{"id", table}, {"cell", cell}, {"text", source_text("cell")}},
+                "text", [this](const V &) { finish(); });
+      });
+    }
+  }
+  void formula_picker(const std::string &table = "",
+                      const std::string &cell = "") {
+    begin_editor("Escolher um cartão de fórmula");
+    editor_table = table;
+    editor_cell = cell;
+    label(editor, "Preencha os cartões ou use a escrita livre. Referências "
+                  "podem vir de outras fórmulas, inclusive de células.");
+    for (const auto &[kind, caption] :
+         std::vector<std::pair<std::string, std::string>>{
+             {"condition", "Texto por condição"},
+             {"value", "Guardar um valor"},
+             {"calculate", "Calcular dois valores"},
+             {"change", "Alterar valor à distância"},
+             {"free", "Escrita livre"}})
+      button(editor, caption, "native-kind-" + kind, [this, kind, table, cell] {
+        cancel();
+        formula_editor("", "", table, cell, kind);
+      });
+    button(editor, "Cancelar", "native-cancel", [this] { cancel(); });
+  }
+  std::vector<std::pair<std::string, std::string>>
+  references(bool variables_only = false) {
+    std::vector<std::pair<std::string, std::string>> out;
+    for (const auto &f : state.at("formulas").as_array()) {
+      if (f.at("command").as_boolean() || f.at("consumed").as_boolean() ||
+          text(f, "id") == editor_id)
+        continue;
+      const auto name = text(f, "name");
+      if (!variables_only)
+        out.emplace_back(name + ".resultado", name + " · resultado");
+      for (const auto &v : f.at("variables").as_array())
+        out.emplace_back(name + "." + text(v, "name"),
+                         name + " · " + text(v, "name") + " = " +
+                             text(v, "current_display"));
+    }
+    return out;
+  }
+  void operand(const std::string &key, const std::string &caption,
+               const V &value) {
+    auto options = references();
+    options.insert(options.begin(), {"literal", "Valor preenchido"});
+    choice(key + "-reference", caption, options,
+           text(value, "kind") == "reference"
+               ? text(value, "formula") + "." + text(value, "variable")
+               : "literal");
+    entry(key + "-value", "Valor",
+          text(value, "kind") == "literal" ? text(value, "value") : "");
+  }
+  V operand_value(const std::string &key) {
+    const auto ref = chosen(key + "-reference");
+    if (ref == "literal")
+      return O{
+          {"kind", "literal"},
+          {"value", (editor_kind == "calculate" ||
+                     (choices.contains("type") && chosen("type") == "number"))
+                        ? numeric_text(parse_number(field(key + "-value")))
+                        : field(key + "-value")}};
+    const auto dot = ref.find('.');
+    return O{{"kind", "reference"},
+             {"formula", ref.substr(0, dot)},
+             {"variable", ref.substr(dot + 1)}};
+  }
+  void add_rule(const V &v) {
+    if (std::count_if(rules.begin(), rules.end(),
+                      [](const auto &r) { return r.op != nullptr; }) >= 12) {
+      status.set_text("São permitidas até 12 condições.");
+      return;
+    }
+    auto *row = Gtk::make_managed<Gtk::Box>(Gtk::Orientation::HORIZONTAL, 6);
+    auto *op = Gtk::make_managed<Gtk::ComboBoxText>();
+    for (const auto &[k, t] : std::vector<std::pair<std::string, std::string>>{
+             {"eq", "for igual a"},
+             {"ne", "for diferente de"},
+             {"lt", "for menor que"},
+             {"le", "for menor ou igual a"},
+             {"gt", "for maior que"},
+             {"ge", "for maior ou igual a"}})
+      op->append(k, t);
+    op->set_active_id(text(v, "op"));
+    auto *value = Gtk::make_managed<Gtk::Entry>(),
+         *result = Gtk::make_managed<Gtk::Entry>();
+    value->set_text(text(v, "value"));
+    value->set_placeholder_text("Comparar com…");
+    result->set_text(text(v, "text"));
+    result->set_placeholder_text("Mostrar este texto…");
+    value->set_hexpand(true);
+    result->set_hexpand(true);
+    row->append(*op);
+    row->append(*value);
+    row->append(*result);
+    rule_box->append(*row);
+    rules.push_back({op, value, result, row});
+    const auto index = rules.size() - 1;
+    op->set_name("native-rule-op-" + std::to_string(index));
+    value->set_name("native-rule-value-" + std::to_string(index));
+    result->set_name("native-rule-result-" + std::to_string(index));
+    button(*row, "Subir", "native-rule-up-" + std::to_string(index),
+           [this, row] { shift_rule(row, -1); });
+    button(*row, "Descer", "native-rule-down-" + std::to_string(index),
+           [this, row] { shift_rule(row, 1); });
+    button(*row, "Retirar", "native-rule-remove-" + std::to_string(index),
+           [this, row] {
+             for (auto &r : rules)
+               if (r.row == row) {
+                 r.op = nullptr;
+                 row->set_visible(false);
+               }
+           });
+    update_comparisons();
+  }
+  void shift_rule(Gtk::Box *row, int delta) {
+    auto at = std::find_if(rules.begin(), rules.end(),
+                           [&](const auto &r) { return r.row == row; });
+    if (at == rules.end())
+      return;
+    const auto i = std::distance(rules.begin(), at);
+    auto j = i + delta;
+    while (j >= 0 && j < static_cast<long>(rules.size()) &&
+           !rules[static_cast<std::size_t>(j)].op)
+      j += delta;
+    if (j < 0 || j >= static_cast<long>(rules.size()))
+      return;
+    std::swap(rules[static_cast<std::size_t>(i)],
+              rules[static_cast<std::size_t>(j)]);
+    Gtk::Widget *previous = nullptr;
+    for (const auto &r : rules) {
+      if (previous)
+        rule_box->reorder_child_after(*r.row, *previous);
+      else
+        rule_box->reorder_child_at_start(*r.row);
+      previous = r.row;
+    }
+  }
+  void update_comparisons() {
+    if (!choices.contains("type"))
+      return;
+    const bool numeric = chosen("type") == "number";
+    for (auto &r : rules)
+      if (r.op) {
+        const auto current = r.op->get_active_id();
+        r.op->remove_all();
+        r.op->append("eq", "for igual a");
+        r.op->append("ne", "for diferente de");
+        if (numeric) {
+          r.op->append("lt", "for menor que");
+          r.op->append("le", "for menor ou igual a");
+          r.op->append("gt", "for maior que");
+          r.op->append("ge", "for maior ou igual a");
+        }
+        if (!r.op->set_active_id(current))
+          r.op->set_active_id("eq");
+      }
+  }
+  V collect_model() {
+    auto m = draft_model.as_object();
+    const auto kind = text(draft_model, "kind");
+    if (kind == "condition") {
+      auto c = m.at("cards").as_object();
+      c["title"] = field("title");
+      c["label"] = field("label");
+      c["variable"] = field("variable");
+      c["type"] = chosen("type");
+      c["entry"] = operand_value("entry");
+      A list;
+      for (const auto &r : rules)
+        if (r.op)
+          list.emplace_back(O{{"op", r.op->get_active_id().raw()},
+                              {"value", chosen("type") == "number"
+                                            ? numeric_text(parse_number(
+                                                  r.value->get_text().raw()))
+                                            : r.value->get_text().raw()},
+                              {"text", r.result->get_text().raw()}});
+      c["rules"] = std::move(list);
+      c["otherwise"] = field("otherwise");
+      m["cards"] = std::move(c);
+    } else {
+      m["title"] = field("title");
+      if (kind == "value") {
+        m["label"] = field("label");
+        m["variable"] = field("variable");
+        m["type"] = chosen("type");
+        m["entry"] = operand_value("entry");
+      } else if (kind == "calculate") {
+        m["left"] = operand_value("left");
+        m["right"] = operand_value("right");
+        m["operation"] = chosen("operation");
+      } else if (kind == "change") {
+        m["type"] = chosen("type");
+        const auto ref = chosen("target");
+        const auto dot = ref.find('.');
+        if (dot == std::string::npos)
+          throw std::runtime_error("formula_variable_missing");
+        m["target"] = O{{"formula", ref.substr(0, dot)},
+                        {"variable", ref.substr(dot + 1)}};
+        m["operation"] = chosen("operation");
+        m["operand"] = operand_value("operand");
+      } else
+        m["source"] = source_text("source");
+    }
+    return m;
+  }
+  void formula_editor(const std::string &id = "",
+                      const std::string &target = "",
+                      const std::string &table = "",
+                      const std::string &cell = "",
+                      const std::string &kind = "free") {
+    if (draft)
+      cancel();
+    begin_editor(id.empty() ? "Nova fórmula" : "Editar fórmula");
+    editor_id = id;
+    editor_target = target;
+    editor_table = table;
+    editor_cell = cell;
+    const auto *f = find(state, "formulas", id);
+    const V literal = O{{"kind", "literal"}, {"value", "100"}};
+    if (f)
+      draft_model = f->at("hub");
+    else if (kind == "condition")
+      draft_model =
+          O{{"kind", kind},
+            {"cards",
+             O{{"version", 2},
+               {"title", "Texto por condição"},
+               {"variable", "Entrada"},
+               {"label", "a entrada"},
+               {"type", "number"},
+               {"entry", literal},
+               {"rules",
+                A{V(O{{"op", "gt"}, {"value", "15"}, {"text", "preço caro"}})}},
+               {"otherwise", "que pechincha"}}}};
+    else if (kind == "value")
+      draft_model = O{{"kind", kind},     {"title", "Vida do personagem"},
+                      {"type", "number"}, {"variable", "HP"},
+                      {"label", "Vida"},  {"entry", literal}};
+    else if (kind == "calculate")
+      draft_model = O{{"kind", kind},
+                      {"title", "Cálculo"},
+                      {"left", literal},
+                      {"right", literal},
+                      {"operation", "add"}};
+    else if (kind == "change")
+      draft_model = O{{"kind", kind},
+                      {"title", "Alterar um valor"},
+                      {"type", "number"},
+                      {"target", O{{"formula", ""}, {"variable", ""}}},
+                      {"operation", "set"},
+                      {"operand", O{{"kind", "literal"}, {"value", "80"}}}};
+    else
+      draft_model = O{{"kind", "free"},
+                      {"source", "resultado 0"},
+                      {"title", "Fórmula escrita"}};
+    if (text(draft_model, "kind") == "condition" &&
+        draft_model.at("cards").at("version").as_integer() == 1) {
+      auto c = draft_model.at("cards").as_object();
+      c["version"] = 2;
+      c["title"] = f ? text(*f, "name") : "Texto por condição";
+      c["variable"] = "Entrada";
+      draft_model = O{{"kind", "condition"}, {"cards", std::move(c)}};
+    }
+    const auto k = text(draft_model, "kind");
+    editor_kind = k;
+    std::string unique = "Formula";
+    for (std::size_t n = 1;; ++n) {
+      unique = "Formula" + std::to_string(n);
+      bool exists = false;
+      for (const auto &v : state.at("formulas").as_array())
+        exists = exists || text(v, "name") == unique;
+      if (!exists)
+        break;
+    }
+    entry("name", "Nome curto para usar em outras fórmulas",
+          f ? text(*f, "name") : unique)
+        .set_editable(!f);
+    const auto &m = k == "condition" ? draft_model.at("cards") : draft_model;
+    entry("title", "Nome do cartão",
+          has(m, "title") ? text(m, "title")
+          : f             ? text(*f, "name")
+                          : "Fórmula");
+    if (k == "condition" || k == "value") {
+      entry("label", "Esta informação representa…", text(m, "label"));
+      entry("variable", "Nome da informação",
+            has(m, "variable") ? text(m, "variable") : "Entrada");
+      choice("type", "Tipo da entrada",
+             {{"number", "Número"}, {"text", "Texto comparativo"}},
+             text(m, "type"));
+      operand("entry", "Entrada inicial", m.at("entry"));
+    }
+    if (k == "condition") {
+      label(editor, "Quando a entrada…");
+      rule_box = Gtk::make_managed<Gtk::Box>(Gtk::Orientation::VERTICAL, 6);
+      editor.append(*rule_box);
+      for (const auto &r : m.at("rules").as_array())
+        add_rule(r);
+      button(editor, "Adicionar condição", "native-add-condition", [this] {
+        add_rule(O{{"op", "eq"}, {"value", ""}, {"text", ""}});
+      });
+      choices.at("type")->signal_changed().connect(
+          [this] { update_comparisons(); });
+      entry("otherwise", "Quando nenhuma condição corresponder, mostrar…",
+            text(m, "otherwise"));
+    }
+    if (k == "calculate") {
+      operand("left", "Primeiro valor", m.at("left"));
+      choice("operation", "Operação",
+             {{"add", "Somar"},
+              {"subtract", "Subtrair"},
+              {"multiply", "Multiplicar"},
+              {"divide", "Dividir"}},
+             text(m, "operation"));
+      operand("right", "Segundo valor", m.at("right"));
+    }
+    if (k == "change") {
+      choice("type", "Tipo do valor", {{"number", "Número"}, {"text", "Texto"}},
+             text(m, "type"));
+      const auto &t = m.at("target");
+      choice("target", "Variável que será alterada", references(true),
+             text(t, "formula") + "." + text(t, "variable"));
+      choice("operation", "Como alterar",
+             {{"set", "Definir como"},
+              {"add", "Acrescentar"},
+              {"subtract", "Diminuir"}},
+             text(m, "operation"));
+      operand("operand", "Novo valor ou quantidade", m.at("operand"));
+      label(editor, "Ao aplicar a alteração, o valor ficará registrado na "
+                    "fonte da variável e este comando sairá do documento. "
+                    "Desfazer permite recuperá-lo.");
+    }
+    if (k == "free")
+      source("source", "Fonte da fórmula", text(m, "source"));
+    std::string prefix, suffix;
+    bool simple = true;
+    if (!target.empty() &&
+        state.at("formula_text").as_object().contains(target)) {
+      bool seen = false;
+      int count = 0;
+      for (const auto &run :
+           state.at("formula_text").at(target).at("runs").as_array())
+        if (text(run, "kind") == "result") {
+          seen = true;
+          if (text(run, "formula") != id || ++count != 1)
+            simple = false;
+        } else if (seen)
+          suffix += text(run, "text");
+        else
+          prefix += text(run, "text");
+    }
+    if (!simple) {
+      editor_target.clear();
+      label(editor, "A frase reúne vários resultados e será preservada. Use "
+                    "Editar frase para alterá-la.");
+    }
+    if (k != "change") {
+      entry("prefix", "Texto antes do resultado", prefix);
+      entry("suffix", "Texto depois do resultado", suffix);
+    }
+    if (id.empty() && cell.empty()) {
+      auto &before = choice("before", "Inserir antes de", {}, "");
+      destinations(before);
+    }
+    preview = &label(editor, "");
+    button(editor, "Conferir resultado / alterações", "native-preview", [this] {
+      guard([this] {
+        command("preview_formula_hub",
+                {{"id", editor_id},
+                 {"name", field("name")},
+                 {"model", collect_model()}},
+                {}, [this](const V &r) {
+                  const auto &p = r.at("preview");
+                  std::string s = p.at("valid").as_boolean()
+                                      ? text(p, "display")
+                                      : "Confira a fonte e as referências.";
+                  for (const auto &c : p.at("changes").as_array())
+                    s += text(c, "formula") + "." + text(c, "variable") + ": " +
+                         text(c, "before") + " → " + text(c, "after") + "\n";
+                  preview->set_text(s);
+                });
+      });
+    });
+    if (f) {
+      for (const auto &v : f->at("variables").as_array()) {
+        label(editor, text(v, "name") + " · inicial " +
+                          text(v, "initial_display") + " · atual " +
+                          text(v, "current_display"));
+      }
+      if (k != "free")
+        button(editor, "Editar em escrita livre", "native-advanced",
+               [this, id] {
+                 guard([this, id] {
+                   const auto original =
+                       objects::formula::hub::compile(collect_model());
+                   const auto target = editor_target;
+                   const auto prefix =
+                       fields.contains("prefix") ? field("prefix") : "";
+                   const auto suffix =
+                       fields.contains("suffix") ? field("suffix") : "";
+                   finish();
+                   begin_editor("Escrita livre · fonte integral");
+                   source("source", "Fonte da fórmula", original);
+                   entry("prefix", "Texto antes do resultado", prefix);
+                   entry("suffix", "Texto depois do resultado", suffix);
+                   footer([this, id, target] {
+                     command("edit_formula_hub",
+                             {{"id", id},
+                              {"model", O{{"kind", "free"},
+                                          {"source", source_text("source")}}},
+                              {"target", target},
+                              {"prefix", field("prefix")},
+                              {"suffix", field("suffix")}},
+                             "text", [this](const V &) { finish(); });
+                   });
+                 });
+               });
+    }
+    footer([this, id] {
+      const bool change = text(draft_model, "kind") == "change";
+      O args{{"model", collect_model()},
+             {"prefix", change ? "" : field("prefix")},
+             {"suffix", change ? "" : field("suffix")}};
+      if (id.empty()) {
+        args.emplace("name", field("name"));
+        args.emplace("before", editor_cell.empty() ? chosen("before") : "");
+        args.emplace("table", editor_table);
+        args.emplace("cell", editor_cell);
+      } else {
+        args.emplace("id", id);
+        args.emplace("target", editor_target);
+      }
+      command(id.empty() ? "create_formula_hub" : "edit_formula_hub", args,
+              id.empty() ? "structure" : "text",
+              [this](const V &) { finish(); });
+    });
+  }
+  void variables_editor() {
+    const auto id = formulas.get_active_id().raw();
+    const auto *f = find(state, "formulas", id);
+    if (!f)
+      return;
+    begin_editor("Variáveis · " + text(*f, "name"));
+    for (const auto &v : f->at("variables").as_array()) {
+      label(editor, text(v, "name") + " · inicial " +
+                        text(v, "initial_display") + " · atual " +
+                        text(v, "current_display"));
+      if (v.at("overridden").as_boolean())
+        button(editor, "Restaurar valor inicial de " + text(v, "name"),
+               "native-reset-variable", [this, id, name = text(v, "name")] {
+                 finish();
+                 command("reset_formula_variable",
+                         {{"id", id}, {"variable", name}}, "text");
+               });
+    }
+    button(editor, "Voltar", "native-cancel", [this] { cancel(); });
+  }
+  void attach_formula() {
+    if (formulas.get_active_id().empty())
+      return;
+    command("attach_formula",
+            {{"id", formulas.get_active_id().raw()},
+             {"before", ""},
+             {"table", ""},
+             {"cell", ""}},
+            "structure");
+  }
+  void add_run(const V &run) {
+    auto *row = Gtk::make_managed<Gtk::Box>(Gtk::Orientation::HORIZONTAL, 6);
+    auto *kind = Gtk::make_managed<Gtk::ComboBoxText>(),
+         *ref = Gtk::make_managed<Gtk::ComboBoxText>();
+    kind->append("text", "Texto editável");
+    kind->append("result", "Resultado ligado");
+    kind->set_active_id(text(run, "kind"));
+    auto *literal = Gtk::make_managed<Gtk::TextView>();
+    literal->set_hexpand(true);
+    literal->set_wrap_mode(Gtk::WrapMode::WORD_CHAR);
+    literal->set_size_request(160, 64);
+    if (text(run, "kind") == "text")
+      literal->get_buffer()->set_text(text(run, "text"));
+    for (const auto &f : state.at("formulas").as_array())
+      if (!f.at("command").as_boolean() && !f.at("consumed").as_boolean())
+        ref->append(text(f, "id"), text(f, "name"));
+    if (text(run, "kind") == "result")
+      ref->set_active_id(text(run, "formula"));
+    else
+      ref->set_active(0);
+    row->append(*kind);
+    row->append(*literal);
+    row->append(*ref);
+    auto show = [kind, literal, ref] {
+      const bool writing = kind->get_active_id() == "text";
+      literal->set_visible(writing);
+      ref->set_visible(!writing);
+    };
+    kind->signal_changed().connect(show);
+    show();
+    run_box->append(*row);
+    runs.push_back({kind, ref, literal, row});
+    const auto index = runs.size() - 1;
+    button(*row, "Subir", "native-run-up-" + std::to_string(index),
+           [this, row] { shift_run(row, -1); });
+    button(*row, "Descer", "native-run-down-" + std::to_string(index),
+           [this, row] { shift_run(row, 1); });
+    button(*row, "Retirar", "native-run-remove-" + std::to_string(index),
+           [this, row] {
+             for (auto &r : runs)
+               if (r.row == row) {
+                 r.kind = nullptr;
+                 row->set_visible(false);
+               }
+           });
+  }
+  void shift_run(Gtk::Box *row, int delta) {
+    auto at = std::find_if(runs.begin(), runs.end(),
+                           [&](const auto &r) { return r.row == row; });
+    if (at == runs.end())
+      return;
+    const auto i = std::distance(runs.begin(), at);
+    auto j = i + delta;
+    while (j >= 0 && j < static_cast<long>(runs.size()) &&
+           !runs[static_cast<std::size_t>(j)].kind)
+      j += delta;
+    if (j < 0 || j >= static_cast<long>(runs.size()))
+      return;
+    std::swap(runs[static_cast<std::size_t>(i)],
+              runs[static_cast<std::size_t>(j)]);
+    Gtk::Widget *previous = nullptr;
+    for (const auto &r : runs) {
+      if (previous)
+        run_box->reorder_child_after(*r.row, *previous);
+      else
+        run_box->reorder_child_at_start(*r.row);
+      previous = r.row;
+    }
+  }
+  void phrase_editor(const std::string &target) {
+    if (draft)
+      cancel();
+    if (!state.at("formula_text").as_object().contains(target))
+      return;
+    begin_editor("Texto e resultados na mesma frase");
+    run_box = Gtk::make_managed<Gtk::Box>(Gtk::Orientation::VERTICAL, 6);
+    editor.append(*run_box);
+    for (const auto &r :
+         state.at("formula_text").at(target).at("runs").as_array())
+      add_run(r);
+    button(editor, "Acrescentar trecho", "native-add-run",
+           [this] { add_run(O{{"kind", "text"}, {"text", ""}}); });
+    footer([this, target] {
+      A values;
+      for (const auto &r : runs)
+        if (r.kind) {
+          if (r.kind->get_active_id() == "text")
+            values.emplace_back(
+                O{{"kind", "text"},
+                  {"text", r.literal->get_buffer()->get_text().raw()}});
+          else
+            values.emplace_back(
+                O{{"kind", "result"},
+                  {"formula", r.formula->get_active_id().raw()}});
+        }
+      command("edit_formula_text",
+              {{"target", target}, {"runs", std::move(values)}}, "text",
+              [this](const V &) { finish(); });
+    });
+  }
+  void layout_editor() {
+    if (selected.empty())
+      return;
+    begin_editor("Posição e alinhamento · " + title(selected));
+    const auto id = selected;
+    auto &before = choice("before", "Mover antes de", {}, "");
+    destinations(before);
+    choice("intent", "Ordem que será alterada",
+           {{"visual", "Apresentação"},
+            {"authorial", "Sequência autoral e leitura"}},
+           "visual");
+    button(editor, "Mover", "native-move", [this, id] {
+      command("move",
+              {{"id", id},
+               {"before", chosen("before")},
+               {"intent", chosen("intent")}},
+              "structure", [this](const V &) { finish(); });
+    });
+    auto &other = choice("other", "Colocar lado a lado com", {}, "");
+    for (const auto &v : state.at("visual_order").as_array())
+      if (v.as_string() != id)
+        other.append(v.as_string(), title(v.as_string()));
+    other.set_active(0);
+    choice("side", "Posição do selecionado",
+           {{"left", "À esquerda"}, {"right", "À direita"}}, "right");
+    entry("first", "Largura da primeira coluna (%)", "50");
+    entry("gap", "Espaço entre colunas (px)", "16");
+    button(editor, "Compor lado a lado", "native-pair", [this, id] {
+      guard([this, id] {
+        const auto first = number("first") / 100.;
+        command("arrange_objects",
+                {{"id", id},
+                 {"other", chosen("other")},
+                 {"side", chosen("side")},
+                 {"first", first},
+                 {"second", 1 - first},
+                 {"gap", number("gap")}},
+                "composition", [this](const V &) { finish(); });
+      });
+    });
+    button(editor, "Voltar o selecionado à coluna única", "native-stack",
+           [this, id] {
+             command("stack", {{"id", id}}, "composition",
+                     [this](const V &) { finish(); });
+           });
+    button(editor, "Restaurar tamanho e alinhamento padrão",
+           "native-reset-placement", [this, id] {
+             command("reset_presentation", {{"id", id}}, "composition",
+                     [this](const V &) { finish(); });
+           });
+    V p = O{{"width", 100},
+            {"horizontal", "start"},
+            {"text_align", "left"},
+            {"vertical", "start"}};
+    if (state.at("presentation").as_object().contains(id))
+      p = state.at("presentation").at(id);
+    entry("width", "Largura do objeto (20–100%)",
+          numeric_text(real(p.at("width"))));
+    choice("horizontal", "Alinhamento horizontal",
+           {{"start", "Esquerda"}, {"center", "Centro"}, {"end", "Direita"}},
+           text(p, "horizontal"));
+    choice("text_align", "Alinhamento do texto",
+           {{"left", "Esquerda"},
+            {"center", "Centro"},
+            {"right", "Direita"},
+            {"justify", "Justificado"}},
+           text(p, "text_align"));
+    choice("vertical", "Alinhamento vertical",
+           {{"start", "Topo"}, {"center", "Centro"}, {"end", "Base"}},
+           text(p, "vertical"));
+    footer([this, id] {
+      command("set_presentation",
+              {{"id", id},
+               {"width", number("width")},
+               {"horizontal", chosen("horizontal")},
+               {"text_align", chosen("text_align")},
+               {"vertical", chosen("vertical")}},
+              "composition", [this](const V &) { finish(); });
+    });
+  }
+  void removed_editor() {
+    begin_editor("Restaurar itens retirados");
+    auto &list = choice("removed", "Item preservado", {}, "");
+    for (const auto &v : state.at("removed_items").as_array())
+      list.append(text(v, "id"), text(v, "kind") + ": " + text(v, "label"));
+    list.set_active(0);
+    auto &before = choice("before", "Restaurar antes de", {}, "");
+    destinations(before);
+    footer([this] {
+      command("restore_removed",
+              {{"id", chosen("removed")}, {"before", chosen("before")}},
+              "structure", [this](const V &) { finish(); });
+    });
+  }
+  void axes_editor() {
+    const auto *t = find(state, "tables", selected);
+    if (!t)
+      return;
+    begin_editor("Linhas e colunas · " + text(*t, "title"));
+    const auto id = selected;
+    for (const auto &axis : {std::string("row"), std::string("column")}) {
+      const auto listkey = axis == "row" ? "row_ids" : "column_ids";
+      auto &existing =
+          choice(axis,
+                 "Antes de / retirar " +
+                     std::string(axis == "row" ? "linha" : "coluna"),
+                 {}, "");
+      existing.append("", "Fim");
+      int n = 0;
+      for (const auto &v : t->at(listkey).as_array())
+        existing.append(v.as_string(), std::to_string(++n));
+      existing.set_active_id("");
+      button(editor, axis == "row" ? "Inserir linha" : "Inserir coluna",
+             "native-insert-" + axis, [this, id, axis] {
+               command("insert_table_axis",
+                       {{"id", id}, {"axis", axis}, {"before", chosen(axis)}},
+                       "structure", [this](const V &) { finish(); });
+             });
+      button(editor, axis == "row" ? "Retirar linha" : "Retirar coluna",
+             "native-retire-" + axis, [this, id, axis] {
+               command("remove_table_axis",
+                       {{"id", id}, {"axis", axis}, {"axis_id", chosen(axis)}},
+                       "structure", [this](const V &) { finish(); });
+             });
+      auto &removed =
+          choice(axis + "-removed", "Retiradas e preservadas", {}, "");
+      for (const auto &v :
+           t->at("structure")
+               .at(axis == "row" ? "removed_rows" : "removed_columns")
+               .as_array())
+        removed.append(text(v, "id"), text(v, "label").empty()
+                                          ? "Item retirado"
+                                          : text(v, "label"));
+      removed.set_active(0);
+      button(editor, axis == "row" ? "Restaurar linha" : "Restaurar coluna",
+             "native-restore-" + axis, [this, id, axis] {
+               command("restore_table_axis",
+                       {{"id", id},
+                        {"axis", axis},
+                        {"axis_id", chosen(axis + "-removed")}},
+                       "structure", [this](const V &) { finish(); });
+             });
+    }
+    button(editor, "Voltar", "native-cancel", [this] { cancel(); });
+  }
+  void appearance_editor() {
+    const auto *t = find(state, "tables", selected);
+    if (!t)
+      return;
+    begin_editor("Aparência da tabela");
+    editor_id = selected;
+    draft_model = t->at("appearance");
+    entry("title", "Título da tabela", text(*t, "title"));
+    check("header", "Primeira linha é cabeçalho", t->at("header").as_boolean());
+    auto &preset = choice("preset", "Modelos de aparência",
+                          {{"custom", "Personalizado"}}, "custom");
+    for (const auto &p : state.at("table_design_presets").as_array())
+      preset.append(text(p, "id"), text(p, "label"));
+    preset.signal_changed().connect([this] {
+      const auto id = chosen("preset");
+      for (const auto &p : state.at("table_design_presets").as_array())
+        if (text(p, "id") == id) {
+          auto next = p.at("appearance").as_object();
+          for (const auto *key : {"column_weights", "row_heights", "cells"})
+            next[key] = draft_model.at(key);
+          draft_model = next;
+          update_appearance_fields();
+        }
+    });
+    const std::map<std::string, std::string> captions = {
+        {"font_size", "Tamanho da letra (10–32)"},
+        {"line_height", "Espaçamento entre linhas (1–2,2)"},
+        {"text_color", "Cor do texto (#RRGGBB)"},
+        {"fill_color", "Fundo das células"},
+        {"header_fill", "Fundo do cabeçalho"},
+        {"header_text", "Texto do cabeçalho"},
+        {"band_fill", "Fundo alternado"},
+        {"border_color", "Cor das bordas"},
+        {"border_width", "Espessura das bordas (0–4)"},
+        {"padding_x", "Espaço horizontal interno (0–32)"},
+        {"padding_y", "Espaço vertical interno (0–32)"},
+        {"min_row_height", "Altura mínima das linhas (24–240)"}};
+    choice("font", "Fonte",
+           {{"sans", "Sem serifa"},
+            {"serif", "Com serifa"},
+            {"mono", "Monoespaçada"}},
+           text(draft_model, "font"));
+    choice("border_kind", "Bordas",
+           {{"grid", "Grade"},
+            {"horizontal", "Horizontais"},
+            {"outer", "Contorno"},
+            {"none", "Sem bordas"}},
+           text(draft_model, "border_kind"));
+    choice("border_style", "Traço das bordas",
+           {{"solid", "Contínuo"},
+            {"dashed", "Tracejado"},
+            {"dotted", "Pontilhado"}},
+           text(draft_model, "border_style"));
+    choice("cell_vertical", "Posição vertical do conteúdo",
+           {{"top", "Topo"}, {"middle", "Centro"}, {"bottom", "Base"}},
+           text(draft_model, "cell_vertical"));
+    choice("caption_align", "Alinhamento do título",
+           {{"left", "Esquerda"}, {"center", "Centro"}, {"right", "Direita"}},
+           text(draft_model, "caption_align"));
+    choice("caption_side", "Posição do título",
+           {{"top", "Acima"}, {"bottom", "Abaixo"}},
+           text(draft_model, "caption_side"));
+    for (const auto &[key, caption] : captions)
+      entry(key, caption,
+            std::holds_alternative<std::string>(draft_model.at(key).storage())
+                ? text(draft_model, key)
+                : numeric_text(real(draft_model.at(key))));
+    for (const auto &[key, caption] :
+         std::vector<std::pair<std::string, std::string>>{
+             {"zebra", "Alternar fundo das linhas"},
+             {"header_bold", "Cabeçalho em negrito"},
+             {"show_title", "Mostrar título"}})
+      check(key, caption, draft_model.at(key).as_boolean());
+    label(editor,
+          "Proporções das colunas: percentuais positivos que somam 100.");
+    const auto &cols = t->at("column_ids").as_array();
+    const auto &weights = draft_model.at("column_weights").as_array();
+    for (std::size_t i = 0; i < cols.size(); ++i)
+      entry("column-" + std::to_string(i), "Coluna " + std::to_string(i + 1),
+            numeric_text(weights.empty()
+                             ? 100. / static_cast<double>(cols.size())
+                             : real(weights[i])));
+    label(editor,
+          "Alturas individuais: deixe vazio para usar a altura mínima.");
+    for (const auto &row : t->at("row_ids").as_array())
+      entry("height-" + row.as_string(),
+            "Altura da linha " + row.as_string().substr(0, 8),
+            draft_model.at("row_heights").as_object().contains(row.as_string())
+                ? numeric_text(
+                      real(draft_model.at("row_heights").at(row.as_string())))
+                : "");
+    const auto cell = text(state, "selected_cell");
+    if (!cell.empty()) {
+      label(editor, "Personalizar célula selecionada");
+      choice("cell-align", "Alinhamento da célula",
+             {{"inherit", "Usar padrão"},
+              {"left", "Esquerda"},
+              {"center", "Centro"},
+              {"right", "Direita"},
+              {"justify", "Justificado"}},
+             "inherit");
+      choice("cell-vertical", "Posição vertical da célula",
+             {{"inherit", "Preservar"},
+              {"top", "Topo"},
+              {"middle", "Centro"},
+              {"bottom", "Base"}},
+             "inherit");
+      check("cell-reset", "Usar novamente os padrões da tabela nesta célula",
+            false);
+      entry("cell-fill", "Fundo da célula (vazio para preservar)");
+      entry("cell-color", "Cor da célula (vazio para preservar)");
+      choice("cell-bold", "Negrito da célula",
+             {{"inherit", "Preservar"}, {"yes", "Ativar"}, {"no", "Desativar"}},
+             "inherit");
+      choice("cell-italic", "Itálico da célula",
+             {{"inherit", "Preservar"}, {"yes", "Ativar"}, {"no", "Desativar"}},
+             "inherit");
+    }
+    auto *preview_box =
+        Gtk::make_managed<Gtk::Box>(Gtk::Orientation::VERTICAL, 8);
+    editor.append(*preview_box);
+    button(editor, "Conferir aparência sem aplicar", "native-table-preview",
+           [this, cell, preview_box] {
+             guard([this, cell, preview_box] {
+               const auto a = collect_appearance(cell);
+               auto t = find(state, "tables", editor_id)->as_object();
+               std::vector<std::string> rows, columns;
+               std::set<std::string> cells;
+               for (const auto &r : t.at("row_ids").as_array())
+                 rows.push_back(r.as_string());
+               for (const auto &c : t.at("column_ids").as_array())
+                 columns.push_back(c.as_string());
+               for (const auto &c : t.at("cells").as_array())
+                 cells.insert(text(c, "id"));
+               objects::pilot::table_design::validate(a, rows, columns, cells);
+               t["appearance"] = a;
+               t["title"] = field("title");
+               t["header"] = checks.at("header")->get_active();
+               clear(*preview_box);
+               std::string style;
+               table_view(*preview_box, V(t), style);
+               css->load_from_data(style);
+             });
+           });
+    footer([this, cell] {
+      const auto a = collect_appearance(cell);
+      V placement = O{{"width", 100},
+                      {"horizontal", "start"},
+                      {"text_align", "left"},
+                      {"vertical", "start"}};
+      if (state.at("presentation").as_object().contains(editor_id))
+        placement = state.at("presentation").at(editor_id);
+      command("edit_table_design",
+              {{"id", editor_id},
+               {"title", field("title")},
+               {"header", checks.at("header")->get_active()},
+               {"appearance", a},
+               {"placement", placement}},
+              "composition", [this](const V &) { finish(); });
+    });
+  }
+  V collect_appearance(const std::string &cell) {
+    auto a = draft_model.as_object();
+    for (const auto &[key, input] : fields) {
+      if (a.contains(key)) {
+        if (std::holds_alternative<std::string>(a.at(key).storage()))
+          a[key] = input->get_text().raw();
+        else
+          a[key] = number(key);
+      }
+    }
+    for (const auto &[key, c] : choices)
+      if (a.contains(key))
+        a[key] = c->get_active_id().raw();
+    for (const auto &[key, c] : checks)
+      if (a.contains(key))
+        a[key] = c->get_active();
+    const auto *table = find(state, "tables", editor_id);
+    A weights;
+    for (std::size_t i = 0; i < table->at("column_ids").as_array().size(); ++i)
+      weights.emplace_back(number("column-" + std::to_string(i)));
+    a["column_weights"] = std::move(weights);
+    auto heights = a.at("row_heights").as_object();
+    for (const auto &r : table->at("row_ids").as_array()) {
+      const auto key = "height-" + r.as_string();
+      if (field(key).empty())
+        heights.erase(r.as_string());
+      else
+        heights[r.as_string()] = number(key);
+    }
+    a["row_heights"] = heights;
+    if (!cell.empty()) {
+      auto overrides = a.at("cells").as_object();
+      auto style =
+          overrides.contains(cell) ? overrides.at(cell).as_object() : O{};
+      if (checks.at("cell-reset")->get_active())
+        style.clear();
+      if (chosen("cell-vertical") != "inherit")
+        style["vertical"] = chosen("cell-vertical");
+      if (chosen("cell-align") != "inherit")
+        style["align"] = chosen("cell-align");
+      if (!field("cell-fill").empty())
+        style["fill"] = field("cell-fill");
+      if (!field("cell-color").empty())
+        style["color"] = field("cell-color");
+      for (const auto *key : {"bold", "italic"})
+        if (chosen(std::string("cell-") + key) != "inherit")
+          style[key] = chosen(std::string("cell-") + key) == "yes";
+      if (!style.empty())
+        overrides[cell] = style;
+      else
+        overrides.erase(cell);
+      a["cells"] = overrides;
+    }
+    return a;
+  }
+  void update_appearance_fields() {
+    for (const auto &[key, v] : fields)
+      if (has(draft_model, key))
+        v->set_text(
+            std::holds_alternative<std::string>(draft_model.at(key).storage())
+                ? text(draft_model, key)
+                : numeric_text(real(draft_model.at(key))));
+    for (const auto &[key, c] : choices)
+      if (has(draft_model, key))
+        c->set_active_id(text(draft_model, key));
+    for (const auto &[key, c] : checks)
+      if (has(draft_model, key))
+        c->set_active(draft_model.at(key).as_boolean());
+  }
+};
+ObjectDocumentWindow::ObjectDocumentWindow(application::ProjectService &s,
+                                           Gtk::Window &parent,
+                                           const std::string &document)
+    : impl_(std::make_unique<Impl>(s, *this, document)) {
+  set_transient_for(parent);
+  set_application(parent.get_application());
+  set_modal(true);
+}
+ObjectDocumentWindow::~ObjectDocumentWindow() = default;
+void ObjectDocumentWindow::save_for_project(
+    const std::filesystem::path &project) {
+  if (project != impl_->project_path)
+    return;
+  if (impl_->draft || impl_->busy || impl_->choosing_image)
+    throw std::runtime_error(
+        "Aplique ou cancele a edição de Objetos antes de salvar o projeto.");
+  std::lock_guard lock(impl_->runtime->mutex);
+  auto &s = *impl_->runtime->session;
+  const auto state = s.request(O{{"op", "view"}}).at("state");
+  const auto r =
+      s.request(O{{"op", "save"}, {"expected", state.at("revision")}});
+  if (!r.at("accepted").as_boolean())
+    throw std::runtime_error(
+        "Não foi possível confirmar a composição por objetos.");
+  impl_->state = r.at("state");
+}
+bool ObjectDocumentWindow::on_close_request() {
+  if (impl_->draft || impl_->busy || impl_->choosing_image ||
+      text(impl_->state, "persistence_status") == "uncertain") {
+    impl_->status.set_text("Aplique ou cancele a edição aberta antes de "
+                           "fechar. O trabalho confirmado está protegido.");
+    return true;
+  }
+  set_visible(false);
   return true;
 }
+const V &ObjectNativeProbe::state(const ObjectDocumentWindow &w) {
+  return w.impl_->state;
 }
+bool ObjectNativeProbe::busy(const ObjectDocumentWindow &w) {
+  return w.impl_->busy || w.impl_->choosing_image;
+}
+bool ObjectNativeProbe::draft(const ObjectDocumentWindow &w) {
+  return w.impl_->draft;
+}
+void ObjectNativeProbe::choose_image(ObjectDocumentWindow &w,
+                                     const std::filesystem::path &p) {
+  if (!w.impl_->chooser)
+    throw std::runtime_error("Seletor de arquivo ausente");
+  auto file = Gio::File::create_for_path(p.string());
+  auto chooser = w.impl_->chooser;
+  auto life = w.impl_->life;
+  auto *impl = w.impl_.get();
+  chooser->set_file(file);
+  Glib::signal_timeout().connect(
+      [chooser, file, life, impl, tries = 0]() mutable {
+        if (!life->alive)
+          return false;
+        auto selected = chooser->get_file();
+        if (selected && g_file_equal(selected->gobj(), file->gobj())) {
+          g_signal_emit_by_name(chooser->gobj(), "response",
+                                static_cast<int>(Gtk::ResponseType::ACCEPT));
+          return false;
+        }
+        if (++tries >= 100) {
+          impl->last_error = "native_file_chooser_selection_failed";
+          g_signal_emit_by_name(chooser->gobj(), "response",
+                                static_cast<int>(Gtk::ResponseType::CANCEL));
+          return false;
+        }
+        return true;
+      },
+      50);
+}
+std::string ObjectNativeProbe::error(const ObjectDocumentWindow &w) {
+  return w.impl_->last_error;
+}
+} // namespace inde::ui

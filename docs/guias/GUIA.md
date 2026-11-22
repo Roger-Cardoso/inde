@@ -178,7 +178,7 @@ Para habilitar a etapa C++ em outra instalação compatível:
 bash Preparar-ponte.sh
 ```
 
-O editor de documentos por objetos também exige WebKitGTK 6.0 (pacote `libwebkitgtk-6.0-dev` em Ubuntu/Debian compatíveis). A notação matemática usa KaTeX incluído localmente, sem acesso à rede durante a edição.
+O editor de documentos por objetos usa componentes C++/GTK4. A notação matemática é desenhada com Cairo/Pango e MicroTeX incluído localmente; exige Fontconfig (`libfontconfig-dev` para compilar), sem WebKit ou dependência de rede durante a edição.
 
 A compilação exige as dependências da base INDE: CMake 3.22+, Ninja, compilador C++20, pkg-config, GTKmm 4.8+, GLib, UUID, SQLite com Session/Preupdate, Pango/Cairo e ICU 74+. O script não instala dependências nem usa a rede. Ele extrai a fonte aceita se necessário, verifica seus hashes e compila apenas a ponte e bibliotecas necessárias.
 
