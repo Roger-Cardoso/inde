@@ -1,0 +1,336 @@
+{
+  "date": "2026-11-22",
+  "branch": "feature/inde-obj-01-foundation",
+  "base_commit": "26adaa22995def08b5ea2e269e9ef3a193d398c8",
+  "implementation_commit": "90939bb4652d1ba3452ccefb62174c8dea68ccbd",
+  "scope": "configurable creation and reversible table axes, retained intersections/formulas/styles, dynamic appearance editor and history regression fix",
+  "code_sha256": {
+    ".github/workflows/obj-01.yml": "9ea6aaa1bed6aeaff6333b0e0da03eaf0cf0d008199742223a0bfffd6634054d",
+    "cpp/object_composite_pilot.cpp": "df2ee9c7b59b8e276cdbeef295e326e197ac7756e60afc0435152aca2189f43c",
+    "cpp/object_table_design.cpp": "4820780ad0ccc29001ae2563f2c66901750bddcdd24d2e041b2c785e01988bbe",
+    "cpp/object_table_design.hpp": "657de70e08b4b96b536d9d547e016fab2e181226c25906d001437944d873af2e",
+    "scripts/demos/Abrir-demo-obj01-estrutura-tabelas.sh": "6b1f85d0f0ea8a6e6ec366bbc0fc08f6d63777b260200e79b135660402dc7384",
+    "tests/object_composite_pilot/CMakeLists.txt": "950333a949f75051379d54243d782994992e027d85eeabc667a5cb73181898d1",
+    "tests/object_composite_pilot/test_http_table_structure.py": "6ecbc49d232460f38f474c4cc8d284d1bcdd0442aa1f6c548b76250baf230af7",
+    "tests/object_composite_pilot/test_table_structure.py": "13c6b6b18c5f5bb4f5e9613c0d53c01b2fc9f19b7fce51a2a357f8860555b4a1",
+    "tools/obj01-pilot/app.js": "93a5aefae984554aaa9c15a03145380ab8ca9caf093431f5f75b5dfe713aac24",
+    "tools/obj01-pilot/serve.py": "7759ba0d98cd26e46821adb5dbb00d1e16a8524d4affb71689c4114a37cb9e78",
+    "tools/obj01-pilot/style.css": "83074a13cb383b1a809188c65779fe7ec847cb3cf87c7e6dfe7c460db260e169"
+  },
+  "document_sha256": {
+    "docs/README.md": "1bf3047ba60d842b5bb7c1ac293a72baa6cdf6de8f02552852ae9f2dcc2161ee",
+    "docs/arquitetura/ESTRUTURA-TABELAS-OBJ-01.md": "2ffb795d47ecaac8b4fcac69f6148e78cfc362566a44295ac4a5ff9b78b0f714",
+    "docs/arquitetura/RECONCILIACAO-OBJ-01.md": "fa8ea88c75ef335efd5b519d7feb25bf0954d347b695490205a0c4a194597ce7",
+    "docs/validacao/VALIDACAO-OBJ-01-ESTRUTURA-TABELAS.md": "38c592190abeb8565981474c4281ecf4451533dfef2519947a4346a6e61d8d48",
+    "tools/obj01-pilot/ESTRUTURA-TABELAS.md": "bad25bf8f2c8d9738258bd857c7b8297de1735adfec3ea4874fa90299d5a1ee0",
+    "tools/obj01-pilot/TABELAS.md": "27792ccd1328d22341201e3ff64b439fd74e2dda2d5f7ff9b391ee5f2f0f724c",
+    "tools/obj01-pilot/README.md": "fcdca931d886f6c9377e4bbef5e066fd9a5b2692f20973dae176eaa4face90c3"
+  },
+  "local": {
+    "variants": [
+      "GCC Debug",
+      "Clang Debug",
+      "GCC ASan+UBSan",
+      "Clang ASan+UBSan"
+    ],
+    "programs_per_variant": 21,
+    "seconds": [
+      149.08,
+      145.87,
+      447.84,
+      347.08
+    ],
+    "prior_programs_repeated": 19,
+    "new_core_cases": 18,
+    "new_http_cases": 7,
+    "own_http_cases": 3,
+    "inherited_http_cases": 4,
+    "local_lsan": false,
+    "test_names": {
+      "test_table_structure.py": [
+        "test_create_dimensions_and_old_creation_api_stays_2_by_3",
+        "test_invalid_counts_types_and_fields_are_atomic",
+        "test_insert_before_after_end_preserves_existing_ids_text_and_styles",
+        "test_remove_restore_row_preserves_ids_styles_height_and_payload",
+        "test_crossed_removed_axes_and_new_intersections_do_not_lose_content",
+        "test_visible_style_edits_preserve_retired_cell_and_row_overrides",
+        "test_visible_designer_cannot_modify_hidden_cell_or_row_directly",
+        "test_column_weights_project_merge_and_restore_by_identity",
+        "test_formula_binding_phrase_and_result_survive_retirement",
+        "test_retired_cells_reject_direct_edit_select_attach_and_rich_edit",
+        "test_last_axis_protected_and_single_column_designer_valid",
+        "test_retention_limit_includes_retired_axes_and_max_shape_valid",
+        "test_invalid_axis_target_foreign_inactive_and_stale_are_atomic",
+        "test_hidden_command_is_not_consumed_or_executed_by_removal",
+        "test_insert_remove_restore_each_one_undo_and_outer_arrangement_kept",
+        "test_undo_formula_created_in_new_axis_keeps_earlier_insert_history",
+        "test_sigkill_keeps_retired_axes_full_grid_and_saved_snapshot_five",
+        "test_four_crash_windows_insert_remove_restore_are_atomic"
+      ],
+      "test_http_table_structure.py": [
+        "test_insert_retire_reopen_and_restore",
+        "test_invalid_structure_is_atomic",
+        "test_caps_and_controls_available"
+      ]
+    },
+    "crash_windows": [
+      "after_blobs",
+      "after_snapshot",
+      "before_commit",
+      "after_commit"
+    ],
+    "crash_operations": [
+      "insert_table_axis",
+      "remove_table_axis",
+      "restore_table_axis"
+    ],
+    "crash_axis": "row",
+    "crash_cases": 12,
+    "syntax_and_diff": "passed",
+    "history_regression_reproduced_before_fix": true
+  },
+  "ci": {
+    "run_id": 45068431579,
+    "url": "https://github.com/Roger-Cardoso/inde/actions/runs/45068431579",
+    "head_sha": "90939bb4652d1ba3452ccefb62174c8dea68ccbd",
+    "jobs": 25,
+    "passed": 25,
+    "remote_lsan": true,
+    "conclusion": "success"
+  },
+  "archives": [
+    {
+      "label": "schema28",
+      "path": "fontes/inde-schema28-89b47f27.tar.gz",
+      "sha256": "3d6bee4c60dbecc602a56881b1957f90b55798dbc711c9c290701e2ad8a6e97e",
+      "files": 641,
+      "manifest_match": true
+    },
+    {
+      "label": "original37",
+      "path": "fontes/inde-P03c-schema37-original.tar.gz",
+      "sha256": "2e97a15ddcda56b8f5892d033c9a7427d6102bcf650454678491c50ff5459ef2",
+      "files": 757,
+      "manifest_match": true
+    },
+    {
+      "label": "integrated37",
+      "path": "fontes/inde-integrado-schema37.tar.gz",
+      "sha256": "554623abec5d7c3c175dab2aa6bbabc8a95abd6e3d98a27191cea0260a4965c4",
+      "files": 758,
+      "manifest_match": true
+    }
+  ],
+  "extracted_bytes_match": true,
+  "source_auditor_negative_tests": 5,
+  "operations": [
+    "create_table_sized",
+    "insert_table_axis",
+    "remove_table_axis",
+    "restore_table_axis"
+  ],
+  "invariants": {
+    "identity": "known full grid retained; axes mask visibility; new axis creates blank cells across all known opposite axes",
+    "limits": "64 known rows and 32 known columns including retired axes; at least one visible of each",
+    "formulas": "binding, phrase and resource retained; retired resources still evaluate; no implicit command execution/consumption",
+    "appearance": "project visible subset, merge without erasing retired overrides or reserved column weights",
+    "new_cells": "general style only; per-cell column application is not a future column rule",
+    "undo": "one step per operation; phrases retained only on existing target endpoints",
+    "header": "first visible row",
+    "order": "outer composition and owner reading order unchanged"
+  },
+  "browser": {
+    "runtime": "real C++/SQLite/authenticated HTTP; new synthetic fixture",
+    "observed": [
+      "create and fill 3x4",
+      "formula result 100 points in cell",
+      "notebook style, size17, right-aligned column, bold formula cell",
+      "insert row and column before existing cells",
+      "fill new row and group column",
+      "retire formula row and group column",
+      "insert and fill row while both axes retired",
+      "save, restore column unsaved, SIGKILL own engine",
+      "recover same checkpoint and saved separately",
+      "restore formula row after restart",
+      "fill blank new intersection and extend column alignment",
+      "save full5x5; 20 old cells and formula records identical"
+    ],
+    "restart": {
+      "snapshot_identical_after_SIGKILL": true,
+      "saved_not_promoted": true,
+      "working_generation": 76,
+      "saved_revision": 1,
+      "integrity_check": "ok",
+      "foreign_key_check": [],
+      "user_version": 5,
+      "history_entries_after_restart": 0,
+      "visible_shape": [
+        4,
+        5
+      ],
+      "retained_shape": [
+        5,
+        5
+      ],
+      "retired_formula_row": true
+    },
+    "cell_comparison": {
+      "original_20_cells_unchanged": true,
+      "formula_records_bindings_phrases_identical": true,
+      "original_cell_overrides_preserved": true,
+      "visible_shape": [
+        5,
+        5
+      ],
+      "known_cells": 25,
+      "source_body_and_outer_order_unchanged": true,
+      "saved_table_and_composition_identical_to_working": true,
+      "formula_result": "100",
+      "no_browser_errors": true
+    },
+    "human_acceptance": "pending real product review"
+  },
+  "format": {
+    "profile": "P2-D2",
+    "auxiliary_user_version": 5,
+    "formula_language": 2,
+    "old_snapshots_retained": [
+      "INDE-OBJ01-COMPOSITE-P2D2-1",
+      "INDE-OBJ01-COMPOSITE-P2D2-2",
+      "INDE-OBJ01-COMPOSITE-P2D2-3"
+    ],
+    "new_snapshot": "INDE-OBJ01-COMPOSITE-P2D2-4",
+    "new_field": "composition.table_structure",
+    "canonical_schema_migration": false,
+    "auxiliary_schema_migration": false,
+    "old_engine_refusal": {
+      "old_engine_code_commit": "26adaa22995def08b5ea2e269e9ef3a193d398c8",
+      "old_engine_sha256": "08c6e3f2006329563fc58a45c9ed80342a9ee27bbd72fbfa5ae31a241ff8918a",
+      "new_snapshot": "INDE-OBJ01-COMPOSITE-P2D2-4",
+      "old_engine_exit": 1,
+      "old_engine_error": "OBJ-01: unsupported_snapshot_version",
+      "origin_and_db_unchanged": true
+    },
+    "rows": [
+      1,
+      64
+    ],
+    "columns": [
+      1,
+      32
+    ],
+    "maximum_known_cells_per_table": 2048
+  },
+  "preservation": {
+    "old_demo_files": 18,
+    "old_demos": 9,
+    "hashes_unchanged": true,
+    "main_head": "d41a5c9b9809ca7d40beb6ff10f22f1a5b451e0b",
+    "main_preexisting_status": " M Preparar-ponte.sh",
+    "protected_paths": [
+      "fontes",
+      "metadata",
+      "verificar_base.py",
+      "cpp/CMakeLists.txt",
+      "cpp/object_model.cpp",
+      "cpp/object_model.hpp",
+      "cpp/object_commands.cpp",
+      "cpp/object_commands.hpp",
+      "cpp/object_document_adapter.cpp",
+      "cpp/object_document_adapter.hpp",
+      "cpp/object_composition_adapter.cpp",
+      "cpp/object_composition_adapter.hpp",
+      "cpp/object_change_plan.cpp",
+      "cpp/object_change_plan.hpp",
+      "cpp/object_change_session.cpp",
+      "cpp/object_change_session.hpp",
+      "cpp/object_save_protocol.cpp",
+      "cpp/object_save_protocol.hpp",
+      "cpp/object_checkpoint_store.cpp",
+      "cpp/object_checkpoint_store.hpp",
+      "cpp/object_formula_rich.cpp",
+      "cpp/object_formula.cpp",
+      "cpp/object_formula_cards.cpp",
+      "cpp/object_formula_hub.cpp",
+      "docs/validacao/VALIDACAO-OBJ-01-COMPOSICAO.md",
+      "docs/validacao/evidencias-obj01-composicao"
+    ],
+    "canonical_projects_written": false,
+    "publication": false,
+    "gtk": false,
+    "single_file_inde": false,
+    "historical_manifests": [
+      {
+        "profile": "p2a",
+        "commit": "8ea6c233f50529de9c9894a62b925d90941157a1",
+        "entries_verified": 37
+      },
+      {
+        "profile": "p2b",
+        "commit": "b1ae38fbcc47962c33ca74e8bcdca2e72ae64cca",
+        "entries_verified": 39
+      },
+      {
+        "profile": "p2c",
+        "commit": "347be9dfea7ea7442fdd7606e469ac9c1d3d6928",
+        "entries_verified": 44
+      },
+      {
+        "profile": "p2d",
+        "commit": "1560cfe3c490ab1d4090c0e53857789ff2f648cf",
+        "entries_verified": 49
+      },
+      {
+        "profile": "p2d2",
+        "commit": "8ad48d13b32d87fdeb493877e4fdf77c8ae3fb22",
+        "entries_verified": 47
+      },
+      {
+        "profile": "cartoes",
+        "commit": "729404048b5614d86088fdf9730e630110f57c44",
+        "entries_verified": 41
+      },
+      {
+        "profile": "hub",
+        "commit": "93caf049fe575025aaed9f6cb89dc539b2fdeab4",
+        "entries_verified": 48
+      },
+      {
+        "profile": "composicao-edicao",
+        "commit": "08c6e8a1f63aebac77d72316cbe0974c1de78ea0",
+        "entries_verified": 43
+      },
+      {
+        "profile": "tabelas-visuais",
+        "commit": "26adaa22995def08b5ea2e269e9ef3a193d398c8",
+        "entries_verified": 49
+      }
+    ],
+    "historical_entries_verified": 397
+  },
+  "checks": {
+    "local_markdown_links_resolve": 137,
+    "git_diff_check": "passed",
+    "demo_integrity_check": "ok",
+    "demo_foreign_key_check": "empty"
+  },
+  "not_implemented": [
+    "merged cells",
+    "permanent axis purge",
+    "internal drag reordering",
+    "numeric formats",
+    "per-cell borders",
+    "resize handles",
+    "canonical GTK/publication/project migration",
+    "single-file .inde"
+  ],
+  "not_proven": [
+    "all viewports/input methods",
+    "broad concurrency",
+    "latency/RSS benchmark",
+    "all storage/power faults",
+    "column axis in every crash window",
+    "human acceptance"
+  ],
+  "native_61_tests": "not repeated this cut; old evidence remains historical"
+}

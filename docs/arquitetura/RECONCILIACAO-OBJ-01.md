@@ -141,3 +141,7 @@ Após o pedido do usuário, o [contrato de composição e remoção](COMPOSICAO-
 ## Atualização — tabelas visuais, 2026-11-22
 
 O pedido do usuário foi implementado no [contrato de tabelas visuais](TABELAS-VISUAIS-OBJ-01.md), com [validação própria](../validacao/VALIDACAO-OBJ-01-TABELAS-VISUAIS.md): aparência, dimensões e detalhes de células em operação atômica. Snapshot privado V3 explícito, auxiliar SQLite 5, sem conversão das demos anteriores, schema real, GTK/publicação ou início de Fase 3.
+
+## Atualização — estrutura recuperável de tabelas, 2026-11-22
+
+A continuação acrescenta [criação com dimensões escolhidas e linhas/colunas recuperáveis](ESTRUTURA-TABELAS-OBJ-01.md), com [validação própria](../validacao/VALIDACAO-OBJ-01-ESTRUTURA-TABELAS.md). A grade conhecida conserva células, fórmulas e estilos durante retirada/restauração; o editor de aparência acompanha a grade visível. Foi corrigida uma falha de histórico demonstrada ao desfazer fórmula em linha recém-inserida. Snapshot privado V4 explícito, auxiliar SQLite 5, sem migração das demos anteriores ou de projetos reais, GTK/publicação ou início de Fase 3. Isso não declara concluída a composição documental inteira nem substitui o aceite humano.

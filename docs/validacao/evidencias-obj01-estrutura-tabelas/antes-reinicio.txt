@@ -1,0 +1,328 @@
+Browser tab: 5, Title: "INDE · Compor o documento", URL: "http://127.0.0.1:46761/".
+0 AXWebArea INDE · Compor o documento, URL: 127.0.0.1:46761/
+	1 container
+		2 text INDE OFICINA EXPERIMENTAL
+		356 text OBJ-01 / P2-D2
+		357 text Trabalho protegido · não salvo
+		5 button Desfazer, ID: undo
+		6 button (disabled) Refazer, ID: redo
+		7 button Reabrir trabalho, ID: reopen-working
+		8 button Reabrir salvo, ID: reopen
+		9 button Salvar documento, ID: save
+	10 container
+		358 text DOCUMENTO COMPOSTO · TEXTO + FIGURA + TABELA
+		12 heading Cada objeto encontra seu lugar., Value: 1
+			359 text Cada objeto encontra seu lugar.
+		360 text Texto, figura, tabela e fórmula: lado a lado, alinhados e recuperáveis.
+		15 container
+			16 text Dados sintéticos
+			17 text Origem preservada
+		361 text Linha ou coluna restaurada com suas células, fórmulas e detalhes.
+		362 text Cada operação confirmada é registrada para recuperação. Salvar confirma o estado autoral; o histórico não sobrevive ao reinício.
+		20 container Ferramentas do experimento
+			21 container
+				22 heading Instrumento de edição, Value: 2
+					23 text Instrumento de edição
+				24 text Trabalhar com
+				25 pop up button (collapsed, settable) Trabalhar com, Value: Estrutura, ID: context, Secondary Actions: Expand
+					26 menu
+						27 Texto
+						28 (selected) Estrutura
+						29 Composição
+				30 text A seleção é compartilhada entre os instrumentos.
+			31 container
+				32 heading 1. Acrescentar uma figura, Value: 2
+					33 text 1. Acrescentar uma figura
+				34 text PNG do seu computador
+				35 button PNG do seu computador, ID: file
+				36 button Usar figura de exemplo, ID: sample
+				37 text Nenhuma figura escolhida.
+				38 text Legenda
+				39 text field (settable) Legenda, ID: caption
+				40 text Descrição para leitura
+				41 text field (settable) Descrição para leitura, ID: alt
+				42 checkbox (settable, integer) Description: Esta figura é decorativa, Value: 0, ID: decorative
+				43 text Inserir antes de
+				44 pop up button (collapsed, settable) Inserir antes de, Value: O horizonte abre uma passagem., ID: insert-before, Secondary Actions: Expand
+					45 menu
+						363 Água, luz e memória.
+						364 (selected) O horizonte abre uma passagem.
+						365 Tabela: Elenco da viagem
+						366 Fim do documento
+				50 button (disabled) Inserir figura, ID: import
+			51 container
+				52 heading Tabela de notas, Value: 2
+					53 text Tabela de notas
+				54 text Escolha quantas linhas e colunas criar. Textos e fórmulas podem ser preenchidos depois. Título da tabela
+				55 text field (settable) Título da tabela, Value: Elenco da viagem, ID: table-title
+				56 checkbox (settable, integer) Description: Primeira linha como cabeçalho, Value: 1, ID: table-header
+				57 text Inserir tabela antes de
+				58 pop up button (collapsed, settable) Inserir tabela antes de, Value: Fim do documento, ID: table-before, Secondary Actions: Expand
+					59 menu
+						367 Água, luz e memória.
+						368 O horizonte abre uma passagem.
+						369 Tabela: Elenco da viagem
+						370 (selected) Fim do documento
+				64 container table-dimensions
+					65 container
+						66 text Linhas da nova tabela
+						67 stepper (settable, integer) Linhas da nova tabela, Value: 3, ID: table-create-rows
+					68 container
+						69 text Colunas da nova tabela
+						70 stepper (settable, integer) Colunas da nova tabela, Value: 4, ID: table-create-columns
+				71 button Inserir tabela, ID: create-table
+			72 container cards-tools
+				73 heading Fórmulas, Value: 2
+					371 text Fórmulas
+				372 text Escolha como criar. Variáveis e resultados podem alimentar outras fórmulas.
+				76 button Inserir fórmula, ID: create-cards
+				373 text Fórmulas do documento
+				78 pop up button (collapsed, settable) Fórmulas do documento, Value: Vida de Armand · 100, ID: cards-library, Secondary Actions: Expand
+					79 menu
+						374 (selected) Vida de Armand · 100
+				81 button Abrir fórmula escolhida, ID: edit-cards
+			82 button (collapsed) Ferramentas avançadas anteriores, Secondary Actions: Expand
+				83 text Ferramentas avançadas anteriores
+			84 container
+				85 heading 2. Escolher, mover e remover, Value: 2
+					86 text 2. Escolher, mover e remover
+				87 container object-picker
+					88 text Objeto no documento
+					89 pop up button (collapsed, settable) Objeto no documento, Value: Tabela: Elenco da viagem, ID: object-library, Secondary Actions: Expand
+						90 menu
+							375 Escolha no documento
+							376 Água, luz e memória.
+							377 O horizonte abre uma passagem.
+							378 A casa guarda outra história 🙂.
+							379 (selected) Tabela: Elenco da viagem
+					96 button Compor objeto selecionado, ID: compose-selected
+					97 button Aparência da tabela, ID: table-design-selected
+				380 text Tabela selecionada: Elenco da viagem
+				99 text O que muda
+				100 pop up button (collapsed, settable) O que muda, Value: A ordem de leitura e a apresentação, ID: intent, Secondary Actions: Expand
+					101 menu
+						102 (selected) A ordem de leitura e a apresentação
+						103 Somente a apresentação
+				104 text Mover antes de
+				105 pop up button (collapsed, settable) Mover antes de, Value: Água, luz e memória., ID: move-before, Secondary Actions: Expand
+					106 menu
+						381 (selected) Água, luz e memória.
+						382 O horizonte abre uma passagem.
+						383 Fim do documento
+				110 button Mover tabela selecionada, ID: move
+				111 text Mover retira o objeto do arranjo lado a lado. No texto, mover a leitura leva o grupo protegido inteiro.
+				112 button (disabled) Criar outro uso da mesma figura, ID: duplicate
+				113 button Remover uso selecionado, ID: remove
+			114 container
+				115 heading Ordem dos grupos textuais, Value: 2
+					116 text Ordem dos grupos textuais
+				117 text Grupo completo
+				118 pop up button (collapsed, settable) Grupo completo, Value: Água, luz e memória., ID: text-group, Secondary Actions: Expand
+					119 menu
+						384 (selected) Água, luz e memória.
+						385 O horizonte abre uma passagem. / A casa guarda outra história 🙂.
+				122 text Mover grupo antes de
+				123 pop up button (collapsed, settable) Mover grupo antes de, Value: Fim do documento, ID: text-before, Secondary Actions: Expand
+					124 menu
+						386 Água, luz e memória.
+						387 O horizonte abre uma passagem.
+						388 Tabela: Elenco da viagem
+						389 (selected) Fim do documento
+				129 button Mover grupo textual, ID: reorder-text
+				130 text Conserva parágrafos e vínculos. Desfaz somente os arranjos lado a lado dos parágrafos movidos.
+				131 button Verificar compatibilidade de publicação, ID: publication-check
+			132 container table-grid-tools
+				133 heading Linhas e colunas, Value: 2
+					134 text Linhas e colunas
+				390 text Elenco da viagem · 4 linhas × 5 colunas. Conservadas: 5/64 linhas e 5/32 colunas, incluindo as retiradas.
+				136 container
+					137 text Linha para alterar
+					138 pop up button (collapsed, settable) Linha para alterar, Value: Linha 4, ID: table-grid-row, Secondary Actions: Expand
+						139 menu
+							391 Linha 1
+							392 Linha 2
+							393 Linha 3
+							394 (selected) Linha 4
+				143 button Inserir linha antes, ID: table-grid-row-before
+				144 button Inserir linha depois, ID: table-grid-row-after
+				145 button Retirar linha, ID: table-grid-row-remove
+				146 container
+					147 text Coluna para alterar
+					148 pop up button (collapsed, settable) Coluna para alterar, Value: Coluna 1, ID: table-grid-column, Secondary Actions: Expand
+						149 menu
+							395 (selected) Coluna 1
+							396 Coluna 2
+							397 Coluna 3
+							398 Coluna 4
+							399 Coluna 5
+				154 button Inserir coluna antes, ID: table-grid-column-before
+				155 button Inserir coluna depois, ID: table-grid-column-after
+				156 button Retirar coluna, ID: table-grid-column-remove
+				400 text Linha escolhida: 4 células preenchidas, 0 fórmulas. Coluna escolhida: 4 células preenchidas, 0 fórmulas. Retirar conserva esses dados.
+				158 heading Linhas e colunas retiradas, Value: 3
+					159 text Linhas e colunas retiradas
+				160 container
+					161 text O que devolver à tabela
+					162 pop up button (collapsed, settable) O que devolver à tabela, Value: Linha 3 · Armand · 4 preenchidas / 1 fórmulas, ID: table-grid-retired, Secondary Actions: Expand
+						355 menu
+							401 (selected) Linha 3 · Armand · 4 preenchidas / 1 fórmulas
+				163 button Restaurar linha ou coluna, ID: table-grid-restore
+				164 text A retirada conserva conteúdo, fórmulas e detalhes. O cabeçalho acompanha a primeira linha visível.
+			165 container arrangement-tools
+				166 heading 3. Colocar lado a lado, Value: 2
+					167 text 3. Colocar lado a lado
+				402 text Outro objeto
+				169 pop up button (collapsed, settable) Outro objeto, Value: O horizonte abre uma passagem., ID: paragraph, Secondary Actions: Expand
+					170 menu
+						403 Água, luz e memória.
+						404 (selected) O horizonte abre uma passagem.
+						405 A casa guarda outra história 🙂.
+				174 container row-settings
+					175 text Posição do selecionado
+					176 pop up button (disabled, collapsed, settable) Posição do selecionado, Value: À esquerda do outro objeto, ID: row-side, Secondary Actions: Expand
+						177 menu
+							178 (selected) À esquerda do outro objeto
+							179 À direita do outro objeto
+					180 text Espaço entre colunas
+					181 stepper (disabled, settable, integer) Espaço entre colunas, Value: 20, ID: row-gap
+					182 text Aproxima os dois na apresentação. A ordem de leitura é conservada.
+				183 container
+					184 text Largura da primeira coluna
+					185 text 50%
+				186 slider (settable, integer) Largura da primeira coluna, Value: 50, ID: ratio
+				187 button (disabled) Mostrar lado a lado, ID: arrange
+				188 button (disabled) Voltar à coluna única, ID: stack
+			189 container presentation-tools
+				190 heading 4. Tamanho e alinhamento, Value: 2
+					191 text 4. Tamanho e alinhamento
+				192 text Vale para texto, figura, tabela e fórmula. Na linha, a largura é relativa à sua coluna.
+				193 text Largura do objeto (%)
+				194 stepper (disabled, settable, integer) Largura do objeto (%), Value: 100, ID: object-width
+				195 text Posição na coluna
+				196 pop up button (disabled, collapsed, settable) Posição na coluna, Value: À esquerda, ID: object-horizontal, Secondary Actions: Expand
+					197 menu
+						198 (selected) À esquerda
+						199 Ao centro
+						200 À direita
+				201 text Alinhamento do texto
+				202 pop up button (disabled, collapsed, settable) Alinhamento do texto, Value: À esquerda, ID: object-text-align, Secondary Actions: Expand
+					203 menu
+						204 (selected) À esquerda
+						205 Centralizado
+						206 À direita
+						207 Justificado
+				208 text Alinhamento na linha lado a lado
+				209 pop up button (disabled, collapsed, settable) Alinhamento na linha lado a lado, Value: No topo, ID: object-vertical, Secondary Actions: Expand
+					210 menu
+						211 (selected) No topo
+						212 No meio
+						213 Na base
+				214 button (disabled) Aplicar tamanho e alinhamento, ID: apply-presentation
+				215 button (disabled) Restaurar tamanho e alinhamento, ID: reset-presentation
+			216 container removed-tools
+				217 heading Itens removidos, Value: 2
+					218 text Itens removidos
+				219 text Remover retira do fluxo, conservando o conteúdo. Você pode restaurar mesmo após reabrir. Comandos já consumidos não reaparecem aqui.
+				220 text O que restaurar
+				221 pop up button (collapsed, settable) O que restaurar, ID: removed-library, Secondary Actions: Expand
+				222 text Restaurar antes de
+				223 pop up button (collapsed, settable) Restaurar antes de, Value: Fim do documento, ID: restore-before, Secondary Actions: Expand
+					224 menu
+						406 Água, luz e memória.
+						407 O horizonte abre uma passagem.
+						408 Tabela: Elenco da viagem
+						409 (selected) Fim do documento
+				229 button (disabled) Restaurar item removido, ID: restore-removed
+				410 text Nenhum item removido disponível para restaurar.
+			411 text Texto livre e resultados protegidos no mesmo parágrafo. O comando alterar age uma vez e é consumido.
+		232 container Documento experimental
+			233 container Modo de visualização
+				234 button Apresentação, ID: visual-tab
+				235 button Ordem de leitura, ID: reading-tab
+			412 text Ordem alinhada
+			237 container
+				238 text ESTUDO DE COMPOSIÇÃO 01
+				239 heading Travessia, Value: 2
+					240 text Travessia
+				241 text Um pequeno documento para experimentar relações entre palavra e imagem.
+				242 container Description: Conteúdo do documento, ID: document
+					413 checkbox Description: Selecionar parágrafo: Água, luz e memória., Value: 0
+						414 text Água, luz e memória.
+						415 container Ações de Água, luz e memória.
+							416 button Selecionar objeto Água, luz e memória.
+							417 button Compor objeto Água, luz e memória.
+							418 button Description: Remover objeto Água, luz e memória., Help: Retira o grupo completo de 1 parágrafo(s); a origem é conservada.
+					419 checkbox Description: Selecionar parágrafo: O horizonte abre uma passagem., Value: 0
+						420 text O horizonte abre uma passagem.
+						421 container Ações de O horizonte abre uma passagem.
+							422 text Grupo protegido · 2 parágrafos
+							423 button Selecionar objeto O horizonte abre uma passagem.
+							424 button Compor objeto O horizonte abre uma passagem.
+							425 button Description: Remover objeto O horizonte abre uma passagem., Help: Retira o grupo completo de 2 parágrafo(s); a origem é conservada.
+					426 checkbox Description: Selecionar parágrafo: A casa guarda outra história 🙂., Value: 0
+						427 text A casa guarda outra história 🙂.
+						428 container Ações de A casa guarda outra história 🙂.
+							429 text Grupo protegido · 2 parágrafos
+							430 button Selecionar objeto A casa guarda outra história 🙂.
+							431 button Compor objeto A casa guarda outra história 🙂.
+							432 button Description: Remover objeto A casa guarda outra história 🙂., Help: Retira o grupo completo de 2 parágrafo(s); a origem é conservada.
+					433 container Tabela: Elenco da viagem
+						434 table Elenco da viagem
+							435 text Elenco da viagem
+							436 row
+								437 cell
+									438 text entry area Description: Elenco da viagem, linha 1, coluna 1, Value: Nome
+								439 cell
+									440 text entry area Description: Elenco da viagem, linha 1, coluna 2, Value: Grupo
+								441 cell
+									442 text entry area Description: Elenco da viagem, linha 1, coluna 3, Value: Papel
+								443 cell
+									444 text entry area Description: Elenco da viagem, linha 1, coluna 4, Value: Condição
+								445 cell
+									446 text entry area Description: Elenco da viagem, linha 1, coluna 5, Value: Vida
+							447 row
+								448 cell
+									449 text entry area Description: Elenco da viagem, linha 2, coluna 1, Value: Breno
+								450 cell
+									451 text entry area Description: Elenco da viagem, linha 2, coluna 2, Value: Sul
+								452 cell
+									453 text entry area Description: Elenco da viagem, linha 2, coluna 3, Value: Vigia
+								454 cell
+									455 text entry area Description: Elenco da viagem, linha 2, coluna 4, Value: Pronto
+								456 cell
+									457 text entry area Description: Elenco da viagem, linha 2, coluna 5, Value: 90
+							458 row
+								459 cell
+									460 text entry area Description: Elenco da viagem, linha 3, coluna 1, Value: Lia
+								461 cell
+									462 text entry area Description: Elenco da viagem, linha 3, coluna 2, Value: Norte
+								463 cell
+									464 text entry area Description: Elenco da viagem, linha 3, coluna 3, Value: Exploradora
+								465 cell
+									466 text entry area Description: Elenco da viagem, linha 3, coluna 4, Value: Cansada
+								467 cell
+									468 text entry area Description: Elenco da viagem, linha 3, coluna 5, Value: 80
+							469 row
+								470 cell
+									471 text entry area Description: Elenco da viagem, linha 4, coluna 1, Value: Dora
+								472 cell
+									473 text entry area Elenco da viagem, linha 4, coluna 2
+								474 cell
+									475 text entry area Description: Elenco da viagem, linha 4, coluna 3, Value: Curandeira
+								476 cell
+									477 text entry area Description: Elenco da viagem, linha 4, coluna 4, Value: Atenta
+								478 cell
+									479 text entry area Description: Elenco da viagem, linha 4, coluna 5, Value: 70
+						480 text Tab / Shift+Tab: trocar de célula e aplicar o texto. Ctrl+Enter: aplicar sem sair. Salvar também aplica as células em edição.
+						481 button Selecionar a tabela inteira
+						482 button Aparência da tabela
+						483 button Linhas e colunas
+						484 container Ações de Tabela: Elenco da viagem
+							485 button Selecionar objeto Tabela: Elenco da viagem
+							486 button Compor objeto Tabela: Elenco da viagem
+							487 button Remover objeto Tabela: Elenco da viagem
+				488 text INDE · EXPERIMENTO AUTORAL P2-D2
+			309 text Autoria integral: as camadas da origem são conservadas. A folha alternativa privada não é exibida nesta demonstração.
+		310 text Gravação local em área experimental separada. Operações confirmadas ficam protegidas para recuperação. Salvar confirma o estado autoral. Nenhuma publicação é realizada.
+
+The focused UI element is 0 AXWebArea INDE · Compor o documento, URL: 127.0.0.1:46761/

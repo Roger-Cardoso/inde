@@ -1,0 +1,23 @@
+test_column_weights_project_merge_and_restore_by_identity (__main__.TableStructure.test_column_weights_project_merge_and_restore_by_identity) ... ok
+test_create_dimensions_and_old_creation_api_stays_2_by_3 (__main__.TableStructure.test_create_dimensions_and_old_creation_api_stays_2_by_3) ... ok
+test_crossed_removed_axes_and_new_intersections_do_not_lose_content (__main__.TableStructure.test_crossed_removed_axes_and_new_intersections_do_not_lose_content) ... ok
+test_formula_binding_phrase_and_result_survive_retirement (__main__.TableStructure.test_formula_binding_phrase_and_result_survive_retirement) ... ok
+test_four_crash_windows_insert_remove_restore_are_atomic (__main__.TableStructure.test_four_crash_windows_insert_remove_restore_are_atomic) ... ok
+test_hidden_command_is_not_consumed_or_executed_by_removal (__main__.TableStructure.test_hidden_command_is_not_consumed_or_executed_by_removal) ... ok
+test_insert_before_after_end_preserves_existing_ids_text_and_styles (__main__.TableStructure.test_insert_before_after_end_preserves_existing_ids_text_and_styles) ... ok
+test_insert_remove_restore_each_one_undo_and_outer_arrangement_kept (__main__.TableStructure.test_insert_remove_restore_each_one_undo_and_outer_arrangement_kept) ... ok
+test_invalid_axis_target_foreign_inactive_and_stale_are_atomic (__main__.TableStructure.test_invalid_axis_target_foreign_inactive_and_stale_are_atomic) ... ok
+test_invalid_counts_types_and_fields_are_atomic (__main__.TableStructure.test_invalid_counts_types_and_fields_are_atomic) ... ok
+test_last_axis_protected_and_single_column_designer_valid (__main__.TableStructure.test_last_axis_protected_and_single_column_designer_valid) ... ok
+test_remove_restore_row_preserves_ids_styles_height_and_payload (__main__.TableStructure.test_remove_restore_row_preserves_ids_styles_height_and_payload) ... ok
+test_retention_limit_includes_retired_axes_and_max_shape_valid (__main__.TableStructure.test_retention_limit_includes_retired_axes_and_max_shape_valid) ... ok
+test_retired_cells_reject_direct_edit_select_attach_and_rich_edit (__main__.TableStructure.test_retired_cells_reject_direct_edit_select_attach_and_rich_edit) ... ok
+test_sigkill_keeps_retired_axes_full_grid_and_saved_snapshot_five (__main__.TableStructure.test_sigkill_keeps_retired_axes_full_grid_and_saved_snapshot_five) ... ok
+test_undo_formula_created_in_new_axis_keeps_earlier_insert_history (__main__.TableStructure.test_undo_formula_created_in_new_axis_keeps_earlier_insert_history) ... ok
+test_visible_designer_cannot_modify_hidden_cell_or_row_directly (__main__.TableStructure.test_visible_designer_cannot_modify_hidden_cell_or_row_directly) ... ok
+test_visible_style_edits_preserve_retired_cell_and_row_overrides (__main__.TableStructure.test_visible_style_edits_preserve_retired_cell_and_row_overrides) ... ok
+
+----------------------------------------------------------------------
+Ran 18 tests in 13.519s
+
+OK

@@ -1,0 +1,15 @@
+test_undo_formula_created_in_new_axis_keeps_earlier_insert_history (__main__.TableStructure.test_undo_formula_created_in_new_axis_keeps_earlier_insert_history) ... FAIL
+
+======================================================================
+FAIL: test_undo_formula_created_in_new_axis_keeps_earlier_insert_history (__main__.TableStructure.test_undo_formula_created_in_new_axis_keeps_earlier_insert_history)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/roger/Documents/Projects/GitHub/INDE/obj01-audit/tests/object_composite_pilot/test_table_structure.py", line 58, in test_undo_formula_created_in_new_axis_keeps_earlier_insert_history
+    before=copy.deepcopy(self.table());self.axis('insert_table_axis','row');cell=self.cell(3,0);self.yes(self.c.op('create_formula_hub',name='Nova',model=dict(kind='free',source='resultado 42'),before='',table=self.id,cell=cell['id'],prefix='Valor ',suffix='.'));self.yes(self.c.op('undo'));self.assertTrue(self.c.state['can_undo']);self.yes(self.c.op('undo'));self.assertEqual(self.table(),before);self.yes(self.c.op('redo'));self.yes(self.c.op('redo'));self.assertEqual(self.c.state['formula_cells'][cell['id']],self.c.state['formulas'][0]['id'])
+                                                                                                                                                                                                                                                                                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: False is not true
+
+----------------------------------------------------------------------
+Ran 1 test in 0.235s
+
+FAILED (failures=1)

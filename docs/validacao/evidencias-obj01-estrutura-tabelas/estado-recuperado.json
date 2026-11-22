@@ -1,0 +1,502 @@
+{
+  "aligned": true,
+  "author_order": [
+    "obj01/occurrence/19334a1c-c3c3-42ae-9cc5-c5f782ec8222/1fc2cdf5-6708-45e6-9ec8-ae9704f94b15/44134218-1b49-4f4a-b56b-dcfd48a0fb7d",
+    "obj01/occurrence/19334a1c-c3c3-42ae-9cc5-c5f782ec8222/1fc2cdf5-6708-45e6-9ec8-ae9704f94b15/93c677e8-f0d2-4a82-ad9f-f20458bede0f",
+    "obj01/occurrence/19334a1c-c3c3-42ae-9cc5-c5f782ec8222/1fc2cdf5-6708-45e6-9ec8-ae9704f94b15/8e0ae9cd-48bd-4334-96b1-0d64d2479c48",
+    "16d06fcd-bd39-4d5d-b266-6623330de57a"
+  ],
+  "can_redo": false,
+  "can_undo": false,
+  "composition_version": 4,
+  "context": "structure",
+  "dirty": true,
+  "figures": [],
+  "formula_cards_supported": true,
+  "formula_cells": {
+    "6f8047e5-47d6-4984-9c96-c229966f29be": "5a3827b2-453b-490d-a3e7-850939f9d757"
+  },
+  "formula_hub_supported": true,
+  "formula_text": {
+    "6f8047e5-47d6-4984-9c96-c229966f29be": {
+      "object": "5a3827b2-453b-490d-a3e7-850939f9d757",
+      "runs": [
+        {
+          "kind": "text",
+          "text": ""
+        },
+        {
+          "formula": "5a3827b2-453b-490d-a3e7-850939f9d757",
+          "kind": "result"
+        },
+        {
+          "kind": "text",
+          "text": " pontos"
+        }
+      ]
+    }
+  },
+  "formula_uses": [],
+  "formulas": [
+    {
+      "actions": 0,
+      "bindings": {},
+      "cards": null,
+      "command": false,
+      "consumed": false,
+      "display": "100",
+      "error": "",
+      "hub": {
+        "entry": {
+          "kind": "literal",
+          "value": "100"
+        },
+        "kind": "value",
+        "label": "Vida",
+        "title": "Vida de Armand",
+        "type": "number",
+        "variable": "HP"
+      },
+      "id": "5a3827b2-453b-490d-a3e7-850939f9d757",
+      "language": 2,
+      "name": "VidadeArmand",
+      "offset": 0,
+      "overrides": {},
+      "revision": 0,
+      "source": "# INDE-BLOCK-1 {\"kind\":\"value\",\"label\":\"Vida\",\"title\":\"Vida de Armand\",\"type\":\"number\",\"variable\":\"HP\"}\ndeclara HP = 100\nresultado HP",
+      "type": "number",
+      "valid": true,
+      "variables": [
+        {
+          "current": 100,
+          "current_display": "100",
+          "initial": 100,
+          "initial_display": "100",
+          "name": "HP",
+          "overridden": false
+        }
+      ]
+    }
+  ],
+  "history_entries": 0,
+  "object_composition_supported": true,
+  "paragraphs": [
+    {
+      "id": "obj01/occurrence/19334a1c-c3c3-42ae-9cc5-c5f782ec8222/1fc2cdf5-6708-45e6-9ec8-ae9704f94b15/44134218-1b49-4f4a-b56b-dcfd48a0fb7d",
+      "object": "obj01/paragraph/19334a1c-c3c3-42ae-9cc5-c5f782ec8222/1fc2cdf5-6708-45e6-9ec8-ae9704f94b15/44134218-1b49-4f4a-b56b-dcfd48a0fb7d",
+      "paragraph": "44134218-1b49-4f4a-b56b-dcfd48a0fb7d",
+      "text": "Água, luz e memória."
+    },
+    {
+      "id": "obj01/occurrence/19334a1c-c3c3-42ae-9cc5-c5f782ec8222/1fc2cdf5-6708-45e6-9ec8-ae9704f94b15/93c677e8-f0d2-4a82-ad9f-f20458bede0f",
+      "object": "obj01/paragraph/19334a1c-c3c3-42ae-9cc5-c5f782ec8222/1fc2cdf5-6708-45e6-9ec8-ae9704f94b15/93c677e8-f0d2-4a82-ad9f-f20458bede0f",
+      "paragraph": "93c677e8-f0d2-4a82-ad9f-f20458bede0f",
+      "text": "O horizonte abre uma passagem."
+    },
+    {
+      "id": "obj01/occurrence/19334a1c-c3c3-42ae-9cc5-c5f782ec8222/1fc2cdf5-6708-45e6-9ec8-ae9704f94b15/8e0ae9cd-48bd-4334-96b1-0d64d2479c48",
+      "object": "obj01/paragraph/19334a1c-c3c3-42ae-9cc5-c5f782ec8222/1fc2cdf5-6708-45e6-9ec8-ae9704f94b15/8e0ae9cd-48bd-4334-96b1-0d64d2479c48",
+      "paragraph": "8e0ae9cd-48bd-4334-96b1-0d64d2479c48",
+      "text": "A casa guarda outra história 🙂."
+    }
+  ],
+  "persistence_status": "protected",
+  "presentation": {
+    "16d06fcd-bd39-4d5d-b266-6623330de57a": {
+      "horizontal": "start",
+      "text_align": "left",
+      "vertical": "start",
+      "width": 100
+    }
+  },
+  "private_alternatives": 1,
+  "profile": "P2-D2",
+  "reading_groups": [
+    [
+      "obj01/occurrence/19334a1c-c3c3-42ae-9cc5-c5f782ec8222/1fc2cdf5-6708-45e6-9ec8-ae9704f94b15/44134218-1b49-4f4a-b56b-dcfd48a0fb7d"
+    ],
+    [
+      "obj01/occurrence/19334a1c-c3c3-42ae-9cc5-c5f782ec8222/1fc2cdf5-6708-45e6-9ec8-ae9704f94b15/93c677e8-f0d2-4a82-ad9f-f20458bede0f",
+      "obj01/occurrence/19334a1c-c3c3-42ae-9cc5-c5f782ec8222/1fc2cdf5-6708-45e6-9ec8-ae9704f94b15/8e0ae9cd-48bd-4334-96b1-0d64d2479c48"
+    ]
+  ],
+  "recovered_on_open": true,
+  "recovery_generation": 76,
+  "removed_items": [],
+  "retained_figures": 0,
+  "retained_tables": 0,
+  "revision": 0,
+  "rows": [],
+  "saved_revision": 1,
+  "selected_cell": "",
+  "selection": "16d06fcd-bd39-4d5d-b266-6623330de57a",
+  "source_body_sha256": "092c8cf3b98bc9e0038c64d0e3d1642beeac14f94785b8b4137fbe9dd7091c9a",
+  "source_document": "1fc2cdf5-6708-45e6-9ec8-ae9704f94b15",
+  "source_sha256": "efa1e0334c1806d45fa44c1bda935a2409ca273b0756180841e92ed74bf52dc5",
+  "table_design_defaults": {
+    "band_fill": "#f3f6f1",
+    "border_color": "#ccd7cd",
+    "border_kind": "horizontal",
+    "border_style": "solid",
+    "border_width": 1,
+    "caption_align": "left",
+    "caption_side": "top",
+    "cell_vertical": "top",
+    "cells": {},
+    "column_weights": [],
+    "fill_color": "#fffefa",
+    "font": "sans",
+    "font_size": 15,
+    "header_bold": true,
+    "header_fill": "#e7ede7",
+    "header_text": "#243d38",
+    "line_height": 1.5,
+    "min_row_height": 42,
+    "padding_x": 12,
+    "padding_y": 10,
+    "row_heights": {},
+    "show_title": true,
+    "text_color": "#243d38",
+    "zebra": true
+  },
+  "table_design_presets": [
+    {
+      "appearance": {
+        "band_fill": "#f3f6f1",
+        "border_color": "#ccd7cd",
+        "border_kind": "horizontal",
+        "border_style": "solid",
+        "border_width": 1,
+        "caption_align": "left",
+        "caption_side": "top",
+        "cell_vertical": "top",
+        "cells": {},
+        "column_weights": [],
+        "fill_color": "#fffefa",
+        "font": "sans",
+        "font_size": 15,
+        "header_bold": true,
+        "header_fill": "#e7ede7",
+        "header_text": "#243d38",
+        "line_height": 1.5,
+        "min_row_height": 42,
+        "padding_x": 12,
+        "padding_y": 10,
+        "row_heights": {},
+        "show_title": true,
+        "text_color": "#243d38",
+        "zebra": true
+      },
+      "id": "editorial",
+      "label": "Editorial"
+    },
+    {
+      "appearance": {
+        "band_fill": "#f5efdf",
+        "border_color": "#d9cfb9",
+        "border_kind": "horizontal",
+        "border_style": "solid",
+        "border_width": 1,
+        "caption_align": "left",
+        "caption_side": "top",
+        "cell_vertical": "top",
+        "cells": {},
+        "column_weights": [],
+        "fill_color": "#fcf8ef",
+        "font": "serif",
+        "font_size": 17,
+        "header_bold": true,
+        "header_fill": "#ede4d0",
+        "header_text": "#243d38",
+        "line_height": 1.5,
+        "min_row_height": 42,
+        "padding_x": 12,
+        "padding_y": 12,
+        "row_heights": {},
+        "show_title": true,
+        "text_color": "#243d38",
+        "zebra": true
+      },
+      "id": "notebook",
+      "label": "Caderno"
+    },
+    {
+      "appearance": {
+        "band_fill": "#edf4f1",
+        "border_color": "#aebfb6",
+        "border_kind": "grid",
+        "border_style": "solid",
+        "border_width": 1,
+        "caption_align": "left",
+        "caption_side": "top",
+        "cell_vertical": "top",
+        "cells": {},
+        "column_weights": [],
+        "fill_color": "#ffffff",
+        "font": "sans",
+        "font_size": 15,
+        "header_bold": true,
+        "header_fill": "#2d5a50",
+        "header_text": "#ffffff",
+        "line_height": 1.5,
+        "min_row_height": 42,
+        "padding_x": 12,
+        "padding_y": 10,
+        "row_heights": {},
+        "show_title": true,
+        "text_color": "#243d38",
+        "zebra": true
+      },
+      "id": "grid",
+      "label": "Grade"
+    },
+    {
+      "appearance": {
+        "band_fill": "#203441",
+        "border_color": "#4c6370",
+        "border_kind": "horizontal",
+        "border_style": "solid",
+        "border_width": 1,
+        "caption_align": "left",
+        "caption_side": "top",
+        "cell_vertical": "top",
+        "cells": {},
+        "column_weights": [],
+        "fill_color": "#192a36",
+        "font": "sans",
+        "font_size": 15,
+        "header_bold": true,
+        "header_fill": "#263f4d",
+        "header_text": "#ffffff",
+        "line_height": 1.5,
+        "min_row_height": 42,
+        "padding_x": 12,
+        "padding_y": 10,
+        "row_heights": {},
+        "show_title": true,
+        "text_color": "#ecf0ed",
+        "zebra": true
+      },
+      "id": "night",
+      "label": "Noite"
+    }
+  ],
+  "table_design_supported": true,
+  "table_structure_supported": true,
+  "tables": [
+    {
+      "appearance": {
+        "band_fill": "#f5efdf",
+        "border_color": "#d9cfb9",
+        "border_kind": "horizontal",
+        "border_style": "solid",
+        "border_width": 1,
+        "caption_align": "left",
+        "caption_side": "top",
+        "cell_vertical": "top",
+        "cells": {
+          "534b003c-e3df-4a14-b04e-fedfbbd68547": {
+            "align": "right"
+          },
+          "be8ef89b-f77e-4ed5-bc28-64c1958e7863": {
+            "align": "right"
+          }
+        },
+        "column_weights": [],
+        "fill_color": "#fcf8ef",
+        "font": "serif",
+        "font_size": 17,
+        "header_bold": true,
+        "header_fill": "#ede4d0",
+        "header_text": "#243d38",
+        "line_height": 1.5,
+        "min_row_height": 42,
+        "padding_x": 12,
+        "padding_y": 12,
+        "row_heights": {},
+        "show_title": true,
+        "text_color": "#243d38",
+        "zebra": true
+      },
+      "cells": [
+        {
+          "column": "ca506dea-1391-4f04-9fb5-8396ec30227e",
+          "id": "cab69cdf-7529-44cd-b826-cee1f018d0a6",
+          "row": "d35843cd-f463-45f4-94d1-e92dc90da0f7",
+          "text": "Nome"
+        },
+        {
+          "column": "5b6b6453-d9c2-4919-b110-10dda8cc2b9c",
+          "id": "87aa147d-1d8e-4dc9-b2f6-479908e5066e",
+          "row": "d35843cd-f463-45f4-94d1-e92dc90da0f7",
+          "text": "Papel"
+        },
+        {
+          "column": "8b5798ad-9a09-46f3-b066-5b829432079f",
+          "id": "89e541eb-9989-407b-8b49-9c45ba7d5243",
+          "row": "d35843cd-f463-45f4-94d1-e92dc90da0f7",
+          "text": "Condição"
+        },
+        {
+          "column": "709e9db9-89a1-482f-9263-5101dabc5b42",
+          "id": "be8ef89b-f77e-4ed5-bc28-64c1958e7863",
+          "row": "d35843cd-f463-45f4-94d1-e92dc90da0f7",
+          "text": "Vida"
+        },
+        {
+          "column": "ca506dea-1391-4f04-9fb5-8396ec30227e",
+          "id": "0f8287a4-de9a-4732-8ca0-ebf1a9c908c9",
+          "row": "da908a75-e700-46b3-9ff0-3ea6ba46e380",
+          "text": "Lia"
+        },
+        {
+          "column": "5b6b6453-d9c2-4919-b110-10dda8cc2b9c",
+          "id": "2d330b53-ada6-495a-a090-9297d58cbba1",
+          "row": "da908a75-e700-46b3-9ff0-3ea6ba46e380",
+          "text": "Exploradora"
+        },
+        {
+          "column": "8b5798ad-9a09-46f3-b066-5b829432079f",
+          "id": "425d511c-ec23-4089-ad04-e098b2ed229d",
+          "row": "da908a75-e700-46b3-9ff0-3ea6ba46e380",
+          "text": "Cansada"
+        },
+        {
+          "column": "709e9db9-89a1-482f-9263-5101dabc5b42",
+          "id": "534b003c-e3df-4a14-b04e-fedfbbd68547",
+          "row": "da908a75-e700-46b3-9ff0-3ea6ba46e380",
+          "text": "80"
+        },
+        {
+          "column": "ca506dea-1391-4f04-9fb5-8396ec30227e",
+          "id": "ccc0256e-49f3-427e-9b60-57ce71ff77d1",
+          "row": "e05c844e-2369-440d-9eb3-4e03aa61a1a5",
+          "text": "Breno"
+        },
+        {
+          "column": "5b6b6453-d9c2-4919-b110-10dda8cc2b9c",
+          "id": "4bb8e59d-6c70-4326-9a1f-f0045be53fe8",
+          "row": "e05c844e-2369-440d-9eb3-4e03aa61a1a5",
+          "text": "Vigia"
+        },
+        {
+          "column": "8b5798ad-9a09-46f3-b066-5b829432079f",
+          "id": "6bd2034b-4573-49cf-8929-e70ef8556c64",
+          "row": "e05c844e-2369-440d-9eb3-4e03aa61a1a5",
+          "text": "Pronto"
+        },
+        {
+          "column": "709e9db9-89a1-482f-9263-5101dabc5b42",
+          "id": "cfb7abff-89c9-43b1-8d13-a9737eb6bc7c",
+          "row": "e05c844e-2369-440d-9eb3-4e03aa61a1a5",
+          "text": "90"
+        },
+        {
+          "column": "1cfd876c-b12c-4a37-8cb3-7f90c471d926",
+          "id": "e1d29d65-28b5-44b2-95cf-9aacb5b9ca12",
+          "row": "d35843cd-f463-45f4-94d1-e92dc90da0f7",
+          "text": "Grupo"
+        },
+        {
+          "column": "1cfd876c-b12c-4a37-8cb3-7f90c471d926",
+          "id": "509ec1b7-c2b5-42a1-9996-c8aa1ce53598",
+          "row": "e05c844e-2369-440d-9eb3-4e03aa61a1a5",
+          "text": "Sul"
+        },
+        {
+          "column": "1cfd876c-b12c-4a37-8cb3-7f90c471d926",
+          "id": "f515a8db-879e-4633-b5f0-c66fd989334c",
+          "row": "da908a75-e700-46b3-9ff0-3ea6ba46e380",
+          "text": "Norte"
+        },
+        {
+          "column": "ca506dea-1391-4f04-9fb5-8396ec30227e",
+          "id": "54573003-3734-4086-b423-daf7b898ea91",
+          "row": "f5f02d60-27ef-40e4-aad7-fa6878f4ebea",
+          "text": "Dora"
+        },
+        {
+          "column": "1cfd876c-b12c-4a37-8cb3-7f90c471d926",
+          "id": "f61e5a9e-df11-4830-9ac5-b34c4007e891",
+          "row": "f5f02d60-27ef-40e4-aad7-fa6878f4ebea",
+          "text": ""
+        },
+        {
+          "column": "5b6b6453-d9c2-4919-b110-10dda8cc2b9c",
+          "id": "5e26cf6e-14e7-4fd2-b664-8b4b382073db",
+          "row": "f5f02d60-27ef-40e4-aad7-fa6878f4ebea",
+          "text": "Curandeira"
+        },
+        {
+          "column": "8b5798ad-9a09-46f3-b066-5b829432079f",
+          "id": "e243b9a8-a752-4a3f-be93-c5fa5e118c75",
+          "row": "f5f02d60-27ef-40e4-aad7-fa6878f4ebea",
+          "text": "Atenta"
+        },
+        {
+          "column": "709e9db9-89a1-482f-9263-5101dabc5b42",
+          "id": "1ad35ae5-2917-4e00-ba7a-d410196d10a9",
+          "row": "f5f02d60-27ef-40e4-aad7-fa6878f4ebea",
+          "text": "70"
+        }
+      ],
+      "column_ids": [
+        "ca506dea-1391-4f04-9fb5-8396ec30227e",
+        "1cfd876c-b12c-4a37-8cb3-7f90c471d926",
+        "5b6b6453-d9c2-4919-b110-10dda8cc2b9c",
+        "8b5798ad-9a09-46f3-b066-5b829432079f",
+        "709e9db9-89a1-482f-9263-5101dabc5b42"
+      ],
+      "header": true,
+      "id": "16d06fcd-bd39-4d5d-b266-6623330de57a",
+      "object": "10bd2b2f-a909-43ba-b3d0-3d6e74ec100d",
+      "occurrence": "16d06fcd-bd39-4d5d-b266-6623330de57a",
+      "payload_revision": 30,
+      "row_ids": [
+        "d35843cd-f463-45f4-94d1-e92dc90da0f7",
+        "e05c844e-2369-440d-9eb3-4e03aa61a1a5",
+        "da908a75-e700-46b3-9ff0-3ea6ba46e380",
+        "f5f02d60-27ef-40e4-aad7-fa6878f4ebea"
+      ],
+      "structure": {
+        "removed_columns": [],
+        "removed_rows": [
+          {
+            "filled_cells": 4,
+            "formula_cells": 1,
+            "id": "56e5b7fe-f52e-440e-bf4e-73dac46e5f04",
+            "index": 2,
+            "label": "Armand"
+          }
+        ],
+        "retained_columns": 5,
+        "retained_rows": 5
+      },
+      "title": "Elenco da viagem"
+    }
+  ],
+  "text_groups": [
+    {
+      "id": "44134218-1b49-4f4a-b56b-dcfd48a0fb7d",
+      "occurrences": [
+        "obj01/occurrence/19334a1c-c3c3-42ae-9cc5-c5f782ec8222/1fc2cdf5-6708-45e6-9ec8-ae9704f94b15/44134218-1b49-4f4a-b56b-dcfd48a0fb7d"
+      ]
+    },
+    {
+      "id": "93c677e8-f0d2-4a82-ad9f-f20458bede0f",
+      "occurrences": [
+        "obj01/occurrence/19334a1c-c3c3-42ae-9cc5-c5f782ec8222/1fc2cdf5-6708-45e6-9ec8-ae9704f94b15/93c677e8-f0d2-4a82-ad9f-f20458bede0f",
+        "obj01/occurrence/19334a1c-c3c3-42ae-9cc5-c5f782ec8222/1fc2cdf5-6708-45e6-9ec8-ae9704f94b15/8e0ae9cd-48bd-4334-96b1-0d64d2479c48"
+      ]
+    }
+  ],
+  "uncertain_candidate_available": false,
+  "unsaved_recovery": true,
+  "visibility_profiles": 1,
+  "visual_order": [
+    "obj01/occurrence/19334a1c-c3c3-42ae-9cc5-c5f782ec8222/1fc2cdf5-6708-45e6-9ec8-ae9704f94b15/44134218-1b49-4f4a-b56b-dcfd48a0fb7d",
+    "obj01/occurrence/19334a1c-c3c3-42ae-9cc5-c5f782ec8222/1fc2cdf5-6708-45e6-9ec8-ae9704f94b15/93c677e8-f0d2-4a82-ad9f-f20458bede0f",
+    "obj01/occurrence/19334a1c-c3c3-42ae-9cc5-c5f782ec8222/1fc2cdf5-6708-45e6-9ec8-ae9704f94b15/8e0ae9cd-48bd-4334-96b1-0d64d2479c48",
+    "16d06fcd-bd39-4d5d-b266-6623330de57a"
+  ]
+}

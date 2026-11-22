@@ -1,0 +1,13 @@
+{
+  "schema": 37,
+  "arquivos_conferidos": 758,
+  "arquivo_sha256": "554623abec5d7c3c175dab2aa6bbabc8a95abd6e3d98a27191cea0260a4965c4",
+  "resultado": "ok"
+}
+-- Configuring done (1.9s)
+-- Generating done (0.0s)
+-- Build files have been written to: /home/roger/Documents/Projects/GitHub/INDE/obj01-audit/build-obj01-p2a
+[1/4] Building CXX object CMakeFiles/inde_object_composite_pilot_domain.dir/home/roger/Documents/Projects/GitHub/INDE/obj01-audit/cpp/object_composite_pilot.cpp.o
+[2/4] Linking CXX static library libinde_object_composite_pilot_domain.a
+[3/4] Linking CXX executable inde_object_composite_pilot_fault_driver
+[4/4] Linking CXX executable inde_object_composite_pilot

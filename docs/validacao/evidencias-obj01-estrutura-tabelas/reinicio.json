@@ -1,0 +1,19 @@
+{
+  "snapshot_identical_after_SIGKILL": true,
+  "saved_not_promoted": true,
+  "working_generation": 76,
+  "saved_revision": 1,
+  "integrity_check": "ok",
+  "foreign_key_check": [],
+  "user_version": 5,
+  "history_entries_after_restart": 0,
+  "visible_shape": [
+    4,
+    5
+  ],
+  "retained_shape": [
+    5,
+    5
+  ],
+  "retired_formula_row": true
+}
