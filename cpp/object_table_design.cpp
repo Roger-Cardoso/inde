@@ -254,9 +254,17 @@ Value with_inserted_column(const Value &style, std::size_t index) {
     const auto count = static_cast<double>(weights.size());
     for (auto &w : weights)
       w = real(w) * count / (count + 1);
-    weights.insert(weights.begin() + static_cast<std::ptrdiff_t>(index),
-                   V(100 / (count + 1)));
-    out["column_weights"] = V(weights);
+    // Construct the numeric JSON value directly instead of moving a temporary
+    // variant through vector::insert (GCC 13 -O3 diagnoses inactive storage).
+    V::Array inserted;
+    inserted.reserve(weights.size() + 1);
+    for (std::size_t i = 0; i <= weights.size(); ++i) {
+      if (i == index)
+        inserted.emplace_back(100 / (count + 1));
+      if (i < weights.size())
+        inserted.push_back(weights[i]);
+    }
+    out["column_weights"] = V(inserted);
   }
   return V(out);
 }
