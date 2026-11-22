@@ -6,6 +6,7 @@
 #include "object_commands.hpp"
 #include "object_document_adapter.hpp"
 #include "object_formula.hpp"
+#include "object_formula_cards.hpp"
 #include <algorithm>
 #include <array>
 #include <cerrno>
@@ -1811,6 +1812,8 @@ struct Session::Impl {
           value.emplace("command", r.command);
           value.emplace("consumed", r.consumed);
           value.emplace("type", r.type);
+          const auto cards = formula::cards::recognize(f.source);
+          value.emplace("cards", cards ? *cards : V{});
         }
         value.emplace("display", r.valid ? r.display : "");
         value.emplace("error", r.error);
@@ -1831,6 +1834,7 @@ struct Session::Impl {
             key, V::Object{{"object", p.object}, {"runs", runs_value(p.runs)}});
     return V::Object{
         {"formula_text", std::move(texts)},
+        {"formula_cards_supported", p2d2},
         {"formulas", std::move(formulas)},
         {"formula_uses", std::move(uses)},
         {"formula_cells", std::move(cells)},
@@ -1981,9 +1985,65 @@ struct Session::Impl {
     if (v.at("expected").as_integer() != revision)
       fail("stale_session_revision");
   }
-  V request(const V &v) {
+  V request(const V &input) {
     try {
-      const auto op = v.at("op").as_string();
+      auto v = input;
+      auto op = v.at("op").as_string();
+      const bool visual_cards =
+          op == "create_formula_cards" || op == "edit_formula_cards";
+      if (op == "create_formula_cards" || op == "edit_formula_cards" ||
+          op == "preview_formula_cards") {
+        if (!p2d2)
+          fail("p2d2_profile_required");
+        expected(v);
+        if (op == "create_formula_cards")
+          fields(v, {"op", "expected", "name", "cards", "before", "table",
+                     "cell", "prefix", "suffix"});
+        else if (op == "edit_formula_cards")
+          fields(v, {"op", "expected", "id", "cards", "target", "prefix",
+                     "suffix"});
+        else
+          fields(v, {"op", "expected", "id", "cards"});
+        const auto source = formula::cards::compile(v.at("cards"));
+        if (op == "preview_formula_cards") {
+          auto records = working.formulas;
+          const auto id = v.at("id").as_string();
+          auto at = std::find_if(records.begin(), records.end(),
+                                 [&](const auto &f) { return f.id == id; });
+          if (!id.empty() && at == records.end())
+            fail("formula_not_found");
+          if (at == records.end()) {
+            formula::Record f;
+            f.id = project::new_uuid();
+            f.name = "__CardsPreview0";
+            std::size_t preview_index = 0;
+            while (std::any_of(records.begin(), records.end(),
+                               [&](const auto &r) { return r.name == f.name; }))
+              f.name = "__CardsPreview" + std::to_string(++preview_index);
+            f.advanced = true;
+            records.push_back(f);
+            at = std::prev(records.end());
+          }
+          if (at->consumed)
+            fail("formula_command_consumed");
+          at->source = source;
+          const auto preview_id = at->id;
+          formula::bind(*at, records);
+          const auto result = formula::evaluate(records).at(preview_id);
+          return V::Object{{"accepted", true},
+                           {"preview", V::Object{{"valid", result.valid},
+                                                 {"display", result.display},
+                                                 {"error", result.error}}}};
+        }
+        auto converted = v.as_object();
+        converted.erase("cards");
+        converted.emplace("source", source);
+        if (op == "create_formula_cards") {
+          op = "create_formula";
+          converted.at("op") = op;
+        }
+        v = V(std::move(converted));
+      }
       if (op == "view") {
         fields(v, {"op"});
         return V::Object{{"accepted", true}, {"state", view()}};
@@ -2007,10 +2067,10 @@ struct Session::Impl {
       if (p2c && uncertain && op != "reopen" && op != "reopen_working")
         fail("persistence_requires_reopen");
       if (p2c) {
-        const bool text_edit = op == "edit_cell" || op == "edit_formula" ||
-                               op == "execute_formula" ||
-                               op == "edit_formula_text" ||
-                               op == "reset_formula_variable";
+        const bool text_edit =
+            op == "edit_cell" || op == "edit_formula" ||
+            op == "execute_formula" || op == "edit_formula_text" ||
+            op == "edit_formula_cards" || op == "reset_formula_variable";
         const bool structure = op == "create_table" || op == "import" ||
                                op == "duplicate" || op == "move" ||
                                op == "remove" || op == "reorder_text" ||
@@ -2183,7 +2243,8 @@ struct Session::Impl {
           candidate.formula_text[target] = {id, decode_runs(v.at("runs"))};
         } else if (op == "create_formula" || op == "attach_formula" ||
                    op == "detach_formula" || op == "edit_formula" ||
-                   op == "execute_formula" || op == "reset_formula_variable") {
+                   op == "edit_formula_cards" || op == "execute_formula" ||
+                   op == "reset_formula_variable") {
           if (!p2d)
             fail("p2d_profile_required");
           const auto find_formula = [&](const std::string &id) {
@@ -2222,6 +2283,12 @@ struct Session::Impl {
               candidate.formulas.push_back(std::move(f));
               for (auto &r : candidate.formulas)
                 formula::bind(r, candidate.formulas);
+              if (visual_cards) {
+                const auto result =
+                    formula::evaluate(candidate.formulas).at(object);
+                if (!result.valid)
+                  throw std::runtime_error(result.error);
+              }
             } else if (op == "attach_formula")
               object = find_formula(v.at("id").as_string())->id;
             std::string presentation_target;
@@ -2271,12 +2338,57 @@ struct Session::Impl {
             const auto f = find_formula(v.at("id").as_string());
             if (p2d2 && f->consumed)
               fail("formula_command_consumed");
-            if (op == "edit_formula") {
-              fields(v, {"op", "expected", "id", "source"});
+            if (op == "edit_formula" || op == "edit_formula_cards") {
+              if (op == "edit_formula_cards") {
+                fields(v, {"op", "expected", "id", "source", "target", "prefix",
+                           "suffix"});
+                // A visual edit may only replace a fully representable source.
+                if (!formula::cards::recognize(f->source))
+                  fail("formula_cards_advanced_source");
+                const auto target = v.at("target").as_string();
+                if (!target.empty()) {
+                  bool active = std::any_of(
+                      candidate.formula_uses.begin(),
+                      candidate.formula_uses.end(), [&](const auto &u) {
+                        return u.occurrence == target && u.object == f->id;
+                      });
+                  for (const auto &t : candidate.tables)
+                    for (const auto &c : t.cells)
+                      if (c.id == target &&
+                          candidate.formula_cells.contains(target) &&
+                          candidate.formula_cells.at(target) == f->id)
+                        active = true;
+                  if (!active)
+                    fail("formula_text_target_invalid");
+                  // Refuse to flatten a richer phrase containing other results.
+                  const auto &runs = candidate.formula_text.at(target).runs;
+                  std::size_t own = 0;
+                  for (const auto &r : runs) {
+                    if (!r.formula.empty()) {
+                      if (r.formula != f->id || ++own != 1)
+                        fail("formula_cards_complex_phrase");
+                    }
+                  }
+                  candidate.formula_text[target] = {
+                      f->id,
+                      {{v.at("prefix").as_string(), {}},
+                       {{}, f->id},
+                       {v.at("suffix").as_string(), {}}}};
+                } else if (!v.at("prefix").as_string().empty() ||
+                           !v.at("suffix").as_string().empty())
+                  fail("formula_text_target_invalid");
+              } else
+                fields(v, {"op", "expected", "id", "source"});
               f->source = v.at("source").as_string();
               bump(f->revision);
               for (auto &r : candidate.formulas)
                 formula::bind(r, candidate.formulas);
+              if (visual_cards) {
+                const auto result =
+                    formula::evaluate(candidate.formulas).at(f->id);
+                if (!result.valid)
+                  throw std::runtime_error(result.error);
+              }
             } else if (op == "execute_formula") {
               fields(v, {"op", "expected", "id"});
               const auto command_id = f->id;

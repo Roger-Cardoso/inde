@@ -126,6 +126,9 @@ const errors = {
   formula_command_must_be_alone: 'O comando alterar deve ficar sozinho: uma instrução, sem declarações, resultado, frase ou usos compartilhados.',
   formula_command_consumed: 'Esse comando já foi executado e consumido. Desfazer pode restaurá-lo.',
   formula_command_has_no_value: 'Um comando alterar não oferece resultado para outra fórmula. Consulte a variável alterada.',
+  formula_cards_invalid: 'Preencha a entrada e os valores dos cartões. Confira também o limite de 12 condições.',
+  formula_cards_advanced_source: 'Esta fonte foi alterada fora do formato dos cartões. Abra a edição avançada para conservá-la integralmente.',
+  formula_cards_complex_phrase: 'A frase reúne outros resultados. Use Editar frase para conservar todos os trechos.',
   formula_type: 'A operação recebeu um tipo incompatível. Use números nas contas e & para juntar texto.',
   formula_text_limit: 'O resultado textual excede 4.096 bytes neste experimento.',
   formula_output_limit: 'O conjunto de resultados excede o limite de texto deste experimento.',
@@ -205,6 +208,7 @@ function message(text, error = false) {
   $('message').textContent = text;
   $('message').className = error ? 'error' : '';
   $('message').hidden = false;
+  if(cardsEditing&&$('cards-error')){ $('cards-error').textContent=text; $('cards-error').hidden=!error; }
 }
 async function fetchApi(path, options = {}) {
   const response = await fetch(path, { ...options, headers: { 'X-Obj01-Token': token, ...(options.headers || {}) } });
@@ -217,7 +221,7 @@ async function fetchApi(path, options = {}) {
 function cellData(tableId, cellId) { return state?.tables?.find(t => t.id === tableId)?.cells.find(c => c.id === cellId); }
 let formulaEditing = null;
 function formulaDraft() { return formulaEditing && formulaEditing.draft !== state?.formulas?.find(f => f.id === formulaEditing.id)?.source; }
-function hasDrafts() { return formulaDraft() || richDrafts() || [...document.querySelectorAll('.cell-editor')].some(n => n.value !== cellData(n.dataset.table, n.dataset.cell)?.text); }
+function hasDrafts() { return cardsDraft() || formulaDraft() || richDrafts() || [...document.querySelectorAll('.cell-editor')].some(n => n.value !== cellData(n.dataset.table, n.dataset.cell)?.text); }
 function updateSelection() {
   for (const node of $('document').querySelectorAll('.item')) {
     const selected = state.selection === node.dataset.occurrence;
@@ -301,6 +305,7 @@ function options(id, values, fallback = '') {
 function controls() {
   if (!state) return;
   richControls();
+  cardsControls();
   for (const n of document.querySelectorAll('.cell-editor')) n.readOnly = busy && !['edit_cell', 'select_cell'].includes(activeOperation);
   for (const id of ['save', 'reopen', 'sample', 'file', 'caption', 'alt', 'decorative', 'intent', 'insert-before', 'move-before', 'paragraph', 'ratio', 'restore', 'table-title', 'table-header', 'table-before', 'create-table']) $(id).disabled = busy;
   $('import').disabled = busy || !upload;
@@ -429,7 +434,8 @@ function renderVariables() {
 function formulaError(f) {
   return errors[f.error] || 'A fórmula precisa ser conferida. Abra sua fonte para corrigir.';
 }
-async function openFormula(id,key,table='',cell='') {
+async function openFormula(id,key,table='',cell='',advanced=false) {
+  if(!advanced&&richProfile()&&state.formulas.find(f=>f.id===id)?.cards)return openCards(id,key,table,cell);
   if (state.context !== 'text' && !await action('set_context',{context:'text'})) return;
   if (table) { if (!await action('select_cell',{id:table,cell})) return; }
   else if (key !== 'library') { if (!await action('select',{id:key})) return; }
@@ -515,6 +521,7 @@ function render() {
   if (p2c) {document.title = 'INDE · Trabalho recuperável'; document.querySelector('h1').textContent = 'Seu trabalho continua aqui.'; document.querySelector('.paper-footer').textContent = 'INDE · EXPERIMENTO AUTORAL P2-C'; $('limits').textContent = 'Células em Texto, objetos em Estrutura, arranjos em Composição. Operações confirmadas são recuperáveis; o histórico reinicia.';}
   if (p2d) { document.title = 'INDE · Fórmulas vivas'; document.querySelector('h1').textContent = 'Resultados que acompanham sua história.'; document.querySelector('.paper-footer').textContent = 'INDE · EXPERIMENTO AUTORAL P2-D'; $('limits').textContent = 'Fórmulas numéricas com variáveis e dependências. Alterações de variáveis exigem execução; resultados recalculam automaticamente.'; }
   if(p2d2) { document.title='INDE · Texto e fórmulas'; document.querySelector('h1').textContent='A conta faz parte da escrita.'; document.querySelector('.intro p:not(.eyebrow)').textContent='Escreva a frase, deixe os resultados acompanharem as mudanças.'; $('limits').textContent='Texto livre e resultados protegidos no mesmo parágrafo. O comando alterar age uma vez e é consumido.'; document.querySelector('.paper-footer').textContent='INDE · EXPERIMENTO AUTORAL P2-D2'; }
+  if(state.formula_cards_supported){document.title='INDE · Texto por condições';document.querySelector('h1').textContent='Escolha as palavras, sem programar.';document.querySelector('.intro p:not(.eyebrow)').textContent='Preencha as frases e deixe os cartões acompanharem a situação.';}
   const destination = state.author_order.filter(id => !state.rows.some(r => r.children[1] === id) && (state.figures.some(f => f.id === id) || state.tables?.some(t => t.id === id) || state.formula_uses?.some(u => u.id === id) || state.reading_groups.some(g => g[0] === id))).map(id => [id, shortText(id)]);
   destination.push(['', 'Fim do documento']);
   options('insert-before', destination, state.paragraphs[1]?.id || '');
@@ -522,6 +529,7 @@ function render() {
   options('formula-before',destination,'');
   options('formula-library',(state.formulas || []).filter(f=>!f.consumed).map(f => [f.id,f.name + ': ' + (f.valid?f.display:'conferir fórmula')]),state.formulas?.[0]?.id || '');
   renderVariables();
+  cardsSetup();
   options('move-before', destination.filter(([id]) => id !== state.selection), '');
   options('text-before', destination, '');
   options('text-group', (state.text_groups || []).map(g => [g.id, g.occurrences.map(shortText).join(' / ')]), state.text_groups?.[0]?.id || '');
@@ -623,3 +631,145 @@ window.addEventListener('beforeunload', event => { if (hasDrafts() || (state?.di
     state = result.state; render();
   } catch (error) { message(errors[error.message] || 'Não foi possível abrir o documento experimental.', true); }
 })();
+
+// Approved card authoring: the C++ compiler/evaluator is the only authority.
+let cardsEditing = null, cardsPreviewTimer = null, cardsPreviewSequence = 0;
+const cardsOperators = {
+  number: [['lt','for menor que'],['le','for igual ou menor que'],['eq','for igual a'],['ne','for diferente de'],['ge','for igual ou maior que'],['gt','for maior que']],
+  text: [['eq','for igual a'],['ne','for diferente de'],['contains','contiver'],['starts','começar com']],
+};
+function cardsNode(tag, text, props={}) {
+  const n=document.createElement(tag); if(text!==null)n.textContent=text;
+  for(const [k,v] of Object.entries(props))n.setAttribute(k,v);return n;
+}
+function cardsField(label,node) {const l=cardsNode('label',label);l.append(node);return l;}
+function cardsButton(label,fn) {const b=cardsNode('button',label,{type:'button'});b.addEventListener('click',fn);return b;}
+function cardsFingerprint() {return cardsEditing?JSON.stringify({model:cardsEditing.model,prefix:cardsEditing.prefix,suffix:cardsEditing.suffix,where:cardsEditing.where}):'';}
+function cardsDraft() {return cardsEditing&&cardsFingerprint()!==cardsEditing.initial;}
+function cardsNewModel(type='number') {return {version:1,type,label:type==='number'?'o preço':'Atitude',entry:{kind:'literal',value:type==='number'?'16':'hostil'},rules:type==='number'?[{op:'gt',value:'15',text:'preço caro'},{op:'eq',value:'15',text:'vou negociar'}]:[{op:'eq',value:'hostil',text:'ameaçador'},{op:'eq',value:'amistosa',text:'receptivo'}],otherwise:type==='number'?'que pechincha':'indecifrável'};}
+function cardsSetup() {
+  if(!$('cards-tools'))return;
+  $('cards-tools').hidden=!state?.formula_cards_supported;
+  if(!state?.formula_cards_supported)return;
+  if(richProfile()&&!$('formula-advanced')) {
+    const advanced=cardsNode('details',null,{id:'formula-advanced'}), summary=cardsNode('summary','Contas e comandos avançados');
+    advanced.append(summary);const host=$('formula-tools');while(host.firstChild)advanced.append(host.firstChild);host.append(advanced);
+    $('create-cards').addEventListener('click',()=>openCards());
+    $('edit-cards').addEventListener('click',()=>{
+      const f=state.formulas.find(f=>f.id===$('cards-library').value);if(!f)return;
+      const u=state.formula_uses.find(u=>u.object===f.id);
+      if(u){openCards(f.id,u.id);return;}
+      for(const t of state.tables)for(const c of t.cells)if(state.formula_cells[c.id]===f.id){openCards(f.id,c.id,t.id,c.id);return;}
+      openCards(f.id,'library');
+    });
+    $('cards-library').addEventListener('change',cardsControls);
+  }
+  if(richProfile()) options('cards-library',state.formulas.filter(f=>f.cards&&!f.consumed).map(f=>[f.id,`${f.cards.label||'Entrada'} · ${f.valid?f.display:'conferir'}`]),'');
+}
+function cardsControls() {
+  if(!$('create-cards'))return;const blocked=busy||state?.persistence_status==='uncertain';
+  $('create-cards').disabled=blocked||!state?.formula_cards_supported;$('edit-cards').disabled=blocked||!$('cards-library').value;$('cards-library').disabled=blocked;
+  const dialog=$('cards-dialog');if(dialog)for(const n of dialog.querySelectorAll('input,select,textarea,button'))n.disabled=blocked||n.dataset.fixed==='true';
+}
+async function openCards(id='',key='',table='',cell='') {
+  if(busy)return;
+  if(id) {
+    const f=state.formulas.find(f=>f.id===id);if(!f?.cards){message('Esta conta usa uma expressão avançada. Sua fonte foi conservada.',true);return;}
+    if(state.context!=='text'&&!await action('set_context',{context:'text'}))return;
+    if(key!=='library'&&!await richChoose(key,table,cell))return;
+  } else if(!await action('set_context',{context:'structure'}))return;
+  const f=state.formulas.find(f=>f.id===id);let prefix='',suffix='',target=key==='library'?'':key,complex=false;
+  if(target) {
+    const runs=richModel(target)?.runs||[];let seen=false,count=0;
+    for(const r of runs)if(r.kind==='result'){if(r.formula!==id||++count!==1)complex=true;seen=true;}else if(seen)suffix+=r.text;else prefix+=r.text;
+    if(complex){target='';prefix='';suffix='';}
+  }
+  cardsEditing={id,key,table,cell,target,complex,model:f?structuredClone(f.cards):cardsNewModel(),prefix:f?prefix:'Ei Armand ... eita, ',suffix:f?suffix:' isso!',models:{}};
+  cardsEditing.models[cardsEditing.model.type]=cardsEditing.model;
+  cardsEditing.where={target:cell?'cell':'document',before:$('formula-before').value};
+  cardsEditing.initial=cardsFingerprint();formulaEditing=null;richTextEditing=null;
+  let dialog=$('cards-dialog');if(!dialog){dialog=cardsNode('dialog',null,{id:'cards-dialog','aria-labelledby':'cards-title'});document.body.append(dialog);dialog.addEventListener('cancel',()=>closeCards());}
+  buildCardsDialog();dialog.showModal();dialog.querySelector('input,select')?.focus();queueCardsPreview();
+}
+function closeCards() {clearTimeout(cardsPreviewTimer);++cardsPreviewSequence;cardsEditing=null;$('cards-dialog')?.close();controls();}
+function cardsChanged() {controls();queueCardsPreview();}
+function cardsInput(value,onInput,{number=false,multiline=false,limit=4096}={}) {
+  const n=cardsNode(multiline?'textarea':'input',null,{maxlength:String(limit)});if(number){n.type='number';n.step='any';}else if(!multiline)n.type='text';n.value=value;
+  n.addEventListener('input',()=>{onInput(n.value);cardsChanged();});return n;
+}
+function cardsReferenceSelect(editor) {
+  const select=cardsNode('select',null,{'aria-label':'Resultado ou variável de entrada'});
+  select.append(cardsNode('option','Escolha uma informação',{value:''}));
+  for(const f of state.formulas.filter(f=>f.id!==editor.id&&!f.command&&!f.consumed)) {
+    for(const symbol of ['resultado',...f.variables.map(v=>v.name)])select.append(cardsNode('option',`${f.name} · ${symbol==='resultado'?'resultado':symbol}`,{value:JSON.stringify([f.name,symbol])}));
+  }
+  select.value=editor.model.entry.kind==='reference'?JSON.stringify([editor.model.entry.formula,editor.model.entry.variable]):'';
+  select.addEventListener('change',()=>{if(!select.value)return;const [formula,variable]=JSON.parse(select.value);editor.model.entry={kind:'reference',formula,variable};cardsChanged();});return select;
+}
+function buildCardsDialog() {
+  const e=cardsEditing;if(!e)return;const model=e.model,dialog=$('cards-dialog');dialog.replaceChildren();
+  dialog.append(cardsNode('h2',e.id?'Editar texto por condições':'Criar texto por condições',{id:'cards-title'}));
+  const intro=cardsNode('p','A primeira condição atendida escolhe o texto. As palavras ao redor continuam suas.',{class:'hint'});dialog.append(intro);
+  const error=cardsNode('p','',{id:'cards-error',role:'alert',class:'formula-error'});error.hidden=true;dialog.append(error);
+  if(!e.id) {
+    const destination=cardsNode('section',null,{class:'cards-destination'}),target=cardsNode('select',null,{'aria-label':'Inserir o trecho em'});
+    target.append(cardsNode('option','Documento',{value:'document'}));if(selectedTable()&&state.selected_cell)target.append(cardsNode('option','Célula selecionada',{value:'cell'}));target.value=e.where.target;
+    target.addEventListener('change',()=>{e.where.target=target.value;buildCardsDialog();cardsChanged();});destination.append(cardsField('Inserir o trecho em',target));
+    if(e.where.target==='document'){const before=cardsNode('select',null,{'aria-label':'Inserir antes de'});for(const option of $('formula-before').options)before.append(option.cloneNode(true));before.value=e.where.before;before.addEventListener('change',()=>{e.where.before=before.value;cardsChanged();});destination.append(cardsField('Inserir antes de',before));}dialog.append(destination);
+  }
+  const entry=cardsNode('section',null,{class:'cards-entry'});entry.append(cardsNode('h3','Entrada para comparar'));
+  const type=cardsNode('select',null,{'aria-label':'Tipo de entrada'});type.append(cardsNode('option','Número',{value:'number'}),cardsNode('option','Texto',{value:'text'}));type.value=model.type;
+  type.addEventListener('change',()=>{e.models[model.type]=model;e.model=e.models[type.value]||cardsNewModel(type.value);e.models[type.value]=e.model;buildCardsDialog();cardsChanged();});
+  entry.append(cardsField('Tipo de entrada',type),cardsField('Nome da entrada',cardsInput(model.label,v=>{model.label=v;for(const n of dialog.querySelectorAll('.cards-entry-name'))n.textContent=v||'Entrada';},{limit:256})));
+  const origin=cardsNode('select',null,{'aria-label':'De onde vem a entrada'});origin.append(cardsNode('option','Valor preenchido aqui',{value:'literal'}),cardsNode('option','Resultado ou variável existente',{value:'reference'}));origin.value=model.entry.kind;
+  origin.addEventListener('change',()=>{model.entry=origin.value==='literal'?{kind:'literal',value:model.type==='number'?'0':''}:{kind:'reference',formula:'',variable:''};delete model.current;buildCardsDialog();cardsChanged();});entry.append(cardsField('De onde vem a entrada',origin));
+  if(model.entry.kind==='literal')entry.append(cardsField('Valor da entrada',cardsInput(model.entry.value,v=>model.entry.value=v,{number:model.type==='number'})));
+  else entry.append(cardsField('Informação escolhida',cardsReferenceSelect(e)));
+  if(Object.hasOwn(model,'current')){entry.append(cardsField('Valor atual alterado',cardsInput(model.current,v=>model.current=v,{number:model.type==='number'})),cardsButton('Voltar à entrada original',()=>{delete model.current;buildCardsDialog();cardsChanged();}));}
+  dialog.append(entry);
+  const context=cardsNode('section',null,{class:'cards-context'});context.append(cardsNode('h3','Frase de contexto'));
+  const prefix=cardsInput(e.prefix,v=>e.prefix=v,{multiline:true}),suffix=cardsInput(e.suffix,v=>e.suffix=v,{multiline:true});
+  if(e.complex||e.key==='library'){prefix.disabled=suffix.disabled=true;prefix.dataset.fixed=suffix.dataset.fixed='true';context.append(cardsNode('p',e.complex?'Esta frase reúne outros resultados. Edite seus trechos em Editar frase; os cartões conservam a montagem existente.':'Este objeto está sem uso escolhido. A frase pertence a cada lugar onde ele aparece.',{class:'hint'}));}
+  context.append(cardsField('Texto antes do resultado',prefix),cardsField('Texto depois do resultado',suffix));dialog.append(context);
+  const list=cardsNode('section',null,{class:'cards-rules'});list.append(cardsNode('h3','Condições · vale a primeira que servir'));
+  model.rules.forEach((rule,index)=>{
+    const card=cardsNode('div',null,{class:'cards-rule'}),head=cardsNode('div',null,{class:'cards-rule-head'});head.append(cardsNode('strong',`Condição ${index+1}`));
+    const up=cardsButton('Subir',()=>{[model.rules[index-1],model.rules[index]]=[model.rules[index],model.rules[index-1]];buildCardsDialog();cardsChanged();});up.disabled=index===0;up.dataset.fixed=String(index===0);
+    const down=cardsButton('Descer',()=>{[model.rules[index+1],model.rules[index]]=[model.rules[index],model.rules[index+1]];buildCardsDialog();cardsChanged();});down.disabled=index===model.rules.length-1;down.dataset.fixed=String(down.disabled);
+    head.append(up,down,cardsButton('Remover',()=>{model.rules.splice(index,1);buildCardsDialog();cardsChanged();}));card.append(head);
+    const when=cardsNode('div',null,{class:'cards-when'}),comparison=cardsNode('select',null,{'aria-label':`Comparação da condição ${index+1}`});
+    for(const [value,label] of cardsOperators[model.type])comparison.append(cardsNode('option',label,{value}));comparison.value=rule.op;comparison.addEventListener('change',()=>{rule.op=comparison.value;cardsChanged();});
+    const value=cardsInput(rule.value,v=>rule.value=v,{number:model.type==='number'});value.setAttribute('aria-label',`Valor da condição ${index+1}`);
+    when.append(cardsNode('span','Se'),cardsNode('span',model.label||'Entrada',{class:'cards-entry-name'}),comparison,value);card.append(when,cardsField('Mostrar esta palavra ou frase',cardsInput(rule.text,v=>rule.text=v,{multiline:true})));list.append(card);
+  });
+  const add=cardsButton('Adicionar condição',()=>{model.rules.push({op:'eq',value:'',text:''});buildCardsDialog();cardsChanged();});add.disabled=model.rules.length>=12;add.dataset.fixed=String(add.disabled);list.append(add,cardsField('Se nenhuma condição servir, mostrar',cardsInput(model.otherwise,v=>model.otherwise=v,{multiline:true})));dialog.append(list);
+  const preview=cardsNode('section',null,{class:'cards-preview'});preview.append(cardsNode('h3','Prévia no documento'),cardsNode('p','Conferindo…',{id:'cards-preview-result',class:'paragraph'}),cardsNode('p','Rascunho: aplicar confirma o trecho para recuperação.',{id:'cards-preview-note',class:'hint'}));dialog.append(preview);
+  const footer=cardsNode('div',null,{class:'cards-footer'});footer.append(cardsButton(e.id?'Aplicar cartões e frase':'Inserir texto por condições',applyCards),cardsButton('Cancelar',closeCards));
+  if(e.id)footer.append(cardsButton('Abrir fonte avançada',()=>{if(cardsDraft()){message('Aplique ou cancele as mudanças dos cartões antes de abrir a fonte.',true);return;}const {id,key,table,cell}=e;closeCards();openFormula(id,key,table,cell,true);}));dialog.append(footer);cardsControls();
+}
+function queueCardsPreview() {
+  clearTimeout(cardsPreviewTimer);const sequence=++cardsPreviewSequence;
+  if(!cardsEditing)return;
+  $('cards-preview-note').textContent='Conferindo a regra…';
+  cardsPreviewTimer=setTimeout(async()=>{
+    const e=cardsEditing;if(!e)return;const fingerprint=cardsFingerprint();
+    try {
+      const response=await fetchApi('/api/request',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({op:'preview_formula_cards',expected:state.revision,id:e.id,cards:e.model})});const r=await response.json();
+      if(sequence!==cardsPreviewSequence||cardsEditing!==e||fingerprint!==cardsFingerprint())return;
+      const p=r.preview;
+      $('cards-preview-result').textContent=r.accepted&&p?.valid?e.prefix+p.display+e.suffix:'Confira a entrada e as condições.';
+      $('cards-preview-note').textContent=r.accepted&&p?.valid?'Prévia calculada pelo núcleo. Aplicar protege o trabalho; Cancelar conserva o estado anterior.':errors[p?.error||r.error]||'Preencha os valores das condições e escolha uma entrada compatível.';
+    } catch {if(sequence===cardsPreviewSequence&&cardsEditing===e)$('cards-preview-note').textContent='A prévia não pôde ser calculada. Seu rascunho foi conservado.';}
+  },250);
+}
+async function applyCards() {
+  const e=cardsEditing;if(!e||busy)return;clearTimeout(cardsPreviewTimer);++cardsPreviewSequence;
+  let values={cards:structuredClone(e.model),prefix:e.prefix,suffix:e.suffix},op;
+  if(e.id){op='edit_formula_cards';values={...values,id:e.id,target:e.target};}
+  else {
+    let index=1;while(state.formulas.some(f=>f.name===`Escolha${index}`))index++;
+    const inCell=e.where.target==='cell';if(inCell&&(!selectedTable()||!state.selected_cell)){message('Selecione uma célula antes de criar o trecho.',true);return;}
+    op='create_formula_cards';values={...values,name:`Escolha${index}`,before:inCell?'':e.where.before,table:inCell?state.selection:'',cell:inCell?state.selected_cell:''};
+  }
+  if(await action(op,values,'Cartões e frase confirmados no documento.'))closeCards();else if(cardsEditing===e)queueCardsPreview();
+}

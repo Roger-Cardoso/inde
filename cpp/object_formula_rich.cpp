@@ -504,6 +504,19 @@ public:
           fail("formula_arguments", e->at);
         return !truth(child(0), e->at);
       }
+      if (name == "CONTEM" || name == "CONTAINS" || name == "COMECA_COM" ||
+          name == "STARTSWITH") {
+        if (n != 2)
+          fail("formula_arguments", e->at);
+        const auto a = child(0), b = child(1);
+        const auto *haystack = std::get_if<std::string>(&a);
+        const auto *needle = std::get_if<std::string>(&b);
+        if (!haystack || !needle)
+          fail("formula_type", e->at);
+        return name == "CONTEM" || name == "CONTAINS"
+                   ? haystack->find(*needle) != std::string::npos
+                   : haystack->starts_with(*needle);
+      }
       if (name == "TEXTO" || name == "TEXT") {
         if (n != 1)
           fail("formula_arguments", e->at);
