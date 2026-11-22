@@ -224,6 +224,12 @@
         "        selected_version = std::stoul(type_key->substr(pos + 1));",
         "        const auto parsed_version = std::stoul(type_key->substr(pos + 1));\n        if (parsed_version > std::numeric_limits<std::uint32_t>::max())\n          throw std::runtime_error(\"Versão do tipo fora do limite suportado\");\n        selected_version = static_cast<std::uint32_t>(parsed_version);"
       ]
+    ],
+    "src/application/text_clipboard.cpp": [
+      [
+        "spans.push_back(Value::Object{",
+        "spans.emplace_back(Value::Object{"
+      ]
     ]
   },
   "performance": {

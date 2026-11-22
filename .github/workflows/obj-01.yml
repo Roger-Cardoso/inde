@@ -6,6 +6,8 @@ on:
     paths:
       - cpp/object_*
       - cpp/CMakeLists.txt
+      - cpp/base_patches.json
+      - cpp/otimizar_base.py
       - cpp/integrar_objetos.py
       - cpp/integrar_gtk.py
       - cpp/overlay/**
@@ -45,6 +47,8 @@ on:
     paths:
       - cpp/object_*
       - cpp/CMakeLists.txt
+      - cpp/base_patches.json
+      - cpp/otimizar_base.py
       - cpp/integrar_objetos.py
       - cpp/integrar_gtk.py
       - cpp/overlay/**
