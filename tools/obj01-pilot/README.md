@@ -2,7 +2,7 @@
 
 Demonstração local em navegador, controlada por um processo C++20 com o motor documental e os comandos OBJ-01 reais. Python serve os arquivos da interface e encaminha pedidos; não define identidades, ordenação, conteúdo nem gravação. Não usa GTK nem integra o aplicativo principal.
 
-Para escolher palavras por cartões preenchíveis, veja [Texto por condições](CARTOES.md). Para texto misto, lógica textual e comandos consumíveis, veja [P2-D2](P2D2.md). Para fórmulas no documento e nas células, veja [P2-D](P2D.md). Para recuperação do trabalho composto e reordenação de grupos, veja [P2-C](P2C.md). O perfil P2-A abaixo é conservado. Para tabela editável e histórico vivo em dados separados, veja [P2-B](P2B.md).
+Para os cinco tipos de criação e alterações de uso único, veja [Hub de fórmulas](HUB.md). Para escolher palavras por cartões preenchíveis, veja [Texto por condições](CARTOES.md). Para texto misto, lógica textual e comandos consumíveis, veja [P2-D2](P2D2.md). Para fórmulas no documento e nas células, veja [P2-D](P2D.md). Para recuperação do trabalho composto e reordenação de grupos, veja [P2-C](P2C.md). O perfil P2-A abaixo é conservado. Para tabela editável e histórico vivo em dados separados, veja [P2-B](P2B.md).
 
 ## Abrir
 

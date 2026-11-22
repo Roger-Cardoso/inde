@@ -73,8 +73,8 @@ function richFormulaItem(id,key,table='',cell='') {
   const f=state.formulas.find(f=>f.id===id),wrapper=document.createElement('div');wrapper.className='formula-box rich-formula';wrapper.dataset.formula=id;wrapper.dataset.target=key;
   if(f.command) {
     wrapper.classList.add('rich-command');
-    const label=document.createElement('p');label.textContent=f.source;wrapper.append(label);
-    wrapper.append(richButton('Executar alteração',()=>richExecute(id)),
+    const label=document.createElement('p');label.textContent=state.formula_hub_supported?hubCommandLabel(f):f.source;wrapper.append(label);
+    wrapper.append(richButton(state.formula_hub_supported?'Aplicar alteração':'Executar alteração',()=>richExecute(id)),
       richButton('Editar comando',()=>openFormula(id,key,table,cell)));
     if(!f.valid){const e=document.createElement('p');e.className='formula-error';e.textContent=formulaError(f);wrapper.append(e);}
     return wrapper;
@@ -110,7 +110,7 @@ function richFormulaItem(id,key,table='',cell='') {
   });
   wrapper.append(flow);
   const tools=document.createElement('div');tools.className='rich-tools';
-  tools.append(richButton(`Editar fonte de ${f.name}`,()=>openFormula(id,key,table,cell)),richButton(`Editar frase de ${f.name}`,()=>richEditPhrase(id,key,table,cell)));
+  tools.append(richButton(`${state.formula_hub_supported?'Editar fórmula':'Editar fonte de'} ${state.formula_hub_supported?hubTitle(f):f.name}`,()=>openFormula(id,key,table,cell)),richButton(`Editar frase de ${f.name}`,()=>richEditPhrase(id,key,table,cell)));
   wrapper.append(tools);
   return wrapper;
 }
@@ -126,6 +126,9 @@ const errors = {
   formula_command_must_be_alone: 'O comando alterar deve ficar sozinho: uma instrução, sem declarações, resultado, frase ou usos compartilhados.',
   formula_command_consumed: 'Esse comando já foi executado e consumido. Desfazer pode restaurá-lo.',
   formula_command_has_no_value: 'Um comando alterar não oferece resultado para outra fórmula. Consulte a variável alterada.',
+  formula_hub_invalid: 'Confira os campos do cartão e a informação escolhida.',
+  formula_hub_advanced_source: 'Essa fonte não pode ser convertida integralmente para este cartão. Use a escrita livre ou crie uma nova fórmula.',
+  formula_symbol_immutable: 'A referência desta variável já está em uso. O nome de apresentação pode mudar; a referência é conservada.',
   formula_cards_invalid: 'Preencha a entrada e os valores dos cartões. Confira também o limite de 12 condições.',
   formula_cards_advanced_source: 'Esta fonte foi alterada fora do formato dos cartões. Abra a edição avançada para conservá-la integralmente.',
   formula_cards_complex_phrase: 'A frase reúne outros resultados. Use Editar frase para conservar todos os trechos.',
@@ -208,6 +211,7 @@ function message(text, error = false) {
   $('message').textContent = text;
   $('message').className = error ? 'error' : '';
   $('message').hidden = false;
+  if(hubEditing&&$('hub-error')){ $('hub-error').textContent=text; $('hub-error').hidden=!error; }
   if(cardsEditing&&$('cards-error')){ $('cards-error').textContent=text; $('cards-error').hidden=!error; }
 }
 async function fetchApi(path, options = {}) {
@@ -221,7 +225,7 @@ async function fetchApi(path, options = {}) {
 function cellData(tableId, cellId) { return state?.tables?.find(t => t.id === tableId)?.cells.find(c => c.id === cellId); }
 let formulaEditing = null;
 function formulaDraft() { return formulaEditing && formulaEditing.draft !== state?.formulas?.find(f => f.id === formulaEditing.id)?.source; }
-function hasDrafts() { return cardsDraft() || formulaDraft() || richDrafts() || [...document.querySelectorAll('.cell-editor')].some(n => n.value !== cellData(n.dataset.table, n.dataset.cell)?.text); }
+function hasDrafts() { return hubDraft() || cardsDraft() || formulaDraft() || richDrafts() || [...document.querySelectorAll('.cell-editor')].some(n => n.value !== cellData(n.dataset.table, n.dataset.cell)?.text); }
 function updateSelection() {
   for (const node of $('document').querySelectorAll('.item')) {
     const selected = state.selection === node.dataset.occurrence;
@@ -435,6 +439,7 @@ function formulaError(f) {
   return errors[f.error] || 'A fórmula precisa ser conferida. Abra sua fonte para corrigir.';
 }
 async function openFormula(id,key,table='',cell='',advanced=false) {
+  if(!advanced&&state?.formula_hub_supported)return openHubEditor(id,key,table,cell);
   if(!advanced&&richProfile()&&state.formulas.find(f=>f.id===id)?.cards)return openCards(id,key,table,cell);
   if (state.context !== 'text' && !await action('set_context',{context:'text'})) return;
   if (table) { if (!await action('select_cell',{id:table,cell})) return; }
@@ -648,6 +653,7 @@ function cardsFingerprint() {return cardsEditing?JSON.stringify({model:cardsEdit
 function cardsDraft() {return cardsEditing&&cardsFingerprint()!==cardsEditing.initial;}
 function cardsNewModel(type='number') {return {version:1,type,label:type==='number'?'o preço':'Atitude',entry:{kind:'literal',value:type==='number'?'16':'hostil'},rules:type==='number'?[{op:'gt',value:'15',text:'preço caro'},{op:'eq',value:'15',text:'vou negociar'}]:[{op:'eq',value:'hostil',text:'ameaçador'},{op:'eq',value:'amistosa',text:'receptivo'}],otherwise:type==='number'?'que pechincha':'indecifrável'};}
 function cardsSetup() {
+  if(state?.formula_hub_supported){hubSetup();return;}
   if(!$('cards-tools'))return;
   $('cards-tools').hidden=!state?.formula_cards_supported;
   if(!state?.formula_cards_supported)return;
@@ -667,6 +673,7 @@ function cardsSetup() {
   if(richProfile()) options('cards-library',state.formulas.filter(f=>f.cards&&!f.consumed).map(f=>[f.id,`${f.cards.label||'Entrada'} · ${f.valid?f.display:'conferir'}`]),'');
 }
 function cardsControls() {
+  if(state?.formula_hub_supported){hubControls();return;}
   if(!$('create-cards'))return;const blocked=busy||state?.persistence_status==='uncertain';
   $('create-cards').disabled=blocked||!state?.formula_cards_supported;$('edit-cards').disabled=blocked||!$('cards-library').value;$('cards-library').disabled=blocked;
   const dialog=$('cards-dialog');if(dialog)for(const n of dialog.querySelectorAll('input,select,textarea,button'))n.disabled=blocked||n.dataset.fixed==='true';
@@ -773,3 +780,86 @@ async function applyCards() {
   }
   if(await action(op,values,'Cartões e frase confirmados no documento.'))closeCards();else if(cardsEditing===e)queueCardsPreview();
 }
+
+// All five authoring paths share the same source, engine, journal and uses.
+let hubEditing=null,hubPreviewTimer=null,hubPreviewSequence=0;
+const hubKinds=[['condition','Escolher palavras ou frases','Condições ordenadas, contexto e alternativa.'],['calculate','Fazer uma conta','Dois valores ou referências, com uma operação.'],['value','Guardar um valor','Uma informação numérica ou textual reutilizável.'],['change','Alterar um valor','Um comando que age uma vez e desaparece.'],['free','Escrever livremente','Digite a fórmula ou o comando completo.']];
+function hubTitle(f){return f.hub?.kind==='condition'?(f.hub.cards.title||f.hub.cards.label||f.name):(f.hub?.title||f.name);}
+function hubCommandLabel(f){const m=f.hub;if(m?.kind!=='change')return `${hubTitle(f)} · comando de uso único\n${m?.source||f.source}`;const op={set:'Definir',add:'Acrescentar',subtract:'Diminuir'}[m.operation],operand=m.operand.kind==='literal'?m.operand.value:`${m.operand.formula}.${m.operand.variable}`;return `${hubTitle(f)} · ${op} ${m.target.formula}.${m.target.variable} ${m.operation==='set'?'como':'em'} ${operand}`;}
+function hubSetup(){
+  const host=$('cards-tools');host.hidden=false;host.querySelector('h2').textContent='Fórmulas';host.querySelector('.hint').textContent='Escolha como criar. Variáveis e resultados podem alimentar outras fórmulas.';$('create-cards').textContent='Inserir fórmula';host.querySelector('label').textContent='Fórmulas do documento';$('edit-cards').textContent='Abrir fórmula escolhida';
+  if(!host.dataset.hubReady){
+    host.dataset.hubReady='true';
+    if(!$('formula-advanced')){const d=cardsNode('details',null,{id:'formula-advanced'});d.append(cardsNode('summary','Ferramentas avançadas anteriores'));const tools=$('formula-tools');while(tools.firstChild)d.append(tools.firstChild);tools.append(d);}
+    $('create-cards').addEventListener('click',openFormulaHub);$('edit-cards').addEventListener('click',()=>{const f=state.formulas.find(f=>f.id===$('cards-library').value);if(!f)return;const u=state.formula_uses.find(u=>u.object===f.id);if(u)return openHubEditor(f.id,u.id);for(const t of state.tables)for(const c of t.cells)if(state.formula_cells[c.id]===f.id)return openHubEditor(f.id,c.id,t.id,c.id);openHubEditor(f.id,'library');});
+    $('cards-library').addEventListener('change',hubControls);
+  }
+  options('cards-library',state.formulas.filter(f=>!f.consumed).map(f=>[f.id,`${hubTitle(f)} · ${f.command?'comando de uso único':f.valid?f.display:'conferir'}`]),'');
+}
+function hubControls(){const blocked=busy||state?.persistence_status==='uncertain';$('create-cards').disabled=blocked;$('edit-cards').disabled=blocked||!$('cards-library').value;$('cards-library').disabled=blocked;const dialog=$('hub-dialog');if(dialog)for(const n of dialog.querySelectorAll('button,input,select,textarea'))n.disabled=blocked||n.dataset.fixed==='true';}
+function hubDialog(){let d=$('hub-dialog');if(!d){d=cardsNode('dialog',null,{id:'hub-dialog','aria-labelledby':'hub-title'});d.className='hub-editor';d.addEventListener('cancel',closeHub);document.body.append(d);}return d;}
+function closeHub(){clearTimeout(hubPreviewTimer);++hubPreviewSequence;hubEditing=null;$('hub-dialog')?.close();controls();}
+function hubFingerprint(){return hubEditing&&!hubEditing.picker?JSON.stringify({model:hubEditing.model,name:hubEditing.name,prefix:hubEditing.prefix,suffix:hubEditing.suffix,where:hubEditing.where}):'';}
+function hubDraft(){return hubEditing&&!hubEditing.picker&&hubFingerprint()!==hubEditing.initial;}
+function openFormulaHub(){if(busy)return;hubEditing={picker:true};const d=hubDialog();d.replaceChildren(cardsNode('h2','Inserir fórmula',{id:'hub-title'}));const list=cardsNode('div',null,{class:'hub-kinds'});for(const [kind,title,description]of hubKinds){const b=cardsButton(title,()=>startHub(kind));b.append(cardsNode('span',description));list.append(b);}d.append(list,cardsButton('Cancelar',closeHub));if(!d.open)d.showModal();}
+function hubUnique(base){let name=base,index=2;while(state.formulas.some(f=>f.name===name))name=base.slice(0,58)+index++;return name;}
+function hubIdentifier(text,fallback='Formula'){let name=text.normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-zA-Z0-9_]/g,'').slice(0,64);if(!/^[a-zA-Z_]/.test(name))name=fallback+name;return name.slice(0,64)||fallback;}
+function hubDefault(kind){
+  if(kind==='condition'){const c=cardsNewModel();return {kind,cards:{...c,version:2,title:'Preço da negociação',variable:'Preco'}};}
+  if(kind==='value')return {kind,title:'Vida do personagem',type:'number',variable:'HP',label:'Vida',entry:{kind:'literal',value:'100'}};
+  if(kind==='calculate')return {kind,title:'Dano de dois ataques',left:{kind:'literal',value:'2'},right:{kind:'literal',value:'10'},operation:'multiply'};
+  if(kind==='change')return {kind,title:'Alterar um valor',type:'number',target:{formula:'',variable:''},operation:'set',operand:{kind:'literal',value:'0'}};
+  return {kind:'free',title:'Fórmula escrita',source:'resultado 0'};
+}
+async function startHub(kind,preset=null){
+  if(busy)return;if(!await action('set_context',{context:'structure'}))return;
+  const name=hubUnique({condition:'Negociacao',value:'Personagem',calculate:'Combate',change:'Alteracao',free:'Formula'}[kind]);
+  const model=preset||hubDefault(kind);hubEditing={id:'',key:'',target:'',model,name,prefix:kind==='condition'?'Armand: ':kind==='value'?'Vida: ':'',suffix:kind==='condition'||kind==='value'?'.':'',complex:false,where:{target:'document',before:$('formula-before').value},nameAutomatic:true,symbolAutomatic:false};
+  hubEditing.initial=hubFingerprint();buildHubEditor();const d=hubDialog();if(!d.open)d.showModal();d.querySelector('input,textarea,select')?.focus();queueHubPreview();
+}
+async function openHubEditor(id,key,table='',cell=''){
+  if(busy)return;if((state.context!=='text'||formulaDraft()||richDrafts())&&!await action('set_context',{context:'text'}))return;if(key!=='library'&&!await richChoose(key,table,cell))return;
+  const f=state.formulas.find(f=>f.id===id);if(!f||f.consumed)return;
+  let prefix='',suffix='',target=key==='library'?'':key,complex=false;
+  if(target&&!f.command){let seen=false,count=0;for(const r of richModel(target)?.runs||[]){if(r.kind==='result'){if(r.formula!==id||++count!==1)complex=true;seen=true;}else if(seen)suffix+=r.text;else prefix+=r.text;}if(complex){target='';prefix='';suffix='';}}
+  hubEditing={id,key,table,cell,target,complex,model:structuredClone(f.hub||{kind:'free',source:f.source}),name:f.name,prefix,suffix,where:null,nameAutomatic:false};hubEditing.initial=hubFingerprint();formulaEditing=null;richTextEditing=null;buildHubEditor();const d=hubDialog();if(!d.open)d.showModal();d.querySelector('input,textarea,select')?.focus();queueHubPreview();
+}
+function hubChanged(){if($('hub-error'))$('hub-error').hidden=true;hubEditing.preview=null;hubControls();updateHubReferences();queueHubPreview();}
+function hubInput(value,set,{number=false,multiline=false,limit=4096}={}){const n=cardsNode(multiline?'textarea':'input',null,{maxlength:String(limit)});if(number){n.type='number';n.step='any';}else if(!multiline)n.type='text';n.value=value;n.addEventListener('input',()=>{set(n.value);hubChanged();});return n;}
+function hubSelect(options,value,set,label){const n=cardsNode('select',null,{'aria-label':label});for(const [key,text]of options)n.append(cardsNode('option',text,{value:key}));n.value=value;n.addEventListener('change',()=>{set(n.value);hubChanged();});return n;}
+function hubReferences(exclude=''){const list=[];for(const f of state.formulas.filter(f=>f.id!==exclude&&!f.command&&!f.consumed)){list.push({formula:f.name,variable:'resultado',label:`${hubTitle(f)} · resultado (${f.name}.resultado)`,type:f.type});for(const v of f.variables)list.push({formula:f.name,variable:v.name,label:`${hubTitle(f)} · ${v.name} (${f.name}.${v.name})`,type:typeof v.current==='number'?'number':typeof v.current==='string'?'text':'boolean'});}return list;}
+function hubOperand(host,label,parent,key,type){
+  const e=hubEditing,operand=parent[key],section=cardsNode('div',null,{class:'hub-operand'});section.append(cardsNode('h4',label));
+  section.append(cardsField('De onde vem '+label.toLowerCase(),hubSelect([['literal','Valor preenchido aqui'],['reference','Resultado ou variável existente']],operand.kind,v=>{parent[key]=v==='literal'?{kind:'literal',value:type==='number'?'0':''}:{kind:'reference',formula:'',variable:''};buildHubEditor();},'Origem de '+label.toLowerCase())));
+  if(operand.kind==='literal')section.append(cardsField(label,hubInput(operand.value,v=>operand.value=v,{number:type==='number'})));
+  else {const options=[['','Escolha uma informação'],...hubReferences(e.id).map(r=>[JSON.stringify([r.formula,r.variable]),r.label])];section.append(cardsField('Informação para '+label.toLowerCase(),hubSelect(options,operand.formula?JSON.stringify([operand.formula,operand.variable]):'',v=>{if(!v)return;const [formula,variable]=JSON.parse(v);parent[key]={kind:'reference',formula,variable};},'Informação para '+label.toLowerCase())));}
+  host.append(section);
+}
+function hubModelTitle(m){return m.kind==='condition'?m.cards.title:m.title;}
+function hubSymbols(){const e=hubEditing,m=e.model;if(m.kind==='condition')return [m.cards.version===1?'Entrada':m.cards.variable];if(m.kind==='value')return [m.variable];if(m.kind==='calculate')return ['Primeiro','Segundo'];return e.preview?.variables?.map(v=>v.name)||state.formulas.find(f=>f.id===e.id)?.variables.map(v=>v.name)||[];}
+function updateHubReferences(){if(!hubEditing||hubEditing.picker||!$('hub-reference-list'))return;const e=hubEditing,list=$('hub-reference-list');list.replaceChildren();const symbols=hubSymbols();for(const symbol of symbols){const line=cardsNode('div',null,{class:'hub-reference-row'}),code=cardsNode('input',null,{readonly:'', 'aria-label':'Referência '+symbol});code.value=e.name+'.'+symbol;code.addEventListener('click',()=>code.select());line.append(code);if(e.id){const prepare=cardsButton('Preparar alteração',()=>{if(hubDraft()){message('Aplique ou cancele as mudanças antes de preparar outra fórmula.',true);return;}const variable=state.formulas.find(f=>f.id===e.id)?.variables.find(v=>v.name===symbol),type=typeof variable?.current==='string'?'text':'number',preset=hubDefault('change');preset.target={formula:e.name,variable:symbol};preset.type=type;preset.title='Alterar '+(hubModelTitle(e.model)||e.name);preset.operand={kind:'literal',value:variable?.current_display||'0'};closeHub();startHub('change',preset);});line.append(prepare);}list.append(line);}if(!symbols.length)list.append(cardsNode('p','As variáveis declaradas aparecem aqui depois da prévia.',{class:'hint'}));}
+function buildHubEditor(){
+  const e=hubEditing;if(!e||e.picker)return;const m=e.model,d=hubDialog();d.replaceChildren();const kindName=hubKinds.find(k=>k[0]===m.kind)?.[1]||'Fórmula';d.append(cardsNode('h2',(e.id?'Editar · ':'Criar · ')+kindName,{id:'hub-title'}));
+  const error=cardsNode('p','',{id:'hub-error',role:'alert',class:'formula-error'});error.hidden=true;d.append(error);
+  const title=hubInput(hubModelTitle(m)||e.name,v=>{if(m.kind==='condition')m.cards.title=v;else m.title=v;if(!e.id&&e.nameAutomatic){e.name=hubUnique(hubIdentifier(v));const n=d.querySelector('[data-formula-name]');if(n)n.value=e.name;}},{limit:256});
+  if((m.kind==='condition'&&m.cards.version===1)||(m.kind==='free'&&!Object.hasOwn(m,'title'))){title.disabled=true;title.dataset.fixed='true';}d.append(cardsField('Nome da fórmula',title));
+  const reference=cardsNode('details',null,{class:'hub-reference'});reference.append(cardsNode('summary','Referências para outras fórmulas'));
+  const name=hubInput(e.name,v=>{e.name=v;e.nameAutomatic=false;},{limit:64});name.dataset.formulaName='true';if(e.id){name.disabled=true;name.dataset.fixed='true';}reference.append(cardsField('Referência da fórmula',name));
+  const owner=m.kind==='condition'?m.cards:m.kind==='value'?m:null;
+  if(owner){const symbol=owner.version===1?'Entrada':owner.variable,field=hubInput(symbol,v=>owner.variable=v,{limit:64});if(e.id||owner.version===1){field.disabled=true;field.dataset.fixed='true';}reference.append(cardsField('Referência da variável',field));}
+  reference.append(cardsNode('p','Na criação, use letras sem acentos, números ou sublinhado nas referências. Elas permanecem estáveis depois; o nome de apresentação pode mudar.',{class:'hint'}),cardsNode('div',null,{id:'hub-reference-list'}));d.append(reference);
+  if(!e.id){const destination=cardsNode('section',null,{class:'hub-destination'}),opts=[['document','Documento']];if(selectedTable()&&state.selected_cell)opts.push(['cell','Célula selecionada']);destination.append(cardsField('Inserir em',hubSelect(opts,e.where.target,v=>{e.where.target=v;buildHubEditor();},'Inserir em')));if(e.where.target==='document'){const opts=[...$('formula-before').options].map(o=>[o.value,o.textContent]);destination.append(cardsField('Inserir antes de',hubSelect(opts,e.where.before,v=>e.where.before=v,'Inserir antes de')));}d.append(destination);}
+  if(m.kind==='condition')buildHubConditions(d,m.cards);else if(m.kind==='value')buildHubValue(d,m);else if(m.kind==='calculate')buildHubCalculate(d,m);else if(m.kind==='change')buildHubChange(d,m);else {const source=hubInput(m.source,v=>m.source=v,{multiline:true,limit:16384});source.rows=8;source.classList.add('hub-source');d.append(cardsField('Escreva a fórmula ou o comando',source));}
+  const context=cardsNode('section',null,{id:'hub-context',class:'hub-context'});context.append(cardsNode('h3','Frase de contexto'));
+  const before=hubInput(e.prefix,v=>e.prefix=v,{multiline:true}),after=hubInput(e.suffix,v=>e.suffix=v,{multiline:true});if(e.complex||e.key==='library'){before.disabled=after.disabled=true;before.dataset.fixed=after.dataset.fixed='true';context.append(cardsNode('p',e.complex?'A montagem com outros resultados será conservada. Use Editar frase para mudar seus trechos.':'A frase pertence a cada uso no documento ou célula.',{class:'hint'}));}context.append(cardsField('Texto antes do resultado',before),cardsField('Texto depois do resultado',after));context.hidden=m.kind==='change';d.append(context);
+  const preview=cardsNode('section',null,{class:'hub-preview'});preview.append(cardsNode('h3',m.kind==='change'?'Efeito previsto':'Prévia'),cardsNode('p','Conferindo…',{id:'hub-preview-result',class:'paragraph'}),cardsNode('p','A prévia não grava nem executa o comando.',{id:'hub-preview-note',class:'hint'}));d.append(preview);
+  const footer=cardsNode('div',null,{class:'hub-footer'}),apply=cardsButton(e.id?'Aplicar fórmula e frase':m.kind==='change'?'Inserir comando de uso único':'Inserir fórmula',applyHub);apply.id='hub-apply';footer.append(apply,cardsButton('Cancelar',closeHub));d.append(footer);updateHubReferences();hubControls();
+}
+function hubSwitchType(model,type,kind){const e=hubEditing,key=kind+'Types';e[key]||={};const properties=kind==='condition'?['entry','rules','otherwise','current']:['entry','current'];const saved={};for(const p of properties)if(Object.hasOwn(model,p))saved[p]=structuredClone(model[p]);e[key][model.type]=saved;const next=e[key][type]||(kind==='condition'?cardsNewModel(type):{entry:{kind:'literal',value:type==='number'?'0':''}});for(const p of properties){if(Object.hasOwn(next,p))model[p]=structuredClone(next[p]);else delete model[p];}model.type=type;}
+function buildHubValue(d,m){const section=cardsNode('section',null,{class:'hub-value'});section.append(cardsNode('h3','Informação guardada'),cardsField('Nome da informação',hubInput(m.label,v=>m.label=v,{limit:256})),cardsField('Tipo do valor',hubSelect([['number','Número'],['text','Texto']],m.type,v=>{hubSwitchType(m,v,'value');buildHubEditor();},'Tipo do valor')));hubOperand(section,'Valor',m,'entry',m.type);if(m.current&&Object.hasOwn(m.current,m.variable)){section.append(cardsField('Valor atual alterado',hubInput(m.current[m.variable],v=>m.current[m.variable]=v,{number:m.type==='number'})),cardsButton('Voltar ao valor inicial',()=>{delete m.current;buildHubEditor();hubChanged();}));}d.append(section);}
+function buildHubCalculate(d,m){const section=cardsNode('section',null,{class:'hub-calculate'});section.append(cardsNode('h3','Conta'));hubOperand(section,'Primeiro valor',m,'left','number');section.append(cardsField('Operação',hubSelect([['add','Somar'],['subtract','Subtrair'],['multiply','Multiplicar'],['divide','Dividir']],m.operation,v=>m.operation=v,'Operação da conta')));hubOperand(section,'Segundo valor',m,'right','number');for(const symbol of ['Primeiro','Segundo'])if(m.current&&Object.hasOwn(m.current,symbol))section.append(cardsField('Valor atual de '+symbol,hubInput(m.current[symbol],v=>m.current[symbol]=v,{number:true})));if(m.current)section.append(cardsButton('Voltar aos valores iniciais',()=>{delete m.current;buildHubEditor();hubChanged();}));d.append(section);}
+function buildHubChange(d,m){const section=cardsNode('section',null,{class:'hub-change'});section.append(cardsNode('h3','Alteração de uso único'));const refs=hubReferences().filter(r=>r.variable!=='resultado'&&['number','text'].includes(r.type));const options=[['','Escolha a variável'],...refs.map(r=>[JSON.stringify([r.formula,r.variable]),r.label])];section.append(cardsField('Variável a alterar',hubSelect(options,m.target.formula?JSON.stringify([m.target.formula,m.target.variable]):'',v=>{if(!v)return;const r=refs.find(r=>JSON.stringify([r.formula,r.variable])===v);m.target={formula:r.formula,variable:r.variable};if(m.type!==r.type){m.type=r.type;m.operation='set';m.operand={kind:'literal',value:r.type==='number'?'0':''};}buildHubEditor();},'Variável a alterar')));const ops=[['set','Definir como']];if(m.type==='number')ops.push(['add','Acrescentar'],['subtract','Diminuir']);section.append(cardsField('O que fazer',hubSelect(ops,m.operation,v=>m.operation=v,'O que fazer com a variável')));hubOperand(section,'Novo valor ou quantidade',m,'operand',m.type);section.append(cardsNode('p','Inserir prepara o comando. No documento, Aplicar alteração confirma o efeito e retira o comando. Desfazer restaura valor e comando juntos.',{class:'hint'}));d.append(section);}
+function buildHubConditions(d,c){const section=cardsNode('section',null,{class:'hub-conditions'});section.append(cardsNode('h3','Entrada para comparar'),cardsField('Tipo de entrada',hubSelect([['number','Número'],['text','Texto']],c.type,v=>{hubSwitchType(c,v,'condition');buildHubEditor();},'Tipo de entrada')),cardsField('Nome da entrada',hubInput(c.label,v=>{c.label=v;for(const n of d.querySelectorAll('.hub-entry-name'))n.textContent=v;},{limit:256})));hubOperand(section,'Entrada',c,'entry',c.type);if(Object.hasOwn(c,'current'))section.append(cardsField('Valor atual alterado',hubInput(c.current,v=>c.current=v,{number:c.type==='number'})),cardsButton('Voltar à entrada original',()=>{delete c.current;buildHubEditor();hubChanged();}));d.append(section);
+  const list=cardsNode('section',null,{class:'hub-rules'});list.append(cardsNode('h3','Condições · vale a primeira que servir'));c.rules.forEach((r,i)=>{const card=cardsNode('div',null,{class:'hub-rule'}),head=cardsNode('div',null,{class:'hub-rule-head'});head.append(cardsNode('strong','Condição '+(i+1)));for(const [label,offset]of [['Subir',-1],['Descer',1]]){const b=cardsButton(label,()=>{[c.rules[i],c.rules[i+offset]]=[c.rules[i+offset],c.rules[i]];buildHubEditor();hubChanged();});b.disabled=i+offset<0||i+offset>=c.rules.length;b.dataset.fixed=String(b.disabled);head.append(b);}head.append(cardsButton('Remover',()=>{c.rules.splice(i,1);buildHubEditor();hubChanged();}));card.append(head);const when=cardsNode('div',null,{class:'hub-when'});const val=hubInput(r.value,v=>r.value=v,{number:c.type==='number'});val.setAttribute('aria-label','Valor da condição '+(i+1));when.append(cardsNode('span','Se'),cardsNode('span',c.label,{class:'hub-entry-name'}),hubSelect(cardsOperators[c.type],r.op,v=>r.op=v,'Comparação da condição '+(i+1)),val);card.append(when,cardsField('Mostrar esta palavra ou frase',hubInput(r.text,v=>r.text=v,{multiline:true})));list.append(card);});const add=cardsButton('Adicionar condição',()=>{c.rules.push({op:'eq',value:'',text:''});buildHubEditor();hubChanged();});add.disabled=c.rules.length>=12;add.dataset.fixed=String(add.disabled);list.append(add,cardsField('Se nenhuma condição servir, mostrar',hubInput(c.otherwise,v=>c.otherwise=v,{multiline:true})));d.append(list);}
+function queueHubPreview(){clearTimeout(hubPreviewTimer);const seq=++hubPreviewSequence;if(!hubEditing||hubEditing.picker)return;hubPreviewTimer=setTimeout(async()=>{const e=hubEditing;if(!e||e.picker)return;const fingerprint=hubFingerprint();try{const response=await fetchApi('/api/request',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({op:'preview_formula_hub',expected:state.revision,id:e.id,name:e.name,model:e.model})}),r=await response.json();if(seq!==hubPreviewSequence||hubEditing!==e||fingerprint!==hubFingerprint())return;const p=r.preview;e.preview=p;if(r.accepted&&p?.valid){$('hub-context').hidden=p.command;$('hub-apply').textContent=e.id?'Aplicar fórmula e frase':p.command?'Inserir comando de uso único':'Inserir fórmula';$('hub-preview-result').textContent=p.command?(p.changes.length?p.changes.map(c=>`${c.formula}.${c.variable}: ${c.before} → ${c.after}`).join('\n'):'O valor permanece igual; o comando será consumido ao aplicar.'):e.prefix+p.display+e.suffix;$('hub-preview-note').textContent=p.command?'Efeito apenas previsto. O comando será executado uma única vez quando você aplicar a alteração no documento.':'Prévia calculada pelo mesmo motor do documento. Aplicar protege o trabalho.';updateHubReferences();}else{$('hub-preview-result').textContent='Confira a fórmula.';$('hub-preview-note').textContent=errors[p?.error||r.error]||'Preencha os valores e escolha uma informação compatível.';}}catch{if(seq===hubPreviewSequence&&hubEditing===e)$('hub-preview-note').textContent='A prévia não pôde ser calculada. O rascunho foi conservado.';}},250);}
+async function applyHub(){const e=hubEditing;if(!e||e.picker||busy)return;clearTimeout(hubPreviewTimer);++hubPreviewSequence;const command=e.model.kind==='change'||e.preview?.command;const prefix=command?'':e.prefix,suffix=command?'':e.suffix;let op,values;if(e.id){op='edit_formula_hub';values={id:e.id,model:structuredClone(e.model),target:e.target,prefix,suffix};}else{op='create_formula_hub';const cell=e.where.target==='cell';if(cell&&(!selectedTable()||!state.selected_cell)){message('Selecione primeiro uma célula.',true);return;}values={name:e.name,model:structuredClone(e.model),before:cell?'':e.where.before,table:cell?state.selection:'',cell:cell?state.selected_cell:'',prefix,suffix};}if(await action(op,values,command?'Comando preparado. Aplicar alteração executa uma vez e o retira do documento.':'Fórmula e frase confirmadas no documento.'))closeHub();else if(hubEditing===e)queueHubPreview();}

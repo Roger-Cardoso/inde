@@ -88,29 +88,66 @@ public:
   }
 };
 } // namespace
-std::string compile(const V &model) {
-  const bool current = model.as_object().contains("current");
-  if (current)
-    fields(model, {"version", "type", "label", "entry", "rules", "otherwise",
-                   "current"});
+std::string checked_text(const V &v, std::size_t cap) { return text(v, cap); }
+std::string quote_text(const std::string &s) { return quote(s); }
+std::string emit_operand(const V &entry, const std::string &type) {
+  if (type != "number" && type != "text")
+    fail();
+  if (entry.at("kind").as_string() == "reference")
+    return reference(entry);
+  fields(entry, {"kind", "value"});
+  if (entry.at("kind").as_string() != "literal")
+    fail();
+  const auto raw = text(entry.at("value"));
+  return type == "number" ? numeric(raw) : quote(raw);
+}
+V read_operand(const std::string &input, const std::string &type) {
+  V out;
+  if (input.starts_with('"'))
+    out = V::Object{{"kind", "literal"},
+                    {"value", persistence::json::parse(input).as_string()}};
+  else if (const auto dot = input.find('.');
+           dot != input.npos && identifier(input.substr(0, dot)) &&
+           (input.substr(dot + 1) == "resultado" ||
+            identifier(input.substr(dot + 1))))
+    out = V::Object{{"kind", "reference"},
+                    {"formula", input.substr(0, dot)},
+                    {"variable", input.substr(dot + 1)}};
   else
-    fields(model, {"version", "type", "label", "entry", "rules", "otherwise"});
-  if (model.at("version").as_integer() != 1)
+    out = V::Object{{"kind", "literal"}, {"value", input}};
+  if (emit_operand(out, type) != input)
+    fail();
+  return out;
+}
+std::string normalize_lines(const std::string &source) {
+  std::string out;
+  out.reserve(source.size());
+  for (const auto c : source)
+    if (c != '\n' || out.empty() || out.back() != '\n')
+      out += c;
+  return out;
+}
+std::string compile(const V &model) {
+  auto base = model.as_object();
+  const bool current = base.erase("current") != 0;
+  const bool named = model.at("version").as_integer() == 2;
+  if (named)
+    fields(V(base), {"version", "type", "label", "entry", "rules", "otherwise",
+                     "title", "variable"});
+  else
+    fields(V(base),
+           {"version", "type", "label", "entry", "rules", "otherwise"});
+  const auto variable = named ? text(model.at("variable"), 64) : "Entrada";
+  if (!identifier(variable))
+    fail();
+  const auto title = named ? text(model.at("title"), 256) : "";
+  if (!named && model.at("version").as_integer() != 1)
     fail();
   const auto type = text(model.at("type"), 16),
              label = text(model.at("label"), 256);
   if (type != "number" && type != "text")
     fail();
-  const auto &entry = model.at("entry");
-  std::string value;
-  if (entry.at("kind").as_string() == "literal") {
-    fields(entry, {"kind", "value"});
-    const auto raw = text(entry.at("value"));
-    value = type == "number" ? numeric(raw) : quote(raw);
-  } else if (entry.at("kind").as_string() == "reference")
-    value = reference(entry);
-  else
-    fail();
+  const auto value = emit_operand(model.at("entry"), type);
   const auto &rules = model.at("rules").as_array();
   if (rules.size() > 12)
     fail();
@@ -120,13 +157,13 @@ std::string compile(const V &model) {
     const auto op = text(rule.at("op"), 16), raw = text(rule.at("value"));
     std::string condition;
     if (type == "text" && (op == "contains" || op == "starts"))
-      condition = (op == "contains" ? "CONTEM" : "COMECA_COM") +
-                  std::string("(Entrada; ") + quote(raw) + ")";
+      condition = std::string(op == "contains" ? "CONTEM" : "COMECA_COM") +
+                  "(" + variable + "; " + quote(raw) + ")";
     else {
       if (!comparisons.contains(op) ||
           (type == "text" && op != "eq" && op != "ne"))
         fail();
-      condition = "Entrada " + comparisons.at(op) + " " +
+      condition = variable + " " + comparisons.at(op) + " " +
                   (type == "number" ? numeric(raw) : quote(raw));
     }
     expression +=
@@ -135,14 +172,18 @@ std::string compile(const V &model) {
   expression += quote(text(model.at("otherwise")));
   expression += std::string(rules.size(), ')');
   const auto assignment =
-      current ? "\nEntrada = " + (type == "number"
-                                      ? numeric(text(model.at("current")))
+      current ? "\n" + variable + " = " +
+                    (type == "number" ? numeric(text(model.at("current")))
                                       : quote(text(model.at("current"))))
               : "";
-  auto out =
-      "# INDE-CARDS-1 " +
-      pilot::encode_json(V(V::Object{{"label", label}, {"type", type}})) +
-      "\ndeclara Entrada = " + value + assignment + "\nresultado " + expression;
+  V::Object header{{"label", label}, {"type", type}};
+  if (named) {
+    header.emplace("title", title);
+    header.emplace("variable", variable);
+  }
+  auto out = std::string(named ? "# INDE-CARDS-2 " : "# INDE-CARDS-1 ") +
+             pilot::encode_json(V(header)) + "\ndeclara " + variable + " = " +
+             value + assignment + "\nresultado " + expression;
   if (out.size() > 16384)
     throw std::runtime_error("formula_source_limit");
   return out;
@@ -150,10 +191,18 @@ std::string compile(const V &model) {
 std::optional<V> recognize(const std::string &source) {
   try {
     Reader r(source);
-    r.need("# INDE-CARDS-1 ");
+    const bool named = r.take("# INDE-CARDS-2 ");
+    if (!named)
+      r.need("# INDE-CARDS-1 ");
     const auto header = persistence::json::parse(r.until("\n"));
-    fields(header, {"label", "type"});
-    r.need("\ndeclara Entrada = ");
+    if (named)
+      fields(header, {"label", "type", "title", "variable"});
+    else
+      fields(header, {"label", "type"});
+    const auto variable = named ? header.at("variable").as_string() : "Entrada";
+    if (!identifier(variable))
+      fail();
+    r.need("\ndeclara " + variable + " = ");
     const auto input = r.until("\n");
     r.need("\n");
     while (r.take("\n")) {
@@ -161,7 +210,7 @@ std::optional<V> recognize(const std::string &source) {
     const auto type = header.at("type").as_string();
     V entry;
     std::optional<std::string> current;
-    if (r.take("Entrada = ")) {
+    if (r.take(variable + " = ")) {
       current = type == "text" ? r.string() : r.until("\n");
       r.need("\n");
     }
@@ -188,16 +237,16 @@ std::optional<V> recognize(const std::string &source) {
       if (rules.size() >= 12)
         fail();
       std::string op, value;
-      if (r.take("CONTEM(Entrada; ")) {
+      if (r.take("CONTEM(" + variable + "; ")) {
         op = "contains";
         value = r.string();
         r.need(")");
-      } else if (r.take("COMECA_COM(Entrada; ")) {
+      } else if (r.take("COMECA_COM(" + variable + "; ")) {
         op = "starts";
         value = r.string();
         r.need(")");
       } else {
-        r.need("Entrada ");
+        r.need(variable + " ");
         const auto symbol = r.until(" ");
         r.need(" ");
         for (const auto &[key, s] : comparisons)
@@ -217,7 +266,7 @@ std::optional<V> recognize(const std::string &source) {
     r.need(std::string(rules.size(), ')'));
     if (r.pos != r.s.size())
       fail();
-    V model(V::Object{{"version", 1},
+    V model(V::Object{{"version", named ? 2 : 1},
                       {"type", type},
                       {"label", header.at("label")},
                       {"entry", entry},
@@ -228,11 +277,13 @@ std::optional<V> recognize(const std::string &source) {
       object.emplace("current", *current);
       model = V(std::move(object));
     }
-    auto normalized = source;
-    for (auto at = normalized.find("\n\n"); at != std::string::npos;
-         at = normalized.find("\n\n"))
-      normalized.erase(at, 1);
-    if (compile(model) != normalized)
+    if (named) {
+      auto object = model.as_object();
+      object.emplace("title", header.at("title"));
+      object.emplace("variable", variable);
+      model = V(object);
+    }
+    if (compile(model) != normalize_lines(source))
       return {};
     return model;
   } catch (const std::exception &) {

@@ -7,6 +7,7 @@
 #include "object_document_adapter.hpp"
 #include "object_formula.hpp"
 #include "object_formula_cards.hpp"
+#include "object_formula_hub.hpp"
 #include <algorithm>
 #include <array>
 #include <cerrno>
@@ -1814,6 +1815,10 @@ struct Session::Impl {
           value.emplace("type", r.type);
           const auto cards = formula::cards::recognize(f.source);
           value.emplace("cards", cards ? *cards : V{});
+          const auto model = formula::hub::recognize(f.source);
+          value.emplace("hub", model ? *model
+                                     : V(V::Object{{"kind", "free"},
+                                                   {"source", f.source}}));
         }
         value.emplace("display", r.valid ? r.display : "");
         value.emplace("error", r.error);
@@ -1835,6 +1840,7 @@ struct Session::Impl {
     return V::Object{
         {"formula_text", std::move(texts)},
         {"formula_cards_supported", p2d2},
+        {"formula_hub_supported", p2d2},
         {"formulas", std::move(formulas)},
         {"formula_uses", std::move(uses)},
         {"formula_cells", std::move(cells)},
@@ -1985,60 +1991,113 @@ struct Session::Impl {
     if (v.at("expected").as_integer() != revision)
       fail("stale_session_revision");
   }
+  V preview_formula(const std::string &source, const std::string &id,
+                    const std::string &name = "") {
+    auto records = working.formulas;
+    auto at = std::find_if(records.begin(), records.end(),
+                           [&](const auto &f) { return f.id == id; });
+    if (!id.empty() && at == records.end())
+      fail("formula_not_found");
+    if (at == records.end()) {
+      formula::Record f;
+      f.id = project::new_uuid();
+      f.name = name.empty() ? "__FormulaPreview0" : name;
+      std::size_t index = 0;
+      while (name.empty() &&
+             std::any_of(records.begin(), records.end(),
+                         [&](const auto &r) { return r.name == f.name; }))
+        f.name = "__FormulaPreview" + std::to_string(++index);
+      f.advanced = true;
+      records.push_back(f);
+      at = std::prev(records.end());
+    }
+    if (!name.empty() && at->name != name)
+      fail("formula_symbol_immutable");
+    if (at->consumed)
+      fail("formula_command_consumed");
+    at->source = source;
+    const auto preview_id = at->id;
+    formula::bind(*at, records);
+    const auto before = formula::evaluate(records);
+    const auto &r = before.at(preview_id);
+    V::Array changes, preview_variables;
+    for (const auto &v : r.variables)
+      preview_variables.emplace_back(V::Object{{"name", v.name},
+                                               {"type", v.current_type},
+                                               {"display", v.current_display}});
+    if (r.valid && r.command) {
+      const auto after =
+          formula::evaluate(formula::execute(records, preview_id));
+      for (const auto &f : records)
+        if (f.id != preview_id)
+          for (const auto &v : after.at(f.id).variables) {
+            const auto &vars = before.at(f.id).variables;
+            const auto old =
+                std::find_if(vars.begin(), vars.end(),
+                             [&](const auto &x) { return x.name == v.name; });
+            if (old != vars.end() &&
+                (old->current_display != v.current_display ||
+                 old->current_type != v.current_type ||
+                 (v.current_type == "number" && old->current != v.current)))
+              changes.emplace_back(V::Object{{"formula", f.name},
+                                             {"variable", v.name},
+                                             {"before", old->current_display},
+                                             {"after", v.current_display}});
+          }
+    }
+    return V::Object{{"accepted", true},
+                     {"preview", V::Object{{"valid", r.valid},
+                                           {"display", r.display},
+                                           {"error", r.error},
+                                           {"command", r.command},
+                                           {"changes", changes},
+                                           {"variables", preview_variables}}}};
+  }
   V request(const V &input) {
     try {
       auto v = input;
       auto op = v.at("op").as_string();
-      const bool visual_cards =
-          op == "create_formula_cards" || op == "edit_formula_cards";
-      if (op == "create_formula_cards" || op == "edit_formula_cards" ||
-          op == "preview_formula_cards") {
+      V authoring_model;
+      bool visual_cards = false;
+      const bool from_hub = op == "create_formula_hub" ||
+                            op == "edit_formula_hub" ||
+                            op == "preview_formula_hub";
+      if (from_hub || op == "create_formula_cards" ||
+          op == "edit_formula_cards" || op == "preview_formula_cards") {
         if (!p2d2)
           fail("p2d2_profile_required");
         expected(v);
-        if (op == "create_formula_cards")
-          fields(v, {"op", "expected", "name", "cards", "before", "table",
-                     "cell", "prefix", "suffix"});
-        else if (op == "edit_formula_cards")
-          fields(v, {"op", "expected", "id", "cards", "target", "prefix",
-                     "suffix"});
-        else
-          fields(v, {"op", "expected", "id", "cards"});
-        const auto source = formula::cards::compile(v.at("cards"));
-        if (op == "preview_formula_cards") {
-          auto records = working.formulas;
-          const auto id = v.at("id").as_string();
-          auto at = std::find_if(records.begin(), records.end(),
-                                 [&](const auto &f) { return f.id == id; });
-          if (!id.empty() && at == records.end())
-            fail("formula_not_found");
-          if (at == records.end()) {
-            formula::Record f;
-            f.id = project::new_uuid();
-            f.name = "__CardsPreview0";
-            std::size_t preview_index = 0;
-            while (std::any_of(records.begin(), records.end(),
-                               [&](const auto &r) { return r.name == f.name; }))
-              f.name = "__CardsPreview" + std::to_string(++preview_index);
-            f.advanced = true;
-            records.push_back(f);
-            at = std::prev(records.end());
-          }
-          if (at->consumed)
-            fail("formula_command_consumed");
-          at->source = source;
-          const auto preview_id = at->id;
-          formula::bind(*at, records);
-          const auto result = formula::evaluate(records).at(preview_id);
-          return V::Object{{"accepted", true},
-                           {"preview", V::Object{{"valid", result.valid},
-                                                 {"display", result.display},
-                                                 {"error", result.error}}}};
-        }
+        const bool create =
+            op == "create_formula_hub" || op == "create_formula_cards";
+        const bool preview =
+            op == "preview_formula_hub" || op == "preview_formula_cards";
+        const auto key = from_hub ? "model" : "cards";
+        if (create)
+          fields(v, {"op", "expected", "name", key, "before", "table", "cell",
+                     "prefix", "suffix"});
+        else if (preview) {
+          if (from_hub && v.as_object().contains("name"))
+            fields(v, {"op", "expected", "id", key, "name"});
+          else
+            fields(v, {"op", "expected", "id", key});
+        } else
+          fields(v,
+                 {"op", "expected", "id", key, "target", "prefix", "suffix"});
+        authoring_model =
+            from_hub
+                ? v.at(key)
+                : V(V::Object{{"kind", "condition"}, {"cards", v.at(key)}});
+        const auto source = formula::hub::compile(authoring_model);
+        if (preview)
+          return preview_formula(source, v.at("id").as_string(),
+                                 from_hub && v.as_object().contains("name")
+                                     ? v.at("name").as_string()
+                                     : "");
+        visual_cards = authoring_model.at("kind").as_string() != "free";
         auto converted = v.as_object();
-        converted.erase("cards");
+        converted.erase(key);
         converted.emplace("source", source);
-        if (op == "create_formula_cards") {
+        if (create) {
           op = "create_formula";
           converted.at("op") = op;
         }
@@ -2070,7 +2129,8 @@ struct Session::Impl {
         const bool text_edit =
             op == "edit_cell" || op == "edit_formula" ||
             op == "execute_formula" || op == "edit_formula_text" ||
-            op == "edit_formula_cards" || op == "reset_formula_variable";
+            op == "edit_formula_cards" || op == "edit_formula_hub" ||
+            op == "reset_formula_variable";
         const bool structure = op == "create_table" || op == "import" ||
                                op == "duplicate" || op == "move" ||
                                op == "remove" || op == "reorder_text" ||
@@ -2243,8 +2303,8 @@ struct Session::Impl {
           candidate.formula_text[target] = {id, decode_runs(v.at("runs"))};
         } else if (op == "create_formula" || op == "attach_formula" ||
                    op == "detach_formula" || op == "edit_formula" ||
-                   op == "edit_formula_cards" || op == "execute_formula" ||
-                   op == "reset_formula_variable") {
+                   op == "edit_formula_cards" || op == "edit_formula_hub" ||
+                   op == "execute_formula" || op == "reset_formula_variable") {
           if (!p2d)
             fail("p2d_profile_required");
           const auto find_formula = [&](const std::string &id) {
@@ -2338,13 +2398,16 @@ struct Session::Impl {
             const auto f = find_formula(v.at("id").as_string());
             if (p2d2 && f->consumed)
               fail("formula_command_consumed");
-            if (op == "edit_formula" || op == "edit_formula_cards") {
-              if (op == "edit_formula_cards") {
+            if (op == "edit_formula" || op == "edit_formula_cards" ||
+                op == "edit_formula_hub") {
+              if (op == "edit_formula_cards" || op == "edit_formula_hub") {
                 fields(v, {"op", "expected", "id", "source", "target", "prefix",
                            "suffix"});
                 // A visual edit may only replace a fully representable source.
-                if (!formula::cards::recognize(f->source))
+                if (op == "edit_formula_cards" &&
+                    !formula::cards::recognize(f->source))
                   fail("formula_cards_advanced_source");
+                formula::hub::preserve_symbols(f->source, authoring_model);
                 const auto target = v.at("target").as_string();
                 if (!target.empty()) {
                   bool active = std::any_of(
@@ -2361,7 +2424,16 @@ struct Session::Impl {
                   if (!active)
                     fail("formula_text_target_invalid");
                   // Refuse to flatten a richer phrase containing other results.
-                  const auto &runs = candidate.formula_text.at(target).runs;
+                  const bool command =
+                      formula::evaluate(candidate.formulas).at(f->id).command;
+                  if (command) {
+                    if (!v.at("prefix").as_string().empty() ||
+                        !v.at("suffix").as_string().empty())
+                      fail("formula_command_must_be_alone");
+                  }
+                  const auto runs =
+                      command ? std::vector<FormulaTextRun>{}
+                              : candidate.formula_text.at(target).runs;
                   std::size_t own = 0;
                   for (const auto &r : runs) {
                     if (!r.formula.empty()) {
@@ -2369,11 +2441,12 @@ struct Session::Impl {
                         fail("formula_cards_complex_phrase");
                     }
                   }
-                  candidate.formula_text[target] = {
-                      f->id,
-                      {{v.at("prefix").as_string(), {}},
-                       {{}, f->id},
-                       {v.at("suffix").as_string(), {}}}};
+                  if (!command)
+                    candidate.formula_text[target] = {
+                        f->id,
+                        {{v.at("prefix").as_string(), {}},
+                         {{}, f->id},
+                         {v.at("suffix").as_string(), {}}}};
                 } else if (!v.at("prefix").as_string().empty() ||
                            !v.at("suffix").as_string().empty())
                   fail("formula_text_target_invalid");
