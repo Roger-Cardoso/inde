@@ -233,6 +233,7 @@ function updateSelection() {
     if (node.getAttribute('role') === 'button') node.setAttribute('aria-pressed', String(selected));
   }
   for (const n of $('document').querySelectorAll('.cell-editor')) n.classList.toggle('selected-cell', state.selection === n.dataset.table && state.selected_cell === n.dataset.cell);
+  if(state.object_composition_supported) compositionSetup();
   controls();
 }
 let requests = Promise.resolve();
@@ -283,6 +284,8 @@ function action(op, values = {}, success = '') {
   requests = next.then(() => undefined, () => undefined);
   return next;
 }
+function selectedParagraph() { return state?.paragraphs?.find(p=>p.id===state.selection); }
+function selectedTextGroup() { return state?.text_groups?.find(g=>g.occurrences.includes(state.selection)); }
 function selectedTable() { return state?.tables?.find(t => t.id === state.selection); }
 function selectedFormulaUse() { return state?.formula_uses?.find(u => u.id === state.selection); }
 function libraryFormula() { return state?.formulas?.find(f => f.id === $('formula-library').value); }
@@ -310,17 +313,24 @@ function controls() {
   if (!state) return;
   richControls();
   cardsControls();
+  compositionControls();
   for (const n of document.querySelectorAll('.cell-editor')) n.readOnly = busy && !['edit_cell', 'select_cell'].includes(activeOperation);
   for (const id of ['save', 'reopen', 'sample', 'file', 'caption', 'alt', 'decorative', 'intent', 'insert-before', 'move-before', 'paragraph', 'ratio', 'restore', 'table-title', 'table-header', 'table-before', 'create-table']) $(id).disabled = busy;
   $('import').disabled = busy || !upload;
   for (const id of ['move', 'duplicate', 'arrange', 'stack']) $(id).disabled = busy || !figure();
   $('save').disabled = false; $('reopen').disabled = false;
   $('undo').disabled = !state.can_undo; $('redo').disabled = !state.can_redo;
-  $('move').disabled = busy || !(figure() || selectedTable() || selectedFormulaUse());
-  $('remove').disabled = busy || !(figure() || selectedTable() || selectedFormulaUse());
+  const generic = state.object_composition_supported, paragraphSelected = selectedParagraph();
+  $('move').disabled = busy || !(figure() || selectedTable() || selectedFormulaUse() || (generic && paragraphSelected));
+  $('remove').disabled = busy || !(figure() || selectedTable() || selectedFormulaUse() || (generic && paragraphSelected));
+  if (generic) for (const id of ['arrange','stack']) $(id).disabled = busy || !state.selection;
+  if(generic)$('arrange').disabled ||= !$('paragraph').value;
   $('move').textContent = selectedFormulaUse() ? 'Mover fórmula selecionada' : selectedTable() ? 'Mover tabela selecionada' : 'Mover figura selecionada';
   $('selected-label').textContent = selectedTable() ? 'Tabela selecionada: ' + selectedTable().title : figure() ? 'Figura selecionada: ' + (figure().caption || 'sem legenda') : 'Selecione uma figura ou tabela no documento.';
   if (selectedFormulaUse()) $('selected-label').textContent = shortText(state.selection);
+  if (generic && paragraphSelected) { const group=selectedTextGroup(); $('move').textContent='Mover texto selecionado'; $('selected-label').textContent=`Texto selecionado. Mover a leitura ou remover afeta o grupo completo de ${group.occurrences.length} parágrafo(s).`; }
+  $('remove').textContent=generic&&paragraphSelected?'Remover grupo textual':'Remover uso selecionado';
+  if(generic&&!state.selection){$('move').textContent='Mover objeto selecionado';$('selected-label').textContent='Selecione texto, figura, tabela ou fórmula no documento ou na lista.';}
   $('alt').disabled = busy || $('decorative').checked;
   $('save-status').textContent = hasDrafts() ? 'Célula em edição' : state.dirty ? 'Alterações em memória' : 'Salvo localmente';
   $('save-status').className = state.dirty ? 'dirty' : '';
@@ -510,7 +520,7 @@ function render() {
   const currentGeneration = ++generation;
   const p2c = ['P2-C','P2-D','P2-D2'].includes(state.profile);
   const p2d = ['P2-D','P2-D2'].includes(state.profile);
-  const p2d2=richProfile();document.body.classList.toggle('has-rich-formulas',p2d2);
+  const p2d2=richProfile();document.body.classList.toggle('has-rich-formulas',p2d2);document.body.classList.toggle('has-object-composition',Boolean(state.object_composition_supported));
   document.querySelectorAll('.p2d2-only').forEach(n=>{n.hidden=!p2d2;});
   document.body.classList.toggle('has-formulas',p2d);
   if (state.context !== 'text') { formulaEditing = null; richTextEditing = null; }
@@ -527,6 +537,7 @@ function render() {
   if (p2d) { document.title = 'INDE · Fórmulas vivas'; document.querySelector('h1').textContent = 'Resultados que acompanham sua história.'; document.querySelector('.paper-footer').textContent = 'INDE · EXPERIMENTO AUTORAL P2-D'; $('limits').textContent = 'Fórmulas numéricas com variáveis e dependências. Alterações de variáveis exigem execução; resultados recalculam automaticamente.'; }
   if(p2d2) { document.title='INDE · Texto e fórmulas'; document.querySelector('h1').textContent='A conta faz parte da escrita.'; document.querySelector('.intro p:not(.eyebrow)').textContent='Escreva a frase, deixe os resultados acompanharem as mudanças.'; $('limits').textContent='Texto livre e resultados protegidos no mesmo parágrafo. O comando alterar age uma vez e é consumido.'; document.querySelector('.paper-footer').textContent='INDE · EXPERIMENTO AUTORAL P2-D2'; }
   if(state.formula_cards_supported){document.title='INDE · Texto por condições';document.querySelector('h1').textContent='Escolha as palavras, sem programar.';document.querySelector('.intro p:not(.eyebrow)').textContent='Preencha as frases e deixe os cartões acompanharem a situação.';}
+  if(state.object_composition_supported){document.title='INDE · Compor o documento';document.querySelector('h1').textContent='Cada objeto encontra seu lugar.';document.querySelector('.intro p:not(.eyebrow)').textContent='Texto, figura, tabela e fórmula: lado a lado, alinhados e recuperáveis.';}
   const destination = state.author_order.filter(id => !state.rows.some(r => r.children[1] === id) && (state.figures.some(f => f.id === id) || state.tables?.some(t => t.id === id) || state.formula_uses?.some(u => u.id === id) || state.reading_groups.some(g => g[0] === id))).map(id => [id, shortText(id)]);
   destination.push(['', 'Fim do documento']);
   options('insert-before', destination, state.paragraphs[1]?.id || '');
@@ -538,7 +549,8 @@ function render() {
   options('move-before', destination.filter(([id]) => id !== state.selection), '');
   options('text-before', destination, '');
   options('text-group', (state.text_groups || []).map(g => [g.id, g.occurrences.map(shortText).join(' / ')]), state.text_groups?.[0]?.id || '');
-  options('paragraph', state.paragraphs.map(p => [p.id, shortText(p.id)]), state.paragraphs[1]?.id || '');
+  options('paragraph', state.object_composition_supported ? state.visual_order.filter(id=>id!==state.selection).map(id=>[id,shortText(id)]) : state.paragraphs.map(p => [p.id, shortText(p.id)]), state.paragraphs[1]?.id || '');
+  compositionSetup(destination);
   const f = figure();
   $('selected-label').textContent = f ? 'Figura selecionada: ' + (f.caption || 'sem legenda') : 'Selecione uma figura no documento.';
   $('alignment').textContent = state.aligned ? 'Ordem alinhada' : 'Apresentação independente';
@@ -559,6 +571,7 @@ function render() {
       target.append(container);
     } else target.append(item(id, currentGeneration));
   }
+  if(state.object_composition_supported) for(const node of target.querySelectorAll(':scope > .item,:scope > .composite-row > .item')) decorateItem(node);
   controls();
 }
 async function choose(file, name) {
@@ -585,7 +598,7 @@ $('import').addEventListener('click', async () => {
 });
 $('move').addEventListener('click', () => action('move', { id: state.selection, before: $('move-before').value, intent: $('intent').value }, 'Uso selecionado movido.'));
 $('duplicate').addEventListener('click', () => action('duplicate', { id: state.selection, before: $('move-before').value }, 'Outro uso criado; o recurso é compartilhado.'));
-$('arrange').addEventListener('click', () => { const first = Number($('ratio').value) / 100; action('arrange', { id: state.selection, paragraph: $('paragraph').value, first, second: 1 - first, gap: 20 }, 'Figura e parágrafo lado a lado.'); });
+$('arrange').addEventListener('click', () => { const first = Number($('ratio').value) / 100; if(state.object_composition_supported) action('arrange_objects',{id:state.selection,other:$('paragraph').value,side:$('row-side').value,first,second:1-first,gap:Number($('row-gap').value)},'Objetos lado a lado; ordem de leitura conservada.'); else action('arrange', { id: state.selection, paragraph: $('paragraph').value, first, second: 1 - first, gap: 20 }, 'Figura e parágrafo lado a lado.'); });
 $('stack').addEventListener('click', () => action('stack', { id: state.selection }, 'Apresentação em coluna única.'));
 $('restore').addEventListener('click', () => action('restore', {}, 'Apresentação restaurada pela sequência autoral.'));
 $('ratio').addEventListener('input', () => { $('ratio-label').textContent = $('ratio').value + '%'; });
@@ -863,3 +876,74 @@ function buildHubConditions(d,c){const section=cardsNode('section',null,{class:'
   const list=cardsNode('section',null,{class:'hub-rules'});list.append(cardsNode('h3','Condições · vale a primeira que servir'));c.rules.forEach((r,i)=>{const card=cardsNode('div',null,{class:'hub-rule'}),head=cardsNode('div',null,{class:'hub-rule-head'});head.append(cardsNode('strong','Condição '+(i+1)));for(const [label,offset]of [['Subir',-1],['Descer',1]]){const b=cardsButton(label,()=>{[c.rules[i],c.rules[i+offset]]=[c.rules[i+offset],c.rules[i]];buildHubEditor();hubChanged();});b.disabled=i+offset<0||i+offset>=c.rules.length;b.dataset.fixed=String(b.disabled);head.append(b);}head.append(cardsButton('Remover',()=>{c.rules.splice(i,1);buildHubEditor();hubChanged();}));card.append(head);const when=cardsNode('div',null,{class:'hub-when'});const val=hubInput(r.value,v=>r.value=v,{number:c.type==='number'});val.setAttribute('aria-label','Valor da condição '+(i+1));when.append(cardsNode('span','Se'),cardsNode('span',c.label,{class:'hub-entry-name'}),hubSelect(cardsOperators[c.type],r.op,v=>r.op=v,'Comparação da condição '+(i+1)),val);card.append(when,cardsField('Mostrar esta palavra ou frase',hubInput(r.text,v=>r.text=v,{multiline:true})));list.append(card);});const add=cardsButton('Adicionar condição',()=>{c.rules.push({op:'eq',value:'',text:''});buildHubEditor();hubChanged();});add.disabled=c.rules.length>=12;add.dataset.fixed=String(add.disabled);list.append(add,cardsField('Se nenhuma condição servir, mostrar',hubInput(c.otherwise,v=>c.otherwise=v,{multiline:true})));d.append(list);}
 function queueHubPreview(){clearTimeout(hubPreviewTimer);const seq=++hubPreviewSequence;if(!hubEditing||hubEditing.picker)return;hubPreviewTimer=setTimeout(async()=>{const e=hubEditing;if(!e||e.picker)return;const fingerprint=hubFingerprint();try{const response=await fetchApi('/api/request',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({op:'preview_formula_hub',expected:state.revision,id:e.id,name:e.name,model:e.model})}),r=await response.json();if(seq!==hubPreviewSequence||hubEditing!==e||fingerprint!==hubFingerprint())return;const p=r.preview;e.preview=p;if(r.accepted&&p?.valid){$('hub-context').hidden=p.command;$('hub-apply').textContent=e.id?'Aplicar fórmula e frase':p.command?'Inserir comando de uso único':'Inserir fórmula';$('hub-preview-result').textContent=p.command?(p.changes.length?p.changes.map(c=>`${c.formula}.${c.variable}: ${c.before} → ${c.after}`).join('\n'):'O valor permanece igual; o comando será consumido ao aplicar.'):e.prefix+p.display+e.suffix;$('hub-preview-note').textContent=p.command?'Efeito apenas previsto. O comando será executado uma única vez quando você aplicar a alteração no documento.':'Prévia calculada pelo mesmo motor do documento. Aplicar protege o trabalho.';updateHubReferences();}else{$('hub-preview-result').textContent='Confira a fórmula.';$('hub-preview-note').textContent=errors[p?.error||r.error]||'Preencha os valores e escolha uma informação compatível.';}}catch{if(seq===hubPreviewSequence&&hubEditing===e)$('hub-preview-note').textContent='A prévia não pôde ser calculada. O rascunho foi conservado.';}},250);}
 async function applyHub(){const e=hubEditing;if(!e||e.picker||busy)return;clearTimeout(hubPreviewTimer);++hubPreviewSequence;const command=e.model.kind==='change'||e.preview?.command;const prefix=command?'':e.prefix,suffix=command?'':e.suffix;let op,values;if(e.id){op='edit_formula_hub';values={id:e.id,model:structuredClone(e.model),target:e.target,prefix,suffix};}else{op='create_formula_hub';const cell=e.where.target==='cell';if(cell&&(!selectedTable()||!state.selected_cell)){message('Selecione primeiro uma célula.',true);return;}values={name:e.name,model:structuredClone(e.model),before:cell?'':e.where.before,table:cell?state.selection:'',cell:cell?state.selected_cell:'',prefix,suffix};}if(await action(op,values,command?'Comando preparado. Aplicar alteração executa uma vez e o retira do documento.':'Fórmula e frase confirmadas no documento.'))closeHub();else if(hubEditing===e)queueHubPreview();}
+
+// Shared object composition. The server owns layout, removal and recovery;
+// these controls only submit complete, revision-checked operations.
+function compositionSetup(destination) {
+  const supported=Boolean(state.object_composition_supported);
+  for(const id of ['object-picker','row-settings','presentation-tools','removed-tools']) $(id).hidden=!supported;
+  if(!supported)return;
+  $('neighbor-label').textContent='Outro objeto';
+  options('paragraph',state.visual_order.filter(id=>id!==state.selection).map(id=>[id,shortText(id)]),'');
+  options('object-library',[['','Escolha no documento'],...state.author_order.map(id=>[id,shortText(id)])],state.selection);
+  $('object-library').value=state.selection;
+  if(!destination)destination=[...$('insert-before').options].map(o=>[o.value,o.textContent]);
+  options('restore-before',destination,'');
+  const kinds={text:'Texto',image:'Figura',table:'Tabela',formula:'Fórmula'};
+  options('removed-library',(state.removed_items||[]).map(r=>[r.id,`${kinds[r.kind]}${r.count>1?' · '+r.count+' parágrafos':''}: ${r.label||'sem legenda'}`]),'');
+  $('removed-hint').textContent=state.removed_items.length?'Restaurar respeita os grupos textuais. A apresentação precisa estar alinhada à leitura.':'Nenhum item removido disponível para restaurar.';
+  const p=state.presentation?.[state.selection]||{width:100,horizontal:'start',text_align:'left',vertical:'start'};
+  $('object-width').value=p.width;$('object-horizontal').value=p.horizontal;$('object-text-align').value=p.text_align;$('object-vertical').value=p.vertical;
+  const row=state.rows.find(r=>r.children.includes(state.selection));
+  if(row){$('paragraph').value=row.children.find(id=>id!==state.selection);$('row-side').value=row.children[0]===state.selection?'left':'right';$('row-gap').value=row.gap;$('ratio').value=row.first*100;$('ratio-label').textContent=Math.round(row.first*100)+'%';}
+  if(!$('compose-selected')){
+    const b=document.createElement('button');b.id='compose-selected';b.className='wide';b.textContent='Compor objeto selecionado';b.addEventListener('click',()=>composeObject(state.selection));$('object-picker').append(b);
+    $('move').nextElementSibling.textContent='Mover retira o objeto do arranjo lado a lado. No texto, mover a leitura leva o grupo protegido inteiro.';
+  }
+}
+function compositionControls(){
+  if(!state?.object_composition_supported)return;
+  const locked=busy||state.persistence_status==='uncertain', selected=Boolean(state.selection);
+  for(const id of ['object-library','removed-library','restore-before']) $(id).disabled=locked;
+  for(const id of ['object-width','object-horizontal','object-text-align','object-vertical','apply-presentation','reset-presentation','row-side','row-gap']) $(id).disabled=locked||!selected||state.context!=='composition';
+  if($('compose-selected'))$('compose-selected').disabled=locked||!selected;
+  $('restore-removed').disabled=locked||!$('removed-library').value||!state.aligned;
+  for(const n of document.querySelectorAll('.object-actions button'))n.disabled=locked;
+}
+async function composeObject(id){
+  if(!id)return;
+  if(state.selection!==id&&!await action('select',{id}))return;
+  if(state.context!=='composition'&&!await action('set_context',{context:'composition'}))return;
+  if(mode!=='visual'){mode='visual';render();}
+  $('arrangement-tools').scrollIntoView({block:'center',behavior:'smooth'});
+}
+async function removeObject(id){
+  if(!id)return;
+  if(state.context!=='structure'&&!await action('set_context',{context:'structure'}))return;
+  await action('remove',{id},'Uso retirado do documento. Desfazer ou Itens removidos permitem restaurar.');
+}
+function decorateItem(node){
+  const id=node.dataset.occurrence,p=state.presentation?.[id];
+  if(mode==='visual'&&p){node.style.width=p.width+'%';node.style.justifySelf=p.horizontal;node.style.alignSelf=p.vertical;node.style.marginInlineStart=p.horizontal==='start'?'0':'auto';node.style.marginInlineEnd=p.horizontal==='end'?'0':'auto';node.style.textAlign=p.text_align;node.style.setProperty('--object-text-align',p.text_align);}
+  const actions=document.createElement('div');actions.className='object-actions';actions.setAttribute('role','group');actions.setAttribute('aria-label','Ações de '+shortText(id));
+  const group=state.text_groups.find(g=>g.occurrences.includes(id));
+  for(const [label,run]of [['Selecionar',()=>action('select',{id})],['Compor',()=>composeObject(id)],['Remover',()=>removeObject(id)]]){
+    const b=document.createElement('button');b.type='button';b.textContent=label;b.setAttribute('aria-label',label+' objeto '+shortText(id));
+    if(label==='Remover'&&group)b.title=`Retira o grupo completo de ${group.occurrences.length} parágrafo(s); a origem é conservada.`;
+    b.addEventListener('click',e=>{e.stopPropagation();run();});b.addEventListener('keydown',e=>e.stopPropagation());actions.append(b);
+  }
+  if(group&&group.occurrences.length>1){const note=document.createElement('span');note.className='object-group-note';note.textContent='Grupo protegido · '+group.occurrences.length+' parágrafos';actions.prepend(note);}
+  node.append(actions);
+}
+$('object-library').addEventListener('change',()=>action('select',{id:$('object-library').value}));
+$('apply-presentation').addEventListener('click',()=>action('set_presentation',{id:state.selection,width:Number($('object-width').value),horizontal:$('object-horizontal').value,text_align:$('object-text-align').value,vertical:$('object-vertical').value},'Tamanho e alinhamento aplicados; ordem de leitura conservada.'));
+$('reset-presentation').addEventListener('click',()=>action('reset_presentation',{id:state.selection},'Tamanho e alinhamento restaurados.'));
+$('restore-removed').addEventListener('click',async()=>{const values={id:$('removed-library').value,before:$('restore-before').value};if(state.context!=='structure'&&!await action('set_context',{context:'structure'}))return;await action('restore_removed',values,'Item restaurado. Conteúdo, vínculos e apresentação individual foram conservados.');});
+Object.assign(errors,{
+  invalid_presentation:'Use largura de 20 a 100% e escolha alinhamentos válidos.',
+  invalid_row_target:'Escolha dois objetos diferentes para colocar lado a lado.',
+  invalid_row_profile:'As duas larguras devem completar 100% e o espaço deve ficar entre 0 e 256.',
+  occurrence_not_active:'Esse objeto não está no fluxo atual. Confira os itens removidos.',
+  removed_item_not_found:'Esse item não está disponível para restaurar.',
+  invalid_removed_text_group:'O grupo textual removido não corresponde à origem preservada.',
+});

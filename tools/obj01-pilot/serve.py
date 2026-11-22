@@ -151,7 +151,7 @@ class Handler(BaseHTTPRequestHandler):
             if len(raw) != size:
                 return self.reply(400, {'accepted': False, 'error': 'incomplete_request'})
             data = json.loads(raw)
-            if not isinstance(data, dict) or data.get('op') not in {'import', 'duplicate', 'move', 'arrange', 'stack', 'restore', 'save', 'reopen', 'select', 'create_table', 'edit_cell', 'select_cell', 'remove', 'undo', 'redo', 'set_context', 'reorder_text', 'reopen_working', 'export_legacy', 'create_formula', 'edit_formula', 'execute_formula', 'reset_formula_variable', 'attach_formula', 'detach_formula', 'edit_formula_text', 'create_formula_cards', 'edit_formula_cards', 'preview_formula_cards', 'create_formula_hub', 'edit_formula_hub', 'preview_formula_hub'}:
+            if not isinstance(data, dict) or data.get('op') not in {'import', 'duplicate', 'move', 'arrange', 'arrange_objects', 'set_presentation', 'reset_presentation', 'restore_removed', 'stack', 'restore', 'save', 'reopen', 'select', 'create_table', 'edit_cell', 'select_cell', 'remove', 'undo', 'redo', 'set_context', 'reorder_text', 'reopen_working', 'export_legacy', 'create_formula', 'edit_formula', 'execute_formula', 'reset_formula_variable', 'attach_formula', 'detach_formula', 'edit_formula_text', 'create_formula_cards', 'edit_formula_cards', 'preview_formula_cards', 'create_formula_hub', 'edit_formula_hub', 'preview_formula_hub'}:
                 return self.reply(400, {'accepted': False, 'error': 'unsupported_operation'})
             self.reply(200, self.server.engine.request(data))
         except (ValueError, UnicodeError, RecursionError):

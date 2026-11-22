@@ -437,6 +437,10 @@ struct FormulaText {
   std::string object;
   std::vector<FormulaTextRun> runs;
 };
+struct Presentation {
+  double width = 100;
+  std::string horizontal = "start", text_align = "left", vertical = "start";
+};
 struct State {
   std::string project, source, source_hash, selection;
   std::vector<std::string> author, visual;
@@ -450,8 +454,26 @@ struct State {
   std::map<std::string, FormulaText> formula_text;
   std::map<std::string, std::string> formula_cells;
   std::vector<Row> rows;
+  // Versioned private composition overlay; the captured owner document stays
+  // complete. Old snapshots keep their exact shape until this overlay is used.
+  bool composition_v2 = false;
+  std::vector<std::string> removed_text;
+  std::map<std::string, Presentation> presentation;
   std::map<std::string, std::shared_ptr<const Bytes>> blobs;
 };
+std::set<std::string>
+removed_paragraphs(const State &s, const compat::DocumentReadProjection &p) {
+  std::set<std::string> removed, groups;
+  for (const auto &id : s.removed_text) {
+    const auto g =
+        std::find_if(p.reading_groups().begin(), p.reading_groups().end(),
+                     [&](const auto &g) { return g.source_block_id == id; });
+    if (g == p.reading_groups().end() || !groups.insert(id).second)
+      fail("invalid_removed_text_group");
+    removed.insert(g->occurrence_ids.begin(), g->occurrence_ids.end());
+  }
+  return removed;
+}
 void sync_formula_text(State &s) {
   if (!s.p2d2)
     return;
@@ -498,6 +520,9 @@ const Figure &figure(const State &s, const std::string &id) {
 Composition graph(const State &s,
                   const compat::DocumentReadProjection &source) {
   Composition g = source.graph();
+  const auto removed = removed_paragraphs(s, source);
+  std::erase_if(g.occurrences,
+                [&](const auto &o) { return removed.contains(o.id); });
   std::set<std::string> objects, resources;
   auto assets = s.figures;
   assets.insert(assets.end(), s.archived_figures.begin(),
@@ -584,9 +609,16 @@ void validate(const State &s, bool decode_media = true) {
   if (sha(s.source) != s.source_hash)
     fail("source_hash_mismatch");
   const auto p = projection(s);
+  if ((!s.p2d2 && s.composition_v2) ||
+      (!s.composition_v2 &&
+       (!s.removed_text.empty() || !s.presentation.empty())))
+    fail("composition_version_required");
+  const auto removed = removed_paragraphs(s, *p);
   std::set<std::string> expected;
   std::vector<std::string> paragraph_order;
   for (const auto &b : p->paragraphs()) {
+    if (removed.contains(b.occurrence_id))
+      continue;
     expected.insert(b.occurrence_id);
     paragraph_order.push_back(b.occurrence_id);
   }
@@ -659,6 +691,7 @@ void validate(const State &s, bool decode_media = true) {
     if (!expected.insert(f.occurrence).second)
       fail("identity_collision");
   std::set<std::string> nested_ids = expected;
+  nested_ids.insert(removed.begin(), removed.end());
   for (const auto &o : p->graph().objects)
     nested_ids.insert(o.id);
   for (const auto &l : p->graph().layouts)
@@ -871,6 +904,8 @@ void validate(const State &s, bool decode_media = true) {
   for (const auto &group : p->reading_groups()) {
     if (group.occurrence_ids.empty())
       fail("empty_reading_group");
+    if (removed.contains(group.occurrence_ids.front()))
+      continue;
     const auto at = std::find(s.author.begin(), s.author.end(),
                               group.occurrence_ids.front());
     const auto start = static_cast<std::size_t>(at - s.author.begin());
@@ -897,6 +932,8 @@ void validate(const State &s, bool decode_media = true) {
       fail("row_not_adjacent");
     bool has_paragraph = false, has_figure = false;
     for (const auto &id : r.children) {
+      if (!expected.contains(id))
+        fail("row_child_not_active");
       if (!paired.insert(id).second)
         fail("row_overlap");
       has_paragraph = has_paragraph || paragraph_ids.contains(id);
@@ -905,8 +942,29 @@ void validate(const State &s, bool decode_media = true) {
                                                return f.occurrence == id;
                                              });
     }
-    if (!has_paragraph || !has_figure)
+    if (!s.composition_v2 && (!has_paragraph || !has_figure))
       fail("row_requires_paragraph_and_figure");
+  }
+  std::set<std::string> known = expected;
+  known.insert(removed.begin(), removed.end());
+  for (const auto &f : s.archived_figures)
+    known.insert(f.occurrence);
+  for (const auto &t : s.archived_tables)
+    known.insert(t.occurrence);
+  for (const auto &u : s.retired_formula_uses)
+    known.insert(u.occurrence);
+  if (s.presentation.size() > known.size())
+    fail("presentation_limit");
+  for (const auto &[id, style] : s.presentation) {
+    if (!known.contains(id) || !std::isfinite(style.width) ||
+        style.width < 20 || style.width > 100 ||
+        (style.horizontal != "start" && style.horizontal != "center" &&
+         style.horizontal != "end") ||
+        (style.vertical != "start" && style.vertical != "center" &&
+         style.vertical != "end") ||
+        (style.text_align != "left" && style.text_align != "center" &&
+         style.text_align != "right" && style.text_align != "justify"))
+      fail("invalid_presentation");
   }
   if (!s.selection.empty() && !expected.contains(s.selection))
     fail("selection_not_found");
@@ -1053,11 +1111,12 @@ V encode(const State &s) {
                                 {"first", r.first},
                                 {"second", r.second},
                                 {"gap", r.gap}});
-  V::Object result{{"format", s.p2d2  ? "INDE-OBJ01-COMPOSITE-P2D2-1"
-                              : s.p2d ? "INDE-OBJ01-COMPOSITE-P2D-1"
-                              : s.p2c ? "INDE-OBJ01-COMPOSITE-P2C-1"
-                              : s.p2b ? "INDE-OBJ01-COMPOSITE-P2B-1"
-                                      : "INDE-OBJ01-COMPOSITE-P2A-1"},
+  V::Object result{{"format", s.composition_v2 ? "INDE-OBJ01-COMPOSITE-P2D2-2"
+                              : s.p2d2         ? "INDE-OBJ01-COMPOSITE-P2D2-1"
+                              : s.p2d          ? "INDE-OBJ01-COMPOSITE-P2D-1"
+                              : s.p2c          ? "INDE-OBJ01-COMPOSITE-P2C-1"
+                              : s.p2b          ? "INDE-OBJ01-COMPOSITE-P2B-1"
+                                               : "INDE-OBJ01-COMPOSITE-P2A-1"},
                    {"project", s.project},
                    {"source", s.source},
                    {"source_sha256", s.source_hash},
@@ -1066,6 +1125,17 @@ V encode(const State &s) {
                    {"figures", std::move(figures)},
                    {"rows", std::move(rows)},
                    {"selection", s.selection}};
+  if (s.composition_v2) {
+    V::Object styles;
+    for (const auto &[id, p] : s.presentation)
+      styles.emplace(id, V::Object{{"width", p.width},
+                                   {"horizontal", p.horizontal},
+                                   {"text_align", p.text_align},
+                                   {"vertical", p.vertical}});
+    result.emplace("composition",
+                   V::Object{{"removed_text", array(s.removed_text)},
+                             {"presentation", std::move(styles)}});
+  }
   if (s.p2b) {
     V::Array archived, tables, retired;
     for (const auto &f : s.archived_figures)
@@ -1134,24 +1204,41 @@ State decode(const std::string &bytes) {
   const auto v = persistence::json::parse(bytes);
   const auto format = v.at("format").as_string();
   State s;
-  s.p2d2 = format == "INDE-OBJ01-COMPOSITE-P2D2-1";
+  s.composition_v2 = format == "INDE-OBJ01-COMPOSITE-P2D2-2";
+  s.p2d2 = s.composition_v2 || format == "INDE-OBJ01-COMPOSITE-P2D2-1";
   s.p2d = s.p2d2 || format == "INDE-OBJ01-COMPOSITE-P2D-1";
   s.p2c = s.p2d || format == "INDE-OBJ01-COMPOSITE-P2C-1";
   s.p2b = s.p2c || format == "INDE-OBJ01-COMPOSITE-P2B-1";
   if (!s.p2b && format != "INDE-OBJ01-COMPOSITE-P2A-1")
     fail("unsupported_snapshot_version");
-  if (s.p2d2)
-    fields(v, {"format",        "project",
-               "source",        "source_sha256",
-               "author_order",  "visual_order",
-               "figures",       "rows",
-               "selection",     "archived_figures",
-               "tables",        "archived_tables",
-               "selected_cell", "working_text",
-               "context",       "formulas",
-               "formula_uses",  "formula_cells",
-               "formula_text",  "retired_formula_uses"});
-  else if (s.p2d)
+  if (s.p2d2) {
+    auto body = v.as_object();
+    if (s.composition_v2) {
+      const auto &c = v.at("composition");
+      fields(c, {"removed_text", "presentation"});
+      s.removed_text = strings(c.at("removed_text"), 10000);
+      if (c.at("presentation").as_object().size() > 10512)
+        fail("presentation_limit");
+      for (const auto &[id, p] : c.at("presentation").as_object()) {
+        fields(p, {"width", "horizontal", "text_align", "vertical"});
+        s.presentation.emplace(id, Presentation{real(p.at("width")),
+                                                p.at("horizontal").as_string(),
+                                                p.at("text_align").as_string(),
+                                                p.at("vertical").as_string()});
+      }
+      body.erase("composition");
+    }
+    fields(V(body), {"format",        "project",
+                     "source",        "source_sha256",
+                     "author_order",  "visual_order",
+                     "figures",       "rows",
+                     "selection",     "archived_figures",
+                     "tables",        "archived_tables",
+                     "selected_cell", "working_text",
+                     "context",       "formulas",
+                     "formula_uses",  "formula_cells",
+                     "formula_text",  "retired_formula_uses"});
+  } else if (s.p2d)
     fields(v,
            {"format", "project", "source", "source_sha256", "author_order",
             "visual_order", "figures", "rows", "selection", "archived_figures",
@@ -1281,6 +1368,60 @@ void unpair(State &s, const std::string &id) {
     return std::find(r.children.begin(), r.children.end(), id) !=
            r.children.end();
   });
+}
+void require_active(const State &s, const std::string &id) {
+  if (std::find(s.author.begin(), s.author.end(), id) == s.author.end())
+    fail("occurrence_not_active");
+}
+// Move/restore a complete owner reading block, never an inferred paragraph
+// slice. Removed groups stay in working_text, including all semantic offsets.
+void place_text(State &s, const compat::DocumentReadProjection &p,
+                const compat::ReadingGroupBinding &group,
+                const std::string &before) {
+  if (s.author != s.visual)
+    fail("authorial_requires_alignment");
+  if (std::find(group.occurrence_ids.begin(), group.occurrence_ids.end(),
+                before) != group.occurrence_ids.end())
+    fail("reading_group_target_selected");
+  for (const auto &child : group.occurrence_ids)
+    unpair(s, child);
+  for (const auto &r : s.rows)
+    if (r.children[1] == before)
+      fail("destination_inside_row");
+  for (const auto &child : group.occurrence_ids)
+    std::erase(s.author, child);
+  const auto target = before.empty()
+                          ? s.author.end()
+                          : std::find(s.author.begin(), s.author.end(), before);
+  if (!before.empty() && target == s.author.end())
+    fail("destination_not_found");
+  const auto at = s.author.insert(target, group.occurrence_ids.begin(),
+                                  group.occurrence_ids.end());
+  const auto after =
+      at + static_cast<std::ptrdiff_t>(group.occurrence_ids.size());
+  std::string owner_before;
+  for (auto it = after; it != s.author.end(); ++it) {
+    const auto b =
+        std::find_if(p.paragraphs().begin(), p.paragraphs().end(),
+                     [&](const auto &b) { return b.occurrence_id == *it; });
+    if (b != p.paragraphs().end()) {
+      owner_before = b->paragraph_id;
+      break;
+    }
+  }
+  try {
+    s.working_text = persistence::encode_document_snapshot(
+        application::move_reading_block({p.source_snapshot(), {}},
+                                        group.source_block_id, owner_before)
+            .document);
+  } catch (const std::bad_alloc &) {
+    throw;
+  } catch (const std::exception &) {
+    fail("owner_text_move_refused");
+  }
+  s.visual = s.author;
+  s.selection = group.occurrence_ids.front();
+  s.selected_cell.clear();
 }
 // Undo changes active occurrences, not the existence of immutable resources.
 // Retained records are library entries, never hidden reading-order items.
@@ -1738,13 +1879,15 @@ struct Session::Impl {
   bool dirty() const { return encode_json(encode(working)) != saved_bytes; }
   V view() const {
     const auto p = projection(working);
+    const auto removed = removed_paragraphs(working, *p);
     V::Array paragraphs, figures, rows, groups, tables;
     for (const auto &b : p->paragraphs())
-      paragraphs.emplace_back(V::Object{
-          {"id", b.occurrence_id},
-          {"object", b.object_id},
-          {"paragraph", b.paragraph_id},
-          {"text", std::string(*p->paragraph_text(b.occurrence_id))}});
+      if (!removed.contains(b.occurrence_id))
+        paragraphs.emplace_back(V::Object{
+            {"id", b.occurrence_id},
+            {"object", b.object_id},
+            {"paragraph", b.paragraph_id},
+            {"text", std::string(*p->paragraph_text(b.occurrence_id))}});
     for (const auto &f : working.figures)
       figures.emplace_back(
           V::Object{{"id", f.occurrence},
@@ -1765,7 +1908,8 @@ struct Session::Impl {
                                   {"second", r.second},
                                   {"gap", r.gap}});
     for (const auto &g : p->reading_groups())
-      groups.emplace_back(array(g.occurrence_ids));
+      if (!removed.contains(g.occurrence_ids.front()))
+        groups.emplace_back(array(g.occurrence_ids));
     for (const auto &t : working.tables) {
       auto v = table_value(t).as_object();
       v.emplace("id", t.occurrence);
@@ -1773,8 +1917,51 @@ struct Session::Impl {
     }
     V::Array text_groups;
     for (const auto &g : p->reading_groups())
-      text_groups.emplace_back(V::Object{
-          {"id", g.source_block_id}, {"occurrences", array(g.occurrence_ids)}});
+      if (!removed.contains(g.occurrence_ids.front()))
+        text_groups.emplace_back(
+            V::Object{{"id", g.source_block_id},
+                      {"occurrences", array(g.occurrence_ids)}});
+    V::Object styles;
+    for (const auto &[id, s] : working.presentation)
+      styles.emplace(id, V::Object{{"width", s.width},
+                                   {"horizontal", s.horizontal},
+                                   {"text_align", s.text_align},
+                                   {"vertical", s.vertical}});
+    V::Array removed_items;
+    for (const auto &g : p->reading_groups())
+      if (removed.contains(g.occurrence_ids.front())) {
+        std::string label;
+        for (const auto &id : g.occurrence_ids) {
+          if (!label.empty())
+            label += " / ";
+          label += *p->paragraph_text(id);
+        }
+        removed_items.emplace_back(
+            V::Object{{"id", g.source_block_id},
+                      {"kind", "text"},
+                      {"label", label},
+                      {"count", number(g.occurrence_ids.size())}});
+      }
+    for (const auto &f : working.archived_figures)
+      removed_items.emplace_back(V::Object{{"id", f.occurrence},
+                                           {"kind", "image"},
+                                           {"label", f.caption},
+                                           {"count", 1}});
+    for (const auto &t : working.archived_tables)
+      removed_items.emplace_back(V::Object{{"id", t.occurrence},
+                                           {"kind", "table"},
+                                           {"label", t.title},
+                                           {"count", 1}});
+    for (const auto &u : working.retired_formula_uses) {
+      const auto f =
+          std::find_if(working.formulas.begin(), working.formulas.end(),
+                       [&](const auto &f) { return f.id == u.object; });
+      if (f != working.formulas.end() && !f->consumed)
+        removed_items.emplace_back(V::Object{{"id", u.occurrence},
+                                             {"kind", "formula"},
+                                             {"label", f->name},
+                                             {"count", 1}});
+    }
     V::Array formulas, uses;
     V::Object cells, texts;
     if (p2d) {
@@ -1841,6 +2028,10 @@ struct Session::Impl {
         {"formula_text", std::move(texts)},
         {"formula_cards_supported", p2d2},
         {"formula_hub_supported", p2d2},
+        {"object_composition_supported", p2d2},
+        {"composition_version", working.composition_v2 ? 2 : 1},
+        {"presentation", std::move(styles)},
+        {"removed_items", std::move(removed_items)},
         {"formulas", std::move(formulas)},
         {"formula_uses", std::move(uses)},
         {"formula_cells", std::move(cells)},
@@ -2133,11 +2324,13 @@ struct Session::Impl {
             op == "reset_formula_variable";
         const bool structure = op == "create_table" || op == "import" ||
                                op == "duplicate" || op == "move" ||
-                               op == "remove" || op == "reorder_text" ||
-                               op == "create_formula" ||
+                               op == "remove" || op == "restore_removed" ||
+                               op == "reorder_text" || op == "create_formula" ||
                                op == "attach_formula" || op == "detach_formula";
-        const bool composition =
-            op == "arrange" || op == "stack" || op == "restore";
+        const bool composition = op == "arrange" || op == "arrange_objects" ||
+                                 op == "set_presentation" ||
+                                 op == "reset_presentation" || op == "stack" ||
+                                 op == "restore";
         if ((text_edit && working.context != "text") ||
             (structure && working.context != "structure") ||
             (composition && working.context != "composition"))
@@ -2219,61 +2412,17 @@ struct Session::Impl {
           if (!p2c)
             fail("p2c_profile_required");
           fields(v, {"op", "expected", "group", "before"});
-          if (candidate.author != candidate.visual)
-            fail("authorial_requires_alignment");
           const auto p = projection(candidate);
-          const auto id = v.at("group").as_string(),
-                     before = v.at("before").as_string();
+          const auto id = v.at("group").as_string();
           const auto group = std::find_if(
               p->reading_groups().begin(), p->reading_groups().end(),
               [&](const auto &g) { return g.source_block_id == id; });
-          if (group == p->reading_groups().end())
+          if (group == p->reading_groups().end() ||
+              std::find(candidate.removed_text.begin(),
+                        candidate.removed_text.end(),
+                        id) != candidate.removed_text.end())
             fail("reading_group_not_found");
-          if (std::find(group->occurrence_ids.begin(),
-                        group->occurrence_ids.end(),
-                        before) != group->occurrence_ids.end())
-            fail("reading_group_target_selected");
-          for (const auto &child : group->occurrence_ids)
-            unpair(candidate, child);
-          for (const auto &r : candidate.rows)
-            if (r.children[1] == before)
-              fail("destination_inside_row");
-          for (const auto &child : group->occurrence_ids)
-            std::erase(candidate.author, child);
-          const auto target = before.empty()
-                                  ? candidate.author.end()
-                                  : std::find(candidate.author.begin(),
-                                              candidate.author.end(), before);
-          if (!before.empty() && target == candidate.author.end())
-            fail("destination_not_found");
-          const auto at =
-              candidate.author.insert(target, group->occurrence_ids.begin(),
-                                      group->occurrence_ids.end());
-          const auto after =
-              at + static_cast<std::ptrdiff_t>(group->occurrence_ids.size());
-          std::string owner_before;
-          for (auto it = after; it != candidate.author.end(); ++it) {
-            const auto b = std::find_if(
-                p->paragraphs().begin(), p->paragraphs().end(),
-                [&](const auto &b) { return b.occurrence_id == *it; });
-            if (b != p->paragraphs().end()) {
-              owner_before = b->paragraph_id;
-              break;
-            }
-          }
-          application::DocumentEditState old{p->source_snapshot(), {}};
-          try {
-            candidate.working_text = persistence::encode_document_snapshot(
-                application::move_reading_block(old, id, owner_before)
-                    .document);
-          } catch (const std::bad_alloc &) {
-            throw;
-          } catch (const std::exception &) {
-            fail("owner_text_move_refused");
-          }
-          candidate.visual = candidate.author;
-          candidate.selection = group->occurrence_ids.front();
-          candidate.selected_cell.clear();
+          place_text(candidate, *p, *group, v.at("before").as_string());
         } else if (op == "edit_formula_text") {
           if (!p2d2)
             fail("p2d2_profile_required");
@@ -2560,7 +2709,7 @@ struct Session::Impl {
           if (!p2b)
             fail("p2b_profile_required");
           fields(v, {"op", "expected", "id"});
-          if (candidate.author != candidate.visual)
+          if (!p2d2 && candidate.author != candidate.visual)
             fail("authorial_requires_alignment");
           const auto id = v.at("id").as_string();
           const auto f =
@@ -2583,14 +2732,86 @@ struct Session::Impl {
             if (p2d2)
               candidate.retired_formula_uses.push_back(*use);
             candidate.formula_uses.erase(use);
-          } else
-            fail("source_removal_out_of_scope");
+          } else {
+            if (!p2d2)
+              fail("source_removal_out_of_scope");
+            const auto p = projection(candidate);
+            const auto g =
+                std::find_if(p->reading_groups().begin(),
+                             p->reading_groups().end(), [&](const auto &g) {
+                               return std::find(g.occurrence_ids.begin(),
+                                                g.occurrence_ids.end(),
+                                                id) != g.occurrence_ids.end();
+                             });
+            if (g == p->reading_groups().end())
+              fail("occurrence_not_active");
+            require_active(candidate, id);
+            candidate.composition_v2 = true;
+            candidate.removed_text.push_back(g->source_block_id);
+            for (const auto &child : g->occurrence_ids) {
+              unpair(candidate, child);
+              std::erase(candidate.author, child);
+              std::erase(candidate.visual, child);
+              if (candidate.selection == child)
+                candidate.selection.clear();
+            }
+            candidate.selected_cell.clear();
+          }
           unpair(candidate, id);
           std::erase(candidate.author, id);
           std::erase(candidate.visual, id);
           if (candidate.selection == id) {
             candidate.selection.clear();
             candidate.selected_cell.clear();
+          }
+        } else if (op == "restore_removed") {
+          if (!p2d2)
+            fail("p2d2_profile_required");
+          fields(v, {"op", "expected", "id", "before"});
+          if (candidate.author != candidate.visual)
+            fail("authorial_requires_alignment");
+          const auto id = v.at("id").as_string(),
+                     before = v.at("before").as_string();
+          candidate.composition_v2 = true;
+          const auto hidden = std::find(candidate.removed_text.begin(),
+                                        candidate.removed_text.end(), id);
+          const auto f =
+              std::find_if(candidate.archived_figures.begin(),
+                           candidate.archived_figures.end(),
+                           [&](const auto &f) { return f.occurrence == id; });
+          const auto t =
+              std::find_if(candidate.archived_tables.begin(),
+                           candidate.archived_tables.end(),
+                           [&](const auto &t) { return t.occurrence == id; });
+          const auto u =
+              std::find_if(candidate.retired_formula_uses.begin(),
+                           candidate.retired_formula_uses.end(),
+                           [&](const auto &u) { return u.occurrence == id; });
+          if (hidden != candidate.removed_text.end()) {
+            const auto p = projection(candidate);
+            const auto g = std::find_if(
+                p->reading_groups().begin(), p->reading_groups().end(),
+                [&](const auto &g) { return g.source_block_id == id; });
+            candidate.removed_text.erase(hidden);
+            place_text(candidate, *p, *g, before);
+          } else {
+            if (f != candidate.archived_figures.end()) {
+              candidate.figures.push_back(*f);
+              candidate.archived_figures.erase(f);
+            } else if (t != candidate.archived_tables.end()) {
+              candidate.tables.push_back(*t);
+              candidate.archived_tables.erase(t);
+            } else if (u != candidate.retired_formula_uses.end()) {
+              const auto formula = std::find_if(
+                  candidate.formulas.begin(), candidate.formulas.end(),
+                  [&](const auto &f) { return f.id == u->object; });
+              if (formula == candidate.formulas.end() || formula->consumed)
+                fail("formula_command_consumed");
+              candidate.formula_uses.push_back(*u);
+              candidate.retired_formula_uses.erase(u);
+            } else
+              fail("removed_item_not_found");
+            insert_id(candidate, id, before);
           }
         } else if (op == "import") {
 
@@ -2625,55 +2846,125 @@ struct Session::Impl {
           const auto id = v.at("id").as_string(),
                      before = v.at("before").as_string(),
                      intent = v.at("intent").as_string();
-          if (std::none_of(candidate.formula_uses.begin(),
-                           candidate.formula_uses.end(),
-                           [&](const auto &u) { return u.occurrence == id; }) &&
-              (!p2b ||
-               std::none_of(candidate.tables.begin(), candidate.tables.end(),
-                            [&](const auto &t) { return t.occurrence == id; })))
-            (void)figure(candidate, id);
-          if (intent != "authorial" && intent != "visual")
-            fail("invalid_intent");
-          if (intent == "authorial" && candidate.author != candidate.visual)
-            fail("authorial_requires_alignment");
-          unpair(candidate, id);
-          const auto p = projection(candidate);
-          auto g = graph(candidate, *p);
-          std::string anchor = before;
-          if (!before.empty()) {
-            for (const auto &r : candidate.rows) {
-              if (r.children[0] == before)
-                anchor = r.occurrence;
-              else if (r.children[1] == before)
-                fail("destination_inside_row");
+          const auto source = projection(candidate);
+          const auto paragraph = std::find_if(
+              source->paragraphs().begin(), source->paragraphs().end(),
+              [&](const auto &p) { return p.occurrence_id == id; });
+          if (p2d2 && paragraph != source->paragraphs().end()) {
+            require_active(candidate, id);
+            if (intent == "authorial") {
+              const auto g = std::find_if(
+                  source->reading_groups().begin(),
+                  source->reading_groups().end(), [&](const auto &g) {
+                    return std::find(g.occurrence_ids.begin(),
+                                     g.occurrence_ids.end(),
+                                     id) != g.occurrence_ids.end();
+                  });
+              place_text(candidate, *source, *g, before);
             }
           }
-          CompositionEditor editor(g);
-          auto r = editor.apply(
-              0, {ReorderOccurrences{
-                     g.root_layout_id,
-                     {id},
-                     anchor.empty() ? std::nullopt
-                                    : std::optional<std::string>(anchor)}});
-          if (!r.accepted)
-            fail("object_move_refused");
-          candidate.visual.clear();
-          for (const auto &child : editor.current().layouts.front().children) {
-            const auto row = std::find_if(
-                candidate.rows.begin(), candidate.rows.end(),
-                [&](const auto &a) { return a.occurrence == child; });
-            if (row == candidate.rows.end())
-              candidate.visual.push_back(child);
-            else
-              candidate.visual.insert(candidate.visual.end(),
-                                      row->children.begin(),
-                                      row->children.end());
+          const bool owner_move = p2d2 &&
+                                  paragraph != source->paragraphs().end() &&
+                                  intent == "authorial";
+          if (!owner_move) {
+            if (std::none_of(
+                    candidate.formula_uses.begin(),
+                    candidate.formula_uses.end(),
+                    [&](const auto &u) { return u.occurrence == id; }) &&
+                !(p2d2 && paragraph != source->paragraphs().end()) &&
+                (!p2b ||
+                 std::none_of(
+                     candidate.tables.begin(), candidate.tables.end(),
+                     [&](const auto &t) { return t.occurrence == id; })))
+              (void)figure(candidate, id);
+            if (intent != "authorial" && intent != "visual")
+              fail("invalid_intent");
+            if (intent == "authorial" && candidate.author != candidate.visual)
+              fail("authorial_requires_alignment");
+            unpair(candidate, id);
+            const auto p = projection(candidate);
+            auto g = graph(candidate, *p);
+            std::string anchor = before;
+            if (!before.empty()) {
+              for (const auto &r : candidate.rows) {
+                if (r.children[0] == before)
+                  anchor = r.occurrence;
+                else if (r.children[1] == before)
+                  fail("destination_inside_row");
+              }
+            }
+            CompositionEditor editor(g);
+            auto r = editor.apply(
+                0, {ReorderOccurrences{
+                       g.root_layout_id,
+                       {id},
+                       anchor.empty() ? std::nullopt
+                                      : std::optional<std::string>(anchor)}});
+            if (!r.accepted)
+              fail("object_move_refused");
+            candidate.visual.clear();
+            for (const auto &child :
+                 editor.current().layouts.front().children) {
+              const auto row = std::find_if(
+                  candidate.rows.begin(), candidate.rows.end(),
+                  [&](const auto &a) { return a.occurrence == child; });
+              if (row == candidate.rows.end())
+                candidate.visual.push_back(child);
+              else
+                candidate.visual.insert(candidate.visual.end(),
+                                        row->children.begin(),
+                                        row->children.end());
+            }
+            if (intent == "authorial")
+              candidate.author = candidate.visual;
+            if (candidate.selection != id)
+              candidate.selected_cell.clear();
+            candidate.selection = id;
           }
-          if (intent == "authorial")
-            candidate.author = candidate.visual;
-          if (candidate.selection != id)
-            candidate.selected_cell.clear();
+        } else if (op == "arrange_objects") {
+          if (!p2d2)
+            fail("p2d2_profile_required");
+          fields(v, {"op", "expected", "id", "other", "side", "first", "second",
+                     "gap"});
+          const auto id = v.at("id").as_string(),
+                     other = v.at("other").as_string(),
+                     side = v.at("side").as_string();
+          require_active(candidate, id);
+          require_active(candidate, other);
+          if (id == other || (side != "left" && side != "right"))
+            fail("invalid_row_target");
+          candidate.composition_v2 = true;
+          unpair(candidate, id);
+          unpair(candidate, other);
+          std::erase(candidate.visual, id);
+          const auto at = std::find(candidate.visual.begin(),
+                                    candidate.visual.end(), other);
+          candidate.visual.insert(side == "left" ? at : std::next(at), id);
+          candidate.rows.push_back(
+              {project::new_uuid(), project::new_uuid(), project::new_uuid(),
+               side == "left" ? std::vector<std::string>{id, other}
+                              : std::vector<std::string>{other, id},
+               real(v.at("first")), real(v.at("second")), real(v.at("gap"))});
           candidate.selection = id;
+          candidate.selected_cell.clear();
+        } else if (op == "set_presentation" || op == "reset_presentation") {
+          if (!p2d2)
+            fail("p2d2_profile_required");
+          const auto id = v.at("id").as_string();
+          require_active(candidate, id);
+          candidate.composition_v2 = true;
+          if (op == "set_presentation") {
+            fields(v, {"op", "expected", "id", "width", "horizontal",
+                       "text_align", "vertical"});
+            candidate.presentation[id] = {
+                real(v.at("width")), v.at("horizontal").as_string(),
+                v.at("text_align").as_string(), v.at("vertical").as_string()};
+          } else {
+            fields(v, {"op", "expected", "id"});
+            candidate.presentation.erase(id);
+          }
+          candidate.selection = id;
+          candidate.selected_cell.clear();
         } else if (op == "arrange") {
           fields(v, {"op", "expected", "id", "paragraph", "first", "second",
                      "gap"});
@@ -2704,9 +2995,13 @@ struct Session::Impl {
           candidate.selection = id;
         } else if (op == "stack") {
           fields(v, {"op", "expected", "id"});
-          (void)figure(candidate, v.at("id").as_string());
+          if (p2d2)
+            require_active(candidate, v.at("id").as_string());
+          else
+            (void)figure(candidate, v.at("id").as_string());
           unpair(candidate, v.at("id").as_string());
           candidate.selection = v.at("id").as_string();
+          candidate.selected_cell.clear();
         } else if (op == "restore") {
           fields(v, {"op", "expected"});
           candidate.visual = candidate.author;

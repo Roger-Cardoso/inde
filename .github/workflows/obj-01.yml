@@ -23,6 +23,7 @@ on:
       - scripts/demos/Abrir-demo-obj01-p2d2.sh
       - scripts/demos/Abrir-demo-obj01-cartoes.sh
       - scripts/demos/Abrir-demo-obj01-hub.sh
+      - scripts/demos/Abrir-demo-obj01-composicao.sh
       - tests/audit_obj01_sources.py
       - tests/test_obj01_source_audit.py
       - fontes/*.tar.gz
@@ -52,6 +53,7 @@ on:
       - scripts/demos/Abrir-demo-obj01-p2d2.sh
       - scripts/demos/Abrir-demo-obj01-cartoes.sh
       - scripts/demos/Abrir-demo-obj01-hub.sh
+      - scripts/demos/Abrir-demo-obj01-composicao.sh
       - tests/audit_obj01_sources.py
       - tests/test_obj01_source_audit.py
       - fontes/*.tar.gz
@@ -87,7 +89,7 @@ jobs:
           -DCMAKE_BUILD_TYPE=Debug
       - name: Compile real pilot and owner codecs
         run: cmake --build build-obj01-p2a --parallel 2
-      - name: Verify all pilot profiles, formula hub, stable symbols, condition cards and consumed changes
+      - name: Verify all pilot profiles, shared object composition, reversible removal and formula hub
         env:
           ASAN_OPTIONS: detect_leaks=1:halt_on_error=1
           UBSAN_OPTIONS: halt_on_error=1:print_stacktrace=1

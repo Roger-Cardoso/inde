@@ -65,3 +65,8 @@ add_test(NAME inde_object_formula_hub_tests COMMAND ${Python3_EXECUTABLE} ${CMAK
 set_tests_properties(inde_object_formula_hub_tests PROPERTIES TIMEOUT 300)
 add_test(NAME inde_object_formula_hub_http_tests COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_LIST_DIR}/test_http_hub.py $<TARGET_FILE:inde_object_composite_pilot>)
 set_tests_properties(inde_object_formula_hub_http_tests PROPERTIES TIMEOUT 180)
+
+add_test(NAME inde_object_composition_edit_tests COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_LIST_DIR}/test_composition.py $<TARGET_FILE:inde_object_composite_pilot> $<TARGET_FILE:inde_object_composite_pilot_fault_driver>)
+set_tests_properties(inde_object_composition_edit_tests PROPERTIES TIMEOUT 300)
+add_test(NAME inde_object_composition_edit_http_tests COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_LIST_DIR}/test_http_composition.py $<TARGET_FILE:inde_object_composite_pilot>)
+set_tests_properties(inde_object_composition_edit_http_tests PROPERTIES TIMEOUT 180)
