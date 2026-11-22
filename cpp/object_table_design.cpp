@@ -1,6 +1,7 @@
 #include "object_table_design.hpp"
 #include <algorithm>
 #include <cmath>
+#include <limits>
 #include <stdexcept>
 #include <string_view>
 namespace inde::objects::pilot::table_design {
@@ -133,7 +134,7 @@ void validate(const Value &v, const std::vector<std::string> &rows,
       fail();
     double sum = 0;
     for (const auto &w : weights) {
-      range(w, .1, 100);
+      range(w, std::numeric_limits<double>::min(), 100);
       sum += real(w);
     }
     if (std::abs(sum - 100) > 1e-6)
@@ -167,5 +168,96 @@ void validate(const Value &v, const std::vector<std::string> &rows,
         fail();
     }
   }
+}
+Value project(const Value &style, const std::vector<std::string> &all_columns,
+              const std::vector<std::string> &columns,
+              const std::vector<std::string> &rows,
+              const std::set<std::string> &cells) {
+  auto out = style.as_object();
+  const auto &weights = style.at("column_weights").as_array();
+  if (!weights.empty()) {
+    V::Array visible;
+    double sum = 0;
+    for (std::size_t i = 0; i < all_columns.size(); ++i)
+      if (std::find(columns.begin(), columns.end(), all_columns[i]) !=
+          columns.end()) {
+        visible.push_back(weights[i]);
+        sum += real(weights[i]);
+      }
+    for (auto &w : visible)
+      w = 100 * real(w) / sum;
+    out["column_weights"] = V(visible);
+  }
+  V::Object heights, overrides;
+  for (const auto &[id, h] : style.at("row_heights").as_object())
+    if (std::find(rows.begin(), rows.end(), id) != rows.end())
+      heights.emplace(id, h);
+  for (const auto &[id, c] : style.at("cells").as_object())
+    if (cells.contains(id))
+      overrides.emplace(id, c);
+  out["row_heights"] = V(heights);
+  out["cells"] = V(overrides);
+  return V(out);
+}
+Value merge_visible(const Value &stored, const Value &visible,
+                    const std::vector<std::string> &all_columns,
+                    const std::vector<std::string> &columns,
+                    const std::vector<std::string> &rows,
+                    const std::set<std::string> &cells) {
+  auto out = visible.as_object();
+  if (columns.size() != all_columns.size()) {
+    const auto &old = stored.at("column_weights").as_array();
+    const auto &next = visible.at("column_weights").as_array();
+    std::vector<double> weights;
+    double mass = 0;
+    for (std::size_t i = 0; i < all_columns.size(); ++i) {
+      const auto w = old.empty() ? 100 / static_cast<double>(all_columns.size())
+                                 : real(old[i]);
+      weights.push_back(w);
+      if (std::find(columns.begin(), columns.end(), all_columns[i]) !=
+          columns.end())
+        mass += w;
+    }
+    V::Array combined;
+    for (std::size_t i = 0; i < all_columns.size(); ++i) {
+      const auto at = std::find(columns.begin(), columns.end(), all_columns[i]);
+      if (at != columns.end())
+        weights[i] =
+            mass *
+            (next.empty()
+                 ? 1 / static_cast<double>(columns.size())
+                 : real(next[static_cast<std::size_t>(at - columns.begin())]) /
+                       100);
+      combined.emplace_back(weights[i]);
+    }
+    out["column_weights"] = V(combined);
+  }
+  auto heights = stored.at("row_heights").as_object(),
+       overrides = stored.at("cells").as_object();
+  std::erase_if(heights, [&](const auto &p) {
+    return std::find(rows.begin(), rows.end(), p.first) != rows.end();
+  });
+  std::erase_if(overrides,
+                [&](const auto &p) { return cells.contains(p.first); });
+  for (const auto &[id, h] : visible.at("row_heights").as_object())
+    heights[id] = h;
+  for (const auto &[id, c] : visible.at("cells").as_object())
+    overrides[id] = c;
+  out["row_heights"] = V(heights);
+  out["cells"] = V(overrides);
+  return V(out);
+}
+Value with_inserted_column(const Value &style, std::size_t index) {
+  auto out = style.as_object();
+  auto weights = style.at("column_weights").as_array();
+  if (!weights.empty()) {
+    const auto count = static_cast<double>(weights.size());
+    for (auto &w : weights)
+      w = real(w) * count / (count + 1);
+    weights.insert(weights.begin() + static_cast<std::ptrdiff_t>(index),
+                   V(100 / (count + 1)));
+    out["column_weights"] = V(weights);
+  }
+  return V(out);
 }
 } // namespace inde::objects::pilot::table_design

@@ -25,6 +25,7 @@ on:
       - scripts/demos/Abrir-demo-obj01-hub.sh
       - scripts/demos/Abrir-demo-obj01-composicao.sh
       - scripts/demos/Abrir-demo-obj01-tabelas.sh
+      - scripts/demos/Abrir-demo-obj01-estrutura-tabelas.sh
       - tests/audit_obj01_sources.py
       - tests/test_obj01_source_audit.py
       - fontes/*.tar.gz
@@ -56,6 +57,7 @@ on:
       - scripts/demos/Abrir-demo-obj01-hub.sh
       - scripts/demos/Abrir-demo-obj01-composicao.sh
       - scripts/demos/Abrir-demo-obj01-tabelas.sh
+      - scripts/demos/Abrir-demo-obj01-estrutura-tabelas.sh
       - tests/audit_obj01_sources.py
       - tests/test_obj01_source_audit.py
       - fontes/*.tar.gz
@@ -91,7 +93,7 @@ jobs:
           -DCMAKE_BUILD_TYPE=Debug
       - name: Compile real pilot and owner codecs
         run: cmake --build build-obj01-p2a --parallel 2
-      - name: Verify all pilot profiles, table design, shared composition, recovery and formula hub
+      - name: Verify all pilot profiles, table structure, retained axes, design and recovery
         env:
           ASAN_OPTIONS: detect_leaks=1:halt_on_error=1
           UBSAN_OPTIONS: halt_on_error=1:print_stacktrace=1

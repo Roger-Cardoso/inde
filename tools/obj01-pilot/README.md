@@ -71,4 +71,4 @@ O alvo configura a ponte e os codecs proprietários isolados, além dos testes d
 
 A composição comum e a remoção reversível para texto, figura, tabela e fórmula estão no [roteiro Compor e remover](COMPOSICAO.md).
 
-A edição de aparência, tamanho e detalhes de células está no [roteiro de Tabelas visuais](TABELAS.md).
+A edição de aparência, tamanho e detalhes de células está no [roteiro de Tabelas visuais](TABELAS.md). A criação com dimensões escolhidas e as operações de inserir, retirar e restaurar estão em [Linhas e colunas recuperáveis](ESTRUTURA-TABELAS.md).

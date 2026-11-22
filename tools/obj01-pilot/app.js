@@ -235,6 +235,7 @@ function updateSelection() {
   }
   for (const n of $('document').querySelectorAll('.cell-editor')) n.classList.toggle('selected-cell', state.selection === n.dataset.table && state.selected_cell === n.dataset.cell);
   if(state.object_composition_supported) compositionSetup();
+  if(state.table_structure_supported)tableStructureSetup();
   controls();
 }
 let requests = Promise.resolve();
@@ -316,6 +317,7 @@ function controls() {
   cardsControls();
   compositionControls();
   tableDesignControls();
+  tableStructureControls();
   for (const n of document.querySelectorAll('.cell-editor')) n.readOnly = busy && !['edit_cell', 'select_cell'].includes(activeOperation);
   for (const id of ['save', 'reopen', 'sample', 'file', 'caption', 'alt', 'decorative', 'intent', 'insert-before', 'move-before', 'paragraph', 'ratio', 'restore', 'table-title', 'table-header', 'table-before', 'create-table']) $(id).disabled = busy;
   $('import').disabled = busy || !upload;
@@ -418,13 +420,13 @@ function tableItem(t) {
     }
     body.append(tr);
   }
-  table.append(body); wrapper.append(table);
+  table.append(body);const viewport=document.createElement('div');viewport.className='table-viewport';viewport.append(table);wrapper.append(viewport);
   const hint = document.createElement('p'); hint.className = 'cell-hint';
   hint.textContent = 'Tab / Shift+Tab: trocar de célula e aplicar o texto. Ctrl+Enter: aplicar sem sair. Salvar também aplica as células em edição.';
   const exit = document.createElement('button'); exit.className = 'table-exit'; exit.textContent = 'Selecionar a tabela inteira';
   exit.addEventListener('click', e => { e.stopPropagation(); action('select', { id: t.id }); });
   wrapper.append(hint, exit);
-  if(state.table_design_supported){applyTableAppearance(wrapper,table,t,t.appearance);const style=richButton('Aparência da tabela',e=>openTableDesign(t.id));style.className='table-design-open table-exit';wrapper.append(style);}
+  if(state.table_design_supported){applyTableAppearance(wrapper,table,t,t.appearance);const style=richButton('Aparência da tabela',e=>openTableDesign(t.id));style.className='table-design-open table-exit';wrapper.append(style);if(state.table_structure_supported){const grid=richButton('Linhas e colunas',()=>openTableStructure(t.id));grid.className='table-grid-open table-exit';wrapper.append(grid);}}
   wrapper.addEventListener('click', e => { if (e.target === wrapper || e.target === kind || e.target === caption) action('select', { id: t.id }); });
   wrapper.addEventListener('keydown', e => { if (e.target === wrapper && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); action('select', { id: t.id }); } });
   return wrapper;
@@ -555,6 +557,7 @@ function render() {
   options('paragraph', state.object_composition_supported ? state.visual_order.filter(id=>id!==state.selection).map(id=>[id,shortText(id)]) : state.paragraphs.map(p => [p.id, shortText(p.id)]), state.paragraphs[1]?.id || '');
   compositionSetup(destination);
   tableDesignSetup();
+  tableStructureSetup();
   const f = figure();
   $('selected-label').textContent = f ? 'Figura selecionada: ' + (f.caption || 'sem legenda') : 'Selecione uma figura no documento.';
   $('alignment').textContent = state.aligned ? 'Ordem alinhada' : 'Apresentação independente';
@@ -627,7 +630,10 @@ $('execute-formula').addEventListener('click',()=>{const f=libraryFormula();if(f
 $('attach-formula').addEventListener('click',()=>{const f=libraryFormula();if(f)action('attach_formula',{id:f.id,before:'',table:state.selection,cell:state.selected_cell},'A célula usa o mesmo objeto Fórmula.');});
 $('detach-formula').addEventListener('click',()=>action('detach_formula',{table:state.selection,cell:state.selected_cell},'Fórmula retirada da célula; o texto anterior foi conservado.'));
 
-$('create-table').addEventListener('click', () => action('create_table', { before: $('table-before').value, title: $('table-title').value, header: $('table-header').checked, cells: ['Lugar', 'Imagem', 'Nota', 'Margem', 'Verde', 'Memória 🙂'] }, 'Tabela inserida. Clique em uma célula para editar.'));
+$('create-table').addEventListener('click', () => {
+  if(state.table_structure_supported){for(const id of ['table-create-rows','table-create-columns'])if(!$(id).reportValidity())return;action('create_table_sized',{before:$('table-before').value,title:$('table-title').value,header:$('table-header').checked,rows:Number($('table-create-rows').value),columns:Number($('table-create-columns').value)},'Tabela criada. Em Texto, preencha as células.');}
+  else action('create_table', { before: $('table-before').value, title: $('table-title').value, header: $('table-header').checked, cells: ['Lugar', 'Imagem', 'Nota', 'Margem', 'Verde', 'Memória 🙂'] }, 'Tabela inserida. Clique em uma célula para editar.');
+});
 $('remove').addEventListener('click', () => action('remove', { id: state.selection }, 'Uso removido. Os recursos foram conservados; Desfazer restaura o uso.'));
 $('undo').addEventListener('click', () => action('undo', {}, 'Operação desfeita.'));
 $('redo').addEventListener('click', () => action('redo', {}, 'Operação refeita.'));
@@ -978,7 +984,7 @@ function tableDesignText(cell){
 }
 function applyTableAppearance(wrapper,table,t,a){
   wrapper.classList.add('table-designed');wrapper.style.fontFamily=tableDesignFonts[a.font];wrapper.style.fontSize=a.font_size+'px';wrapper.style.lineHeight=a.line_height;wrapper.style.color=a.text_color;
-  table.style.background=a.fill_color;table.style.color=a.text_color;table.style.borderCollapse='collapse';
+  table.style.minWidth=(t.column_ids.length>6?t.column_ids.length*90:0)+'px';table.style.background=a.fill_color;table.style.color=a.text_color;table.style.borderCollapse='collapse';
   const border=`${a.border_width}px ${a.border_style} ${a.border_color}`;table.style.border=a.border_kind==='outer'?border:'none';
   const caption=table.caption;if(caption){caption.style.textAlign=a.caption_align;caption.style.captionSide=a.caption_side;caption.style.background=a.fill_color;caption.style.color=a.text_color;caption.style.padding=`${a.padding_y}px ${a.padding_x}px`; caption.classList.toggle('design-caption-hidden',!a.show_title);}
   const group=document.createElement('colgroup');for(let i=0;i<t.column_ids.length;i++){const col=document.createElement('col');col.style.width=(a.column_weights.length?a.column_weights[i]:100/t.column_ids.length)+'%';group.append(col);}table.insertBefore(group,table.tBodies[0]||null);
@@ -1040,7 +1046,7 @@ function buildTableDesign(){
     const p=m.placement;panel.append(designNode('h3','A tabela no documento'),designNumeric('Largura da tabela (%)',p,'width',20,100),designField('Posição da tabela',designSelect([['start','À esquerda'],['center','Ao centro'],['end','À direita']],p.horizontal,v=>p.horizontal=v,'Posição da tabela')),designField('Texto da tabela',designSelect([['left','À esquerda'],['center','Centralizado'],['right','À direita'],['justify','Justificado']],p.text_align,v=>p.text_align=v,'Texto da tabela')),designField('Tabela na linha lado a lado',designSelect([['start','No topo'],['center','No meio'],['end','Na base']],p.vertical,v=>p.vertical=v,'Tabela na linha lado a lado')));
     const spacing=designNode('div',null,{class:'design-pair'});spacing.append(designNumeric('Espaço horizontal nas células',a,'padding_x',0,32),designNumeric('Espaço vertical nas células',a,'padding_y',0,32),designNumeric('Altura mínima das linhas',a,'min_row_height',24,240),designField('Conteúdo na célula',designSelect([['top','No topo'],['middle','No meio'],['bottom','Na base']],a.cell_vertical,v=>a.cell_vertical=v,'Conteúdo na célula')));panel.append(designNode('h3','Espaço para escrever'),spacing,designNode('p','A altura cresce quando o conteúdo precisa de mais espaço.',{class:'hint'}),designNode('h3','Proporção das colunas'));
     const weights=a.column_weights.length?[...a.column_weights]:t.column_ids.map(()=>100/t.column_ids.length);
-    weights.forEach((w,i)=>{const field=designInput(Number(w.toFixed(2)),v=>{const old=a.column_weights.length?[...a.column_weights]:[...weights];const remaining=100-old[i];a.column_weights=old.map((x,j)=>i===j?v:(100-v)*(remaining?x/remaining:1/(old.length-1)));for(const n of d.querySelectorAll('[data-design-column]'))if(Number(n.dataset.designColumn)!==i)n.value=Number(a.column_weights[Number(n.dataset.designColumn)].toFixed(2));},{type:'number',min:5,max:90,step:.5});field.dataset.designColumn=String(i);panel.append(designField('Coluna '+(i+1)+' (%)',field));});panel.append(designNode('p','Ao mudar uma coluna, as outras dividem o espaço restante.',{class:'hint'}),cardsButton('Distribuir colunas igualmente',()=>{a.column_weights=[];buildTableDesign();}),designNode('h3','Altura mínima por linha'));
+    weights.forEach((w,i)=>{const field=designInput(Number(w.toFixed(2)),v=>{const old=a.column_weights.length?[...a.column_weights]:[...weights];const remaining=100-old[i];a.column_weights=old.map((x,j)=>i===j?v:(100-v)*(remaining?x/remaining:1/(old.length-1)));for(const n of d.querySelectorAll('[data-design-column]'))if(Number(n.dataset.designColumn)!==i)n.value=Number(a.column_weights[Number(n.dataset.designColumn)].toFixed(2));},{type:'number',min:t.column_ids.length===1?100:.1,max:t.column_ids.length===1?100:100-.1*(t.column_ids.length-1),step:'any'});field.dataset.designColumn=String(i);panel.append(designField('Coluna '+(i+1)+' (%)',field));});panel.append(designNode('p','Ao mudar uma coluna, as outras dividem o espaço restante.',{class:'hint'}),cardsButton('Distribuir colunas igualmente',()=>{a.column_weights=[];buildTableDesign();}),designNode('h3','Altura mínima por linha'));
     t.row_ids.forEach((id,i)=>{const input=designInput(a.row_heights[id]||a.min_row_height,v=>a.row_heights[id]=v,{type:'number',min:24,max:480});input.dataset.designRow=id;panel.append(designField('Linha '+(i+1),input),cardsButton('Usar altura geral · linha '+(i+1),()=>{delete a.row_heights[id];input.value=a.min_row_height;refreshTableDesignPreview();}));});
   }else buildTableCellDesign(panel,t,e);
   panel.append(cardsButton('Restaurar aparência padrão',()=>{e.draft.appearance=structuredClone(state.table_design_defaults);buildTableDesign();}));layout.append(panel,preview);d.append(layout);
@@ -1073,7 +1079,7 @@ function refreshTableDesignPreview(){
   const original=state.tables.find(t=>t.id===e.id),t={...original,title:e.draft.title,header:e.draft.header},m=e.draft,p=m.placement;
   const area=$('table-design-preview');area.replaceChildren();const wrapper=designNode('div',null,{class:'table-item design-preview-sheet'});wrapper.style.width=p.width+'%';wrapper.style.marginInlineStart=p.horizontal==='start'?'0':'auto';wrapper.style.marginInlineEnd=p.horizontal==='end'?'0':'auto';wrapper.style.textAlign=p.text_align;
   const table=document.createElement('table'),caption=document.createElement('caption');caption.textContent=t.title;table.append(caption);const body=document.createElement('tbody');
-  for(const [ri,row]of t.row_ids.entries()){const tr=document.createElement('tr');for(const column of t.column_ids){const cell=t.cells.find(c=>c.row===row&&c.column===column),td=document.createElement(t.header&&ri===0?'th':'td');td.textContent=tableDesignText(cell);td.style.whiteSpace='pre-wrap';td.style.overflowWrap='anywhere';tr.append(td);}body.append(tr);}table.append(body);wrapper.append(table);area.append(wrapper);applyTableAppearance(wrapper,table,t,m.appearance);
+  for(const [ri,row]of t.row_ids.entries()){const tr=document.createElement('tr');for(const column of t.column_ids){const cell=t.cells.find(c=>c.row===row&&c.column===column),td=document.createElement(t.header&&ri===0?'th':'td');td.textContent=tableDesignText(cell);td.style.whiteSpace='pre-wrap';td.style.overflowWrap='anywhere';tr.append(td);}body.append(tr);}table.append(body);const viewport=designNode('div',null,{class:'table-viewport'});viewport.append(table);wrapper.append(viewport);area.append(wrapper);applyTableAppearance(wrapper,table,t,m.appearance);
 }
 async function applyTableDesign(){
   const e=tableDesignEditing;if(!e||busy)return;
@@ -1081,3 +1087,68 @@ async function applyTableDesign(){
   if(await action('edit_table_design',{id:e.id,...structuredClone(e.draft)},'Aparência, tamanho e alinhamento da tabela aplicados.'))closeTableDesign();
 }
 Object.assign(errors,{invalid_table_design:'Confira cores, bordas, medidas e detalhes da tabela. As escolhas anteriores foram conservadas.',table_design_version_required:'Essa edição precisa da versão atual do piloto.'});
+
+function tableStructureSetup(){
+  if(!state.table_structure_supported)return;
+  if(!$('table-dimensions')){
+    const counts=cardsNode('div',null,{id:'table-dimensions',class:'table-grid-counts'});
+    for(const [id,label,value,max]of [['table-create-rows','Linhas da nova tabela',2,64],['table-create-columns','Colunas da nova tabela',3,32]]){
+      const input=cardsNode('input',null,{id,type:'number',min:'1',max:String(max),step:'1',required:'required'});input.value=value;counts.append(cardsField(label,input));
+    }
+    $('create-table').before(counts);$('create-table').textContent='Inserir tabela';$('create-table').parentElement.querySelector('.hint').textContent='Escolha quantas linhas e colunas criar. Textos e fórmulas podem ser preenchidos depois.';
+    const p=cardsNode('section',null,{id:'table-grid-tools'});p.append(cardsNode('h2','Linhas e colunas'),cardsNode('p','Selecione uma tabela para ajustar sua estrutura.',{id:'table-grid-label',class:'hint'}));
+    for(const [axis,label]of [['row','Linha'],['column','Coluna']]){
+      const select=cardsNode('select',null,{id:'table-grid-'+axis});select.addEventListener('change',tableStructureImpact);p.append(cardsField(label+' para alterar',select));
+      const buttons=cardsNode('div',null,{class:'table-grid-buttons'});
+      for(const [where,text]of [['before','Inserir '+label.toLowerCase()+' antes'],['after','Inserir '+label.toLowerCase()+' depois'],['remove','Retirar '+label.toLowerCase()]]){
+        const b=cardsButton(text,()=>tableAxisAction(axis,where));b.id='table-grid-'+axis+'-'+where;buttons.append(b);
+      }p.append(buttons);
+    }
+    const retired=cardsNode('select',null,{id:'table-grid-retired'});p.append(cardsNode('p','',{id:'table-grid-impact',class:'hint'}),cardsNode('h3','Linhas e colunas retiradas'),cardsField('O que devolver à tabela',retired),cardsButton('Restaurar linha ou coluna',restoreTableAxis),cardsNode('p','A retirada conserva conteúdo, fórmulas e detalhes. O cabeçalho acompanha a primeira linha visível.',{class:'hint'}));p.querySelector(':scope > button').id='table-grid-restore';$('arrangement-tools').before(p);
+  }
+  const t=selectedTable();$('table-grid-label').textContent=t?`${t.title} · ${t.row_ids.length} linhas × ${t.column_ids.length} colunas. Conservadas: ${t.structure.retained_rows}/64 linhas e ${t.structure.retained_columns}/32 colunas, incluindo as retiradas.`:'Selecione uma tabela. As linhas e colunas retiradas poderão voltar mesmo após reabrir.';
+  const picked=t?.cells.find(c=>c.id===state.selected_cell);
+  for(const [axis,key]of [['row','row_ids'],['column','column_ids']])options('table-grid-'+axis,t?t[key].map((id,i)=>[id,(axis==='row'?'Linha ':'Coluna ')+(i+1)]):[],picked?.[axis]||t?.[key]?.[0]||'');
+  const removed=t?[...t.structure.removed_rows.map(a=>['row',a]),...t.structure.removed_columns.map(a=>['column',a])]:[];
+  options('table-grid-retired',removed.map(([axis,a])=>[JSON.stringify({axis,id:a.id}),(axis==='row'?'Linha ':'Coluna ')+(a.index+1)+(a.label?' · '+a.label:'')+` · ${a.filled_cells} preenchidas / ${a.formula_cells} fórmulas`]),'');
+  tableStructureImpact();tableStructureControls();
+}
+function tableStructureControls(){
+  if(!state?.table_structure_supported||!$('table-grid-tools'))return;
+  const t=selectedTable(),locked=busy||state.persistence_status==='uncertain';
+  for(const id of ['table-create-rows','table-create-columns'])$(id).disabled=locked;
+  for(const n of $('table-grid-tools').querySelectorAll('select,button'))n.disabled=locked||!t;
+  for(const axis of ['row','column']){
+    const count=t?.[axis==='row'?'row_ids':'column_ids'].length||0,retained=t?.structure[axis==='row'?'retained_rows':'retained_columns']||0;
+    for(const where of ['before','after'])$('table-grid-'+axis+'-'+where).disabled||=retained>=(axis==='row'?64:32);
+    $('table-grid-'+axis+'-remove').disabled||=count<=1;
+  }
+  $('table-grid-restore').disabled||=!$('table-grid-retired').value;
+  for(const b of document.querySelectorAll('.table-grid-open'))b.disabled=locked;
+}
+function tableStructureImpact(){
+  const t=selectedTable();if(!t){$('table-grid-impact').textContent='';return;}
+  const describe=axis=>{const cells=t.cells.filter(c=>c[axis]===$('table-grid-'+axis).value);return `${axis==='row'?'Linha':'Coluna'} escolhida: ${cells.filter(c=>c.text).length} células preenchidas, ${cells.filter(c=>state.formula_cells[c.id]).length} fórmulas.`;};
+  $('table-grid-impact').textContent=describe('row')+' '+describe('column')+' Retirar conserva esses dados.';
+}
+async function openTableStructure(id){
+  if(busy)await requests;
+  if(state.selection!==id&&!await action('select',{id}))return;
+  if(state.context!=='structure'&&!await action('set_context',{context:'structure'}))return;
+  $('table-grid-tools').scrollIntoView({block:'center',behavior:'smooth'});
+}
+async function tableAxisAction(axis,where){
+  const t=selectedTable();if(!t)return;
+  const id=t.id,all=t[axis==='row'?'row_ids':'column_ids'],chosen=$('table-grid-'+axis).value;
+  const values=where==='remove'?{id,axis,axis_id:chosen}:{id,axis,before:where==='before'?chosen:all[all.indexOf(chosen)+1]||''};
+  if(state.context!=='structure'&&!await action('set_context',{context:'structure'}))return;
+  const accepted=await action(where==='remove'?'remove_table_axis':'insert_table_axis',values,where==='remove'?'Linha ou coluna retirada e conservada. Desfazer ou a lista de retiradas permite restaurar.':'Linha ou coluna inserida. Em Texto, preencha as novas células.');
+  if(accepted&&where!=='remove'){const fresh=selectedTable()[axis==='row'?'row_ids':'column_ids'].find(id=>!all.includes(id));if(fresh)$('table-grid-'+axis).value=fresh;tableStructureImpact();}
+}
+async function restoreTableAxis(){
+  const t=selectedTable(),value=$('table-grid-retired').value;if(!t||!value)return;
+  const target=JSON.parse(value),values={id:t.id,axis:target.axis,axis_id:target.id};
+  if(state.context!=='structure'&&!await action('set_context',{context:'structure'}))return;
+  await action('restore_table_axis',values,'Linha ou coluna restaurada com suas células, fórmulas e detalhes.');
+}
+Object.assign(errors,{invalid_table_dimensions:'Escolha de 1 a 64 linhas e de 1 a 32 colunas.',invalid_table_structure:'A estrutura da tabela não corresponde às identidades conservadas.',invalid_table_axis:'Escolha linha ou coluna.',table_axis_not_active:'Essa linha ou coluna não está visível. Confira a lista de retiradas.',table_axis_not_found:'Essa linha ou coluna não pertence à tabela.',table_axis_not_retired:'Esse item não está na lista de retiradas.',table_requires_visible_axis:'Mantenha pelo menos uma linha e uma coluna visíveis. Para retirar tudo, remova a tabela.',table_retained_axis_limit:'O limite inclui linhas e colunas retiradas. Restaure uma existente para reaproveitar seu conteúdo.'});

@@ -442,6 +442,9 @@ struct Presentation {
   double width = 100;
   std::string horizontal = "start", text_align = "left", vertical = "start";
 };
+struct TableAxes {
+  std::vector<std::string> removed_rows, removed_columns;
+};
 struct State {
   std::string project, source, source_hash, selection;
   std::vector<std::string> author, visual;
@@ -459,11 +462,42 @@ struct State {
   // complete. Old snapshots keep their exact shape until this overlay is used.
   bool composition_v2 = false;
   bool table_design_v1 = false;
+  bool table_structure_v1 = false;
+  std::map<std::string, TableAxes> table_structure;
   std::map<std::string, V> table_styles;
   std::vector<std::string> removed_text;
   std::map<std::string, Presentation> presentation;
   std::map<std::string, std::shared_ptr<const Bytes>> blobs;
 };
+const TableAxes &table_axes(const State &s, const Table &t) {
+  static const TableAxes empty;
+  const auto at = s.table_structure.find(t.occurrence);
+  return at == s.table_structure.end() ? empty : at->second;
+}
+std::vector<std::string> visible_axes(const std::vector<std::string> &all,
+                                      const std::vector<std::string> &removed) {
+  auto out = all;
+  std::erase_if(out, [&](const auto &id) {
+    return std::find(removed.begin(), removed.end(), id) != removed.end();
+  });
+  return out;
+}
+bool visible_cell(const State &s, const Table &t, const Cell &c) {
+  const auto &a = table_axes(s, t);
+  return std::find(a.removed_rows.begin(), a.removed_rows.end(), c.row) ==
+             a.removed_rows.end() &&
+         std::find(a.removed_columns.begin(), a.removed_columns.end(),
+                   c.column) == a.removed_columns.end();
+}
+Table visible_table(const State &s, const Table &t) {
+  auto out = t;
+  const auto &a = table_axes(s, t);
+  out.rows = visible_axes(t.rows, a.removed_rows);
+  out.columns = visible_axes(t.columns, a.removed_columns);
+  std::erase_if(out.cells,
+                [&](const auto &c) { return !visible_cell(s, t, c); });
+  return out;
+}
 std::set<std::string>
 removed_paragraphs(const State &s, const compat::DocumentReadProjection &p) {
   std::set<std::string> removed, groups;
@@ -616,6 +650,9 @@ void validate(const State &s, bool decode_media = true) {
       (s.table_design_v1 && !s.composition_v2) ||
       (!s.table_design_v1 && !s.table_styles.empty()))
     fail("table_design_version_required");
+  if ((s.table_structure_v1 && !s.table_design_v1) ||
+      (!s.table_structure_v1 && !s.table_structure.empty()))
+    fail("table_structure_version_required");
   if ((!s.p2d2 && s.composition_v2) ||
       (!s.composition_v2 &&
        (!s.removed_text.empty() || !s.presentation.empty())))
@@ -762,6 +799,32 @@ void validate(const State &s, bool decode_media = true) {
     table_check(t, true);
   for (const auto &t : s.archived_tables)
     table_check(t, false);
+  if (s.table_structure.size() > s.tables.size() + s.archived_tables.size())
+    fail("invalid_table_structure");
+  for (const auto &[id, a] : s.table_structure) {
+    const Table *target = nullptr;
+    for (const auto *list : {&s.tables, &s.archived_tables})
+      for (const auto &t : *list)
+        if (t.occurrence == id)
+          target = &t;
+    if (!target)
+      fail("invalid_table_structure");
+    const auto check = [](const auto &all, const auto &removed) {
+      std::set<std::string> seen;
+      for (const auto &axis : removed)
+        if (std::find(all.begin(), all.end(), axis) == all.end() ||
+            !seen.insert(axis).second)
+          fail("invalid_table_structure");
+      if (seen.size() >= all.size())
+        fail("table_requires_visible_axis");
+    };
+    check(target->rows, a.removed_rows);
+    check(target->columns, a.removed_columns);
+    string_bytes += id.size();
+    for (const auto *axes : {&a.removed_rows, &a.removed_columns})
+      for (const auto &axis : *axes)
+        string_bytes += axis.size();
+  }
   if (s.table_styles.size() > s.tables.size() + s.archived_tables.size())
     fail("invalid_table_design");
   for (const auto &[id, style] : s.table_styles) {
@@ -845,7 +908,9 @@ void validate(const State &s, bool decode_media = true) {
       targets.emplace(cell, id);
       if (std::any_of(s.tables.begin(), s.tables.end(), [&](const auto &t) {
             return std::any_of(t.cells.begin(), t.cells.end(),
-                               [&](const auto &c) { return c.id == cell; });
+                               [&](const auto &c) {
+                                 return c.id == cell && visible_cell(s, t, c);
+                               });
           }))
         ++active_counts[id];
     }
@@ -900,8 +965,9 @@ void validate(const State &s, bool decode_media = true) {
           return t.occurrence == s.selection;
         });
     if (t == s.tables.end() ||
-        std::none_of(t->cells.begin(), t->cells.end(),
-                     [&](const auto &c) { return c.id == s.selected_cell; }))
+        std::none_of(t->cells.begin(), t->cells.end(), [&](const auto &c) {
+          return c.id == s.selected_cell && visible_cell(s, *t, c);
+        }))
       fail("cell_selection_not_found");
   }
   std::size_t total = 0;
@@ -1134,21 +1200,23 @@ V encode(const State &s) {
                                 {"first", r.first},
                                 {"second", r.second},
                                 {"gap", r.gap}});
-  V::Object result{{"format", s.table_design_v1  ? "INDE-OBJ01-COMPOSITE-P2D2-3"
-                              : s.composition_v2 ? "INDE-OBJ01-COMPOSITE-P2D2-2"
-                              : s.p2d2           ? "INDE-OBJ01-COMPOSITE-P2D2-1"
-                              : s.p2d            ? "INDE-OBJ01-COMPOSITE-P2D-1"
-                              : s.p2c            ? "INDE-OBJ01-COMPOSITE-P2C-1"
-                              : s.p2b            ? "INDE-OBJ01-COMPOSITE-P2B-1"
+  V::Object result{
+      {"format", s.table_structure_v1 ? "INDE-OBJ01-COMPOSITE-P2D2-4"
+                 : s.table_design_v1  ? "INDE-OBJ01-COMPOSITE-P2D2-3"
+                 : s.composition_v2   ? "INDE-OBJ01-COMPOSITE-P2D2-2"
+                 : s.p2d2             ? "INDE-OBJ01-COMPOSITE-P2D2-1"
+                 : s.p2d              ? "INDE-OBJ01-COMPOSITE-P2D-1"
+                 : s.p2c              ? "INDE-OBJ01-COMPOSITE-P2C-1"
+                 : s.p2b              ? "INDE-OBJ01-COMPOSITE-P2B-1"
                                       : "INDE-OBJ01-COMPOSITE-P2A-1"},
-                   {"project", s.project},
-                   {"source", s.source},
-                   {"source_sha256", s.source_hash},
-                   {"author_order", array(s.author)},
-                   {"visual_order", array(s.visual)},
-                   {"figures", std::move(figures)},
-                   {"rows", std::move(rows)},
-                   {"selection", s.selection}};
+      {"project", s.project},
+      {"source", s.source},
+      {"source_sha256", s.source_hash},
+      {"author_order", array(s.author)},
+      {"visual_order", array(s.visual)},
+      {"figures", std::move(figures)},
+      {"rows", std::move(rows)},
+      {"selection", s.selection}};
   if (s.composition_v2) {
     V::Object styles;
     for (const auto &[id, p] : s.presentation)
@@ -1163,6 +1231,14 @@ V encode(const State &s) {
       for (const auto &[id, style] : s.table_styles)
         tables.emplace(id, style);
       composition.emplace("table_styles", std::move(tables));
+    }
+    if (s.table_structure_v1) {
+      V::Object tables;
+      for (const auto &[id, a] : s.table_structure)
+        tables.emplace(
+            id, V::Object{{"removed_rows", array(a.removed_rows)},
+                          {"removed_columns", array(a.removed_columns)}});
+      composition.emplace("table_structure", std::move(tables));
     }
     result.emplace("composition", std::move(composition));
   }
@@ -1234,7 +1310,9 @@ State decode(const std::string &bytes) {
   const auto v = persistence::json::parse(bytes);
   const auto format = v.at("format").as_string();
   State s;
-  s.table_design_v1 = format == "INDE-OBJ01-COMPOSITE-P2D2-3";
+  s.table_structure_v1 = format == "INDE-OBJ01-COMPOSITE-P2D2-4";
+  s.table_design_v1 =
+      s.table_structure_v1 || format == "INDE-OBJ01-COMPOSITE-P2D2-3";
   s.composition_v2 =
       s.table_design_v1 || format == "INDE-OBJ01-COMPOSITE-P2D2-2";
   s.p2d2 = s.composition_v2 || format == "INDE-OBJ01-COMPOSITE-P2D2-1";
@@ -1248,6 +1326,18 @@ State decode(const std::string &bytes) {
     if (s.composition_v2) {
       const auto &c = v.at("composition");
       auto composition = c.as_object();
+      if (s.table_structure_v1) {
+        const auto &tables = c.at("table_structure").as_object();
+        if (tables.size() > 64)
+          fail("invalid_table_structure");
+        for (const auto &[id, a] : tables) {
+          fields(a, {"removed_rows", "removed_columns"});
+          s.table_structure.emplace(
+              id, TableAxes{strings(a.at("removed_rows"), 64),
+                            strings(a.at("removed_columns"), 32)});
+        }
+        composition.erase("table_structure");
+      }
       if (s.table_design_v1) {
         const auto &styles = c.at("table_styles").as_object();
         if (styles.size() > 64)
@@ -1507,8 +1597,20 @@ void retain_assets(State &target, const State &current) {
                            return v.occurrence == u.occurrence;
                          }))
           target.retired_formula_uses.push_back(u);
+    // A prior table snapshot may predate a newly inserted cell. Its phrase
+    // belongs to the future/redo state, not to an unknown past endpoint.
+    std::set<std::string> endpoints;
+    for (const auto *uses :
+         {&target.formula_uses, &target.retired_formula_uses})
+      for (const auto &u : *uses)
+        endpoints.insert(u.occurrence);
+    for (const auto *tables : {&target.tables, &target.archived_tables})
+      for (const auto &t : *tables)
+        for (const auto &c : t.cells)
+          endpoints.insert(c.id);
     for (const auto &[key, p] : current.formula_text)
-      target.formula_text.try_emplace(key, p);
+      if (endpoints.contains(key))
+        target.formula_text.try_emplace(key, p);
   }
   for (const auto &t : current.tables)
     remember_table(t);
@@ -1952,12 +2054,60 @@ struct Session::Impl {
       if (!removed.contains(g.occurrence_ids.front()))
         groups.emplace_back(array(g.occurrence_ids));
     for (const auto &t : working.tables) {
-      auto v = table_value(t).as_object();
+      const auto shown = visible_table(working, t);
+      auto v = table_value(shown).as_object();
       v.emplace("id", t.occurrence);
-      if (p2d2)
-        v.emplace("appearance", working.table_styles.contains(t.occurrence)
-                                    ? working.table_styles.at(t.occurrence)
-                                    : table_design::defaults());
+      if (p2d2) {
+        std::set<std::string> cells;
+        for (const auto &c : shown.cells)
+          cells.insert(c.id);
+        v.emplace(
+            "appearance",
+            table_design::project(working.table_styles.contains(t.occurrence)
+                                      ? working.table_styles.at(t.occurrence)
+                                      : table_design::defaults(),
+                                  t.columns, shown.columns, shown.rows, cells));
+        V::Array removed_rows, removed_columns;
+        const auto &axes = table_axes(working, t);
+        const auto describe = [&](const auto &all, const auto &removed,
+                                  bool row, V::Array &out) {
+          for (std::size_t i = 0; i < all.size(); ++i)
+            if (std::find(removed.begin(), removed.end(), all[i]) !=
+                removed.end()) {
+              std::string label;
+              std::size_t filled = 0, formulas = 0;
+              for (const auto &c : t.cells)
+                if ((row ? c.row : c.column) == all[i]) {
+                  if (!c.text.empty()) {
+                    ++filled;
+                    if (label.empty())
+                      label = c.text.substr(0, 120);
+                  }
+                  if (working.formula_cells.contains(c.id))
+                    ++formulas;
+                }
+              // A preview ends on a complete UTF-8 scalar, never in a byte
+              // sequence.
+              while (!label.empty() &&
+                     !g_utf8_validate(label.data(),
+                                      static_cast<gssize>(label.size()),
+                                      nullptr))
+                label.pop_back();
+              out.emplace_back(V::Object{{"id", all[i]},
+                                         {"index", number(i)},
+                                         {"label", label},
+                                         {"filled_cells", number(filled)},
+                                         {"formula_cells", number(formulas)}});
+            }
+        };
+        describe(t.rows, axes.removed_rows, true, removed_rows);
+        describe(t.columns, axes.removed_columns, false, removed_columns);
+        v.emplace("structure",
+                  V::Object{{"retained_rows", number(t.rows.size())},
+                            {"retained_columns", number(t.columns.size())},
+                            {"removed_rows", std::move(removed_rows)},
+                            {"removed_columns", std::move(removed_columns)}});
+      }
       tables.emplace_back(std::move(v));
     }
     V::Array text_groups;
@@ -2075,12 +2225,14 @@ struct Session::Impl {
         {"formula_hub_supported", p2d2},
         {"object_composition_supported", p2d2},
         {"table_design_supported", p2d2},
+        {"table_structure_supported", p2d2},
         {"table_design_defaults", p2d2 ? table_design::defaults() : V{}},
         {"table_design_presets",
          p2d2 ? table_design::presets() : V(V::Array{})},
-        {"composition_version", working.table_design_v1  ? 3
-                                : working.composition_v2 ? 2
-                                                         : 1},
+        {"composition_version", working.table_structure_v1 ? 4
+                                : working.table_design_v1  ? 3
+                                : working.composition_v2   ? 2
+                                                           : 1},
         {"presentation", std::move(styles)},
         {"removed_items", std::move(removed_items)},
         {"formulas", std::move(formulas)},
@@ -2373,11 +2525,13 @@ struct Session::Impl {
             op == "execute_formula" || op == "edit_formula_text" ||
             op == "edit_formula_cards" || op == "edit_formula_hub" ||
             op == "reset_formula_variable";
-        const bool structure = op == "create_table" || op == "import" ||
-                               op == "duplicate" || op == "move" ||
-                               op == "remove" || op == "restore_removed" ||
-                               op == "reorder_text" || op == "create_formula" ||
-                               op == "attach_formula" || op == "detach_formula";
+        const bool structure =
+            op == "create_table" || op == "create_table_sized" ||
+            op == "insert_table_axis" || op == "remove_table_axis" ||
+            op == "restore_table_axis" || op == "import" || op == "duplicate" ||
+            op == "move" || op == "remove" || op == "restore_removed" ||
+            op == "reorder_text" || op == "create_formula" ||
+            op == "attach_formula" || op == "detach_formula";
         const bool composition =
             op == "arrange" || op == "arrange_objects" ||
             op == "edit_table_design" || op == "set_presentation" ||
@@ -2486,7 +2640,7 @@ struct Session::Impl {
           bool active_cell = false;
           for (const auto &t : candidate.tables)
             for (const auto &c : t.cells)
-              if (c.id == target) {
+              if (c.id == target && visible_cell(candidate, t, c)) {
                 active_cell = true;
                 candidate.selection = t.occurrence;
                 candidate.selected_cell = c.id;
@@ -2569,8 +2723,10 @@ struct Session::Impl {
                   [&](const auto &t) { return t.occurrence == table; });
               if (t == candidate.tables.end())
                 fail("table_not_found");
-              if (std::none_of(t->cells.begin(), t->cells.end(),
-                               [&](const auto &c) { return c.id == cell; }))
+              if (std::none_of(
+                      t->cells.begin(), t->cells.end(), [&](const auto &c) {
+                        return c.id == cell && visible_cell(candidate, *t, c);
+                      }))
                 fail("cell_not_found");
               if (op == "detach_formula") {
                 if (candidate.formula_cells.erase(cell) != 1)
@@ -2617,7 +2773,7 @@ struct Session::Impl {
                       });
                   for (const auto &t : candidate.tables)
                     for (const auto &c : t.cells)
-                      if (c.id == target &&
+                      if (c.id == target && visible_cell(candidate, t, c) &&
                           candidate.formula_cells.contains(target) &&
                           candidate.formula_cells.at(target) == f->id)
                         active = true;
@@ -2700,31 +2856,114 @@ struct Session::Impl {
                 bump(f->revision);
             }
           }
-        } else if (op == "create_table") {
+        } else if (op == "create_table" || op == "create_table_sized") {
           if (!p2b)
             fail("p2b_profile_required");
-          fields(v, {"op", "expected", "before", "title", "header", "cells"});
+          const bool sized = op == "create_table_sized";
+          if (sized && !p2d2)
+            fail("p2d2_profile_required");
+          if (sized)
+            fields(v, {"op", "expected", "before", "title", "header", "rows",
+                       "columns"});
+          else
+            fields(v, {"op", "expected", "before", "title", "header", "cells"});
           if (candidate.author != candidate.visual)
             fail("authorial_requires_alignment");
-          if (v.at("cells").as_array().size() != 6)
+          if (!sized && v.at("cells").as_array().size() != 6)
             fail("initial_table_requires_2x3");
+          const auto rows = sized ? v.at("rows").as_integer() : 2,
+                     columns = sized ? v.at("columns").as_integer() : 3;
+          if (rows < 1 || rows > 64 || columns < 1 || columns > 32)
+            fail("invalid_table_dimensions");
+          if (sized)
+            candidate.composition_v2 = candidate.table_design_v1 =
+                candidate.table_structure_v1 = true;
           Table t;
           t.occurrence = project::new_uuid();
           t.object = project::new_uuid();
           t.title = v.at("title").as_string();
           t.header = v.at("header").as_boolean();
-          for (int i = 0; i < 2; ++i)
+          for (int i = 0; i < rows; ++i)
             t.rows.push_back(project::new_uuid());
-          for (int i = 0; i < 3; ++i)
+          for (int i = 0; i < columns; ++i)
             t.columns.push_back(project::new_uuid());
           std::size_t index = 0;
           for (const auto &row : t.rows)
             for (const auto &column : t.columns)
               t.cells.push_back(
                   {project::new_uuid(), row, column,
-                   v.at("cells").as_array()[index++].as_string()});
+                   sized ? std::string{}
+                         : v.at("cells").as_array()[index++].as_string()});
           insert_id(candidate, t.occurrence, v.at("before").as_string());
           candidate.tables.push_back(std::move(t));
+          candidate.selected_cell.clear();
+        } else if (op == "insert_table_axis" || op == "remove_table_axis" ||
+                   op == "restore_table_axis") {
+          if (!p2d2)
+            fail("p2d2_profile_required");
+          if (op == "insert_table_axis")
+            fields(v, {"op", "expected", "id", "axis", "before"});
+          else
+            fields(v, {"op", "expected", "id", "axis", "axis_id"});
+          const auto id = v.at("id").as_string(),
+                     axis = v.at("axis").as_string();
+          if (axis != "row" && axis != "column")
+            fail("invalid_table_axis");
+          const auto t =
+              std::find_if(candidate.tables.begin(), candidate.tables.end(),
+                           [&](const auto &t) { return t.occurrence == id; });
+          if (t == candidate.tables.end())
+            fail("table_not_found");
+          if (t->payload_revision == std::numeric_limits<std::int64_t>::max())
+            fail("revision_limit");
+          auto &a = candidate.table_structure[id];
+          auto &all = axis == "row" ? t->rows : t->columns;
+          auto &removed = axis == "row" ? a.removed_rows : a.removed_columns;
+          if (op == "insert_table_axis") {
+            if (all.size() >= (axis == "row" ? 64U : 32U))
+              fail("table_retained_axis_limit");
+            const auto before = v.at("before").as_string();
+            const auto at = before.empty()
+                                ? all.end()
+                                : std::find(all.begin(), all.end(), before);
+            if (!before.empty() &&
+                (at == all.end() || std::find(removed.begin(), removed.end(),
+                                              before) != removed.end()))
+              fail("table_axis_not_active");
+            const auto index = static_cast<std::size_t>(at - all.begin());
+            const auto fresh = project::new_uuid();
+            all.insert(at, fresh);
+            if (axis == "row")
+              for (const auto &column : t->columns)
+                t->cells.push_back({project::new_uuid(), fresh, column, {}});
+            else {
+              for (const auto &row : t->rows)
+                t->cells.push_back({project::new_uuid(), row, fresh, {}});
+              if (candidate.table_styles.contains(id))
+                candidate.table_styles[id] = table_design::with_inserted_column(
+                    candidate.table_styles.at(id), index);
+            }
+          } else {
+            const auto chosen = v.at("axis_id").as_string();
+            const auto at = std::find(removed.begin(), removed.end(), chosen);
+            if (std::find(all.begin(), all.end(), chosen) == all.end())
+              fail("table_axis_not_found");
+            if (op == "remove_table_axis") {
+              if (at != removed.end())
+                fail("table_axis_not_active");
+              if (all.size() - removed.size() <= 1)
+                fail("table_requires_visible_axis");
+              removed.push_back(chosen);
+            } else {
+              if (at == removed.end())
+                fail("table_axis_not_retired");
+              removed.erase(at);
+            }
+          }
+          ++t->payload_revision;
+          candidate.composition_v2 = candidate.table_design_v1 =
+              candidate.table_structure_v1 = true;
+          candidate.selection = id;
           candidate.selected_cell.clear();
         } else if (op == "edit_cell" || op == "select_cell") {
           if (!p2b)
@@ -2740,9 +2979,10 @@ struct Session::Impl {
                            [&](const auto &t) { return t.occurrence == id; });
           if (t == candidate.tables.end())
             fail("table_not_found");
-          const auto c =
-              std::find_if(t->cells.begin(), t->cells.end(),
-                           [&](const auto &c) { return c.id == cell; });
+          const auto c = std::find_if(
+              t->cells.begin(), t->cells.end(), [&](const auto &c) {
+                return c.id == cell && visible_cell(candidate, *t, c);
+              });
           if (c == t->cells.end())
             fail("cell_not_found");
           if (op == "edit_cell" && candidate.formula_cells.contains(cell))
@@ -3021,7 +3261,18 @@ struct Session::Impl {
             t->header = header;
           }
           candidate.composition_v2 = candidate.table_design_v1 = true;
-          candidate.table_styles[id] = v.at("appearance");
+          const auto shown = visible_table(candidate, *t);
+          std::set<std::string> cells;
+          for (const auto &c : shown.cells)
+            cells.insert(c.id);
+          table_design::validate(v.at("appearance"), shown.rows, shown.columns,
+                                 cells);
+          const auto old = candidate.table_styles.contains(id)
+                               ? candidate.table_styles.at(id)
+                               : table_design::defaults();
+          candidate.table_styles[id] =
+              table_design::merge_visible(old, v.at("appearance"), t->columns,
+                                          shown.columns, shown.rows, cells);
           candidate.presentation[id] = {real(placement.at("width")),
                                         placement.at("horizontal").as_string(),
                                         placement.at("text_align").as_string(),
