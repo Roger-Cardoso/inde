@@ -60,7 +60,7 @@ int run_object_window_smoke(const Glib::RefPtr<Gtk::Application> &app,
   std::string id, original;
   try {
     inde::application::ProjectService service;
-    service.create(project, "Objetos GTK no INDE");
+    service.create(project, "Objetos e matemática");
     auto d = service.writing().create_document("Matemática na narrativa");
     d.content = "Uma travessia pode seguir muitas direções.\nAs relações "
                 "também podem ser expressas com matemática.";
@@ -90,7 +90,11 @@ int run_object_window_smoke(const Glib::RefPtr<Gtk::Application> &app,
       field(*objects, "label", name);
       choose(*objects, "template", model);
     });
-    steps.push_back([&] { click(*objects, "native-apply"); });
+    steps.push_back([&] {
+      capture_window(*objects,
+                     picture.parent_path() / "gtk-editor-equacao.png");
+      click(*objects, "native-apply");
+    });
   };
   steps.push_back([&] {
     click(*objects, "native-new-equation");
@@ -286,7 +290,10 @@ int run_object_window_smoke(const Glib::RefPtr<Gtk::Application> &app,
     stage = 2;
   });
   app->signal_activate().connect([&] {
+    std::cerr << "GTK probe: criando janela principal; Objetos ainda fechado\n";
     main = std::make_unique<inde::ui::MainWindow>(project);
+    std::cerr
+        << "GTK probe: janela principal construída; Objetos ainda fechado\n";
     app->add_window(*main);
     main->present();
     Glib::signal_timeout().connect(
@@ -313,6 +320,7 @@ int run_object_window_smoke(const Glib::RefPtr<Gtk::Application> &app,
               writing->reveal_document(id);
               if (!writing->publication_ready())
                 return true;
+              std::cerr << "GTK probe: abrindo Objetos C++/GTK\n";
               main->lookup_action("document-objects")->activate();
               stage = 1;
               return true;

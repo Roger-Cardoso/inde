@@ -10,7 +10,7 @@ A interface WebKit da entrega anterior não atendia ao requisito do usuário e f
 bash scripts/demos/Abrir-demo-objetos-nativos.sh
 ```
 
-O iniciador verifica as fontes, compila o aplicativo e cria somente a amostra nova em `dados/obj01-gtk-nativo/Projeto.inde`, se ela ainda não existir. Não apaga nem substitui projetos ou demonstrações anteriores. Na Escrita, selecione **Matemática na narrativa** e use **Objetos**. Experimente nessa amostra ou em uma cópia antes de trabalhar com uma obra.
+O iniciador verifica as fontes, compila o aplicativo e cria somente a amostra nova em `dados/obj01-gtk-nativo-final/Projeto.inde`, se ela ainda não existir. Não apaga nem substitui projetos ou demonstrações anteriores. Na Escrita, selecione **Matemática na narrativa** e use **Objetos**. Experimente nessa amostra ou em uma cópia antes de trabalhar com uma obra.
 
 ## Editar pelo GTK
 

@@ -873,6 +873,7 @@ struct ObjectDocumentWindow::Impl {
     clear(editor);
     label(editor, heading).add_css_class("title-2");
     stack.set_visible_child("editor");
+    edit_scroll.get_vadjustment()->set_value(0);
     sidebar.set_sensitive(false);
     toolbar.set_sensitive(false);
     preview = nullptr;
@@ -880,9 +881,11 @@ struct ObjectDocumentWindow::Impl {
   }
   Gtk::Entry &entry(const std::string &name, const std::string &caption,
                     const std::string &value = "") {
-    auto &caption_label = label(editor, caption);
+    label(editor, caption);
     auto *v = Gtk::make_managed<Gtk::Entry>();
-    caption_label.set_mnemonic_widget(*v);
+    gtk_accessible_update_property(GTK_ACCESSIBLE(v->gobj()),
+                                   GTK_ACCESSIBLE_PROPERTY_LABEL,
+                                   caption.c_str(), -1);
     v->set_text(value);
     v->set_name("native-field-" + name);
     editor.append(*v);
@@ -893,10 +896,12 @@ struct ObjectDocumentWindow::Impl {
   choice(const std::string &name, const std::string &caption,
          const std::vector<std::pair<std::string, std::string>> &options,
          const std::string &value = "") {
-    auto &caption_label = label(editor, caption);
+    label(editor, caption);
     auto *v = Gtk::make_managed<Gtk::ComboBoxText>();
     limit_choice(*v);
-    caption_label.set_mnemonic_widget(*v);
+    gtk_accessible_update_property(GTK_ACCESSIBLE(v->gobj()),
+                                   GTK_ACCESSIBLE_PROPERTY_LABEL,
+                                   caption.c_str(), -1);
     for (const auto &[id, t] : options)
       v->append(id, t);
     v->set_active_id(value);
@@ -918,9 +923,11 @@ struct ObjectDocumentWindow::Impl {
   }
   Gtk::TextView &source(const std::string &name, const std::string &caption,
                         const std::string &value) {
-    auto &caption_label = label(editor, caption);
+    label(editor, caption);
     auto *v = Gtk::make_managed<Gtk::TextView>();
-    caption_label.set_mnemonic_widget(*v);
+    gtk_accessible_update_property(GTK_ACCESSIBLE(v->gobj()),
+                                   GTK_ACCESSIBLE_PROPERTY_LABEL,
+                                   caption.c_str(), -1);
     v->set_name("native-field-" + name);
     v->set_wrap_mode(Gtk::WrapMode::WORD_CHAR);
     v->get_buffer()->set_text(value);
