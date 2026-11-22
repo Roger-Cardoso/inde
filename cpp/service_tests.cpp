@@ -47,6 +47,10 @@ int main(int argc,char **argv){try{
   s=service.restore_site(s.id,s.revision);e=service.restore_edition(e.id,e.revision);check(e.id==before.id&&persistence::json::serialize(encode(e).at("choices"),false)==persistence::json::serialize(encode(before).at("choices"),false),"Restauração não preservou identidade/escolhas");
   check(hash(read(root/"Publicacao.inde/data/project.sqlite3"))==base_hash,"Operações de publicação alteraram o banco autoral");
   source.close();source.open(root/"Publicacao.inde");check(service.edition(e.id).revision==e.revision&&service.site(s.id).id==s.id,"Reabertura perdeu persistência");
+  const auto composed=root/"Publicacao.inde/documents/composed"/first;
+  fs::create_directories(composed);std::ofstream(composed/"obj01-piloto.sqlite3")<<"marker";
+  rejects([&]{service.prepare(e.id,s.revision,e.revision);},"Publicação omitiu composição por objetos");
+  fs::remove(composed/"obj01-piloto.sqlite3");
   prepared=service.prepare(e.id,s.revision,e.revision);
   auto doc=*source.writing().document(e.choices.at(nodes.back().id).documents.front());doc.content+="\nUma mudança posterior.";static_cast<void>(source.writing().update_document(doc));
   check(!service.is_current(prepared),"Texto alterado não invalidou retrato");

@@ -117,7 +117,7 @@ function richFormulaItem(id,key,table='',cell='') {
 
 'use strict';
 const $ = id => document.getElementById(id);
-const token = location.hash.slice(1) || sessionStorage.getItem('obj01-p2a-token') || '';
+const token = window.indeNativeRequest ? '' : location.hash.slice(1) || sessionStorage.getItem('obj01-p2a-token') || '';
 if (token) sessionStorage.setItem('obj01-p2a-token', token);
 if (location.hash) history.replaceState(null, '', location.pathname);
 let state, upload, uploadName = '', mode = 'visual', busy = false, generation = 0, activeOperation = '';
@@ -216,6 +216,7 @@ function message(text, error = false) {
   if(cardsEditing&&$('cards-error')){ $('cards-error').textContent=text; $('cards-error').hidden=!error; }
 }
 async function fetchApi(path, options = {}) {
+  if(window.indeNativeRequest)return window.indeNativeRequest(path,options);
   const response = await fetch(path, { ...options, headers: { 'X-Obj01-Token': token, ...(options.headers || {}) } });
   if (!response.ok) {
     const error = await response.json().catch(() => ({ error: 'engine_unavailable' }));
@@ -226,7 +227,7 @@ async function fetchApi(path, options = {}) {
 function cellData(tableId, cellId) { return state?.tables?.find(t => t.id === tableId)?.cells.find(c => c.id === cellId); }
 let formulaEditing = null;
 function formulaDraft() { return formulaEditing && formulaEditing.draft !== state?.formulas?.find(f => f.id === formulaEditing.id)?.source; }
-function hasDrafts() { return tableDesignDraft() || hubDraft() || cardsDraft() || formulaDraft() || richDrafts() || [...document.querySelectorAll('.cell-editor')].some(n => n.value !== cellData(n.dataset.table, n.dataset.cell)?.text); }
+function hasDrafts() { return equationDraft() || tableDesignDraft() || hubDraft() || cardsDraft() || formulaDraft() || richDrafts() || [...document.querySelectorAll('.cell-editor')].some(n => n.value !== cellData(n.dataset.table, n.dataset.cell)?.text); }
 function updateSelection() {
   for (const node of $('document').querySelectorAll('.item')) {
     const selected = state.selection === node.dataset.occurrence;
@@ -295,6 +296,7 @@ function figure() { return state?.figures.find(f => f.id === state.selection); }
 function shortText(id) {
   const p = state.paragraphs.find(p => p.id === id);
   if (p) return p.text.length > 36 ? p.text.slice(0, 36) + '…' : p.text;
+  const equation=state.equations?.find(e=>e.id===id);if(equation)return 'Equação: '+(equation.label||'sem nome');
   const table = state.tables?.find(t => t.id === id);
   if (table) return 'Tabela: ' + table.title;
   const use = state.formula_uses?.find(u => u.id === id);
@@ -312,6 +314,7 @@ function options(id, values, fallback = '') {
   $(id).value = values.some(v => v[0] === selected) ? selected : values.some(v => v[0] === fallback) ? fallback : values.some(v => v[0] === '') ? '' : (values[0]?.[0] || '');
 }
 function controls() {
+  if(window.indeNativeDraft)window.indeNativeDraft(Boolean(busy||hasDrafts()));
   if (!state) return;
   richControls();
   cardsControls();
@@ -325,12 +328,13 @@ function controls() {
   $('save').disabled = false; $('reopen').disabled = false;
   $('undo').disabled = !state.can_undo; $('redo').disabled = !state.can_redo;
   const generic = state.object_composition_supported, paragraphSelected = selectedParagraph();
-  $('move').disabled = busy || !(figure() || selectedTable() || selectedFormulaUse() || (generic && paragraphSelected));
-  $('remove').disabled = busy || !(figure() || selectedTable() || selectedFormulaUse() || (generic && paragraphSelected));
+  $('move').disabled = busy || !(figure() || selectedTable() || selectedFormulaUse() || state.equations?.some(e=>e.id===state.selection) || (generic && paragraphSelected));
+  $('remove').disabled = busy || !(figure() || selectedTable() || selectedFormulaUse() || state.equations?.some(e=>e.id===state.selection) || (generic && paragraphSelected));
   if (generic) for (const id of ['arrange','stack']) $(id).disabled = busy || !state.selection;
   if(generic)$('arrange').disabled ||= !$('paragraph').value;
   $('move').textContent = selectedFormulaUse() ? 'Mover fórmula selecionada' : selectedTable() ? 'Mover tabela selecionada' : 'Mover figura selecionada';
   $('selected-label').textContent = selectedTable() ? 'Tabela selecionada: ' + selectedTable().title : figure() ? 'Figura selecionada: ' + (figure().caption || 'sem legenda') : 'Selecione uma figura ou tabela no documento.';
+  if(state.equations?.some(e=>e.id===state.selection)){$('move').textContent='Mover equação selecionada';$('selected-label').textContent=shortText(state.selection);}
   if (selectedFormulaUse()) $('selected-label').textContent = shortText(state.selection);
   if (generic && paragraphSelected) { const group=selectedTextGroup(); $('move').textContent='Mover texto selecionado'; $('selected-label').textContent=`Texto selecionado. Mover a leitura ou remover afeta o grupo completo de ${group.occurrences.length} parágrafo(s).`; }
   $('remove').textContent=generic&&paragraphSelected?'Remover grupo textual':'Remover uso selecionado';
@@ -491,6 +495,7 @@ function formulaItem(id,key,table='',cell='') {
 }
 
 function item(id, currentGeneration) {
+  const equation=state.equations?.find(e=>e.id===id);if(equation)return equationItem(equation);
   const table = state.tables?.find(t => t.id === id);
   if (table) return tableItem(table);
   const use = state.formula_uses?.find(u => u.id === id);
@@ -543,7 +548,8 @@ function render() {
   if(p2d2) { document.title='INDE · Texto e fórmulas'; document.querySelector('h1').textContent='A conta faz parte da escrita.'; document.querySelector('.intro p:not(.eyebrow)').textContent='Escreva a frase, deixe os resultados acompanharem as mudanças.'; $('limits').textContent='Texto livre e resultados protegidos no mesmo parágrafo. O comando alterar age uma vez e é consumido.'; document.querySelector('.paper-footer').textContent='INDE · EXPERIMENTO AUTORAL P2-D2'; }
   if(state.formula_cards_supported){document.title='INDE · Texto por condições';document.querySelector('h1').textContent='Escolha as palavras, sem programar.';document.querySelector('.intro p:not(.eyebrow)').textContent='Preencha as frases e deixe os cartões acompanharem a situação.';}
   if(state.object_composition_supported){document.title='INDE · Compor o documento';document.querySelector('h1').textContent='Cada objeto encontra seu lugar.';document.querySelector('.intro p:not(.eyebrow)').textContent='Texto, figura, tabela e fórmula: lado a lado, alinhados e recuperáveis.';}
-  const destination = state.author_order.filter(id => !state.rows.some(r => r.children[1] === id) && (state.figures.some(f => f.id === id) || state.tables?.some(t => t.id === id) || state.formula_uses?.some(u => u.id === id) || state.reading_groups.some(g => g[0] === id))).map(id => [id, shortText(id)]);
+  if(state.native_document){$('phase').textContent='Objetos';document.querySelector('.paper h2').textContent=state.document_title;document.querySelector('.paper .subtitle').hidden=true;document.querySelector('.paper-heading').textContent='DOCUMENTO';document.querySelector('.preview').setAttribute('aria-label','Documento composto');document.querySelector('.controls').setAttribute('aria-label','Ferramentas do documento');document.querySelector('.bottom span:first-child').textContent='Conteúdo guardado neste projeto.';document.querySelector('.privacy').textContent='Texto e camadas autorais preservados. Objetos e apresentação pertencem a esta composição.';document.title='INDE · '+state.document_title;document.querySelector('h1').textContent=state.document_title;document.querySelector('.brand span').textContent='DOCUMENTO COMPOSTO';document.querySelector('.fixture-note').textContent='Documento do projeto · texto de origem preservado';document.querySelector('.paper-footer').textContent='INDE · '+state.document_title;$('limits').textContent='Composição vinculada ao documento do projeto. A edição do corpo original continua na Escrita; objetos e alterações confirmadas ficam protegidos neste documento composto.';}
+  const destination = state.author_order.filter(id => !state.rows.some(r => r.children[1] === id) && (state.figures.some(f => f.id === id) || state.tables?.some(t => t.id === id) || state.formula_uses?.some(u => u.id === id) || state.equations?.some(e=>e.id===id) || state.reading_groups.some(g => g[0] === id))).map(id => [id, shortText(id)]);
   destination.push(['', 'Fim do documento']);
   options('insert-before', destination, state.paragraphs[1]?.id || '');
   options('table-before', destination, '');
@@ -558,6 +564,7 @@ function render() {
   compositionSetup(destination);
   tableDesignSetup();
   tableStructureSetup();
+  equationSetup();
   const f = figure();
   $('selected-label').textContent = f ? 'Figura selecionada: ' + (f.caption || 'sem legenda') : 'Selecione uma figura no documento.';
   $('alignment').textContent = state.aligned ? 'Ordem alinhada' : 'Apresentação independente';
@@ -1152,3 +1159,41 @@ async function restoreTableAxis(){
   await action('restore_table_axis',values,'Linha ou coluna restaurada com suas células, fórmulas e detalhes.');
 }
 Object.assign(errors,{invalid_table_dimensions:'Escolha de 1 a 64 linhas e de 1 a 32 colunas.',invalid_table_structure:'A estrutura da tabela não corresponde às identidades conservadas.',invalid_table_axis:'Escolha linha ou coluna.',table_axis_not_active:'Essa linha ou coluna não está visível. Confira a lista de retiradas.',table_axis_not_found:'Essa linha ou coluna não pertence à tabela.',table_axis_not_retired:'Esse item não está na lista de retiradas.',table_requires_visible_axis:'Mantenha pelo menos uma linha e uma coluna visíveis. Para retirar tudo, remova a tabela.',table_retained_axis_limit:'O limite inclui linhas e colunas retiradas. Restaure uma existente para reaproveitar seu conteúdo.'});
+
+
+let equationEditing=null;
+function equationDraft(){return Boolean(equationEditing);}
+function equationRender(target,source,mode){
+  target.replaceChildren();target.className='equation-render';
+  try{if(!window.katex)throw new Error('Renderizador local indisponível.');katex.render(source,target,{displayMode:mode==='block',throwOnError:true,trust:false,strict:'error',maxExpand:200,maxSize:20,output:'htmlAndMathml',macros:{}});return true;}
+  catch(e){target.classList.add('equation-error');target.textContent='Confira a expressão: '+e.message;return false;}
+}
+function equationItem(e){
+  const n=document.createElement('div');n.className='item equation-item';n.dataset.occurrence=e.id;n.setAttribute('role','group');n.setAttribute('aria-label','Equação: '+(e.label||'sem nome'));
+  if(e.label){const title=document.createElement('div');title.className='equation-label';title.textContent=e.label;n.append(title);}
+  const result=document.createElement('div');equationRender(result,e.source,e.mode);n.append(result);
+  const edit=document.createElement('button');edit.textContent='Editar equação';edit.className='equation-edit';edit.addEventListener('click',()=>openEquation(e));n.append(edit);return n;
+}
+function equationSetup(){
+  if(!state.equations_supported||$('equation-tools'))return;
+  const p=cardsNode('section',null,{id:'equation-tools'});p.append(cardsNode('h2','Matemática'),cardsNode('p','Escreva em LaTeX ou comece por um modelo. A fonte acompanha a apresentação.',{class:'hint'}),cardsButton('Inserir equação',()=>openEquation(null)));$('cards-tools').before(p);
+}
+function openEquation(existing){
+  if(busy)return;
+  equationEditing={existing};let dialog=$('equation-dialog');if(!dialog){dialog=document.createElement('dialog');dialog.id='equation-dialog';dialog.setAttribute('aria-label','Editar matemática');document.body.append(dialog);}dialog.replaceChildren();
+  const label=cardsNode('input',null,{'aria-label':'Nome da equação',maxlength:'256'});label.value=existing?.label||'';
+  const mode=cardsNode('select',null,{'aria-label':'Apresentação matemática'});for(const [v,t]of [['block','Em destaque'],['inline','Compacta']]){const o=cardsNode('option',t,{value:v});mode.append(o);}mode.value=existing?.mode||'block';
+  const before=cardsNode('select',null,{'aria-label':'Inserir equação antes de'});for(const id of [...state.author_order,''])before.append(cardsNode('option',id?shortText(id):'Fim do documento',{value:id}));before.value='';
+  const source=cardsNode('textarea',null,{'aria-label':'Fonte LaTeX',maxlength:'16384',rows:'6'});source.value=existing?.source||String.raw`x = \frac{-b \pm \sqrt{b^2-4ac}}{2a}`;
+  const preview=cardsNode('div');preview.setAttribute('aria-label','Prévia matemática');const refresh=()=>equationRender(preview,source.value,mode.value);source.addEventListener('input',refresh);mode.addEventListener('change',refresh);
+  const templates=cardsNode('div',null,{class:'equation-templates'});
+  for(const [title,tex]of [['Fração',String.raw`\frac{a}{b}`],['Raiz',String.raw`\sqrt{x^2+y^2}`],['Somatório',String.raw`\sum_{i=1}^{n} i = \frac{n(n+1)}{2}`],['Integral',String.raw`\int_0^1 x^2\,dx = \frac{1}{3}`],['Matriz',String.raw`\begin{pmatrix} a & b \\ c & d \end{pmatrix}`],['Sistema',String.raw`\begin{aligned} x+y &= 10 \\ x-y &= 2 \end{aligned}`]])templates.append(cardsButton(title,()=>{source.value=tex;refresh();}));
+  const cancel=()=>{equationEditing=null;dialog.close();controls();};dialog.oncancel=e=>{e.preventDefault();cancel();};
+  dialog.append(cardsNode('h2',existing?'Editar matemática':'Inserir matemática'),cardsField('Nome da equação',label),cardsField('Apresentação',mode),templates,cardsField('Fonte LaTeX',source),cardsNode('p','A fonte é preservada mesmo se houver erro de renderização. Equações apresentam matemática; Fórmulas calculam valores.',{class:'hint'}),preview);
+  if(!existing)dialog.append(cardsField('Inserir antes de',before));
+  dialog.append(cardsButton('Cancelar',cancel),cardsButton(existing?'Aplicar equação':'Inserir equação',async()=>{
+    if(busy)return;const args={source:source.value,mode:mode.value,label:label.value};const context=existing?'text':'structure';if(state.context!==context&&!await action('set_context',{context}))return;
+    if(await action(existing?'edit_equation':'create_equation',{...args,...(existing?{id:existing.id}:{before:before.value})},'Equação aplicada; fonte e apresentação conservadas.')){equationEditing=null;dialog.close();controls();}
+  }));refresh();dialog.showModal();source.focus();controls();
+}
+Object.assign(errors,{invalid_equation:'Confira a fonte, o nome e a apresentação da equação.',equation_limit:'O limite é de 64 equações conservadas.',equation_not_found:'Essa equação não está disponível nesta revisão.'});

@@ -20,7 +20,7 @@ jobs:
           sudo apt-get update
           sudo apt-get install --yes build-essential cmake ninja-build pkg-config \
             libgtkmm-4.0-dev libsqlite3-dev uuid-dev libicu-dev libhunspell-dev \
-            libenchant-2-2 hunspell-pt-br xauth xvfb
+            libenchant-2-2 hunspell-pt-br libwebkitgtk-6.0-dev xauth xvfb
       - name: Build the special edition
         run: sh Preparar-INDE-especial.sh
       - name: Run integration tests

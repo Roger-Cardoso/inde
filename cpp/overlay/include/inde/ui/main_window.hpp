@@ -23,6 +23,7 @@
 
 namespace inde::ui {
 
+class ObjectDocumentWindow;
 class PublicationPage;
 class MainWindow final : public Gtk::ApplicationWindow {
 public:
@@ -36,6 +37,9 @@ private:
   bool on_close_request() override;
   void build_ui();
   void show_publication();
+  void show_objects();
+  std::unique_ptr<ObjectDocumentWindow> object_window_;
+  Gtk::Button object_button_{"Objetos"};
   bool guard_comic_project_change();
   void present_publication();
   void refresh_recents();

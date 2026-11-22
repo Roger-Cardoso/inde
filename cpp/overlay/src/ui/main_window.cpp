@@ -1,6 +1,7 @@
 #include "inde/ui/author_diagnostics.hpp"
 #include "inde/ui/main_window.hpp"
 #include "publication_ui.hpp"
+#include "object_native_ui.hpp"
 #include "comic_service.hpp"
 #include "inde/application/contextual_planning.hpp"
 #include "inde/ui/author_vocabulary_dialog.hpp"
@@ -52,6 +53,17 @@ auto display = Gdk::Display::get_default();
   },2000);
 }
 
+void MainWindow::show_objects(){
+  if(!service_.current()||modal_host_.has_dialog())return;
+  if(!writing_workspace_.publication_ready()){
+    status_bar_.set_text("Aguarde o salvamento do texto na Escrita antes de abrir Objetos.");return;
+  }
+  try{
+    object_window_.reset();
+    object_window_=std::make_unique<ObjectDocumentWindow>(service_,*this,writing_workspace_.current_document_id());
+    object_window_->present();
+  }catch(const std::exception &e){show_error("Compor documento",e);}
+}
 MainWindow::~MainWindow() { publication_retry_.disconnect(); if(publication_token_)modal_host_.dismiss_dialog(publication_token_); publication_page_.reset(); context_save_.disconnect(); maximize_idle_.disconnect(); }
 
 void MainWindow::build_ui() {
@@ -93,6 +105,9 @@ void MainWindow::build_ui() {
   header_.pack_start(new_button_);
   header_.pack_start(open_button_);
   header_.pack_start(publication_button_);
+  header_.pack_start(object_button_);
+  object_button_.set_action_name("win.document-objects");
+  object_button_.set_tooltip_text("Compor o documento selecionado com figuras, tabelas, fórmulas e matemática");
   publication_button_.set_action_name("win.web-publication");
   header_.pack_end(application_menu_);
   appearance_menu_.set_icon_name("weather-clear-symbolic");
@@ -129,7 +144,7 @@ void MainWindow::build_ui() {
   save_button_.set_sensitive(false);
   save_as_button_.set_sensitive(false);
   close_button_.set_sensitive(false);
-  publication_button_.set_sensitive(false);
+  publication_button_.set_sensitive(false);object_button_.set_sensitive(false);
   sidebar_toggle_.set_sensitive(false);
   inspector_toggle_.set_sensitive(false);
   inspector_toggle_.set_visible(false);
@@ -339,7 +354,7 @@ void MainWindow::update_project_view() {
   save_button_.set_sensitive(true);
   save_as_button_.set_sensitive(true);
   close_button_.set_sensitive(true);
-  publication_button_.set_sensitive(true);
+  publication_button_.set_sensitive(true);object_button_.set_sensitive(true);
   stack_.set_visible_child("project");
   refresh_recents();
   const auto group = project_preference_group(current->manifest().project_id);
@@ -477,6 +492,7 @@ void MainWindow::show_workspace(WorkspaceId workspace) {
 }
 
 void MainWindow::setup_actions() {
+  add_action("document-objects", sigc::mem_fun(*this, &MainWindow::show_objects));
   add_action("web-publication", sigc::mem_fun(*this, &MainWindow::show_publication));
   add_action("toggle-focus", [this] {
     if (!modal_host_.has_dialog() && service_.current() && workspace_shell_.current() == WorkspaceId::Writing)
@@ -664,7 +680,7 @@ void MainWindow::create_project() {
       auto path = std::filesystem::path(file->get_path());
       auto name = path.stem().string();
       service_.create(path, name.empty() ? "Novo projeto" : name);
-      comic_workspace_.reset();
+      comic_workspace_.reset();object_window_.reset();
       review_workspace_.reset();
       planning_workspace_.reset();
       writing_workspace_.reset();
@@ -704,7 +720,7 @@ void MainWindow::open_project_at(const std::filesystem::path &path) {
     remember_context();
     review_workspace_.reset();
     service_.open(path);
-    comic_workspace_.reset();
+    comic_workspace_.reset();object_window_.reset();
     planning_workspace_.reset();
     writing_workspace_.reset();
     update_project_view();
@@ -718,6 +734,7 @@ void MainWindow::save_project() {
   if(modal_host_.has_dialog())return;
   try {
     comic_workspace_.save_changes();
+    if(object_window_ && service_.current())object_window_->save_for_project(service_.current()->path());
     writing_workspace_.flush_changes();
     remember_context();
     service_.save();
@@ -753,7 +770,7 @@ void MainWindow::save_project_as() {
       service_.save_as(file->get_path());
       publication_service_.adopt_project_copy(previous_publication_owner);
       comic::Service(publication_service_).adopt_project_copy(previous_publication_owner);
-      comic_workspace_.reset();
+      comic_workspace_.reset();object_window_.reset();
       writing_workspace_.reset(); // The copied project has a new persistence context.
       update_project_view();
       status_bar_.set_text(
@@ -774,7 +791,7 @@ void MainWindow::close_project() {
     review_workspace_.reset();
     focus_button_.set_active(false);
     focus_button_.set_sensitive(false);
-    comic_workspace_.reset();
+    comic_workspace_.reset();object_window_.reset();
     service_.close();
   } catch (const std::exception &error) {
     show_error("Não foi possível fechar o projeto", error);
@@ -797,7 +814,7 @@ void MainWindow::close_project() {
   save_button_.set_sensitive(false);
   save_as_button_.set_sensitive(false);
   close_button_.set_sensitive(false);
-  publication_button_.set_sensitive(false);
+  publication_button_.set_sensitive(false);object_button_.set_sensitive(false);
   sidebar_toggle_.set_sensitive(false);
   inspector_toggle_.set_sensitive(false);
   inspector_toggle_.set_visible(false);
@@ -807,6 +824,7 @@ void MainWindow::close_project() {
 }
 
 bool MainWindow::on_close_request() {
+  if(object_window_ && object_window_->get_visible()){object_window_->close();return true;}
   if(!guard_comic_project_change())return true;
   if(publication_token_ || publication_retry_.connected()){
     if(publication_page_ && !publication_page_->can_leave())return true;

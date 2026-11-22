@@ -13,6 +13,8 @@ substitui os textos legais instalados pelos pacotes da sua distribuição.
 | Ninja (opcional) | execução do build | Apache License 2.0; <https://github.com/ninja-build/ninja/blob/master/COPYING> |
 | GTK 4 | toolkit da interface | GNU LGPL 2.1 ou posterior; <https://www.gtk.org/> |
 | gtkmm 4 | bindings C++ de GTK | GNU LGPL 2.1 ou posterior; <https://gtkmm.gnome.org/> |
+| WebKitGTK 6.0 | apresentação local do documento composto dentro do GTK | termos próprios dos componentes WebKitGTK; consulte os avisos do pacote instalado e <https://webkitgtk.org/> |
+| KaTeX 0.19.1 | renderização matemática local, JavaScript/CSS/fontes | MIT; [licença incluída](tools/obj01-pilot/vendor/katex/LICENSE), [proveniência e integridade](tools/obj01-pilot/vendor/katex/PROVENANCE.json) |
 | GLib, Gio, Pango e Cairo | runtime, texto e desenho | LGPL 2.1 ou posterior, conforme cada componente e pacote da distribuição |
 | SQLite 3 | banco local no `.inde` | domínio público; <https://www.sqlite.org/copyright.html> |
 | libuuid (util-linux) | UUIDs persistentes | BSD 3-Clause; consulte o pacote `uuid-dev`/util-linux |

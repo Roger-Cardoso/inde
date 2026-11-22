@@ -80,3 +80,5 @@ add_test(NAME inde_object_table_structure_tests COMMAND ${Python3_EXECUTABLE} ${
 set_tests_properties(inde_object_table_structure_tests PROPERTIES TIMEOUT 300)
 add_test(NAME inde_object_table_structure_http_tests COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_LIST_DIR}/test_http_table_structure.py $<TARGET_FILE:inde_object_composite_pilot>)
 set_tests_properties(inde_object_table_structure_http_tests PROPERTIES TIMEOUT 180)
+add_test(NAME inde_object_equations_tests COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_LIST_DIR}/test_equations.py $<TARGET_FILE:inde_object_composite_pilot> $<TARGET_FILE:inde_object_composite_pilot_fault_driver>)
+set_tests_properties(inde_object_equations_tests PROPERTIES TIMEOUT 300)

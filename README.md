@@ -13,6 +13,10 @@ sh Abrir-INDE-especial.sh
 
 Use `sh Abrir-INDE-especial.sh --vazio` para iniciar sem abrir o projeto de demonstração.
 
+## Documentos por objetos e matemática
+
+Nesta branch, o botão **Objetos** abre a composição do documento selecionado na Escrita: figuras, tabelas, fórmulas e equações LaTeX editáveis, com salvamento dentro do projeto. Veja o [roteiro nativo](tools/obj01-pilot/NATIVO.md) e os limites de integração. A compilação acrescenta WebKitGTK 6.0 às dependências.
+
 ## Estrutura do repositório
 
 | Pasta | Conteúdo |

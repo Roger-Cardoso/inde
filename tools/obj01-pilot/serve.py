@@ -95,7 +95,7 @@ class Handler(BaseHTTPRequestHandler):
         self.send_header('Cache-Control', 'no-store')
         self.send_header('X-Content-Type-Options', 'nosniff')
         self.send_header('Referrer-Policy', 'no-referrer')
-        self.send_header('Content-Security-Policy', "default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' blob:; connect-src 'self'; object-src 'none'; base-uri 'none'; frame-ancestors 'none'")
+        self.send_header('Content-Security-Policy', "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' blob:; connect-src 'self'; object-src 'none'; base-uri 'none'; frame-ancestors 'none'")
         self.end_headers()
         self.wfile.write(body)
 
@@ -112,8 +112,17 @@ class Handler(BaseHTTPRequestHandler):
         if not self.host_ok():
             return self.reply(403, {'accepted': False, 'error': 'origin_forbidden'})
         assets = {'/': ('index.html', 'text/html; charset=utf-8'),
+                  '/native.js': ('native.js', 'text/javascript; charset=utf-8'),
                   '/app.js': ('app.js', 'text/javascript; charset=utf-8'),
                   '/style.css': ('style.css', 'text/css; charset=utf-8')}
+        if path.startswith('/vendor/katex/'):
+            name = path.removeprefix('/vendor/katex/')
+            if name in {'katex.min.js', 'katex.min.css'} or (name.startswith('fonts/') and '/' not in name[6:] and name.endswith('.woff2')):
+                file = ASSETS / 'vendor' / 'katex' / name
+                if file.is_file():
+                    mime = 'text/javascript' if name.endswith('.js') else 'text/css' if name.endswith('.css') else 'font/woff2'
+                    return self.reply(200, file.read_bytes(), mime)
+            return self.reply(404, {'accepted': False, 'error': 'not_found'})
         if path in assets:
             file, mime = assets[path]
             return self.reply(200, (ASSETS / file).read_bytes(), mime)
@@ -151,7 +160,7 @@ class Handler(BaseHTTPRequestHandler):
             if len(raw) != size:
                 return self.reply(400, {'accepted': False, 'error': 'incomplete_request'})
             data = json.loads(raw)
-            if not isinstance(data, dict) or data.get('op') not in {'import', 'duplicate', 'move', 'arrange', 'arrange_objects', 'set_presentation', 'reset_presentation', 'edit_table_design', 'restore_removed', 'stack', 'restore', 'save', 'reopen', 'select', 'create_table', 'create_table_sized', 'insert_table_axis', 'remove_table_axis', 'restore_table_axis', 'edit_cell', 'select_cell', 'remove', 'undo', 'redo', 'set_context', 'reorder_text', 'reopen_working', 'export_legacy', 'create_formula', 'edit_formula', 'execute_formula', 'reset_formula_variable', 'attach_formula', 'detach_formula', 'edit_formula_text', 'create_formula_cards', 'edit_formula_cards', 'preview_formula_cards', 'create_formula_hub', 'edit_formula_hub', 'preview_formula_hub'}:
+            if not isinstance(data, dict) or data.get('op') not in {'import', 'duplicate', 'move', 'arrange', 'arrange_objects', 'set_presentation', 'reset_presentation', 'edit_table_design', 'restore_removed', 'stack', 'restore', 'save', 'reopen', 'select', 'create_table', 'create_equation', 'edit_equation', 'create_table_sized', 'insert_table_axis', 'remove_table_axis', 'restore_table_axis', 'edit_cell', 'select_cell', 'remove', 'undo', 'redo', 'set_context', 'reorder_text', 'reopen_working', 'export_legacy', 'create_formula', 'edit_formula', 'execute_formula', 'reset_formula_variable', 'attach_formula', 'detach_formula', 'edit_formula_text', 'create_formula_cards', 'edit_formula_cards', 'preview_formula_cards', 'create_formula_hub', 'edit_formula_hub', 'preview_formula_hub'}:
                 return self.reply(400, {'accepted': False, 'error': 'unsupported_operation'})
             self.reply(200, self.server.engine.request(data))
         except (ValueError, UnicodeError, RecursionError):

@@ -4,6 +4,7 @@
 #include <functional>
 #include <memory>
 
+namespace inde::project { struct Document; }
 namespace inde::objects::pilot {
 // The owner serializer uses default stream precision. Pilot geometry requires
 // round-trippable doubles; this isolated codec preserves max_digits10.
@@ -26,6 +27,10 @@ public:
                    Profile profile = Profile::P2A,
                    const std::filesystem::path &seed_previous = {},
                    PersistenceHook hook = {});
+  // Explicit native entry point: binds a composition to a real project document.
+  // The legacy pilot constructor still rejects canonical .inde paths.
+  Session(const std::filesystem::path &workspace, const std::string &project_id,
+          const project::Document &document);
   ~Session();
   Session(const Session &) = delete;
   Session &operator=(const Session &) = delete;

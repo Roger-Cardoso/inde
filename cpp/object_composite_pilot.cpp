@@ -463,6 +463,9 @@ struct State {
   bool composition_v2 = false;
   bool table_design_v1 = false;
   bool table_structure_v1 = false;
+  bool equations_v1 = false;
+  std::map<std::string, V> equations;
+  std::vector<std::string> removed_equations;
   std::map<std::string, TableAxes> table_structure;
   std::map<std::string, V> table_styles;
   std::vector<std::string> removed_text;
@@ -586,6 +589,11 @@ Composition graph(const State &s,
     g.objects.push_back({f.id, ObjectKind::Formula, {}, {}});
   for (const auto &f : s.formula_uses)
     g.occurrences.push_back({f.occurrence, f.object, {}});
+  for (const auto &[id, e] : s.equations) {
+    g.objects.push_back({e.at("object").as_string(), ObjectKind::Equation, {}, {}});
+    if (std::find(s.removed_equations.begin(), s.removed_equations.end(), id) == s.removed_equations.end())
+      g.occurrences.push_back({id, e.at("object").as_string(), {}});
+  }
   auto &children = g.layouts.front().children;
   children.clear();
   for (const auto &id : s.visual) {
@@ -799,6 +807,26 @@ void validate(const State &s, bool decode_media = true) {
     table_check(t, true);
   for (const auto &t : s.archived_tables)
     table_check(t, false);
+  if ((!s.equations_v1 && (!s.equations.empty() || !s.removed_equations.empty())) ||
+      (s.equations_v1 && !s.table_structure_v1) || s.equations.size() > 64)
+    fail("invalid_equation_version");
+  std::set<std::string> hidden_equations;
+  for (const auto &id : s.removed_equations)
+    if (!s.equations.contains(id) || !hidden_equations.insert(id).second)
+      fail("invalid_removed_equation");
+  for (const auto &[id, e] : s.equations) {
+    fields(e, {"object", "source", "mode", "label", "revision"});
+    text(id, 256); text(e.at("object").as_string(), 256);
+    text(e.at("source").as_string(), 16384); text(e.at("label").as_string(), 256);
+    if (id.empty() || e.at("object").as_string().empty() ||
+        !nested_ids.insert(id).second || !nested_ids.insert(e.at("object").as_string()).second ||
+        e.at("source").as_string().empty() || e.at("revision").as_integer() < 0 ||
+        (e.at("mode").as_string() != "inline" && e.at("mode").as_string() != "block"))
+      fail("invalid_equation");
+    if (!hidden_equations.contains(id) && !expected.insert(id).second)
+      fail("identity_collision");
+    string_bytes += id.size() + encode_json(e).size();
+  }
   if (s.table_structure.size() > s.tables.size() + s.archived_tables.size())
     fail("invalid_table_structure");
   for (const auto &[id, a] : s.table_structure) {
@@ -1036,6 +1064,7 @@ void validate(const State &s, bool decode_media = true) {
   }
   std::set<std::string> known = expected;
   known.insert(removed.begin(), removed.end());
+  known.insert(s.removed_equations.begin(), s.removed_equations.end());
   for (const auto &f : s.archived_figures)
     known.insert(f.occurrence);
   for (const auto &t : s.archived_tables)
@@ -1201,7 +1230,8 @@ V encode(const State &s) {
                                 {"second", r.second},
                                 {"gap", r.gap}});
   V::Object result{
-      {"format", s.table_structure_v1 ? "INDE-OBJ01-COMPOSITE-P2D2-4"
+      {"format", s.equations_v1 ? "INDE-OBJ01-COMPOSITE-P2D2-5"
+                 : s.table_structure_v1 ? "INDE-OBJ01-COMPOSITE-P2D2-4"
                  : s.table_design_v1  ? "INDE-OBJ01-COMPOSITE-P2D2-3"
                  : s.composition_v2   ? "INDE-OBJ01-COMPOSITE-P2D2-2"
                  : s.p2d2             ? "INDE-OBJ01-COMPOSITE-P2D2-1"
@@ -1239,6 +1269,12 @@ V encode(const State &s) {
             id, V::Object{{"removed_rows", array(a.removed_rows)},
                           {"removed_columns", array(a.removed_columns)}});
       composition.emplace("table_structure", std::move(tables));
+    }
+    if (s.equations_v1) {
+      V::Object equations;
+      for (const auto &[id, e] : s.equations) equations.emplace(id, e);
+      composition.emplace("equations", std::move(equations));
+      composition.emplace("removed_equations", array(s.removed_equations));
     }
     result.emplace("composition", std::move(composition));
   }
@@ -1310,7 +1346,8 @@ State decode(const std::string &bytes) {
   const auto v = persistence::json::parse(bytes);
   const auto format = v.at("format").as_string();
   State s;
-  s.table_structure_v1 = format == "INDE-OBJ01-COMPOSITE-P2D2-4";
+  s.equations_v1 = format == "INDE-OBJ01-COMPOSITE-P2D2-5";
+  s.table_structure_v1 = s.equations_v1 || format == "INDE-OBJ01-COMPOSITE-P2D2-4";
   s.table_design_v1 =
       s.table_structure_v1 || format == "INDE-OBJ01-COMPOSITE-P2D2-3";
   s.composition_v2 =
@@ -1326,6 +1363,13 @@ State decode(const std::string &bytes) {
     if (s.composition_v2) {
       const auto &c = v.at("composition");
       auto composition = c.as_object();
+      if (s.equations_v1) {
+        const auto &equations = c.at("equations").as_object();
+        if (equations.size() > 64) fail("equation_limit");
+        for (const auto &[id, e] : equations) s.equations.emplace(id, e);
+        s.removed_equations = strings(c.at("removed_equations"), 64);
+        composition.erase("equations"); composition.erase("removed_equations");
+      }
       if (s.table_structure_v1) {
         const auto &tables = c.at("table_structure").as_object();
         if (tables.size() > 64)
@@ -1635,8 +1679,11 @@ struct Session::Impl {
   std::vector<State> undo, redo;
   static constexpr std::size_t history_limit = 32, history_bytes = 32 * mib;
 
+  bool native_document = false;
   explicit Impl(std::filesystem::path path, Profile profile,
-                const std::filesystem::path &seed, PersistenceHook callback)
+                const std::filesystem::path &seed, PersistenceHook callback,
+                const project::Document *owner = nullptr,
+                const std::string &owner_project = {})
       : workspace(
             std::filesystem::absolute(std::move(path)).lexically_normal()),
         p2b(profile != Profile::P2A),
@@ -1644,8 +1691,9 @@ struct Session::Impl {
             profile == Profile::P2D2),
         p2d(profile == Profile::P2D || profile == Profile::P2D2),
         p2d2(profile == Profile::P2D2), hook(std::move(callback)) {
+    native_document = owner != nullptr;
     for (const auto &part : workspace)
-      if (part.extension() == ".inde")
+      if (!native_document && part.extension() == ".inde")
         fail("legacy_project_path_forbidden");
     if (::mkdir(workspace.c_str(), 0700) != 0 && errno != EEXIST)
       fail("workspace_creation_failed");
@@ -1668,7 +1716,14 @@ struct Session::Impl {
     if (!seed.empty() && (!p2b || exists))
       fail("seed_requires_new_p2b_workspace");
     if (!exists) {
-      if (seed.empty())
+      if (owner) {
+        working.project = owner_project;
+        working.source = persistence::encode_document_snapshot(*owner);
+        working.source_hash = sha(working.source);
+        const auto p = projection(working);
+        for (const auto &b : p->paragraphs()) working.author.push_back(b.occurrence_id);
+        working.visual = working.author;
+      } else if (seed.empty())
         working = fixture();
       else {
         const auto source_path =
@@ -2122,6 +2177,11 @@ struct Session::Impl {
                                    {"horizontal", s.horizontal},
                                    {"text_align", s.text_align},
                                    {"vertical", s.vertical}});
+    V::Array equations;
+    for (const auto &[id, e] : working.equations)
+      if (std::find(working.removed_equations.begin(), working.removed_equations.end(), id) == working.removed_equations.end()) {
+        auto v = e.as_object(); v.emplace("id", id); equations.emplace_back(v);
+      }
     V::Array removed_items;
     for (const auto &g : p->reading_groups())
       if (removed.contains(g.occurrence_ids.front())) {
@@ -2147,6 +2207,8 @@ struct Session::Impl {
                                            {"kind", "table"},
                                            {"label", t.title},
                                            {"count", 1}});
+    for (const auto &id : working.removed_equations)
+      removed_items.emplace_back(V::Object{{"id", id}, {"kind", "equation"}, {"label", working.equations.at(id).at("label")}, {"count", 1}});
     for (const auto &u : working.retired_formula_uses) {
       const auto f =
           std::find_if(working.formulas.begin(), working.formulas.end(),
@@ -2229,7 +2291,12 @@ struct Session::Impl {
         {"table_design_defaults", p2d2 ? table_design::defaults() : V{}},
         {"table_design_presets",
          p2d2 ? table_design::presets() : V(V::Array{})},
-        {"composition_version", working.table_structure_v1 ? 4
+        {"native_document", native_document},
+        {"document_title", p->source_snapshot().title},
+        {"equations", std::move(equations)},
+        {"equations_supported", p2d2},
+        {"composition_version", working.equations_v1 ? 5
+                                : working.table_structure_v1 ? 4
                                 : working.table_design_v1  ? 3
                                 : working.composition_v2   ? 2
                                                            : 1},
@@ -2524,9 +2591,9 @@ struct Session::Impl {
             op == "edit_cell" || op == "edit_formula" ||
             op == "execute_formula" || op == "edit_formula_text" ||
             op == "edit_formula_cards" || op == "edit_formula_hub" ||
-            op == "reset_formula_variable";
+            op == "reset_formula_variable" || op == "edit_equation";
         const bool structure =
-            op == "create_table" || op == "create_table_sized" ||
+            op == "create_equation" || op == "create_table" || op == "create_table_sized" ||
             op == "insert_table_axis" || op == "remove_table_axis" ||
             op == "restore_table_axis" || op == "import" || op == "duplicate" ||
             op == "move" || op == "remove" || op == "restore_removed" ||
@@ -2856,6 +2923,28 @@ struct Session::Impl {
                 bump(f->revision);
             }
           }
+        } else if (op == "create_equation" || op == "edit_equation") {
+          if (!p2d2) fail("p2d2_profile_required");
+          if (op == "create_equation") fields(v, {"op", "expected", "source", "mode", "label", "before"});
+          else fields(v, {"op", "expected", "id", "source", "mode", "label"});
+          candidate.composition_v2 = candidate.table_design_v1 = candidate.table_structure_v1 = candidate.equations_v1 = true;
+          std::string id;
+          std::int64_t revision = 0;
+          std::string object;
+          if (op == "create_equation") {
+            if (candidate.author != candidate.visual) fail("authorial_requires_alignment");
+            id = project::new_uuid(); object = project::new_uuid();
+            insert_id(candidate, id, v.at("before").as_string());
+          } else {
+            id = v.at("id").as_string(); require_active(candidate, id);
+            const auto e = candidate.equations.find(id);
+            if (e == candidate.equations.end()) fail("equation_not_found");
+            object = e->second.at("object").as_string(); revision = e->second.at("revision").as_integer();
+            if (revision == std::numeric_limits<std::int64_t>::max()) fail("revision_limit");
+            ++revision;
+          }
+          candidate.equations[id] = V::Object{{"object", object}, {"source", v.at("source")}, {"mode", v.at("mode")}, {"label", v.at("label")}, {"revision", revision}};
+          candidate.selection = id; candidate.selected_cell.clear();
         } else if (op == "create_table" || op == "create_table_sized") {
           if (!p2b)
             fail("p2b_profile_required");
@@ -3009,7 +3098,9 @@ struct Session::Impl {
           const auto t =
               std::find_if(candidate.tables.begin(), candidate.tables.end(),
                            [&](const auto &t) { return t.occurrence == id; });
-          if (f != candidate.figures.end()) {
+          if (candidate.equations.contains(id)) {
+            require_active(candidate, id); candidate.removed_equations.push_back(id);
+          } else if (f != candidate.figures.end()) {
             candidate.archived_figures.push_back(*f);
             candidate.figures.erase(f);
           } else if (t != candidate.tables.end()) {
@@ -3086,7 +3177,10 @@ struct Session::Impl {
             candidate.removed_text.erase(hidden);
             place_text(candidate, *p, *g, before);
           } else {
-            if (f != candidate.archived_figures.end()) {
+            const auto equation = std::find(candidate.removed_equations.begin(), candidate.removed_equations.end(), id);
+            if (equation != candidate.removed_equations.end()) {
+              candidate.removed_equations.erase(equation);
+            } else if (f != candidate.archived_figures.end()) {
               candidate.figures.push_back(*f);
               candidate.archived_figures.erase(f);
             } else if (t != candidate.archived_tables.end()) {
@@ -3162,6 +3256,7 @@ struct Session::Impl {
                     candidate.formula_uses.begin(),
                     candidate.formula_uses.end(),
                     [&](const auto &u) { return u.occurrence == id; }) &&
+                !candidate.equations.contains(id) &&
                 !(p2d2 && paragraph != source->paragraphs().end()) &&
                 (!p2b ||
                  std::none_of(
@@ -3376,6 +3471,13 @@ struct Session::Impl {
 Session::Session(const std::filesystem::path &path, Profile profile,
                  const std::filesystem::path &seed, PersistenceHook hook)
     : impl_(std::make_unique<Impl>(path, profile, seed, std::move(hook))) {}
+Session::Session(const std::filesystem::path &path, const std::string &project_id,
+                 const project::Document &document)
+    : impl_(std::make_unique<Impl>(path, Profile::P2D2, std::filesystem::path{},
+                                  PersistenceHook{}, &document, project_id)) {
+  if (impl_->working.source != persistence::encode_document_snapshot(document))
+    fail("native_document_source_changed");
+}
 Session::~Session() = default;
 persistence::json::Value Session::request(const persistence::json::Value &v) {
   return impl_->request(v);

@@ -6,6 +6,12 @@ on:
     paths:
       - cpp/object_*
       - cpp/CMakeLists.txt
+      - cpp/integrar_objetos.py
+      - cpp/integrar_gtk.py
+      - cpp/overlay/**
+      - cpp/publication_service.cpp
+      - cpp/service_tests.cpp
+      - tests/test_obj01_native.py
       - tests/run_object_model_tests.sh
       - tests/object_model/**
       - tests/object_document/**
@@ -26,6 +32,7 @@ on:
       - scripts/demos/Abrir-demo-obj01-composicao.sh
       - scripts/demos/Abrir-demo-obj01-tabelas.sh
       - scripts/demos/Abrir-demo-obj01-estrutura-tabelas.sh
+      - scripts/demos/Abrir-demo-objetos-nativos.sh
       - tests/audit_obj01_sources.py
       - tests/test_obj01_source_audit.py
       - fontes/*.tar.gz
@@ -38,6 +45,12 @@ on:
     paths:
       - cpp/object_*
       - cpp/CMakeLists.txt
+      - cpp/integrar_objetos.py
+      - cpp/integrar_gtk.py
+      - cpp/overlay/**
+      - cpp/publication_service.cpp
+      - cpp/service_tests.cpp
+      - tests/test_obj01_native.py
       - tests/run_object_model_tests.sh
       - tests/object_model/**
       - tests/object_document/**
@@ -58,6 +71,7 @@ on:
       - scripts/demos/Abrir-demo-obj01-composicao.sh
       - scripts/demos/Abrir-demo-obj01-tabelas.sh
       - scripts/demos/Abrir-demo-obj01-estrutura-tabelas.sh
+      - scripts/demos/Abrir-demo-objetos-nativos.sh
       - tests/audit_obj01_sources.py
       - tests/test_obj01_source_audit.py
       - fontes/*.tar.gz
@@ -240,3 +254,23 @@ jobs:
           ASAN_OPTIONS: detect_leaks=1:halt_on_error=1
           UBSAN_OPTIONS: halt_on_error=1:print_stacktrace=1
         run: ctest --test-dir build-obj01-session --output-on-failure
+
+  native-objects:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+      - name: Install native editor dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install --yes build-essential cmake ninja-build pkg-config libgtkmm-4.0-dev libwebkitgtk-6.0-dev libsqlite3-dev uuid-dev libicu-dev libhunspell-dev libenchant-2-2 hunspell-pt-br xauth xvfb
+      - name: Extract verified sources
+        run: python3 verificar_base.py --integrado --extrair
+      - name: Configure actual INDE application
+        run: cmake -S cpp -B build-nativo -G Ninja -DCMAKE_BUILD_TYPE=Release -DINDE_BUILD_CORE_TESTS=ON
+      - name: Compile actual application and project-bound tests
+        run: cmake --build build-nativo --target inde inde_object_native_tests inde_web_bridge inde_publication_tests --parallel 2
+      - name: Verify project binding and actual GTK document workflow
+        run: xvfb-run -a python3 -m unittest discover -s tests -p test_obj01_native.py -v
+      - name: Verify existing publication and refusal of unsupported composition
+        run: python3 -m unittest discover -s tests -p test_sessao_nativa.py -v

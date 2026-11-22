@@ -2,6 +2,7 @@
 from pathlib import Path
 import sys
 from integrar_workspace import expand
+from integrar_objetos import expand as expand_objects
 base, out = map(Path, sys.argv[1:])
 def emit(name, replacements):
     text = (base / name).read_text()
@@ -9,7 +10,7 @@ def emit(name, replacements):
         if before not in text:
             raise RuntimeError('A base mudou: ' + name + ': ' + before[:60])
         text = text.replace(before, after)
-    text = expand(name, text)
+    text = expand_objects(name, expand(name, text))
     path = out / name
     path.parent.mkdir(parents=True, exist_ok=True)
     if not path.exists() or path.read_text() != text:
