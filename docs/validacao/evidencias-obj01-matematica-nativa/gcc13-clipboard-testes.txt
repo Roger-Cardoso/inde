@@ -1,0 +1,7 @@
+Test project /home/roger/Documents/Projects/GitHub/INDE/obj01-audit/build-nativo
+    Start 56: inde_editor_scale_tests
+1/1 Test #56: inde_editor_scale_tests ..........   Passed    0.90 sec
+
+100% tests passed out of 1
+
+Total Test time (real) =   0.90 sec

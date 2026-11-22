@@ -1,0 +1,18 @@
+{
+  "dados/obj01-objetos-nativos/Projeto.inde/data/project.sqlite3": {
+    "integrity": "ok",
+    "foreign_keys": [],
+    "user_version": 0,
+    "canonical_schema": 37
+  },
+  "dados/obj01-objetos-nativos/Projeto.inde/documents/composed/9b086909-0385-4c1d-885e-9edb7eaa9d5a/obj01-piloto.sqlite3": {
+    "integrity": "ok",
+    "foreign_keys": [],
+    "user_version": 5,
+    "format": "INDE-OBJ01-COMPOSITE-P2D2-5",
+    "equations": 3,
+    "figures": 1,
+    "tables": 1,
+    "saved_matches_working": true
+  }
+}

@@ -145,3 +145,10 @@ O pedido do usuário foi implementado no [contrato de tabelas visuais](TABELAS-V
 ## Atualização — estrutura recuperável de tabelas, 2026-11-22
 
 A continuação acrescenta [criação com dimensões escolhidas e linhas/colunas recuperáveis](ESTRUTURA-TABELAS-OBJ-01.md), com [validação própria](../validacao/VALIDACAO-OBJ-01-ESTRUTURA-TABELAS.md). A grade conhecida conserva células, fórmulas e estilos durante retirada/restauração; o editor de aparência acompanha a grade visível. Foi corrigida uma falha de histórico demonstrada ao desfazer fórmula em linha recém-inserida. Snapshot privado V4 explícito, auxiliar SQLite 5, sem migração das demos anteriores ou de projetos reais, GTK/publicação ou início de Fase 3. Isso não declara concluída a composição documental inteira nem substitui o aceite humano.
+
+
+## Atualização — matemática e integração nativa, 2026-11-22
+
+O usuário autorizou acrescentar a parte matemática inspirada em LaTeX e levar ao INDE real as capacidades implementadas. A nova integração abre **Objetos** a partir do documento selecionado na Escrita, no aplicativo GTK, usando o mesmo motor C++ em processo e armazenamento dentro do projeto. O [roteiro nativo](../../tools/obj01-pilot/NATIVO.md) registra as capacidades e os limites. Essa autorização substitui a exclusão de GTK dos cortes experimentais anteriores; não autoriza alterar main ou migrar obras autorais automaticamente.
+
+Equação apresenta fonte LaTeX/MathML e é distinta de Fórmula calculável. A origem textual permanece preservada; sua reconciliação após edição na Escrita, vínculos de variáveis com entidades reais, serviço compartilhado com Comic, publicação dos objetos e `.inde` único continuam pendentes. A integração nativa não encerra por si só todos os marcos de composição, recursos e publicação. Aprovação técnica e revisão humana permanecem separadas.

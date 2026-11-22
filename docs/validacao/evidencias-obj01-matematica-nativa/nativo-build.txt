@@ -1,0 +1,5 @@
+[1/5] Linking CXX executable inde_web_bridge
+[2/5] Building CXX object inde-base/CMakeFiles/inde.dir/home/roger/Documents/Projects/GitHub/INDE/obj01-audit/cpp/object_native_ui.cpp.o
+[3/5] Building CXX object inde-base/CMakeFiles/inde.dir/home/roger/Documents/Projects/GitHub/INDE/obj01-audit/cpp/object_native_smoke.cpp.o
+[4/5] Building CXX object inde-base/CMakeFiles/inde.dir/home/roger/Documents/Projects/GitHub/INDE/obj01-audit/cpp/overlay/src/ui/main_window.cpp.o
+[5/5] Linking CXX executable inde-especial

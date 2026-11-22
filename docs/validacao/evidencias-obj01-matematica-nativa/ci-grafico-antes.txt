@@ -1,0 +1,28 @@
+native-objects	Verify project binding and actual GTK document workflow	﻿2026-11-22T22:26:02.0201705Z ##[group]Run xvfb-run -a python3 -m unittest discover -s tests -p test_obj01_native.py -v
+native-objects	Verify project binding and actual GTK document workflow	2026-11-22T22:26:02.0202236Z ^[[36;1mxvfb-run -a python3 -m unittest discover -s tests -p test_obj01_native.py -v^[[0m
+native-objects	Verify project binding and actual GTK document workflow	2026-11-22T22:26:02.0229988Z shell: /usr/bin/bash -e {0}
+native-objects	Verify project binding and actual GTK document workflow	2026-11-22T22:26:02.0230206Z ##[endgroup]
+native-objects	Verify project binding and actual GTK document workflow	2026-11-22T22:26:04.9998146Z test_project_binding_copy_recovery_and_source_conflict (test_obj01_native.NativeObjects.test_project_binding_copy_recovery_and_source_conflict) ... ok
+native-objects	Verify project binding and actual GTK document workflow	2026-11-22T22:26:35.3916510Z test_real_gtk_entry_math_objects_save_reopen_and_draft_guard (test_obj01_native.NativeObjects.test_real_gtk_entry_math_objects_save_reopen_and_draft_guard) ... FAIL
+native-objects	Verify project binding and actual GTK document workflow	2026-11-22T22:26:35.3917459Z
+native-objects	Verify project binding and actual GTK document workflow	2026-11-22T22:26:35.3919624Z ======================================================================
+native-objects	Verify project binding and actual GTK document workflow	2026-11-22T22:26:35.3920657Z FAIL: test_real_gtk_entry_math_objects_save_reopen_and_draft_guard (test_obj01_native.NativeObjects.test_real_gtk_entry_math_objects_save_reopen_and_draft_guard)
+native-objects	Verify project binding and actual GTK document workflow	2026-11-22T22:26:35.3921705Z ----------------------------------------------------------------------
+native-objects	Verify project binding and actual GTK document workflow	2026-11-22T22:26:35.3928280Z Traceback (most recent call last):
+native-objects	Verify project binding and actual GTK document workflow	2026-11-22T22:26:35.3929099Z   File "/home/runner/work/inde/inde/tests/test_obj01_native.py", line 17, in test_real_gtk_entry_math_objects_save_reopen_and_draft_guard
+native-objects	Verify project binding and actual GTK document workflow	2026-11-22T22:26:35.3929964Z     self.assertEqual(r.returncode,0,r.stdout+r.stderr);self.assertIn('owner preservation OK',r.stdout)
+native-objects	Verify project binding and actual GTK document workflow	2026-11-22T22:26:35.3930524Z     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+native-objects	Verify project binding and actual GTK document workflow	2026-11-22T22:26:35.3931027Z AssertionError: -5 != 0 : libEGL warning: DRI3 error: Could not get DRI3 device
+native-objects	Verify project binding and actual GTK document workflow	2026-11-22T22:26:35.3931633Z libEGL warning: Ensure your X server supports DRI3 to get accelerated rendering
+native-objects	Verify project binding and actual GTK document workflow	2026-11-22T22:26:35.3932056Z
+native-objects	Verify project binding and actual GTK document workflow	2026-11-22T22:26:35.3933129Z (inde-especial:7193): Gtk-WARNING **: 22:26:30.696: Unable to acquire the address of the accessibility bus: GDBus.Error:org.freedesktop.DBus.Error.ServiceUnknown: The name org.a11y.Bus was not provided by any .service files. If you are attempting to run GTK without a11y support, GTK_A11Y should be set to 'none'.
+native-objects	Verify project binding and actual GTK document workflow	2026-11-22T22:26:35.3934696Z bwrap: loopback: Failed RTM_NEWADDR: Operation not permitted
+native-objects	Verify project binding and actual GTK document workflow	2026-11-22T22:26:35.3935321Z
+native-objects	Verify project binding and actual GTK document workflow	2026-11-22T22:26:35.3935887Z ** (inde-especial:7193): ERROR **: 22:26:32.510: Connection: failed to receive credentials: Expecting to read a single byte for receiving credentials but read zero bytes
+native-objects	Verify project binding and actual GTK document workflow	2026-11-22T22:26:35.3936549Z
+native-objects	Verify project binding and actual GTK document workflow	2026-11-22T22:26:35.3936640Z
+native-objects	Verify project binding and actual GTK document workflow	2026-11-22T22:26:35.3936867Z ----------------------------------------------------------------------
+native-objects	Verify project binding and actual GTK document workflow	2026-11-22T22:26:35.3937291Z Ran 2 tests in 30.515s
+native-objects	Verify project binding and actual GTK document workflow	2026-11-22T22:26:35.3937534Z
+native-objects	Verify project binding and actual GTK document workflow	2026-11-22T22:26:35.3937698Z FAILED (failures=1)
+native-objects	Verify project binding and actual GTK document workflow	2026-11-22T22:26:35.4042901Z ##[error]Process completed with exit code 1.

@@ -1,0 +1,4 @@
+[INDE] Renderer compatibility: Cairo for Intel 8086:0102; explicit GSK_RENDERER overrides this default.
+
+** (inde-especial:90945): WARNING **: 18:29:28.882: Disabled hardware acceleration because GTK failed to initialize GL: GL support disabled via GDK_DEBUG.
+Fechou com rascunho

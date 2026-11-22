@@ -1,0 +1,7 @@
+test_project_binding_copy_recovery_and_source_conflict (test_obj01_native.NativeObjects.test_project_binding_copy_recovery_and_source_conflict) ... ok
+test_real_gtk_entry_math_objects_save_reopen_and_draft_guard (test_obj01_native.NativeObjects.test_real_gtk_entry_math_objects_save_reopen_and_draft_guard) ... ok
+
+----------------------------------------------------------------------
+Ran 2 tests in 13.560s
+
+OK

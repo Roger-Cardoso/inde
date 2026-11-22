@@ -1,0 +1,9 @@
+test_bundled_reader_and_public_package_exclude_private_source (test_sessao_nativa.NativeSessionTests.test_bundled_reader_and_public_package_exclude_private_source) ... ok
+test_public_numbers_come_from_persistent_reservations (test_sessao_nativa.NativeSessionTests.test_public_numbers_come_from_persistent_reservations) ... ok
+test_removed_or_incompatible_edition_is_refused (test_sessao_nativa.NativeSessionTests.test_removed_or_incompatible_edition_is_refused) ... ok
+test_service_crud_persistence_conflicts_restore_and_copy (test_sessao_nativa.NativeSessionTests.test_service_crud_persistence_conflicts_restore_and_copy) ... ok
+
+----------------------------------------------------------------------
+Ran 4 tests in 1.945s
+
+OK

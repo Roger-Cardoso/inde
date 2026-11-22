@@ -1,0 +1,6 @@
+{
+  "full_state_identical_to_previous_committed_evidence": true,
+  "baseline": "703ba822acd5e7acb256751481d505f7e09c9cf2",
+  "fixture": "dados/obj01-piloto-estrutura-tabelas",
+  "fields_compared": 45
+}

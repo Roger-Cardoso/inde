@@ -1,0 +1,22 @@
+{
+  "compiler": "GCC 13 -O3 -Werror, Release with LTO",
+  "clipboard": {
+    "before": "spans.push_back(Value::Object{",
+    "after": "spans.emplace_back(Value::Object{",
+    "reproduced_before_exit": 1,
+    "strict_compile_after_exit": 0,
+    "targeted_regression": "inde_editor_scale_tests passed"
+  },
+  "column_insertion": {
+    "before": "vector::insert with temporary JSON Value(double)",
+    "after": "construct inserted numeric JSON value in new array, copy existing values in order",
+    "targeted_regression": "four design/structure programs passed"
+  },
+  "diagnostics_suppressed": false,
+  "frozen_sources_changed": false,
+  "final_implementation": "943e4d8de5a03654ca12a5db0839d66de43364bd",
+  "clean_native_build": "passed, all 269 steps for requested application and helper targets",
+  "actual_gcc13_gtk_workflow": "passed",
+  "gcc13_ctest_scope": "native binding executable passed; the 61 other executables were not built in this independent build directory",
+  "full_62_suite": "passed under GCC15 Release; no claim of full GCC13 suite"
+}

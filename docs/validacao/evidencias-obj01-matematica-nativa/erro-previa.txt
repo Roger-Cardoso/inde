@@ -1,0 +1,30 @@
+Browser tab: 6, Title: "INDE · Compor o documento", URL: "http://127.0.0.1:39027/".
+0 AXWebArea INDE · Compor o documento, URL: 127.0.0.1:39027/
+	1 container Description: Editar matemática, ID: equation-dialog
+		2 heading Editar matemática, Value: 2
+			3 text Editar matemática
+		4 container
+			5 text Nome da equação
+			6 text field (settable) Description: Nome da equação, Value: Transformação
+		7 container
+			8 text Apresentação
+			9 pop up button (collapsed, settable) Description: Apresentação matemática, Value: Em destaque, Secondary Actions: Expand
+				10 menu
+					11 (selected) Em destaque
+					12 Compacta
+		13 button Fração
+		14 button Raiz
+		15 button Somatório
+		16 button Integral
+		17 button Matriz
+		18 button Sistema
+		19 container
+			20 text Fonte LaTeX
+			21 text entry area (settable) Description: Fonte LaTeX, Value: \frac{
+		22 text A fonte é preservada mesmo se houver erro de renderização. Equações apresentam matemática; Fórmulas calculam valores.
+		23 container Prévia matemática
+			24 text Confira a expressão: KaTeX parse error: Unexpected end of input in a macro argument, expected '}' at end of input: \frac{
+		25 button Cancelar
+		26 button Aplicar equação
+
+The focused UI element is 21 text entry area (settable) Description: Fonte LaTeX, Value: \frac{

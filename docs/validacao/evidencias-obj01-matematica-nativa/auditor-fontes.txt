@@ -1,0 +1,10 @@
+test_archive_hash_mismatch_precedes_extraction (test_obj01_source_audit.ArchiveAuditTests.test_archive_hash_mismatch_precedes_extraction) ... ok
+test_existing_destination_is_preserved (test_obj01_source_audit.ArchiveAuditTests.test_existing_destination_is_preserved) ... ok
+test_extract_and_compare_bytes (test_obj01_source_audit.ArchiveAuditTests.test_extract_and_compare_bytes) ... ok
+test_manifest_inventory_mismatch (test_obj01_source_audit.ArchiveAuditTests.test_manifest_inventory_mismatch) ... ok
+test_unsafe_and_duplicate_members (test_obj01_source_audit.ArchiveAuditTests.test_unsafe_and_duplicate_members) ... ok
+
+----------------------------------------------------------------------
+Ran 5 tests in 0.062s
+
+OK

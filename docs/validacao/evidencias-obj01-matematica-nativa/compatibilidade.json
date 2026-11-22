@@ -1,0 +1,8 @@
+{
+  "old_engine_base": "703ba822acd5e7acb256751481d505f7e09c9cf2",
+  "old_engine_sha256": "386a8bc93f6df9c7ffdaa85aa6af12dfb3e75d26833364341e59be3cea823694",
+  "new_snapshot": "INDE-OBJ01-COMPOSITE-P2D2-5",
+  "old_engine_exit": 1,
+  "old_engine_error": "OBJ-01: unsupported_snapshot_version",
+  "origin_and_db_unchanged": true
+}

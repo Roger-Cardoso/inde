@@ -52,3 +52,5 @@ O texto original e suas camadas não são substituídos pela composição. Se o 
 O publicador anterior recusa documentos que têm uma composição por objetos, pois ainda não há tradução completa desse conteúdo para Sites/Edições. A publicação dos demais documentos mantém o fluxo anterior. Não se gera uma publicação que omita os objetos silenciosamente.
 
 Continuam pendentes: vínculo das variáveis com entidades/pseudônimos reais, edição livre inline no corpo original, equações em células como conteúdo tipado, numeração/referências de equações, serviço comum com Comic, publicação dos objetos e `.inde` único. Esta entrega integra as capacidades implementadas ao aplicativo; não conclui automaticamente esses marcos futuros.
+
+Use os projetos com composição por objetos no aplicativo desta branch. Executáveis anteriores continuam lendo o corpo textual canônico e não apresentam essa composição; a nova proteção do publicador também pertence a esta branch e não modifica programas antigos já instalados. Preserve uma cópia separada ao experimentar entre versões.

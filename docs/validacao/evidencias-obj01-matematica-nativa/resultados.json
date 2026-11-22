@@ -1,0 +1,361 @@
+{
+  "date": "2026-11-22",
+  "branch": "feature/inde-obj-01-foundation",
+  "base_commit": "703ba822acd5e7acb256751481d505f7e09c9cf2",
+  "feature_commit": "9336b3d4986360b0e15e4b0299d98101e1130915",
+  "application_commit": "943e4d8de5a03654ca12a5db0839d66de43364bd",
+  "implementation_commit": "04e391438a604ef3097b7deea9b3200e3d9bac3b",
+  "scope": "LaTeX math source and local KaTeX rendering; actual GTK project-bound document editor using in-process C++ Session, project persistence and save; GCC13 Release portability fixes",
+  "runtime_sha256": {
+    ".github/workflows/build.yml": "f4bf1128cc81bedf3d6c02ba49556ba78e08fe5282bc565db16602321b822146",
+    ".github/workflows/obj-01.yml": "e903325ce3fd1614ac5a7ee244a63f06a1b17cbdca9eabae048648b272d05ec3",
+    "Preparar-INDE-especial.sh": "1544520cd0d96475c6f0e6e8339f3f5640a6d12bb669242d795c3d35aefef4f7",
+    "cpp/CMakeLists.txt": "0c6bac1b26e22ce1bd9329c024e64d3b542e8df09f90457ae283c83318778a5b",
+    "cpp/base_patches.json": "0e35be405d1efd14203e0a1376e2070d58f4a5b6761ea0d242cfd7ee50f5e3dc",
+    "cpp/integrar_gtk.py": "d0ab3ebb3da897ebd113e87b4324b9a1ae0b34ec65b92e20fe6236245d6b9bfe",
+    "cpp/integrar_objetos.py": "747720f5ddae4b10867a11b4bfe924dd4ba2882491de9c093017f64dee315beb",
+    "cpp/main_window_smoke.hpp": "f26e87f06a5bc4315342049c201706afe619494795b5d86c3f40289e6b5c8240",
+    "cpp/object_composite_pilot.cpp": "e004da06bde17f29d15aeb10a7ed472416c0bcc9ba5d0f4d11f7b9605cade2a2",
+    "cpp/object_composite_pilot.hpp": "3fbe40467aa3f5adcc0183d73855058f61f76e0c27705a2c75f1ae409a797b5b",
+    "cpp/object_native_smoke.cpp": "d7d07313de483ea6e6c1eb439540d404ec62446c992862467caba52fce0d2de1",
+    "cpp/object_native_tests.cpp": "0465f0669907abd8fd137f8a49bcdae9beb935854b10ec41bbbd1cf9e32aefe3",
+    "cpp/object_native_ui.cpp": "aca05963b58d97c4aa39cb481e45a02da03740c95cf7e581d901c1cd41bc9ec1",
+    "cpp/object_native_ui.hpp": "92f83939307f94bac015202db2e245a43f113eb0a975ef5f175f8ec79a0c422b",
+    "cpp/object_table_design.cpp": "927fd88d0da9d01e812b059d99f4239c76f629d346c85e2c1b5a6f996fe020dc",
+    "cpp/overlay/include/inde/ui/main_window.hpp": "1809dc7d68c8e759befda7904ff6e49d32a29d5549e1ca7495048eff7614c187",
+    "cpp/overlay/src/main.cpp": "e6ec7f0d4399e51bd778450671b89c57205fa815c3f3d124fca130204a494e6e",
+    "cpp/overlay/src/ui/main_window.cpp": "0b0ba95c0585c34acb777621a619e3f237b1c5acd047ed38a7d8a0de2ba78afb",
+    "cpp/publication_service.cpp": "3cd74b0db9a936ae31d7b7c4a5c27382dc194524e7d4cfd1a661c63f03c303ef",
+    "cpp/service_tests.cpp": "7053fb6193c998814e0e25393b67f121e33e1f218d22eb6ccdf695dcc6edb48d",
+    "scripts/demos/Abrir-demo-objetos-nativos.sh": "bfba1947163dec07e1603c13d8853c27f18a2da2a226313850ac7fa8164636c7",
+    "tests/object_composite_pilot/CMakeLists.txt": "1397b14f047e5465d1a3c4ee41842eb5a5dad029a0eb9792933d35f7b58fbe1d",
+    "tests/object_composite_pilot/test_equations.py": "16495c1c79fce1465457203dc69b857b80b22fbd6bda4323287b25ba621ca318",
+    "tests/test_obj01_native.py": "4592676424ea1c3fefef4650b9e3ab46f4d718da1b0ff4c667230f815c0aff08",
+    "tools/obj01-pilot/app.js": "6d9f9fb7168d8f1663d9e169b66c36fc7e24ebd116d3863d9f061c06f603c3ac",
+    "tools/obj01-pilot/index.html": "1a881b6c94566d98d1a03da6840cfa1e622969e32afc137e0723443e3bd4c807",
+    "tools/obj01-pilot/native-smoke.js": "fff7391ce6e52da8b1af5a009f2c451f44d8b8226158ea798c2f1fea7559e4aa",
+    "tools/obj01-pilot/native.js": "067e7da2f1f306c984e4309a707f4f9b92d54982f6c8e68b92d3d18044cddbc2",
+    "tools/obj01-pilot/sample.png": "ff85949e7fba67c05f3c14d6d326abe0641111eb0eb5e8c682acdf2250559fff",
+    "tools/obj01-pilot/serve.py": "1be7b76c6012e9d8158b992c1342d49169e3dcd46a6ff916b7853e3b924b4370",
+    "tools/obj01-pilot/style.css": "692fcef677961e11ed0cae15fa2ac7c565322cd347e4f1239f71621bd04448aa",
+    "tools/obj01-pilot/vendor/katex/LICENSE": "766ccc1f306c885aa45542a9846bbd0a505b27a0374f146778171c2254ce18e3",
+    "tools/obj01-pilot/vendor/katex/PROVENANCE.json": "7a03cfdf322b38cd6d5266ece4fac87490b6353e33cbd39007891e4451614bea",
+    "tools/obj01-pilot/vendor/katex/fonts/KaTeX_AMS-Regular.woff2": "0cdd387c9590a1a9f9794560022dbb59654a7d86f187aa0c81495ad42d3a7308",
+    "tools/obj01-pilot/vendor/katex/fonts/KaTeX_Caligraphic-Bold.woff2": "de7701e42cf1f4cf0b766c03fb27977207eee2f4fd5d76fa82188406da43ea4c",
+    "tools/obj01-pilot/vendor/katex/fonts/KaTeX_Caligraphic-Regular.woff2": "5d53e70ad607c2352162dec9e0923fb54ecdafaccbf604cd8dcf7d00facb989b",
+    "tools/obj01-pilot/vendor/katex/fonts/KaTeX_Fraktur-Bold.woff2": "74444efd593c005e3f4573b44524704c0af0a937fe911cca9e94068d0d140d3f",
+    "tools/obj01-pilot/vendor/katex/fonts/KaTeX_Fraktur-Regular.woff2": "51814d270d06ff0255dba0799994fa4d8c84d11f09951d47595f4abb1f3602dc",
+    "tools/obj01-pilot/vendor/katex/fonts/KaTeX_Main-Bold.woff2": "0f60d1b897938ec918c8ce073092411baf9438f6739465693ff18b0f9d20b021",
+    "tools/obj01-pilot/vendor/katex/fonts/KaTeX_Main-BoldItalic.woff2": "99cd42a3c072d918f2f44984a807cf7aa16e13545fd0875fc07c6c65f99e715b",
+    "tools/obj01-pilot/vendor/katex/fonts/KaTeX_Main-Italic.woff2": "97479ca6cce906abc961ecac96faa5f9ca2e61b8e7670d475826bcdee9a7c267",
+    "tools/obj01-pilot/vendor/katex/fonts/KaTeX_Main-Regular.woff2": "c2342cd8b869e01752a9321dc17213fc40d4d04c79688c1d43f2cf316abd7866",
+    "tools/obj01-pilot/vendor/katex/fonts/KaTeX_Math-BoldItalic.woff2": "dc47344dbb6cb5b655c8460d561f4df5f501b90c804ad3c6cec65fe322351ab1",
+    "tools/obj01-pilot/vendor/katex/fonts/KaTeX_Math-Italic.woff2": "7af58c5ec8f132a2ddde9027c6d7814decce4d3b822a11192a42a20e2e973264",
+    "tools/obj01-pilot/vendor/katex/fonts/KaTeX_SansSerif-Bold.woff2": "e99ae51144bf1232efcc1bfe5add36262c6866b0faab24fa75740e1b98577a62",
+    "tools/obj01-pilot/vendor/katex/fonts/KaTeX_SansSerif-Italic.woff2": "00b26ac825e2095056396e0553b8ac26d3f8ad158c3826e28b4c45b385c4714a",
+    "tools/obj01-pilot/vendor/katex/fonts/KaTeX_SansSerif-Regular.woff2": "68e8c73ef42afd3ccec58bf0fba302cce448938e7fc020a5e31f8a952eee1342",
+    "tools/obj01-pilot/vendor/katex/fonts/KaTeX_Script-Regular.woff2": "036d4e95149b69ff9bcc0cd55771efeb25ffa3947293e69acd78d5ac328c684b",
+    "tools/obj01-pilot/vendor/katex/fonts/KaTeX_Size1-Regular.woff2": "6b47c40166b6dbe21a5dfca7718413f2147fd2399be1ba605d8ad39cedf25dfe",
+    "tools/obj01-pilot/vendor/katex/fonts/KaTeX_Size2-Regular.woff2": "d04c54219f9eaec6d4d4fd42dfb28785975a4794d6b2fc71e566b9cd6db842dd",
+    "tools/obj01-pilot/vendor/katex/fonts/KaTeX_Size3-Regular.woff2": "73d591271b1604960cb10bb90fee021670af7297017e0e98480b332d11f51995",
+    "tools/obj01-pilot/vendor/katex/fonts/KaTeX_Size4-Regular.woff2": "a4af7d414440a1c1790825cfb700cf9cf43b0f2c4b04f0ebc523011ad9853ec0",
+    "tools/obj01-pilot/vendor/katex/fonts/KaTeX_Typewriter-Regular.woff2": "71d517d67827787cfabdf186914cc3358eda539e37931941f2b2fd4a21f68c0b",
+    "tools/obj01-pilot/vendor/katex/katex.min.css": "00e0b094171b07f58422075f469b4feac2b2f7bce1aeec943c08da4d697f4dcf",
+    "tools/obj01-pilot/vendor/katex/katex.min.js": "fa140498b8cfc8302cbe5e7cb1bdbc1f952bc38b3fa258ede09e73edbf9a74bc"
+  },
+  "document_sha256": {
+    "docs/arquitetura/MATEMATICA-NATIVA-OBJ-01.md": "2e1f3de71a053dd3bf0a42dd10a46da2ad218fec0d0d7e485330d0619897adaf",
+    "docs/validacao/VALIDACAO-OBJ-01-MATEMATICA-NATIVA.md": "47a889db1c884af0d00b2ec7a76b8ee2a51e7d1574b3f5d64d1a090b932b5da2",
+    "docs/arquitetura/RECONCILIACAO-OBJ-01.md": "2767520b7052bf9236e668b96588bbe7905ed1c146f2583425bb7a1c65a2b081",
+    "docs/README.md": "da8e0785e53e717b58baa07fcc75d56fd8cca59c21cdc28b845e145cdfedb257",
+    "docs/guias/GUIA.md": "10152af4c3d90121b9d480258774dad090b1a2f1aaae599a9c9ea98910d62b3d",
+    "README.md": "a042b6dd67ba5d6b83b59d3eb99577151fec30aaede831a8d856806ea9679418",
+    "THIRD_PARTY_NOTICES.md": "cfe5226c883391acaab22ea2d3f85ea691985ad54afa3c6d223302469bedee13",
+    "tools/obj01-pilot/NATIVO.md": "cf9f9d0233eb740e0b83f99222463a0f580867b86126d7572e1f920334588d1e"
+  },
+  "local": {
+    "pilot_programs": 22,
+    "variants": [
+      "GCC Debug",
+      "Clang Debug",
+      "GCC ASan+UBSan"
+    ],
+    "seconds": [
+      124.56,
+      146.41,
+      435.11
+    ],
+    "new_math_cases": 6,
+    "math_test_names": [
+      "test_source_identity_mode_revision_and_old_format",
+      "test_invalid_input_stale_context_and_extra_fields_are_atomic",
+      "test_incomplete_unsupported_and_markup_sources_are_preserved_as_data",
+      "test_move_composition_style_remove_restore_and_undo",
+      "test_save_reopen_sigkill_and_recovery_keep_source_and_saved_separate",
+      "test_all_four_crash_windows_create_edit_remove_are_atomic"
+    ],
+    "crash_cases": 12,
+    "crash_windows": [
+      "after_blobs",
+      "after_snapshot",
+      "before_commit",
+      "after_commit"
+    ],
+    "crash_operations": [
+      "create_equation",
+      "edit_equation",
+      "remove"
+    ],
+    "native_release_ctest": 62,
+    "native_release_compiler": "GCC15",
+    "native_seconds": 157.53,
+    "native_python_tests": 2,
+    "publication_python_tests": 4,
+    "local_lsan": false,
+    "gtk_lsan": false,
+    "portability_targeted_after_fixes": [
+      "GCC13 strict O3 clean application build",
+      "clipboard editor scale regression",
+      "four table design/structure programs",
+      "actual GCC13 GTK workflow"
+    ]
+  },
+  "ci": {
+    "run_id": 45077874910,
+    "url": "https://github.com/Roger-Cardoso/inde/actions/runs/45077874910",
+    "head_sha": "04e391438a604ef3097b7deea9b3200e3d9bac3b",
+    "passed": 26,
+    "jobs": 26,
+    "remote_pilot_lsan": true,
+    "native_compiler": "GCC13 Release",
+    "webkit_sandbox_disabled": false,
+    "global_apparmor_policy_disabled": false,
+    "ci_namespace_profile": "Ubuntu apparmor-profiles bwrap-userns-restrict",
+    "previous_runs": [
+      {
+        "id": 45073832109,
+        "status": "failure: GCC13 compilation"
+      },
+      {
+        "id": 45074910600,
+        "status": "cancelled, superseded"
+      },
+      {
+        "id": 45076948174,
+        "status": "failure: runner AppArmor blocked WebKit Bubblewrap"
+      }
+    ],
+    "native_tests": [
+      "project binding",
+      "actual GTK workflow",
+      "existing publication"
+    ]
+  },
+  "format": {
+    "new_snapshot": "INDE-OBJ01-COMPOSITE-P2D2-5",
+    "fields": [
+      "composition.equations",
+      "composition.removed_equations"
+    ],
+    "old_snapshots_preserved": true,
+    "auxiliary_user_version": 5,
+    "canonical_schema": 37,
+    "canonical_user_version": 0,
+    "canonical_schema_migration": false,
+    "formula_language": 2
+  },
+  "browser": {
+    "engine": "real development pilot C++/SQLite",
+    "verified": [
+      "quadratic equation",
+      "matrix",
+      "MathML",
+      "save/reopen",
+      "incomplete source diagnostic and cancel",
+      "no external link/image generated"
+    ],
+    "final_console_errors": []
+  },
+  "native": {
+    "engine": "same in-process C++ Session, no Python server/HTTP/external browser",
+    "entry": "win.document-objects",
+    "source": "actual selected project Document",
+    "persistence": "project/documents/composed/<document-id>",
+    "verified": [
+      "figure bytes loaded",
+      "three rendered equations and MathML",
+      "table/structure/style",
+      "formula in cell",
+      "remote variable 100 to80 and consumed command with undo/redo",
+      "equation move/style/pair/remove/restore",
+      "draft close guard in child and main window",
+      "document save/reopen",
+      "main project save confirms unsaved composition",
+      "native Session recreated and saved state verified",
+      "owner snapshot unchanged",
+      "project copy preserves content",
+      "source drift refused without replacement"
+    ],
+    "smoke": {
+      "native_window": true,
+      "project_bound": true,
+      "no_http": true,
+      "equations": 3,
+      "mathml": true,
+      "table_and_formula": true,
+      "draft_close_guard": true,
+      "save_reopen": true,
+      "source_document": "9b086909-0385-4c1d-885e-9edb7eaa9d5a"
+    },
+    "integrity": {
+      "dados/obj01-objetos-nativos/Projeto.inde/data/project.sqlite3": {
+        "integrity": "ok",
+        "foreign_keys": [],
+        "user_version": 0,
+        "canonical_schema": 37
+      },
+      "dados/obj01-objetos-nativos/Projeto.inde/documents/composed/9b086909-0385-4c1d-885e-9edb7eaa9d5a/obj01-piloto.sqlite3": {
+        "integrity": "ok",
+        "foreign_keys": [],
+        "user_version": 5,
+        "format": "INDE-OBJ01-COMPOSITE-P2D2-5",
+        "equations": 3,
+        "figures": 1,
+        "tables": 1,
+        "saved_matches_working": true
+      }
+    }
+  },
+  "render": {
+    "package": {
+      "package": "katex",
+      "version": "0.19.1",
+      "integrity": "sha512-jG8uKntjSEcm2EpQOh0XturpPuuC9r3Sq5HLHdsFdWZT27E672SF19QEi+of0/YeOy15lDgRhKvr5614uRrEfA==",
+      "tarball_sha256": "24da5a599eb2fcede2e270b99a6ff48bca816beecc95feeb84e8cccbd1bb34fd",
+      "source": "https://registry.npmjs.org/katex/-/katex-0.19.1.tgz"
+    },
+    "trust": false,
+    "maxExpand": 200,
+    "maxSize": 20,
+    "output": "htmlAndMathml",
+    "local_assets": true,
+    "no_tex_process": true
+  },
+  "preservation": {
+    "old_demo_files": 20,
+    "old_demos": 10,
+    "hashes_unchanged": true,
+    "historical_manifests": [
+      {
+        "profile": "p2a",
+        "commit": "8ea6c233f50529de9c9894a62b925d90941157a1",
+        "verified": 37
+      },
+      {
+        "profile": "p2b",
+        "commit": "b1ae38fbcc47962c33ca74e8bcdca2e72ae64cca",
+        "verified": 39
+      },
+      {
+        "profile": "p2c",
+        "commit": "347be9dfea7ea7442fdd7606e469ac9c1d3d6928",
+        "verified": 44
+      },
+      {
+        "profile": "p2d",
+        "commit": "1560cfe3c490ab1d4090c0e53857789ff2f648cf",
+        "verified": 49
+      },
+      {
+        "profile": "p2d2",
+        "commit": "8ad48d13b32d87fdeb493877e4fdf77c8ae3fb22",
+        "verified": 47
+      },
+      {
+        "profile": "cartoes",
+        "commit": "729404048b5614d86088fdf9730e630110f57c44",
+        "verified": 41
+      },
+      {
+        "profile": "hub",
+        "commit": "93caf049fe575025aaed9f6cb89dc539b2fdeab4",
+        "verified": 48
+      },
+      {
+        "profile": "composicao-edicao",
+        "commit": "08c6e8a1f63aebac77d72316cbe0974c1de78ea0",
+        "verified": 43
+      },
+      {
+        "profile": "tabelas-visuais",
+        "commit": "26adaa22995def08b5ea2e269e9ef3a193d398c8",
+        "verified": 49
+      },
+      {
+        "profile": "estrutura-tabelas",
+        "commit": "703ba822acd5e7acb256751481d505f7e09c9cf2",
+        "verified": 45
+      }
+    ],
+    "historical_entries": 442,
+    "main_head": "d41a5c9b9809ca7d40beb6ff10f22f1a5b451e0b",
+    "main_preexisting_status": " M Preparar-ponte.sh",
+    "protected_paths": [
+      "fontes",
+      "metadata",
+      "verificar_base.py",
+      "cpp/object_model.cpp",
+      "cpp/object_model.hpp",
+      "cpp/object_commands.cpp",
+      "cpp/object_commands.hpp",
+      "cpp/object_document_adapter.cpp",
+      "cpp/object_document_adapter.hpp",
+      "cpp/object_composition_adapter.cpp",
+      "cpp/object_composition_adapter.hpp",
+      "cpp/object_change_plan.cpp",
+      "cpp/object_change_plan.hpp",
+      "cpp/object_change_session.cpp",
+      "cpp/object_change_session.hpp",
+      "cpp/object_save_protocol.cpp",
+      "cpp/object_save_protocol.hpp",
+      "cpp/object_checkpoint_store.cpp",
+      "cpp/object_checkpoint_store.hpp",
+      "cpp/object_formula.cpp",
+      "cpp/object_formula_rich.cpp",
+      "cpp/object_formula_cards.cpp",
+      "cpp/object_formula_hub.cpp"
+    ],
+    "canonical_author_projects_written": false,
+    "main_changed": false
+  },
+  "checks": {
+    "local_markdown_links": 173,
+    "syntax": "passed",
+    "diff": "passed"
+  },
+  "fixes": [
+    "asynchronous close handshake protects newly opened draft",
+    "GCC13 O3 direct JSON construction in clipboard and column insertion; no diagnostic suppression",
+    "Ubuntu restricted Bubblewrap profile enabled only in disposable CI runners; WebKit isolation retained"
+  ],
+  "limits": [
+    "source document remains separately edited; changed source needs reconciliation",
+    "compact equation is not arbitrary inline original-body insertion",
+    "equations in cells and automatic numbering/references pending",
+    "entity/alias bindings pending",
+    "shared Comic resources pending",
+    "object publication refused until full translation in this branch; older installed applications do not know this auxiliary composition or guard",
+    "no single-file .inde",
+    "no main promotion or release"
+  ],
+  "not_proven": [
+    "clean distribution/AppImage installation",
+    "all graphics/input methods/accessibility",
+    "broad concurrency",
+    "latency/RSS",
+    "all power/storage faults",
+    "GTK sanitizers/LeakSanitizer",
+    "complete GCC13 CTest suite: other 61 test executables not built in independent GCC13 folder",
+    "human acceptance"
+  ]
+}

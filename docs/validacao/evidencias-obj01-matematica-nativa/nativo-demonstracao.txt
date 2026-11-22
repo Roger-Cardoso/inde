@@ -1,0 +1,18 @@
+{
+  "schema": 37,
+  "arquivos_conferidos": 758,
+  "arquivo_sha256": "554623abec5d7c3c175dab2aa6bbabc8a95abd6e3d98a27191cea0260a4965c4",
+  "resultado": "ok"
+}
+-- Configuring done (0.9s)
+-- Generating done (0.4s)
+-- Build files have been written to: /home/roger/Documents/Projects/GitHub/INDE/obj01-audit/build-nativo
+ninja: no work to do.
+[INDE] Renderer compatibility: Cairo for Intel 8086:0102; explicit GSK_RENDERER overrides this default.
+
+** (inde-especial:95165): WARNING **: 18:44:11.109: Disabled hardware acceleration because GTK failed to initialize GL: GL support disabled via GDK_DEBUG.
+Native GTK/WebKit: actual INDE action, real project, math, table, formula, draft protection, save/reopen and owner preservation OK
+Na Escrita, selecione Matemática na narrativa e use Objetos no cabeçalho.
+[INDE] Renderer compatibility: Cairo for Intel 8086:0102; explicit GSK_RENDERER overrides this default.
+
+** (inde-especial:95126): WARNING **: 19:34:53.972: Disabled hardware acceleration because GTK failed to initialize GL: GL support disabled via GDK_DEBUG.

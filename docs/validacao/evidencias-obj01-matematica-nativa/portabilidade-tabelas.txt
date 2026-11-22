@@ -1,0 +1,13 @@
+Test project /home/roger/Documents/Projects/GitHub/INDE/obj01-audit/build-obj01-p2a
+    Start 17: inde_object_table_design_tests
+1/4 Test #17: inde_object_table_design_tests ...........   Passed    5.01 sec
+    Start 18: inde_object_table_design_http_tests
+2/4 Test #18: inde_object_table_design_http_tests ......   Passed    2.98 sec
+    Start 19: inde_object_table_structure_tests
+3/4 Test #19: inde_object_table_structure_tests ........   Passed   15.41 sec
+    Start 20: inde_object_table_structure_http_tests
+4/4 Test #20: inde_object_table_structure_http_tests ...   Passed    3.24 sec
+
+100% tests passed out of 4
+
+Total Test time (real) =  26.65 sec
