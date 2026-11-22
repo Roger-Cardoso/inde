@@ -1,0 +1,310 @@
+{
+  "date": "2026-11-22",
+  "branch": "feature/inde-obj-01-foundation",
+  "base_commit": "729404048b5614d86088fdf9730e630110f57c44",
+  "implementation_commit": "700fb1fe91af472500138400dc755dc639451caf",
+  "scope": "five real formula hub paths, visible stable references, named card variables and single-use remote changes in the isolated OBJ-01 pilot",
+  "code_sha256": {
+    ".github/workflows/obj-01.yml": "598f3ea096095fecd7ed4063a2aad48ded15f9a70f74b7a29f8dc0c64d3b1948",
+    "cpp/object_composite_pilot.cpp": "f6b4881ccdcd0ce16b36deff8cf686b4b0e70a85454b8f01441ca54bd86072cf",
+    "cpp/object_formula_cards.cpp": "74427ceeb2250b4b5044946b0298c221b1d40cd1da21453297c073555f00516f",
+    "cpp/object_formula_cards.hpp": "1f1664c61245ab959009f626e719c516d897e256c9dcad9d4174a75c7119131f",
+    "cpp/object_formula_hub.cpp": "760debe76cb7a2bb95b874c72ed2ca2c9eebda3dc565441e5b454c67ec5ccb6b",
+    "cpp/object_formula_hub.hpp": "98d004f0434240121491c1af86e7d74d15a799ec722bd926d6c243dacbc4c127",
+    "scripts/demos/Abrir-demo-obj01-hub.sh": "151aa57e2b7dd3a38214fcb19ba77395a8d9560c008cd9dc125f8a64bfe5148a",
+    "tests/object_composite_pilot/CMakeLists.txt": "3ca5bd691878ac8023208c17eaab9b79738dc3853a0bbad20153e5876d00ab4a",
+    "tests/object_composite_pilot/test_http_hub.py": "20b9b820c6da2d7e4eb1c7d24d1f4953e003ec01a27f10c5da996e4fc7c839fc",
+    "tests/object_composite_pilot/test_hub.py": "b8a7dea1df72e8aab662d633f61bea82cb40a46ebc0540b9a602e74b49504286",
+    "tools/obj01-pilot/HUB.md": "27aa35d2e856d870d36c7d0748ebb5fd17219b80581f4b5aebcc1019d0e73947",
+    "tools/obj01-pilot/README.md": "4780a5a87d6d75e4ce61edce7bc654a0143b36fbd37002f22222c245b2b4e56c",
+    "tools/obj01-pilot/app.js": "f1a538fc64686fb1080264fbe3c92a636e0125a0c2a9e3e2c77e71fcec2e49bf",
+    "tools/obj01-pilot/serve.py": "0ac975369e2bebca3f497823f828c23cf3fb5e0b5da964e7296262563a3908d7",
+    "tools/obj01-pilot/style.css": "721c363a413508cdae463c155fd44cb91cb1672491cf2607c5d4e9ecbfdad1cd"
+  },
+  "document_sha256": {
+    "docs/README.md": "1828e261270a38b66f44ef5a50a4bf8e0488a41626e81173df614431ac66bda8",
+    "docs/arquitetura/HUB-FORMULAS-OBJ-01.md": "e9423768fd02910a4a7c6e6f6e814dae11db2900148fddbf3b7859c182fb12be",
+    "docs/arquitetura/CARTOES-FORMULAS-OBJ-01.md": "d2968f9468641836914ab0a39effb911c056e4ce83687bacaab3ccc00c38b0ed",
+    "docs/arquitetura/RECONCILIACAO-OBJ-01.md": "0c1122a545e508d10c13289dcfc4331ae1791ba5959a903cd8ca08e53668a879",
+    "docs/validacao/VALIDACAO-OBJ-01-HUB.md": "8455792118467c3ce8f14b1ef1e032f8bfb649c2dae3fc2f586945387e830bc6",
+    "tools/obj01-pilot/HUB.md": "27aa35d2e856d870d36c7d0748ebb5fd17219b80581f4b5aebcc1019d0e73947",
+    "tools/obj01-pilot/README.md": "4780a5a87d6d75e4ce61edce7bc654a0143b36fbd37002f22222c245b2b4e56c"
+  },
+  "local": {
+    "variants": [
+      "GCC Debug",
+      "Clang Debug",
+      "GCC ASan+UBSan",
+      "Clang ASan+UBSan"
+    ],
+    "programs_per_variant": 15,
+    "seconds": [
+      102.13,
+      98.54,
+      283.8,
+      227.56
+    ],
+    "new_core_cases": 16,
+    "new_http_cases": 7,
+    "own_http_cases": 3,
+    "inherited_http_cases": 4,
+    "prior_programs_included": 13,
+    "local_lsan": false,
+    "test_names": {
+      "test_hub.py": [
+        "test_named_condition_remote_free_command_consumption_and_reopen",
+        "test_preview_uses_chosen_name_and_free_body_is_preserved",
+        "test_free_source_preserves_crlf_and_blank_lines",
+        "test_value_and_calculation_cards_share_real_variables",
+        "test_text_change_drives_text_condition",
+        "test_preview_remote_change_has_before_after_and_no_effect",
+        "test_symbol_rename_is_refused_but_title_and_label_editable",
+        "test_original_cards_and_free_source_are_not_implicitly_converted",
+        "test_calculation_operations_and_current_values_roundtrip",
+        "test_pending_change_card_can_be_edited_then_consumed",
+        "test_failed_change_keeps_command_and_all_values",
+        "test_structured_invalid_and_unknown_fields_are_atomic",
+        "test_cell_change_restores_plain_text_and_undo_restores_command",
+        "test_source_and_phrase_one_undo_and_mixed_command_rejected",
+        "test_sigkill_keeps_named_symbols_and_consumed_change",
+        "test_crash_windows_remote_change_is_atomic"
+      ],
+      "test_http_hub.py": [
+        "test_named_remote_free_change_and_undo",
+        "test_preview_change_is_read_only_and_roundtrip_saved",
+        "test_reference_rename_refused_and_hub_assets_available"
+      ]
+    },
+    "atomic_edit_crash_windows": [
+      "after_blobs",
+      "after_snapshot",
+      "before_commit",
+      "after_commit"
+    ],
+    "syntax_and_diff": "passed"
+  },
+  "ci": {
+    "run_id": 45056096578,
+    "url": "https://github.com/Roger-Cardoso/inde/actions/runs/45056096578",
+    "head_sha": "700fb1fe91af472500138400dc755dc639451caf",
+    "jobs": 25,
+    "passed": 25,
+    "remote_lsan": true,
+    "conclusion": "success"
+  },
+  "archives": [
+    {
+      "label": "schema28",
+      "path": "fontes/inde-schema28-89b47f27.tar.gz",
+      "sha256": "3d6bee4c60dbecc602a56881b1957f90b55798dbc711c9c290701e2ad8a6e97e",
+      "files": 641,
+      "manifest_match": true
+    },
+    {
+      "label": "original37",
+      "path": "fontes/inde-P03c-schema37-original.tar.gz",
+      "sha256": "2e97a15ddcda56b8f5892d033c9a7427d6102bcf650454678491c50ff5459ef2",
+      "files": 757,
+      "manifest_match": true
+    },
+    {
+      "label": "integrated37",
+      "path": "fontes/inde-integrado-schema37.tar.gz",
+      "sha256": "554623abec5d7c3c175dab2aa6bbabc8a95abd6e3d98a27191cea0260a4965c4",
+      "files": 758,
+      "manifest_match": true
+    }
+  ],
+  "extracted_bytes_match": true,
+  "source_auditor_negative_tests": 5,
+  "acceptance": {
+    "hub_paths": [
+      "condition",
+      "calculate",
+      "value",
+      "change",
+      "free"
+    ],
+    "references": "formula/variable chosen on creation, immutable structured identity; editable presentation title",
+    "command": "written and selected change execute explicitly; source assignment and consumption share checkpoint",
+    "preview": "same C++ engine on temporary records, before/after including dependent variables, no persistent effect",
+    "source_authority": "strict recognized source is sole persisted model; views derived",
+    "free_source": "body preserved literally, including comments, CRLF and blank lines",
+    "atomicity": "source and selected use phrase in one checkpoint; undo/redo/recovery together",
+    "entities": "not implemented; Personagem is a formula reference",
+    "human_acceptance": "pending real product review; concept approved",
+    "phase_3_started": false
+  },
+  "browser": {
+    "observed": [
+      "open five-path hub",
+      "create named numeric condition",
+      "copy/reveal formula-variable reference",
+      "write remote change and preview 16 to 15",
+      "apply and consume command with text update",
+      "prepare selected visual change from existing card",
+      "undo/redo target value and command together",
+      "create stored value and preserve per-type drafts",
+      "create calculation using variable reference",
+      "preview chained variable changes",
+      "apply HP 100 to 80 and dependent result 20 to 16",
+      "SIGKILL own engine and reopen without Save",
+      "reopen final binary with identical recovered state"
+    ],
+    "restart": {
+      "snapshot_identical_after_SIGKILL": true,
+      "working_generation": 21,
+      "working_sha256": "917a77c715bf4f9456dd4e63f7284c9308afc6746fa15f2c61a0e875b49bbaa6",
+      "saved_revision": 0,
+      "saved_not_promoted": true,
+      "integrity_check": "ok",
+      "foreign_key_check": [],
+      "user_version": 5,
+      "formula_count": 6,
+      "active_document_uses": 3,
+      "consumed": [
+        "Negociar",
+        "Alteracao",
+        "Alteracao2"
+      ],
+      "sources": {
+        "Negociacao": "# INDE-CARDS-2 {\"label\":\"o preço\",\"title\":\"Preço da negociação\",\"type\":\"number\",\"variable\":\"Preco\"}\ndeclara Preco = 16\nPreco = 14\nresultado SE(Preco > 15; \"preço caro\"; SE(Preco == 15; \"vou negociar\"; \"que pechincha\"))",
+        "Negociar": "# INDE-WRITTEN-1 {\"title\":\"Negociar\"}\nalterar Negociacao.Preco = 15",
+        "Alteracao": "# INDE-BLOCK-1 {\"kind\":\"change\",\"title\":\"Alterar Preço da negociação\",\"type\":\"number\"}\nalterar Negociacao.Preco = 14",
+        "Personagem": "# INDE-BLOCK-1 {\"kind\":\"value\",\"label\":\"Vida\",\"title\":\"Vida do personagem\",\"type\":\"number\",\"variable\":\"HP\"}\ndeclara HP = 100\nHP = 80\nresultado HP",
+        "Quinto": "# INDE-BLOCK-1 {\"kind\":\"calculate\",\"title\":\"Quinto\"}\ndeclara Primeiro = Personagem.HP\ndeclara Segundo = 5\nresultado Primeiro / Segundo",
+        "Alteracao2": "# INDE-BLOCK-1 {\"kind\":\"change\",\"title\":\"Alterar um valor\",\"type\":\"number\"}\nalterar Personagem.HP = Personagem.HP - 20"
+      }
+    },
+    "before_after_text_equal": true,
+    "runtime": "real C++/SQLite with synthetic data",
+    "final_text": [
+      "Armand: que pechincha.",
+      "Vida: 80.",
+      "Um quinto da vida: 16 pontos."
+    ]
+  },
+  "format": {
+    "profile": "P2-D2",
+    "auxiliary_user_version": 5,
+    "language": 2,
+    "source_markers": [
+      "INDE-CARDS-1",
+      "INDE-CARDS-2",
+      "INDE-BLOCK-1",
+      "INDE-WRITTEN-1"
+    ],
+    "schema_migration": false,
+    "visual_model_persisted_separately": false,
+    "conditions": 12,
+    "calculate_operands": 2,
+    "calculate_operations": [
+      "add",
+      "subtract",
+      "multiply",
+      "divide"
+    ],
+    "retained_formula_records_limit": 64,
+    "source_utf8_bytes": 16384,
+    "computed_text_utf8_bytes": 4096,
+    "number_type": "finite double, abs<=1e12",
+    "current_assignment": "optional separate source literal preserving initial declaration",
+    "draft_recovery": false,
+    "persistent_undo": false,
+    "consumed_gc": false,
+    "cross_version": "old engine does not offer new hub; no promise of new card editing on old binary"
+  },
+  "preservation": {
+    "old_demo_files": 12,
+    "old_demos": 6,
+    "hashes_unchanged": true,
+    "main_head": "d41a5c9b9809ca7d40beb6ff10f22f1a5b451e0b",
+    "main_preexisting_status": " M Preparar-ponte.sh",
+    "protected_paths": [
+      "fontes",
+      "metadata",
+      "verificar_base.py",
+      "cpp/CMakeLists.txt",
+      "cpp/object_model.cpp",
+      "cpp/object_model.hpp",
+      "cpp/object_commands.cpp",
+      "cpp/object_commands.hpp",
+      "cpp/object_document_adapter.cpp",
+      "cpp/object_document_adapter.hpp",
+      "cpp/object_composition_adapter.cpp",
+      "cpp/object_composition_adapter.hpp",
+      "cpp/object_change_plan.cpp",
+      "cpp/object_change_plan.hpp",
+      "cpp/object_change_session.cpp",
+      "cpp/object_change_session.hpp",
+      "cpp/object_save_protocol.cpp",
+      "cpp/object_save_protocol.hpp",
+      "cpp/object_checkpoint_store.cpp",
+      "cpp/object_checkpoint_store.hpp",
+      "cpp/object_formula_rich.cpp"
+    ],
+    "canonical_projects_written": false,
+    "publication": false,
+    "gtk": false,
+    "single_file_inde": false,
+    "historical_manifests": [
+      {
+        "profile": "p2a",
+        "commit": "8ea6c233f50529de9c9894a62b925d90941157a1",
+        "entries_verified": 37
+      },
+      {
+        "profile": "p2b",
+        "commit": "b1ae38fbcc47962c33ca74e8bcdca2e72ae64cca",
+        "entries_verified": 39
+      },
+      {
+        "profile": "p2c",
+        "commit": "347be9dfea7ea7442fdd7606e469ac9c1d3d6928",
+        "entries_verified": 44
+      },
+      {
+        "profile": "p2d",
+        "commit": "1560cfe3c490ab1d4090c0e53857789ff2f648cf",
+        "entries_verified": 49
+      },
+      {
+        "profile": "p2d2",
+        "commit": "8ad48d13b32d87fdeb493877e4fdf77c8ae3fb22",
+        "entries_verified": 47
+      },
+      {
+        "profile": "cartoes",
+        "commit": "729404048b5614d86088fdf9730e630110f57c44",
+        "entries_verified": 41
+      }
+    ],
+    "historical_entries_verified": 257
+  },
+  "checks": {
+    "links_resolve": 125,
+    "git_diff_check": "passed",
+    "demo_integrity_check": "ok",
+    "demo_foreign_key_check": "empty"
+  },
+  "not_implemented": [
+    "entity/alias/pseudonym bindings",
+    "visual All/Any groups",
+    "arbitrary advanced-source conversion",
+    "identity refactor rewriting all sources",
+    "consumed-record GC",
+    "persistent undo history",
+    "canonical Document.content/GTK editing",
+    "canonical publication",
+    "schema/project migration",
+    "single-file .inde"
+  ],
+  "not_proven": [
+    "all viewports/input methods",
+    "broad concurrency",
+    "latency/RSS benchmark",
+    "all storage/power faults",
+    "human acceptance"
+  ],
+  "native_61_tests": "not repeated this cut; prior evidence remains historical"
+}

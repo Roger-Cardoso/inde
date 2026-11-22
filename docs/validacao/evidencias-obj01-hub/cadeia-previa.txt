@@ -1,0 +1,61 @@
+Browser tab: 2, Title: "INDE · Texto por condições", URL: "http://127.0.0.1:36381/".
+0 AXWebArea INDE · Texto por condições, URL: 127.0.0.1:36381/
+	1 container Criar · Alterar um valor, ID: hub-dialog
+		2 heading Criar · Alterar um valor, Value: 2, ID: hub-title
+			3 text Criar · Alterar um valor
+		4 container
+			5 text Nome da fórmula
+			6 text field (settable) Nome da fórmula, Value: Alterar um valor
+		7 button (collapsed) Referências para outras fórmulas, Secondary Actions: Expand
+			8 text Referências para outras fórmulas
+		9 container
+			10 text Inserir em
+			11 pop up button (collapsed, settable) Description: Inserir em, Value: Documento, Secondary Actions: Expand
+				12 menu
+					13 (selected) Documento
+			14 text Inserir antes de
+			15 pop up button (collapsed, settable) Description: Inserir antes de, Value: Fim do documento, Secondary Actions: Expand
+				16 menu
+					17 Água, luz e memória.
+					18 O horizonte abre uma passagem.
+					19 Fórmula: Negociacao
+					20 Fórmula: Personagem
+					21 Fórmula: Quinto
+					22 (selected) Fim do documento
+		23 container
+			24 heading Alteração de uso único, Value: 3
+				25 text Alteração de uso único
+			26 text Variável a alterar
+			27 pop up button (collapsed, settable) Description: Variável a alterar, Value: Vida do personagem · HP (Personagem.HP), Secondary Actions: Expand
+				28 menu
+					29 Escolha a variável
+					30 Preço da negociação · Preco (Negociacao.Preco)
+					31 (selected) Vida do personagem · HP (Personagem.HP)
+					32 Quinto · Primeiro (Quinto.Primeiro)
+					33 Quinto · Segundo (Quinto.Segundo)
+			34 text O que fazer
+			35 pop up button (collapsed, settable) Description: O que fazer com a variável, Value: Diminuir, Secondary Actions: Expand
+				36 menu
+					37 Definir como
+					38 Acrescentar
+					39 (selected) Diminuir
+			40 heading Novo valor ou quantidade, Value: 4
+				41 text Novo valor ou quantidade
+			42 text De onde vem novo valor ou quantidade
+			43 pop up button (collapsed, settable) Description: Origem de novo valor ou quantidade, Value: Valor preenchido aqui, Secondary Actions: Expand
+				44 menu
+					45 (selected) Valor preenchido aqui
+					46 Resultado ou variável existente
+			47 text Novo valor ou quantidade
+			48 stepper (settable, integer) Novo valor ou quantidade, Value: 20
+			49 text Inserir prepara o comando. No documento, Aplicar alteração confirma o efeito e retira o comando. Desfazer restaura valor e comando juntos.
+		50 container
+			51 heading Efeito previsto, Value: 3
+				52 text Efeito previsto
+			53 text Personagem.HP: 100 → 80
+Quinto.Primeiro: 100 → 80
+			54 text Efeito apenas previsto. O comando será executado uma única vez quando você aplicar a alteração no documento.
+		55 button Inserir comando de uso único, ID: hub-apply
+		56 button Cancelar
+
+The focused UI element is 48 stepper (settable, integer) Novo valor ou quantidade, Value: 20

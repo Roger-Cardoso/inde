@@ -1,0 +1,34 @@
+Browser tab: 2, Title: "INDE · Texto por condições", URL: "http://127.0.0.1:36381/".
+0 AXWebArea INDE · Texto por condições, URL: 127.0.0.1:36381/
+	1 container Criar · Escrever livremente, ID: hub-dialog
+		2 heading Criar · Escrever livremente, Value: 2, ID: hub-title
+			3 text Criar · Escrever livremente
+		4 container
+			5 text Nome da fórmula
+			6 text field (settable) Nome da fórmula, Value: Negociar
+		7 button (collapsed) Referências para outras fórmulas, Secondary Actions: Expand
+			8 text Referências para outras fórmulas
+		9 container
+			10 text Inserir em
+			11 pop up button (collapsed, settable) Description: Inserir em, Value: Documento, Secondary Actions: Expand
+				12 menu
+					13 (selected) Documento
+			14 text Inserir antes de
+			15 pop up button (collapsed, settable) Description: Inserir antes de, Value: Fim do documento, Secondary Actions: Expand
+				16 menu
+					17 Água, luz e memória.
+					18 O horizonte abre uma passagem.
+					19 Fórmula: Negociacao
+					20 (selected) Fim do documento
+		21 container
+			22 text Escreva a fórmula ou o comando
+			23 text entry area (settable) Escreva a fórmula ou o comando, Value: alterar Negociacao.Preco = 15
+		24 container
+			25 heading Prévia, Value: 3
+				26 text Prévia
+			27 text Negociacao.Preco: 16 → 15
+			28 text Efeito apenas previsto. O comando será executado uma única vez quando você aplicar a alteração no documento.
+		29 button Inserir comando de uso único, ID: hub-apply
+		30 button Cancelar
+
+The focused UI element is 23 text entry area (settable) Escreva a fórmula ou o comando, Value: alterar Negociacao.Preco = 15

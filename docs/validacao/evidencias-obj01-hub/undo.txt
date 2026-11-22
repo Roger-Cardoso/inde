@@ -1,0 +1,169 @@
+Browser tab: 2, Title: "INDE · Texto por condições", URL: "http://127.0.0.1:36381/".
+0 AXWebArea INDE · Texto por condições, URL: 127.0.0.1:36381/
+	1 container
+		2 text INDE OFICINA EXPERIMENTAL
+		157 text OBJ-01 / P2-D2
+		158 text Trabalho protegido · não salvo
+		5 button Desfazer, ID: undo
+		6 button Refazer, ID: redo
+		7 button Reabrir trabalho, ID: reopen-working
+		8 button Reabrir salvo, ID: reopen
+		9 button Salvar documento, ID: save
+	10 container
+		159 text DOCUMENTO COMPOSTO · TEXTO + FIGURA + TABELA
+		12 heading Escolha as palavras, sem programar., Value: 1
+			160 text Escolha as palavras, sem programar.
+		161 text Preencha as frases e deixe os cartões acompanharem a situação.
+		15 container
+			16 text Dados sintéticos
+			17 text Origem preservada
+		162 text Operação desfeita.
+		163 text Cada operação confirmada é registrada para recuperação. Salvar confirma o estado autoral; o histórico não sobrevive ao reinício.
+		20 container Ferramentas do experimento
+			21 container
+				22 heading Instrumento de edição, Value: 2
+					23 text Instrumento de edição
+				24 text Trabalhar com
+				25 pop up button (collapsed, settable) Trabalhar com, Value: Texto, ID: context, Secondary Actions: Expand
+					26 menu
+						27 (selected) Texto
+						28 Estrutura
+						29 Composição
+				30 text A seleção é compartilhada entre os instrumentos.
+			31 container
+				32 heading 1. Acrescentar uma figura, Value: 2
+					33 text 1. Acrescentar uma figura
+				34 text PNG do seu computador
+				35 button PNG do seu computador, ID: file
+				36 button Usar figura de exemplo, ID: sample
+				37 text Nenhuma figura escolhida.
+				38 text Legenda
+				39 text field (settable) Legenda, ID: caption
+				40 text Descrição para leitura
+				41 text field (settable) Descrição para leitura, ID: alt
+				42 checkbox (settable, integer) Description: Esta figura é decorativa, Value: 0, ID: decorative
+				43 text Inserir antes de
+				44 pop up button (collapsed, settable) Inserir antes de, Value: O horizonte abre uma passagem., ID: insert-before, Secondary Actions: Expand
+					45 menu
+						164 Água, luz e memória.
+						165 (selected) O horizonte abre uma passagem.
+						166 Fórmula: Negociacao
+						167 Fórmula: Alteracao
+						168 Fim do documento
+				50 button (disabled) Inserir figura, ID: import
+			51 container
+				52 heading Tabela de notas, Value: 2
+					53 text Tabela de notas
+				54 text Duas linhas e três colunas. Edite as células diretamente no documento. Título da tabela
+				55 text field (settable) Título da tabela, Value: Notas da travessia, ID: table-title
+				56 checkbox (settable, integer) Description: Primeira linha como cabeçalho, Value: 1, ID: table-header
+				57 text Inserir tabela antes de
+				58 pop up button (collapsed, settable) Inserir tabela antes de, Value: Fim do documento, ID: table-before, Secondary Actions: Expand
+					59 menu
+						169 Água, luz e memória.
+						170 O horizonte abre uma passagem.
+						171 Fórmula: Negociacao
+						172 Fórmula: Alteracao
+						173 (selected) Fim do documento
+				64 button (disabled) Inserir tabela 2 × 3, ID: create-table
+			65 container cards-tools
+				66 heading Fórmulas, Value: 2
+					174 text Fórmulas
+				175 text Escolha como criar. Variáveis e resultados podem alimentar outras fórmulas.
+				69 button Inserir fórmula, ID: create-cards
+				176 text Fórmulas do documento
+				71 pop up button (collapsed, settable) Fórmulas do documento, Value: Preço da negociação · vou negociar, ID: cards-library, Secondary Actions: Expand
+					72 menu
+						177 (selected) Preço da negociação · vou negociar
+						178 Alterar Preço da negociação · comando de uso único
+				74 button Abrir fórmula escolhida, ID: edit-cards
+			75 button (collapsed) Ferramentas avançadas anteriores, Secondary Actions: Expand
+				76 text Ferramentas avançadas anteriores
+			77 container
+				78 heading 2. Escolher e mover, Value: 2
+					79 text 2. Escolher e mover
+				179 text Fórmula: Alteracao
+				81 text O que muda
+				82 pop up button (collapsed, settable) O que muda, Value: A ordem de leitura e a apresentação, ID: intent, Secondary Actions: Expand
+					83 menu
+						84 (selected) A ordem de leitura e a apresentação
+						85 Somente a apresentação
+				86 text Mover antes de
+				87 pop up button (collapsed, settable) Mover antes de, Value: Água, luz e memória., ID: move-before, Secondary Actions: Expand
+					88 menu
+						180 (selected) Água, luz e memória.
+						181 O horizonte abre uma passagem.
+						182 Fórmula: Negociacao
+						183 Fim do documento
+				92 button (disabled) Mover fórmula selecionada, ID: move
+				93 text Mover leva a figura à coluna principal, desfazendo seu arranjo lado a lado.
+				94 button (disabled) Criar outro uso da mesma figura, ID: duplicate
+				95 button (disabled) Remover uso selecionado, ID: remove
+			96 container
+				97 heading Ordem dos grupos textuais, Value: 2
+					98 text Ordem dos grupos textuais
+				99 text Grupo completo
+				100 pop up button (collapsed, settable) Grupo completo, Value: Água, luz e memória., ID: text-group, Secondary Actions: Expand
+					101 menu
+						184 (selected) Água, luz e memória.
+						185 O horizonte abre uma passagem. / A casa guarda outra história 🙂.
+				104 text Mover grupo antes de
+				105 pop up button (collapsed, settable) Mover grupo antes de, Value: Fim do documento, ID: text-before, Secondary Actions: Expand
+					106 menu
+						186 Água, luz e memória.
+						187 O horizonte abre uma passagem.
+						188 Fórmula: Negociacao
+						189 Fórmula: Alteracao
+						190 (selected) Fim do documento
+				111 button (disabled) Mover grupo textual, ID: reorder-text
+				112 text Conserva parágrafos e vínculos. Desfaz somente os arranjos lado a lado dos parágrafos movidos.
+				113 button Verificar compatibilidade de publicação, ID: publication-check
+			114 container
+				115 heading 3. Colocar lado a lado, Value: 2
+					116 text 3. Colocar lado a lado
+				117 text Parágrafo vizinho
+				118 pop up button (collapsed, settable) Parágrafo vizinho, Value: O horizonte abre uma passagem., ID: paragraph, Secondary Actions: Expand
+					119 menu
+						191 Água, luz e memória.
+						192 (selected) O horizonte abre uma passagem.
+						193 A casa guarda outra história 🙂.
+				123 text Largura da primeira coluna
+				124 text 50%
+				125 slider (settable, integer) Largura da primeira coluna, Value: 50, ID: ratio
+				126 button (disabled) Mostrar lado a lado, ID: arrange
+				127 button (disabled) Voltar à coluna única, ID: stack
+			194 text Texto livre e resultados protegidos no mesmo parágrafo. O comando alterar age uma vez e é consumido.
+		129 container Documento experimental
+			130 container Modo de visualização
+				131 button Apresentação, ID: visual-tab
+				132 button Ordem de leitura, ID: reading-tab
+			195 text Ordem alinhada
+			134 container
+				135 text ESTUDO DE COMPOSIÇÃO 01
+				136 heading Travessia, Value: 2
+					137 text Travessia
+				138 text Um pequeno documento para experimentar relações entre palavra e imagem.
+				139 container Description: Conteúdo do documento, ID: document
+					196 checkbox Description: Selecionar parágrafo: Água, luz e memória., Value: 0
+						197 text Água, luz e memória.
+					198 checkbox Description: Selecionar parágrafo: O horizonte abre uma passagem., Value: 0
+						199 text O horizonte abre uma passagem.
+					200 checkbox Description: Selecionar parágrafo: A casa guarda outra história 🙂., Value: 0
+						201 text A casa guarda outra história 🙂.
+					202 container
+						203 text entry area (settable) Description: Texto de Negociacao, trecho 1, Value: Armand:
+							204 text Armand:
+						205 button Description: Editar fórmula Negociacao: vou negociar, Help: Editar fonte de Negociacao
+						206 text entry area (settable) Description: Texto de Negociacao, trecho 3, Value: .
+							207 text .
+						208 button Editar fórmula Preço da negociação
+						209 button Editar frase de Negociacao
+					210 container
+						211 text Alterar Preço da negociação · Definir Negociacao.Preco como 14
+						212 button Aplicar alteração
+						213 button Editar comando
+				214 text INDE · EXPERIMENTO AUTORAL P2-D2
+			155 text Autoria integral: as camadas da origem são conservadas. A folha alternativa privada não é exibida nesta demonstração.
+		156 text Gravação local em área experimental separada. Operações confirmadas ficam protegidas para recuperação. Salvar confirma o estado autoral. Nenhuma publicação é realizada.
+
+The focused UI element is 5 button Desfazer, ID: undo

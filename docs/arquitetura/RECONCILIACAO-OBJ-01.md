@@ -129,3 +129,7 @@ Após a proposta do usuário e sua aprovação expressa, o [objeto Fórmula](FOR
 ## Atualização — cartões preenchíveis, 2026-11-22
 
 Após escolha e autorização do usuário, o [editor por cartões](CARTOES-FORMULAS-OBJ-01.md) foi integrado ao piloto P2-D2, com fonte única, prévia no motor e regra/frase atômicas. [Validação própria](../validacao/VALIDACAO-OBJ-01-CARTOES.md). O vínculo com entidades reais, a integração GTK e a publicação canônica permanecem pendentes.
+
+## Atualização — hub e alterações remotas, 2026-11-22
+
+O usuário autorizou o [hub de fórmulas](HUB-FORMULAS-OBJ-01.md): cinco caminhos, referências alcançáveis e alterações consumíveis tanto por cartões quanto por escrita livre. [Validação própria](../validacao/VALIDACAO-OBJ-01-HUB.md). O formato auxiliar 5 permanece; não há migração de projetos reais, integração GTK ou início de Fase 3.

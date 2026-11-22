@@ -1,0 +1,103 @@
+Browser tab: 2, Title: "INDE · Texto por condições", URL: "http://127.0.0.1:36381/".
+0 AXWebArea INDE · Texto por condições, URL: 127.0.0.1:36381/
+	1 container Criar · Escolher palavras ou frases, ID: hub-dialog
+		2 heading Criar · Escolher palavras ou frases, Value: 2, ID: hub-title
+			3 text Criar · Escolher palavras ou frases
+		4 container
+			5 text Nome da fórmula
+			6 text field (settable) Nome da fórmula, Value: Preço da negociação
+		7 container
+			8 button (expanded) Referências para outras fórmulas, Secondary Actions: Collapse
+				9 text Referências para outras fórmulas
+			10 text Referência da fórmula
+			11 text field (settable) Referência da fórmula, Value: Negociacao
+			12 text Referência da variável
+			13 text field (settable) Referência da variável, Value: Preco
+			14 text Na criação, use letras sem acentos, números ou sublinhado nas referências. Elas permanecem estáveis depois; o nome de apresentação pode mudar.
+			15 text field Description: Referência Preco, Value: Negociacao.Preco
+		16 container
+			17 text Inserir em
+			18 pop up button (collapsed, settable) Description: Inserir em, Value: Documento, Secondary Actions: Expand
+				19 menu
+					20 (selected) Documento
+			21 text Inserir antes de
+			22 pop up button (collapsed, settable) Description: Inserir antes de, Value: Fim do documento, Secondary Actions: Expand
+				23 menu
+					24 Água, luz e memória.
+					25 O horizonte abre uma passagem.
+					26 (selected) Fim do documento
+		27 container
+			28 heading Entrada para comparar, Value: 3
+				29 text Entrada para comparar
+			30 text Tipo de entrada
+			31 pop up button (collapsed, settable) Description: Tipo de entrada, Value: Número, Secondary Actions: Expand
+				32 menu
+					33 (selected) Número
+					34 Texto
+			35 text Nome da entrada
+			36 text field (settable) Nome da entrada, Value: o preço
+			37 heading Entrada, Value: 4
+				38 text Entrada
+			39 text De onde vem entrada
+			40 pop up button (collapsed, settable) Description: Origem de entrada, Value: Valor preenchido aqui, Secondary Actions: Expand
+				41 menu
+					42 (selected) Valor preenchido aqui
+					43 Resultado ou variável existente
+			44 text Entrada
+			45 stepper (settable, integer) Entrada, Value: 16
+		46 container
+			47 heading Condições · vale a primeira que servir, Value: 3
+				48 text Condições · vale a primeira que servir
+			49 text Condição 1
+			50 button (disabled) Subir
+			51 button Descer
+			52 button Remover
+			53 text Se o preço
+			54 pop up button (collapsed, settable) Description: Comparação da condição 1, Value: for maior que, Secondary Actions: Expand
+				55 menu
+					56 for menor que
+					57 for igual ou menor que
+					58 for igual a
+					59 for diferente de
+					60 for igual ou maior que
+					61 (selected) for maior que
+			62 stepper (settable, integer) Description: Valor da condição 1, Value: 15
+			63 text Mostrar esta palavra ou frase
+			64 text entry area (settable) Mostrar esta palavra ou frase, Value: preço caro
+			65 text Condição 2
+			66 button Subir
+			67 button (disabled) Descer
+			68 button Remover
+			69 text Se o preço
+			70 pop up button (collapsed, settable) Description: Comparação da condição 2, Value: for igual a, Secondary Actions: Expand
+				71 menu
+					72 for menor que
+					73 for igual ou menor que
+					74 (selected) for igual a
+					75 for diferente de
+					76 for igual ou maior que
+					77 for maior que
+			78 stepper (settable, integer) Description: Valor da condição 2, Value: 15
+			79 text Mostrar esta palavra ou frase
+			80 text entry area (settable) Mostrar esta palavra ou frase, Value: vou negociar
+			81 button Adicionar condição
+			82 text Se nenhuma condição servir, mostrar
+			83 text entry area (settable) Se nenhuma condição servir, mostrar, Value: que pechincha
+		84 container hub-context
+			85 heading Frase de contexto, Value: 3
+				86 text Frase de contexto
+			87 container
+				88 text Texto antes do resultado
+				89 text entry area (settable) Texto antes do resultado, Value: Armand:
+			90 container
+				91 text Texto depois do resultado
+				92 text entry area (settable) Texto depois do resultado, Value: .
+		93 container
+			94 heading Prévia, Value: 3
+				95 text Prévia
+			96 text Armand: preço caro.
+			97 text Prévia calculada pelo mesmo motor do documento. Aplicar protege o trabalho.
+		98 button Inserir fórmula, ID: hub-apply
+		99 button Cancelar
+
+The focused UI element is 8 button (expanded) Referências para outras fórmulas, Secondary Actions: Collapse

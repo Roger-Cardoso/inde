@@ -59,3 +59,7 @@ Formato auxiliar 5, snapshot P2-D2 e linguagem 2 são conservados: sem nova tabe
 | Erro ficar escondido atrás do diálogo | Mensagem dentro da caixa | Recusa visual de valor numérico vazio conserva o documento |
 
 Continua pendente ligar variáveis a entidades reais, formas de nome e pseudônimos do INDE. O nome literal Armand no exemplo não é vínculo semântico. A edição por offsets do Documento original, integração GTK, exportação canônica, `.inde` único e fases posteriores não foram iniciadas neste corte. Validação técnica não substitui o aceite humano do produto.
+
+## Atualização — hub e alterações remotas, 2026-11-22
+
+O usuário autorizou o [hub de fórmulas](HUB-FORMULAS-OBJ-01.md): cinco caminhos, referências alcançáveis e alterações consumíveis tanto por cartões quanto por escrita livre. [Validação própria](../validacao/VALIDACAO-OBJ-01-HUB.md). O formato auxiliar 5 permanece; não há migração de projetos reais, integração GTK ou início de Fase 3.

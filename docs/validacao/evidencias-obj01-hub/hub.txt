@@ -1,0 +1,23 @@
+Browser tab: 2, Title: "INDE · Texto por condições", URL: "http://127.0.0.1:36381/".
+0 AXWebArea INDE · Texto por condições, URL: 127.0.0.1:36381/
+	1 container Inserir fórmula, ID: hub-dialog
+		2 heading Inserir fórmula, Value: 2, ID: hub-title
+			3 text Inserir fórmula
+		4 button Escolher palavras ou frases Condições ordenadas, contexto e alternativa.
+			5 text Escolher palavras ou frases
+			6 text Condições ordenadas, contexto e alternativa.
+		7 button Fazer uma conta Dois valores ou referências, com uma operação.
+			8 text Fazer uma conta
+			9 text Dois valores ou referências, com uma operação.
+		10 button Guardar um valor Uma informação numérica ou textual reutilizável.
+			11 text Guardar um valor
+			12 text Uma informação numérica ou textual reutilizável.
+		13 button Alterar um valor Um comando que age uma vez e desaparece.
+			14 text Alterar um valor
+			15 text Um comando que age uma vez e desaparece.
+		16 button Escrever livremente Digite a fórmula ou o comando completo.
+			17 text Escrever livremente
+			18 text Digite a fórmula ou o comando completo.
+		19 button Cancelar
+
+The focused UI element is 4 button Escolher palavras ou frases Condições ordenadas, contexto e alternativa.

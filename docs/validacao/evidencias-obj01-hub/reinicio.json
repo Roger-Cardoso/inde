@@ -1,0 +1,25 @@
+{
+  "snapshot_identical_after_SIGKILL": true,
+  "working_generation": 21,
+  "working_sha256": "917a77c715bf4f9456dd4e63f7284c9308afc6746fa15f2c61a0e875b49bbaa6",
+  "saved_revision": 0,
+  "saved_not_promoted": true,
+  "integrity_check": "ok",
+  "foreign_key_check": [],
+  "user_version": 5,
+  "formula_count": 6,
+  "active_document_uses": 3,
+  "consumed": [
+    "Negociar",
+    "Alteracao",
+    "Alteracao2"
+  ],
+  "sources": {
+    "Negociacao": "# INDE-CARDS-2 {\"label\":\"o preço\",\"title\":\"Preço da negociação\",\"type\":\"number\",\"variable\":\"Preco\"}\ndeclara Preco = 16\nPreco = 14\nresultado SE(Preco > 15; \"preço caro\"; SE(Preco == 15; \"vou negociar\"; \"que pechincha\"))",
+    "Negociar": "# INDE-WRITTEN-1 {\"title\":\"Negociar\"}\nalterar Negociacao.Preco = 15",
+    "Alteracao": "# INDE-BLOCK-1 {\"kind\":\"change\",\"title\":\"Alterar Preço da negociação\",\"type\":\"number\"}\nalterar Negociacao.Preco = 14",
+    "Personagem": "# INDE-BLOCK-1 {\"kind\":\"value\",\"label\":\"Vida\",\"title\":\"Vida do personagem\",\"type\":\"number\",\"variable\":\"HP\"}\ndeclara HP = 100\nHP = 80\nresultado HP",
+    "Quinto": "# INDE-BLOCK-1 {\"kind\":\"calculate\",\"title\":\"Quinto\"}\ndeclara Primeiro = Personagem.HP\ndeclara Segundo = 5\nresultado Primeiro / Segundo",
+    "Alteracao2": "# INDE-BLOCK-1 {\"kind\":\"change\",\"title\":\"Alterar um valor\",\"type\":\"number\"}\nalterar Personagem.HP = Personagem.HP - 20"
+  }
+}
