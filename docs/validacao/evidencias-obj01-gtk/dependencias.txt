@@ -1,0 +1,7 @@
+test_imported_bytes_and_explicit_patch (test_obj01_native_sources.NativeSources.test_imported_bytes_and_explicit_patch) ... ok
+
+----------------------------------------------------------------------
+Ran 1 test in 0.233s
+
+OK
+Pinned native math files verified: 245

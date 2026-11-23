@@ -1,0 +1,57 @@
+[
+  {
+    "profile": "p2a",
+    "commit": "8ea6c233f50529de9c9894a62b925d90941157a1",
+    "verified": 37
+  },
+  {
+    "profile": "p2b",
+    "commit": "b1ae38fbcc47962c33ca74e8bcdca2e72ae64cca",
+    "verified": 39
+  },
+  {
+    "profile": "p2c",
+    "commit": "347be9dfea7ea7442fdd7606e469ac9c1d3d6928",
+    "verified": 44
+  },
+  {
+    "profile": "p2d",
+    "commit": "1560cfe3c490ab1d4090c0e53857789ff2f648cf",
+    "verified": 49
+  },
+  {
+    "profile": "p2d2",
+    "commit": "8ad48d13b32d87fdeb493877e4fdf77c8ae3fb22",
+    "verified": 47
+  },
+  {
+    "profile": "cartoes",
+    "commit": "729404048b5614d86088fdf9730e630110f57c44",
+    "verified": 41
+  },
+  {
+    "profile": "hub",
+    "commit": "93caf049fe575025aaed9f6cb89dc539b2fdeab4",
+    "verified": 48
+  },
+  {
+    "profile": "composicao-edicao",
+    "commit": "08c6e8a1f63aebac77d72316cbe0974c1de78ea0",
+    "verified": 43
+  },
+  {
+    "profile": "tabelas-visuais",
+    "commit": "26adaa22995def08b5ea2e269e9ef3a193d398c8",
+    "verified": 49
+  },
+  {
+    "profile": "estrutura-tabelas",
+    "commit": "703ba822acd5e7acb256751481d505f7e09c9cf2",
+    "verified": 45
+  },
+  {
+    "profile": "matematica-nativa",
+    "commit": "47328b9fc90a03beff3a640d9ec7b90ccaf62016",
+    "verified": 107
+  }
+]

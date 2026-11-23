@@ -1,0 +1,2 @@
+[INDE] Renderer compatibility: Cairo for Intel 8086:0102; explicit GSK_RENDERER overrides this default.
+Controle nativo ausente: native-field-alt

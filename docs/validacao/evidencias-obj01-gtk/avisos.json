@@ -1,0 +1,15 @@
+{
+  "keyboard_warning": "GTK: Cannot handle >16bit keyvals",
+  "observed_before_objects_open": true,
+  "observed_during_main_window_construction": true,
+  "markers": [
+    483,
+    597,
+    73997,
+    74059
+  ],
+  "warnings_filtered": false,
+  "native_widget_finalization_warnings": 0,
+  "gtk_critical": 0,
+  "all_input_methods_verified": false
+}

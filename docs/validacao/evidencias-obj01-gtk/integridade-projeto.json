@@ -1,0 +1,31 @@
+{
+  "canonical": {
+    "path": "dados/obj01-gtk-nativo-final/Projeto.inde/data/project.sqlite3",
+    "integrity": "ok",
+    "foreign_keys": [],
+    "user_version": 0,
+    "schema": 37
+  },
+  "composition": {
+    "path": "dados/obj01-gtk-nativo-final/Projeto.inde/documents/composed/c883b093-2024-4d3a-b975-fd02cd455b6c/obj01-piloto.sqlite3",
+    "integrity": "ok",
+    "foreign_keys": [],
+    "user_version": 5,
+    "tables": [
+      [
+        "saved"
+      ],
+      [
+        "blobs"
+      ],
+      [
+        "working"
+      ]
+    ],
+    "saved_equals_working": true,
+    "format": "INDE-OBJ01-COMPOSITE-P2D2-5",
+    "equations": 3,
+    "figures": 1,
+    "tables_count": 1
+  }
+}

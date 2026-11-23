@@ -1,0 +1,92 @@
+[INDE] Renderer compatibility: Cairo for Intel 8086:0102; explicit GSK_RENDERER overrides this default.
+
+(inde-especial:124542): Gtk-WARNING **: 20:14:09.975: Finalizing gtkmm__GtkWidget 0x57d12633df20, but it still has children left:
+   - native-cell-d36dcd1c-6ff4-4dc5-a24e-b62b3bb3a9b3 0x57d126333fe0
+   - native-cell-c1001a14-26e2-4030-a9db-ad3ce06829c3 0x57d1264c9f30
+   - native-cell-d7b6d203-4467-414e-92e0-26d3bd5dab63 0x57d1262de940
+
+(inde-especial:124542): Gtk-WARNING **: 20:14:09.976: Finalizing gtkmm__GtkWidget 0x57d1264b8080, but it still has children left:
+   - native-cell-f62d0c35-56f9-4270-ade7-353d7678e4b7 0x57d126bd05d0
+   - native-cell-3214c4a8-b312-4968-8809-24497ab45ae3 0x57d126bde900
+   - native-cell-352c4ada-04aa-4484-8d6c-9e565fc45076 0x57d126bccde0
+
+(inde-especial:124542): Gtk-WARNING **: 20:14:10.374: Finalizing gtkmm__GtkWidget 0x57d1264ba740, but it still has children left:
+   - native-cell-d36dcd1c-6ff4-4dc5-a24e-b62b3bb3a9b3 0x57d1262de940
+   - native-cell-c1001a14-26e2-4030-a9db-ad3ce06829c3 0x57d126bde900
+   - native-cell-d7b6d203-4467-414e-92e0-26d3bd5dab63 0x57d126bccde0
+
+(inde-especial:124542): Gtk-WARNING **: 20:14:10.374: Finalizing gtkmm__GtkWidget 0x57d126bce480, but it still has children left:
+   - native-cell-f62d0c35-56f9-4270-ade7-353d7678e4b7 0x57d126491fa0
+   - native-cell-3214c4a8-b312-4968-8809-24497ab45ae3 0x57d126a09af0
+   - native-cell-352c4ada-04aa-4484-8d6c-9e565fc45076 0x57d1264767b0
+
+(inde-especial:124542): Gtk-WARNING **: 20:14:10.699: Finalizing gtkmm__GtkWidget 0x57d1264ba740, but it still has children left:
+   - native-cell-d36dcd1c-6ff4-4dc5-a24e-b62b3bb3a9b3 0x57d126333fe0
+   - native-cell-c1001a14-26e2-4030-a9db-ad3ce06829c3 0x57d1264c9f30
+   - native-cell-d7b6d203-4467-414e-92e0-26d3bd5dab63 0x57d1262de940
+
+(inde-especial:124542): Gtk-WARNING **: 20:14:10.699: Finalizing gtkmm__GtkWidget 0x57d126bce480, but it still has children left:
+   - native-cell-f62d0c35-56f9-4270-ade7-353d7678e4b7 0x57d126491fa0
+   - native-cell-3214c4a8-b312-4968-8809-24497ab45ae3 0x57d126a2ac60
+   - native-cell-352c4ada-04aa-4484-8d6c-9e565fc45076 0x57d126450990
+
+(inde-especial:124542): Gtk-WARNING **: 20:14:10.904: Finalizing gtkmm__GtkWidget 0x57d12633df20, but it still has children left:
+   - native-cell-d36dcd1c-6ff4-4dc5-a24e-b62b3bb3a9b3 0x57d126ba70a0
+   - native-cell-c1001a14-26e2-4030-a9db-ad3ce06829c3 0x57d126bb3bd0
+   - native-cell-d7b6d203-4467-414e-92e0-26d3bd5dab63 0x57d12627b450
+
+(inde-especial:124542): Gtk-WARNING **: 20:14:10.904: Finalizing gtkmm__GtkWidget 0x57d126474350, but it still has children left:
+   - native-cell-f62d0c35-56f9-4270-ade7-353d7678e4b7 0x57d126454920
+   - native-cell-3214c4a8-b312-4968-8809-24497ab45ae3 0x57d126333fe0
+   - native-cell-352c4ada-04aa-4484-8d6c-9e565fc45076 0x57d126491fa0
+
+(inde-especial:124542): Gtk-WARNING **: 20:14:11.108: Finalizing gtkmm__GtkWidget 0x57d12633df20, but it still has children left:
+   - native-cell-d36dcd1c-6ff4-4dc5-a24e-b62b3bb3a9b3 0x57d1261fe0d0
+   - native-cell-c1001a14-26e2-4030-a9db-ad3ce06829c3 0x57d1262e7ef0
+   - native-cell-d7b6d203-4467-414e-92e0-26d3bd5dab63 0x57d12629be40
+
+(inde-especial:124542): Gtk-WARNING **: 20:14:11.109: Finalizing gtkmm__GtkWidget 0x57d126474350, but it still has children left:
+   - native-cell-f62d0c35-56f9-4270-ade7-353d7678e4b7 0x57d126ba70a0
+   - native-cell-3214c4a8-b312-4968-8809-24497ab45ae3 0x57d126bb3bd0
+   - native-cell-352c4ada-04aa-4484-8d6c-9e565fc45076 0x57d12627b450
+
+(inde-especial:124542): Gtk-WARNING **: 20:14:11.258: Finalizing gtkmm__GtkWidget 0x57d126a02320, but it still has children left:
+   - native-cell-d36dcd1c-6ff4-4dc5-a24e-b62b3bb3a9b3 0x57d126ba70a0
+   - native-cell-c1001a14-26e2-4030-a9db-ad3ce06829c3 0x57d126bb3bd0
+   - native-cell-d7b6d203-4467-414e-92e0-26d3bd5dab63 0x57d12627b450
+
+(inde-especial:124542): Gtk-WARNING **: 20:14:11.258: Finalizing gtkmm__GtkWidget 0x57d12648e740, but it still has children left:
+   - native-cell-f62d0c35-56f9-4270-ade7-353d7678e4b7 0x57d126454920
+   - native-cell-3214c4a8-b312-4968-8809-24497ab45ae3 0x57d126333fe0
+   - native-cell-352c4ada-04aa-4484-8d6c-9e565fc45076 0x57d126491fa0
+
+(inde-especial:124542): Gtk-WARNING **: 20:14:11.441: Finalizing gtkmm__GtkWidget 0x57d126249e70, but it still has children left:
+   - native-cell-d36dcd1c-6ff4-4dc5-a24e-b62b3bb3a9b3 0x57d126b130d0
+   - native-cell-c1001a14-26e2-4030-a9db-ad3ce06829c3 0x57d1264fefc0
+   - native-cell-d7b6d203-4467-414e-92e0-26d3bd5dab63 0x57d12629be40
+
+(inde-especial:124542): Gtk-WARNING **: 20:14:11.441: Finalizing gtkmm__GtkWidget 0x57d126203580, but it still has children left:
+   - native-cell-f62d0c35-56f9-4270-ade7-353d7678e4b7 0x57d126ba70a0
+   - native-cell-3214c4a8-b312-4968-8809-24497ab45ae3 0x57d126bb3bd0
+   - native-cell-352c4ada-04aa-4484-8d6c-9e565fc45076 0x57d12627b450
+
+(inde-especial:124542): Gtk-WARNING **: 20:14:11.625: Finalizing gtkmm__GtkWidget 0x57d126927ae0, but it still has children left:
+   - native-cell-d36dcd1c-6ff4-4dc5-a24e-b62b3bb3a9b3 0x57d126bdef80
+   - native-cell-c1001a14-26e2-4030-a9db-ad3ce06829c3 0x57d1264b1b60
+   - native-cell-d7b6d203-4467-414e-92e0-26d3bd5dab63 0x57d126a2c060
+
+(inde-especial:124542): Gtk-WARNING **: 20:14:11.625: Finalizing gtkmm__GtkWidget 0x57d126b05c30, but it still has children left:
+   - native-cell-f62d0c35-56f9-4270-ade7-353d7678e4b7 0x57d1264459b0
+   - native-cell-3214c4a8-b312-4968-8809-24497ab45ae3 0x57d1261fe0d0
+   - native-cell-352c4ada-04aa-4484-8d6c-9e565fc45076 0x57d12629be40
+Operação GTK recusada: invalid_presentation
+
+(inde-especial:124542): Gtk-WARNING **: 20:14:12.738: Finalizing gtkmm__GtkWidget 0x57d12633df20, but it still has children left:
+   - native-cell-d36dcd1c-6ff4-4dc5-a24e-b62b3bb3a9b3 0x57d1263fb770
+   - native-cell-c1001a14-26e2-4030-a9db-ad3ce06829c3 0x57d126bdef80
+   - native-cell-d7b6d203-4467-414e-92e0-26d3bd5dab63 0x57d1264b1b60
+
+(inde-especial:124542): Gtk-WARNING **: 20:14:12.738: Finalizing gtkmm__GtkWidget 0x57d126461aa0, but it still has children left:
+   - native-cell-f62d0c35-56f9-4270-ade7-353d7678e4b7 0x57d126a2c060
+   - native-cell-3214c4a8-b312-4968-8809-24497ab45ae3 0x57d1264459b0
+   - native-cell-352c4ada-04aa-4484-8d6c-9e565fc45076 0x57d1261fe0d0
