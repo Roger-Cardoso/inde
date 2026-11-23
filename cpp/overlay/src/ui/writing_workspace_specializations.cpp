@@ -1,6 +1,7 @@
 #include "inde/ui/accessibility.hpp"
 #include "inde/ui/overlay_dialog.hpp"
 #include "inde/ui/writing_workspace.hpp"
+#include "object_native_ui.hpp"
 #include <algorithm>
 #include <stdexcept>
 namespace inde::ui {
@@ -170,10 +171,10 @@ void WritingWorkspace::set_editor_specialization(const std::string &id,
                          buffer->get_iter_at_offset(bound));
     editor_scroll_.get_vadjustment()->set_value(scroll);
     changing_specialization_ = false;
-    if (focus && current_document_ && id != "composition" && id != "tables" && id != "formulas" && id != "math")
-      editor_.grab_focus();
+    if (focus && current_document_ && object_editor_) object_editor_->focus_text(cursor, false);
   } catch (const std::exception &e) {
     specialization_selector_.set_active_id(editor_specialization_);
+    for(auto *c=specialty_strip_.get_first_child();c;c=c->get_next_sibling()) if(auto *b=dynamic_cast<Gtk::ToggleButton*>(c)) b->set_active(b->get_name().raw()=="specialty-"+editor_specialization_);
     changing_specialization_ = false;
     signal_status_message_.emit(e.what());
   }

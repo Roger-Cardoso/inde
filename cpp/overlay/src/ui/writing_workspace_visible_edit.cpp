@@ -28,7 +28,7 @@ void WritingWorkspace::show_all_editor_text() {
     invalidate_clipboard();
     refresh_editor_visibility();
     schedule_find();
-    editor_.grab_focus();
+    focus_common_sheet();
   } catch (const std::exception &e) {
     show_error("Não foi possível mudar a visibilidade", e);
   }
@@ -103,7 +103,7 @@ void WritingWorkspace::refresh_editor_visibility() {
       visibility_button_.set_tooltip_text("A visibilidade não altera a origem nem escolhe a saída editorial. Aplicar um perfil conserva a mesma escrita.");
     }
     show_all_button_.set_visible(!active_visibility_id_.empty());
-    if(object_editor_ && objects_can_leave() && !changing_specialization_ && !committing_object_document_ && document_surfaces_.get_visible_child_name()=="objects")flush_document_objects();
+    if(object_editor_ && !changing_specialization_ && !committing_object_document_)schedule_common_sheet();
     refreshing_visibility_ = false;
     refresh_reading_blocks();
   } catch (...) {

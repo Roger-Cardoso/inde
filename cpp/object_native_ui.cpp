@@ -5,6 +5,7 @@
 #include "object_math_native.hpp"
 #include "object_native_probe.hpp"
 #include "object_table_design.hpp"
+#include "object_text_projection.hpp"
 #include <cerrno>
 #include <charconv>
 #include <cmath>
@@ -244,6 +245,8 @@ struct ObjectDocumentEditor::Impl {
     const auto *p = find(state, "paragraphs", id);
     return !p || !visible_text || visible_text->contains(text(*p, "paragraph"));
   }
+  std::map<std::string, ObjectTextProjection *> paragraph_views;
+  sigc::connection cursor_follow, focus_follow;
   Gtk::Revealer side_revealer;
   std::map<std::string, Gtk::Box *> tool_groups;
   Gtk::Box root{Gtk::Orientation::VERTICAL, 8},
@@ -321,6 +324,8 @@ struct ObjectDocumentEditor::Impl {
     state = runtime->session->request(O{{"op", "view"}}).at("state");
     selected = text(state, "selection");
     source_document = *doc;
+    focus_follow = window.property_focus_widget().signal_changed().connect(
+        [this] { follow_cursor(); });
     owner.set_orientation(Gtk::Orientation::VERTICAL);
     owner.append(root);
     root.set_vexpand(true);
@@ -334,6 +339,10 @@ struct ObjectDocumentEditor::Impl {
     history_keys->set_propagation_phase(Gtk::PropagationPhase::CAPTURE);
     history_keys->signal_key_pressed().connect(
         [this](guint key, guint, Gdk::ModifierType mods) {
+          if (owner.text_composing && owner.text_composing())
+            return false;
+          if (focused_text())
+            return false;
           if (busy || draft || choosing_image ||
               (mods & Gdk::ModifierType::CONTROL_MASK) == Gdk::ModifierType{})
             return false;
@@ -370,7 +379,11 @@ struct ObjectDocumentEditor::Impl {
     surface_row.append(stack);
     surface_row.append(side_revealer);
     canvas.set_margin(20);
+    canvas.set_name("native-sheet-content");
     content_scroll.set_child(canvas);
+    if (auto *viewport = dynamic_cast<Gtk::Viewport *>(canvas.get_parent()))
+      viewport->set_scroll_to_focus(false);
+    content_scroll.set_name("native-sheet-scroll");
     content_scroll.set_policy(Gtk::PolicyType::AUTOMATIC,
                               Gtk::PolicyType::AUTOMATIC);
     stack.add(content_scroll, "document");
@@ -390,8 +403,10 @@ struct ObjectDocumentEditor::Impl {
           command("save");
       });
     });
-    button(toolbar, "Desfazer", "native-undo", [this] { command("undo"); });
-    button(toolbar, "Refazer", "native-redo", [this] { command("redo"); });
+    button(toolbar, "Desfazer objeto", "native-undo",
+           [this] { command("undo"); });
+    button(toolbar, "Refazer objeto", "native-redo",
+           [this] { command("redo"); });
     button(toolbar, "Retomar trabalho", "native-working",
            [this] { command("reopen_working", {{"discard_unsaved", true}}); });
     button(toolbar, "Reabrir salvo…", "native-reopen",
@@ -466,8 +481,61 @@ struct ObjectDocumentEditor::Impl {
       box->set_visible(id == specialty);
     render();
   }
+  ObjectTextProjection *focused_text() const {
+    const auto *focused = window.get_focus();
+    if (!focused)
+      return nullptr;
+    for (const auto &[id, view] : paragraph_views)
+      if (GTK_WIDGET(view->gobj()) == focused->gobj())
+        return view;
+    return nullptr;
+  }
+  void reveal_cursor(ObjectTextProjection &view) {
+    graphene_rect_t bounds{};
+    if (!gtk_widget_compute_bounds(GTK_WIDGET(view.gobj()),
+                                   GTK_WIDGET(canvas.gobj()), &bounds))
+      return;
+    const auto buffer = view.get_buffer();
+    Gdk::Rectangle caret;
+    view.get_iter_location(buffer->get_iter_at_mark(buffer->get_insert()),
+                           caret);
+    const double y = static_cast<double>(bounds.origin.y) + caret.get_y();
+    const auto adjustment = content_scroll.get_vadjustment();
+    const double top = adjustment->get_value(),
+                 page = adjustment->get_page_size();
+    if (y < top + 12.)
+      adjustment->set_value(std::max(0., y - 12.));
+    else if (y + caret.get_height() > top + page - 12.)
+      adjustment->set_value(
+          std::min(std::max(0., adjustment->get_upper() - page),
+                   y + caret.get_height() - page + 12.));
+  }
+  void follow_cursor() {
+    if (!focused_text())
+      return;
+    if (auto *viewport = dynamic_cast<Gtk::Viewport *>(canvas.get_parent()))
+      viewport->set_scroll_to_focus(false);
+    const auto adjustment = content_scroll.get_vadjustment();
+    adjustment->set_value(adjustment->get_value());
+    if (cursor_follow.connected())
+      return;
+    const auto lifetime = life;
+    // Coalesce layout/focus notifications. A short main-loop timer also runs
+    // when GTK still has layout idles pending for a growing text viewport.
+    cursor_follow = Glib::signal_timeout().connect(
+        [this, lifetime] {
+          if (!lifetime->alive)
+            return false;
+          if (auto *focused = focused_text())
+            reveal_cursor(*focused);
+          return false;
+        },
+        1);
+  }
   ~Impl() {
     life->alive = false;
+    cursor_follow.disconnect();
+    focus_follow.disconnect();
     close_object_menu();
     chooser_response.disconnect();
     if (chooser)
@@ -509,6 +577,16 @@ struct ObjectDocumentEditor::Impl {
                std::function<void(const V &)> after = {}) {
     if (busy)
       return;
+    if (std::any_of(paragraph_views.begin(), paragraph_views.end(),
+                    [](const auto &p) { return p.second->pending_input(); })) {
+      status.set_text("Aguarde a confirmação da entrada de texto.");
+      return;
+    }
+    if (owner.text_composing && owner.text_composing()) {
+      status.set_text(
+          "Confirme a composição de texto antes de alterar objetos.");
+      return;
+    }
     if (draft && op != "preview_formula_hub" && op != "edit_cell" &&
         op != "edit_formula_text" && op != "create_equation" &&
         op != "edit_equation" && op != "edit_formula" &&
@@ -634,8 +712,18 @@ struct ObjectDocumentEditor::Impl {
     c.set_active_id(active);
   }
   void render() {
-    if (draft)
+    if (std::any_of(paragraph_views.begin(), paragraph_views.end(),
+                    [](const auto &p) { return p.second->pending_input(); }))
       return;
+    if (draft || (owner.text_composing && owner.text_composing()))
+      return;
+    const auto scroll_x = content_scroll.get_hadjustment()->get_value();
+    const auto scroll_y = content_scroll.get_vadjustment()->get_value();
+    auto *focused = focused_text();
+    std::string focused_paragraph;
+    for (const auto &[id, view] : paragraph_views)
+      if (view == focused)
+        focused_paragraph = id;
     rendering = true;
     selected = text(state, "selection");
     if (!selected.empty() && !shown(selected))
@@ -658,6 +746,7 @@ struct ObjectDocumentEditor::Impl {
     side_scroll.get_hadjustment()->set_value(0);
     close_object_menu();
     menus.clear();
+    paragraph_views.clear();
     clear(canvas);
 
     std::string styles =
@@ -705,6 +794,10 @@ struct ObjectDocumentEditor::Impl {
             ? "Trabalho protegido para recuperação · ainda não salvo"
             : "Salvo e conferido");
     stack.set_visible_child("document");
+    content_scroll.get_hadjustment()->set_value(scroll_x);
+    content_scroll.get_vadjustment()->set_value(scroll_y);
+    if (!focused_paragraph.empty())
+      owner.focus_text(-1);
   }
   void format_paragraph(Gtk::Label &l, const std::string &paragraph) {
     if (visible_text)
@@ -800,6 +893,13 @@ struct ObjectDocumentEditor::Impl {
       box->add_css_class("inde-native-selected");
     box->set_name("native-object-" + id);
     box->set_focusable(true);
+    auto focus = Gtk::EventControllerFocus::create();
+    focus->signal_enter().connect([this] {
+      if (auto *viewport = dynamic_cast<Gtk::Viewport *>(canvas.get_parent()))
+        viewport->set_scroll_to_focus(!focused_text());
+      follow_cursor();
+    });
+    box->add_controller(focus);
     box->set_tooltip_text("Clique direito para editar, mover ou retirar. "
                           "Shift+F10 pelo teclado.");
     auto *actions = Gtk::make_managed<Gtk::Box>(Gtk::Orientation::VERTICAL, 4);
@@ -865,16 +965,40 @@ struct ObjectDocumentEditor::Impl {
            [this, id] { command("remove", {{"id", id}}, "structure"); });
     if (const auto *p = find(state, "paragraphs", id)) {
       const auto paragraph = text(*p, "paragraph");
-      action("Editar no texto", "native-paragraph-edit-" + id,
+      action("Escrever neste parágrafo", "native-paragraph-edit-" + id,
              [this, paragraph] {
                if (owner.edit_paragraph)
                  owner.edit_paragraph(paragraph);
              });
-      auto &l = label(*box, visible_text ? visible_text->at(paragraph)
-                                         : text(*p, "text"));
-      l.set_selectable(true);
-      l.add_css_class("inde-native-text");
-      format_paragraph(l, paragraph);
+      if (owner.paragraph_view) {
+        auto *view = owner.paragraph_view(paragraph);
+        if (!view)
+          throw std::runtime_error("Parágrafo sem origem na Escrita.");
+        if (auto *projection = dynamic_cast<ObjectTextProjection *>(view)) {
+          projection->layout_changed = [this, lifetime = life, projection] {
+            if (lifetime->alive && focused_text() == projection)
+              follow_cursor();
+          };
+          // TextView is GtkScrollable: a scrolled host propagates its validated
+          // content height, including wrapping, instead of allocating zero
+          // height before the first focus/layout pass.
+          auto *host = Gtk::make_managed<Gtk::ScrolledWindow>();
+          host->set_policy(Gtk::PolicyType::NEVER, Gtk::PolicyType::NEVER);
+          host->set_propagate_natural_height(true);
+          host->set_min_content_height(32);
+          host->set_hexpand(true);
+          host->set_child(*projection);
+          box->append(*host);
+          paragraph_views[paragraph] = projection;
+        } else
+          box->append(*view);
+      } else {
+        auto &l = label(*box, visible_text ? visible_text->at(paragraph)
+                                           : text(*p, "text"));
+        l.set_selectable(true);
+        l.add_css_class("inde-native-text");
+        format_paragraph(l, paragraph);
+      }
     } else if (const auto *e = find(state, "equations", id)) {
       auto *m = Gtk::make_managed<MathPreview>();
       m->set_name("native-math-" + id);
@@ -936,6 +1060,11 @@ struct ObjectDocumentEditor::Impl {
                          : ta == "right"   ? Gtk::Justification::RIGHT
                          : ta == "justify" ? Gtk::Justification::FILL
                                            : Gtk::Justification::LEFT);
+        } else if (auto *v = dynamic_cast<Gtk::TextView *>(w)) {
+          v->set_justification(ta == "center"    ? Gtk::Justification::CENTER
+                               : ta == "right"   ? Gtk::Justification::RIGHT
+                               : ta == "justify" ? Gtk::Justification::FILL
+                                                 : Gtk::Justification::LEFT);
         }
       const double fraction = real(p.at("width")) / 100.;
       if (fraction < .999 && horizontal == "center") {
@@ -2473,6 +2602,9 @@ void ObjectDocumentEditor::synchronize_document(const project::Document &d) {
   if (!can_leave())
     throw std::runtime_error(
         "Aplique ou cancele a edição aberta antes de mudar de especialidade.");
+  const auto before = impl_->state;
+  const auto visible =
+      visible_paragraphs ? visible_paragraphs(d) : impl_->visible_text;
   {
     std::lock_guard lock(impl_->runtime->mutex);
     impl_->runtime->session->synchronize_document(d);
@@ -2480,7 +2612,37 @@ void ObjectDocumentEditor::synchronize_document(const project::Document &d) {
     impl_->state =
         impl_->runtime->session->request(O{{"op", "view"}}).at("state");
   }
-  impl_->render();
+  impl_->visible_text = visible;
+  const auto same = [&](const char *key) {
+    return persistence::json::serialize(before.at(key)) ==
+           persistence::json::serialize(impl_->state.at(key));
+  };
+  std::set<std::string> shown_paragraphs, displayed_paragraphs;
+  for (const auto &p : impl_->state.at("paragraphs").as_array())
+    if (impl_->shown(text(p, "id")))
+      shown_paragraphs.insert(text(p, "paragraph"));
+  for (const auto &[id, view] : impl_->paragraph_views)
+    displayed_paragraphs.insert(id);
+  if (same("visual_order") && same("rows") && same("presentation") &&
+      displayed_paragraphs == shown_paragraphs)
+    refresh_text_views();
+  else
+    impl_->render();
+}
+void ObjectDocumentEditor::refresh_text_views() {
+  for (const auto &[id, view] : impl_->paragraph_views)
+    view->refresh();
+  impl_->follow_cursor();
+}
+void ObjectDocumentEditor::focus_text(int offset, bool reveal) {
+  for (const auto &[id, view] : impl_->paragraph_views)
+    if (view->contains(offset)) {
+      view->focus_offset(offset);
+      if (!reveal)
+        return;
+      impl_->reveal_cursor(*view);
+      return;
+    }
 }
 void ObjectDocumentEditor::set_specialty(const std::string &id) {
   impl_->specialty = id;
@@ -2490,14 +2652,29 @@ void ObjectDocumentEditor::set_specialty(const std::string &id) {
 }
 void ObjectDocumentEditor::set_visible_text(
     std::optional<std::map<std::string, std::string>> visible) {
+  if (impl_->visible_text == visible)
+    return;
+  bool same_members = bool(impl_->visible_text) == bool(visible);
+  if (same_members && visible) {
+    same_members = impl_->visible_text->size() == visible->size();
+    for (const auto &[id, value] : *visible)
+      same_members = same_members && impl_->visible_text->contains(id);
+  }
   impl_->visible_text = std::move(visible);
-  impl_->render();
+  if (same_members)
+    refresh_text_views();
+  else
+    impl_->render();
 }
 void ObjectDocumentEditor::show_tools(bool open) {
   impl_->side_revealer.set_reveal_child(open);
 }
 bool ObjectDocumentEditor::can_leave() const {
-  return !impl_->draft && !impl_->busy && !impl_->choosing_image &&
+  for (const auto &[id, view] : impl_->paragraph_views)
+    if (view->pending_input())
+      return false;
+  return !(text_composing && text_composing()) && !impl_->draft &&
+         !impl_->busy && !impl_->choosing_image &&
          impl_->pending_actions == 0 &&
          text(impl_->state, "persistence_status") != "uncertain";
 }
@@ -2582,6 +2759,9 @@ void ObjectNativeProbe::reveal_object(ObjectDocumentEditor &w,
   locate(w);
   if (!target)
     throw std::runtime_error("Context object missing");
+  // Focus may start viewport animation. Set the deterministic test position
+  // afterwards, cancelling that animation rather than racing its next frame.
+  target->grab_focus();
   graphene_rect_t bounds{};
   if (gtk_widget_compute_bounds(target->gobj(),
                                 GTK_WIDGET(w.impl_->canvas.gobj()), &bounds)) {
@@ -2589,7 +2769,6 @@ void ObjectNativeProbe::reveal_object(ObjectDocumentEditor &w,
     a->set_value(std::clamp(static_cast<double>(bounds.origin.y) - 32., 0.,
                             std::max(0., a->get_upper() - a->get_page_size())));
   }
-  target->grab_focus();
 }
 void ObjectNativeProbe::open_context(ObjectDocumentEditor &w,
                                      const std::string &id) {

@@ -55,6 +55,25 @@ Gtk::Widget *find(Gtk::Widget &w, const std::string &name) {
       return v;
   return nullptr;
 }
+Gtk::Button *visible_button(Gtk::Widget &w, const std::string &caption) {
+  if (auto *b = dynamic_cast<Gtk::Button *>(&w);
+      b && b->get_mapped() && b->get_label().raw() == caption)
+    return b;
+  for (auto *c = w.get_first_child(); c; c = c->get_next_sibling())
+    if (auto *b = visible_button(*c, caption))
+      return b;
+  return nullptr;
+}
+bool visible_text(Gtk::Widget &w, const std::string &text) {
+  if (auto *l = dynamic_cast<Gtk::Label *>(&w);
+      l && l->get_mapped() &&
+      l->get_text().raw().find(text) != std::string::npos)
+    return true;
+  for (auto *c = w.get_first_child(); c; c = c->get_next_sibling())
+    if (visible_text(*c, text))
+      return true;
+  return false;
+}
 template <class T> T &widget(Gtk::Widget &w, const std::string &name) {
   auto *v = dynamic_cast<T *>(find(w, name));
   if (!v)
@@ -153,6 +172,8 @@ int run_object_window_smoke(const Glib::RefPtr<Gtk::Application> &app,
   std::deque<std::function<void()>> steps;
   int ticks = 0, stage = 0, result = 1, settle = 0;
   std::string table, cell, formula, equation;
+  Gtk::Widget *shared_paragraph = nullptr;
+  std::string shared_content;
   auto state = [&]() -> const V & { return Probe::state(*objects); };
   auto equation_step = [&](const std::string &name, const std::string &model) {
     steps.push_back([&, name, model] {
@@ -177,6 +198,14 @@ int run_object_window_smoke(const Glib::RefPtr<Gtk::Application> &app,
       click(*objects, "native-apply");
     });
   };
+  steps.push_back([&] { main->lookup_action("writing-export")->activate(); });
+  steps.push_back([&] {
+    need(visible_button(*main, "Escolher destino e exportar"),
+         "Folha de texto simples deixou de oferecer a exportação existente");
+    auto *cancel = visible_button(*main, "Cancelar");
+    need(cancel, "Prévia de exportação sem cancelamento");
+    g_signal_emit_by_name(cancel->gobj(), "clicked");
+  });
   steps.push_back([&] { click(*main, "specialty-math"); });
   steps.push_back([&] {
     need(Probe::tools_open(*objects), "Barra não abriu instrumentos");
@@ -383,6 +412,226 @@ int run_object_window_smoke(const Glib::RefPtr<Gtk::Application> &app,
     need(!state().at("dirty").as_boolean(), "Documento não salvo");
     capture_native(*main, picture);
   });
+  steps.push_back([&] { main->lookup_action("writing-export")->activate(); });
+  steps.push_back([&] {
+    need(!visible_button(*main, "Escolher destino e exportar"),
+         "Exportação original omitiu os objetos da folha");
+    auto *close = visible_button(*main, "Fechar");
+    need(close, "Recusa de exportação sem explicação visível");
+    need(visible_text(*main, "nenhum arquivo foi gerado"),
+         "Recusa de exportação sem informar o limite dos objetos");
+    g_signal_emit_by_name(close->gobj(), "clicked");
+  });
+  steps.push_back([&] {
+    click(*main, "specialty-composition");
+    shared_paragraph = find(*objects, "writing-paragraph-" + paragraph_ids[0]);
+    need(dynamic_cast<Gtk::TextView *>(shared_paragraph),
+         "Folha não tem escrita direta");
+    shared_content = widget<Gtk::TextView>(*main, "writing-text-editor")
+                         .get_buffer()
+                         ->get_text();
+  });
+  for (const auto *specialty :
+       {"text", "semantic", "linguistic", "structure", "bindings",
+        "composition", "tables", "formulas", "math"}) {
+    steps.push_back([&, specialty] {
+      click(*main, std::string("specialty-") + specialty);
+      need(find(*objects, "writing-paragraph-" + paragraph_ids[0]) ==
+               shared_paragraph,
+           "Especialidade reconstruiu a folha ou o cursor");
+      need(shared_paragraph->get_mapped(),
+           "Especialidade ocultou a folha comum");
+      need(shared_paragraph->get_height() >= 24,
+           "Parágrafo sem altura legível na folha");
+      need(find(*objects, "native-object-" + equation)->get_mapped(),
+           "Especialidade ocultou equação");
+      need(find(*objects, "native-object-" + table)->get_mapped(),
+           "Especialidade ocultou tabela");
+      need(state().at("rows").as_array().size() == 1,
+           "Especialidade perdeu arranjo lado a lado");
+      need(widget<Gtk::TextView>(*main, "writing-text-editor")
+                   .get_buffer()
+                   ->get_text()
+                   .raw() == shared_content,
+           "Especialidade alterou o texto");
+      if (std::string(specialty) == "text" ||
+          std::string(specialty) == "semantic" ||
+          std::string(specialty) == "composition")
+        capture_native(*main,
+                       picture.parent_path() /
+                           (std::string("gtk-folha-") + specialty + ".png"));
+    });
+  }
+  steps.push_back([&] {
+    click(*main, "specialty-composition");
+    auto &view = widget<Gtk::TextView>(*objects,
+                                       "writing-paragraph-" + paragraph_ids[0]);
+    view.grab_focus();
+    view.get_buffer()->place_cursor(view.get_buffer()->begin());
+    view.get_buffer()->insert(view.get_buffer()->begin(), "Ação — ");
+    need(widget<Gtk::TextView>(*main, "writing-text-editor")
+             .get_buffer()
+             ->get_text()
+             .raw()
+             .starts_with("Ação — "),
+         "Digitação na Composição não entrou no texto autoritativo");
+  });
+  steps.push_back([&] {
+    need(find(*objects, "writing-paragraph-" + paragraph_ids[0]) ==
+             shared_paragraph,
+         "Digitação comum destruiu a entrada GTK");
+    need(state()
+             .at("paragraphs")
+             .as_array()[0]
+             .at("text")
+             .as_string()
+             .starts_with("Ação — "),
+         "Folha não adotou a escrita direta");
+    click(*main, "specialty-text");
+    click(*main, "writing-undo");
+  });
+  steps.push_back([&] {
+    need(widget<Gtk::TextView>(*main, "writing-text-editor")
+                 .get_buffer()
+                 ->get_text()
+                 .raw() == shared_content,
+         "Desfazer não restaurou digitação na folha comum");
+    auto &view = widget<Gtk::TextView>(*objects,
+                                       "writing-paragraph-" + paragraph_ids[0]);
+    view.grab_focus();
+    view.get_buffer()->place_cursor(view.get_buffer()->end());
+    view.get_buffer()->insert(view.get_buffer()->end(),
+                              "\nParágrafo de ensaio.");
+  });
+  steps.push_back([&] {
+    need(state().at("paragraphs").as_array().size() == 3,
+         "Enter não criou parágrafo na folha");
+    need(state().at("equations").as_array().size() == 3,
+         "Enter perdeu objetos");
+    auto *typing = dynamic_cast<Gtk::TextView *>(main->get_focus());
+    need(
+        typing && typing->get_name().raw() ==
+                      "writing-paragraph-" + state()
+                                                 .at("paragraphs")
+                                                 .as_array()[1]
+                                                 .at("paragraph")
+                                                 .as_string(),
+        "Enter não levou o cursor ao novo parágrafo: foco=" +
+            (typing ? typing->get_name().raw() : std::string("nenhum campo")) +
+            "; esperado=" +
+            state().at("paragraphs").as_array()[1].at("paragraph").as_string() +
+            "; cursor=" +
+            std::to_string(
+                widget<Gtk::TextView>(*main, "writing-text-editor")
+                    .get_buffer()
+                    ->get_iter_at_mark(
+                        widget<Gtk::TextView>(*main, "writing-text-editor")
+                            .get_buffer()
+                            ->get_insert())
+                    .get_offset()));
+    typing->get_buffer()->insert(typing->get_buffer()->end(), " Continuação.");
+    click(*main, "writing-undo");
+  });
+  steps.push_back([&] {
+    need(state().at("paragraphs").as_array().size() == 2,
+         "Desfazer Enter perdeu a estrutura");
+    click(*main, "specialty-composition");
+    auto &view = widget<Gtk::TextView>(*objects,
+                                       "writing-paragraph-" + paragraph_ids[0]);
+    g_signal_emit_by_name(view.gobj(), "preedit-changed", "e");
+    click(*main, "specialty-math");
+    need(widget<Gtk::ToggleButton>(*main, "specialty-composition").get_active(),
+         "Mudou especialidade durante composição de entrada");
+    g_signal_emit_by_name(view.gobj(), "preedit-changed", "");
+  });
+  steps.push_back([&] {
+    need(widget<Gtk::TextView>(*main, "writing-text-editor")
+                 .get_buffer()
+                 ->get_text()
+                 .raw() == shared_content,
+         "Texto provisório foi salvo");
+    click(*objects, "native-save");
+  });
+  steps.push_back([&] {
+    click(*main, "specialty-text");
+    auto &view = widget<Gtk::TextView>(*objects,
+                                       "writing-paragraph-" + paragraph_ids[0]);
+    view.grab_focus();
+    auto source =
+        widget<Gtk::TextView>(*main, "writing-text-editor").get_buffer();
+    source->select_range(source->end(), source->begin());
+    objects->refresh_text_views();
+    auto local = view.get_buffer();
+    local->erase(local->begin(), local->end());
+    local->insert(local->begin(), "Uma");
+    need(!objects->can_leave(),
+         "Seleção entre parágrafos não bloqueou fechamento provisório");
+    main->close();
+    need(main->get_visible(), "Fechou antes de confirmar entrada aceita");
+  });
+  steps.push_back([&] {
+    need(widget<Gtk::TextView>(*main, "writing-text-editor")
+                 .get_buffer()
+                 ->get_text() == "Uma",
+         "Substituir seleção entre parágrafos perdeu a entrada aceita");
+    click(*main, "writing-undo");
+  });
+  steps.push_back([&] {
+    need(widget<Gtk::TextView>(*main, "writing-text-editor")
+                 .get_buffer()
+                 ->get_text()
+                 .raw() == shared_content,
+         "Substituir seleção entre parágrafos não desfez como uma operação "
+         "completa");
+  });
+  steps.push_back([&] {
+    auto &view = widget<Gtk::TextView>(*objects,
+                                       "writing-paragraph-" + paragraph_ids[0]);
+    view.grab_focus();
+    std::string prose;
+    for (int i = 0; i < 70; ++i)
+      prose += " A escrita precisa permanecer legível em várias linhas.";
+    view.get_buffer()->place_cursor(view.get_buffer()->end());
+    view.get_buffer()->insert(view.get_buffer()->end(), prose);
+  });
+  steps.push_back([&] {
+    auto &view = widget<Gtk::TextView>(*objects,
+                                       "writing-paragraph-" + paragraph_ids[0]);
+    Gdk::Rectangle end;
+    view.get_iter_location(view.get_buffer()->end(), end);
+    need(view.get_height() >= end.get_y() + end.get_height(),
+         "Texto longo ficou cortado dentro do parágrafo");
+    need(state().at("paragraphs").as_array().size() == 2,
+         "Escrita no fim do parágrafo alterou seus vizinhos");
+    auto &scroll = widget<Gtk::ScrolledWindow>(*objects, "native-sheet-scroll");
+    graphene_rect_t bounds{};
+    need(gtk_widget_compute_bounds(
+             GTK_WIDGET(view.gobj()),
+             GTK_WIDGET(
+                 widget<Gtk::Box>(*objects, "native-sheet-content").gobj()),
+             &bounds),
+         "Sem geometria da escrita longa");
+    const double caret_y = static_cast<double>(bounds.origin.y) + end.get_y();
+    const auto adjustment = scroll.get_vadjustment();
+    need(caret_y >= adjustment->get_value() &&
+             caret_y + end.get_height() <=
+                 adjustment->get_value() + adjustment->get_page_size(),
+         "Cursor saiu da área visível durante escrita longa: y=" +
+             std::to_string(caret_y) +
+             "; top=" + std::to_string(adjustment->get_value()) +
+             "; page=" + std::to_string(adjustment->get_page_size()) +
+             "; upper=" + std::to_string(adjustment->get_upper()) +
+             "; local_cursor=" +
+             std::to_string(
+                 view.get_buffer()
+                     ->get_iter_at_mark(view.get_buffer()->get_insert())
+                     .get_offset()) +
+             "; local_length=" +
+             std::to_string(view.get_buffer()->get_char_count()) + "; focus=" +
+             (main->get_focus() ? main->get_focus()->get_name().raw()
+                                : std::string("none")));
+    click(*main, "writing-undo");
+  });
   steps.push_back([&] { Probe::reveal_object(*objects, equation); });
   steps.push_back([&] { Probe::open_context(*objects, equation); });
   steps.push_back([&] {
@@ -529,6 +778,48 @@ int run_object_window_smoke(const Glib::RefPtr<Gtk::Application> &app,
     click(*objects, "native-layout");
     need(!Probe::draft(*objects),
          "Objeto oculto continuou selecionado para movimentação");
+    auto &view = widget<Gtk::TextView>(*objects,
+                                       "writing-paragraph-" + paragraph_ids[1]);
+    view.grab_focus();
+    view.get_buffer()->place_cursor(view.get_buffer()->end());
+    view.get_buffer()->insert(view.get_buffer()->end(), "\n");
+  });
+  steps.push_back([&] {
+    need(state().at("paragraphs").as_array().size() == 3,
+         "Enter na lente não criou parágrafo");
+    const auto paragraph =
+        state().at("paragraphs").as_array()[2].at("paragraph").as_string();
+    auto &empty =
+        widget<Gtk::TextView>(*objects, "writing-paragraph-" + paragraph);
+    need(empty.get_mapped(), "Lente ocultou o novo parágrafo vazio editável");
+    need(main->get_focus() &&
+             main->get_focus()->gobj() == GTK_WIDGET(empty.gobj()),
+         "Lente perdeu o cursor ao criar parágrafo");
+    empty.get_buffer()->insert(empty.get_buffer()->end(),
+                               "Continuação visível.");
+  });
+  steps.push_back([&] {
+    need(widget<Gtk::TextView>(*main, "writing-text-editor")
+             .get_buffer()
+             ->get_text()
+             .raw()
+             .ends_with("Continuação visível."),
+         "Não foi possível continuar escrevendo na lente");
+    main->lookup_action("writing-undo")->activate();
+  });
+  steps.push_back([&] {
+    if (widget<Gtk::TextView>(*main, "writing-text-editor")
+            .get_buffer()
+            ->get_text()
+            .raw() != revised_body)
+      main->lookup_action("writing-undo")->activate();
+  });
+  steps.push_back([&] {
+    need(widget<Gtk::TextView>(*main, "writing-text-editor")
+                 .get_buffer()
+                 ->get_text()
+                 .raw() == revised_body,
+         "Desfazer na lente não conservou os trechos ocultos");
     click_label("Mostrar tudo");
   });
   steps.push_back([&] {
@@ -658,6 +949,15 @@ int run_object_window_smoke(const Glib::RefPtr<Gtk::Application> &app,
                    "Equações perdidas na reabertura");
               need(value() == "80", "Fórmula perdida");
               need(math_widgets(*objects) >= 3, "Desenho nativo perdido");
+              for (const auto &p : state().at("paragraphs").as_array()) {
+                auto &view = widget<Gtk::TextView>(
+                    *objects,
+                    "writing-paragraph-" + p.at("paragraph").as_string());
+                need(view.get_height() >= 24,
+                     "Reabertura deixou um parágrafo sem altura");
+                need(!view.get_buffer()->get_text().empty(),
+                     "Reabertura deixou um campo vazio");
+              }
               capture_native(*main, picture.parent_path() / "gtk-reaberto.png");
               stage = 4;
               return true;
@@ -668,6 +968,11 @@ int run_object_window_smoke(const Glib::RefPtr<Gtk::Application> &app,
                      "\"javascript\":false,\"native_cairo_math\":true,"
                      "\"equations\":3,\"draft_close_guard\":true,\"remote_"
                      "change_undo_redo\":true,\"table_style_structure\":true,"
+                     "\"shared_sheet\":true,\"inline_text\":true,\"shared_"
+                     "sheet_ime_guard\":true,"
+                     "\"specialties_keep_widgets\":true,\"paragraph_split_"
+                     "undo\":true,"
+                     "\"cross_selection_undo\":true,"
                      "\"integrated_writing\":true,\"tools_collapsed\":true,"
                      "\"context_menus\":true,\"visibility_lens\":true,\"save_"
                      "reopen\":true,\"source_"
@@ -692,7 +997,9 @@ int run_object_window_smoke(const Glib::RefPtr<Gtk::Application> &app,
             return false;
           }
         },
-        180);
+        // Observe a settled GTK turn: input reconciliation and layout idles
+        // must finish before the next assertion, including on a large display.
+        180, Glib::PRIORITY_LOW);
   });
   app->run();
   capture_frame.disconnect();

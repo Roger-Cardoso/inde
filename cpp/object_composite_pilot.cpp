@@ -3480,6 +3480,33 @@ struct Session::Impl {
 Session::Session(const std::filesystem::path &path, Profile profile,
                  const std::filesystem::path &seed, PersistenceHook hook)
     : impl_(std::make_unique<Impl>(path, profile, seed, std::move(hook))) {}
+bool Session::plain_text_compatible(const std::filesystem::path &workspace,
+    const std::string &project_id, const project::Document &document) noexcept {
+  try {
+    Db database(workspace / "obj01-piloto.sqlite3", true);
+    database.exec("PRAGMA query_only=ON; BEGIN");
+    const auto saved = Impl::read_saved(database, workspace, 5);
+    const auto working = Impl::read_saved(database, workspace, 5, true);
+    Query base(database, "SELECT base_revision,base_sha256 FROM working WHERE id=1");
+    if (!base.step() || base.integer(0) != saved.rev || base.string(1) != saved.hash) return false;
+    Query assets(database, "SELECT count(*) FROM blobs");
+    if (!assets.step() || assets.integer(0) != 0) return false;
+    const auto plain = [&](const State &s) {
+      if (s.project != project_id || !s.p2d2 || s.author != s.visual ||
+          !s.figures.empty() || !s.archived_figures.empty() || !s.tables.empty() ||
+          !s.archived_tables.empty() || !s.rows.empty() || !s.formulas.empty() ||
+          !s.formula_uses.empty() || !s.retired_formula_uses.empty() ||
+          !s.formula_text.empty() || !s.formula_cells.empty() || !s.equations.empty() ||
+          !s.removed_equations.empty() || !s.removed_text.empty() ||
+          !s.presentation.empty() || !s.table_styles.empty() || !s.table_structure.empty()) return false;
+      const auto p = projection(s);
+      std::vector<std::string> expected;
+      for (const auto &row : p->paragraphs()) expected.push_back(row.occurrence_id);
+      return expected == s.author && project::same_document_state(p->source_snapshot(), document, false);
+    };
+    return plain(saved.state) && plain(working.state);
+  } catch (...) { return false; }
+}
 Session::Session(const std::filesystem::path &path,
                  const std::string &project_id,
                  const project::Document &document, DocumentBinding binding)

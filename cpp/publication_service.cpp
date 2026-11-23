@@ -1,4 +1,5 @@
 #include "publication_service.hpp"
+#include "object_composite_pilot.hpp"
 #include "inde/project/manifest.hpp"
 #include <glib.h>
 #include <algorithm>
@@ -269,7 +270,9 @@ V Service::capture(const Edition &edition,const Site &s)const{
   application::ProductionOptions options;options.author=s.author;options.profile=application::ProductionProfile::Reading;
   const auto production=application::prepare_work_production(project().manifest().project_id,e.structure_id,*w,nodes,source_.writing().documents(),e.choices,options);
   for(const auto &unit:production.units)for(const auto &doc:unit.documents)
-    require(!std::filesystem::exists(project().path()/"documents"/"composed"/doc.id/"obj01-piloto.sqlite3"),"Este documento possui composição por objetos. O publicador atual não traduz esse conteúdo; nenhuma edição incompleta será gerada.");
+    require(!std::filesystem::exists(project().path()/"documents"/"composed"/doc.id/"obj01-piloto.sqlite3") ||
+      objects::pilot::Session::plain_text_compatible(project().path()/"documents"/"composed"/doc.id,project().manifest().project_id,doc),
+      "Este documento possui composição por objetos ou uma composição que não pôde ser conferida. O publicador atual não traduz esse conteúdo; nenhuma edição incompleta será gerada.");
   std::vector<project::NarrativeEntity> entities;const auto types=source_.narrative().entity_types();
   for(const auto &id:e.entities){const auto entity=*source_.narrative().entity(id);
     require(std::any_of(types.begin(),types.end(),[&](const auto &t){return t.id==entity.entity_type_id && t.key=="character";}),"Este tipo de entidade ainda não tem projeção web");entities.push_back(entity);}

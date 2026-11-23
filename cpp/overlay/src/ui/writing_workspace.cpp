@@ -507,6 +507,7 @@ void WritingWorkspace::build_ui() {
       });
     }
     mark_dirty();
+    schedule_common_sheet();
     refresh_formatting_toolbar();
     refresh_semantic_lenses();
     schedule_inline_suggestions();
@@ -540,6 +541,7 @@ void WritingWorkspace::build_ui() {
               static_cast<std::size_t>(buffer->get_iter_at_mark(buffer->get_selection_bound()).get_offset())});
           schedule_position_save();
           refresh_alternative_context();
+          schedule_common_sheet();
         }
       });
   editor_.get_buffer()->signal_insert().connect(
@@ -791,6 +793,7 @@ void WritingWorkspace::reset() {
 }
 
 WritingWorkspace::~WritingWorkspace() {
+  common_sheet_idle_.disconnect();
   reset_document_objects();
   visibility_idle_.disconnect();
   close_inline_suggestions();inline_popover_.unparent();

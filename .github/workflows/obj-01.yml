@@ -38,6 +38,7 @@ on:
       - scripts/demos/Abrir-demo-obj01-tabelas.sh
       - scripts/demos/Abrir-demo-obj01-estrutura-tabelas.sh
       - scripts/demos/Abrir-demo-objetos-nativos.sh
+      - scripts/demos/Abrir-demo-folha-comum.sh
       - tests/audit_obj01_sources.py
       - tests/test_obj01_source_audit.py
       - fontes/*.tar.gz
@@ -82,6 +83,7 @@ on:
       - scripts/demos/Abrir-demo-obj01-tabelas.sh
       - scripts/demos/Abrir-demo-obj01-estrutura-tabelas.sh
       - scripts/demos/Abrir-demo-objetos-nativos.sh
+      - scripts/demos/Abrir-demo-folha-comum.sh
       - tests/audit_obj01_sources.py
       - tests/test_obj01_source_audit.py
       - fontes/*.tar.gz
@@ -281,7 +283,7 @@ jobs:
       - name: Configure actual INDE application
         run: cmake -S cpp -B build-nativo -G Ninja -DCMAKE_BUILD_TYPE=Release -DINDE_BUILD_CORE_TESTS=ON
       - name: Compile actual application and project-bound tests
-        run: cmake --build build-nativo --target inde inde_object_native_tests inde_native_math_tests inde_web_bridge inde_publication_tests --parallel 2
+        run: cmake --build build-nativo --target inde inde_object_native_tests inde_object_text_projection_tests inde_native_math_tests inde_web_bridge inde_publication_tests --parallel 2
       - name: Verify native math input boundaries
         run: ctest --test-dir build-nativo -R "^inde_native_math_tests$" --output-on-failure
       - name: Verify project binding and actual GTK document workflow

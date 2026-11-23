@@ -28,7 +28,7 @@ void WritingWorkspace::set_focus_mode(bool focused) {
   context_menu_button_.set_visible(!focused);
   document_menu_button_.set_visible(!focused);
   if (focused && tools_visible_) toggle_tools();
-  if (current_document_ && page_stack_.get_visible_child_name()=="editor") editor_.grab_focus();
+  if (current_document_ && page_stack_.get_visible_child_name()=="editor") focus_common_sheet();
 }
 
 void WritingWorkspace::review_document(const std::string &id) {
@@ -81,7 +81,7 @@ void WritingWorkspace::open_document(const std::string &id) {
     page_stack_.set_visible_child("editor");
     begin_recovery();
     refresh_recovery_notice();
-    editor_.grab_focus();
+    focus_common_sheet();
     signal_status_message_.emit("Documento aberto para Escrita");
   } catch (const std::exception &error) {
     loading_editor_ = false;
@@ -95,7 +95,7 @@ void WritingWorkspace::reveal_document(const std::string &id) {
       flush_changes();
       const auto persisted=service_.writing().document(id);
       if(persisted && project::same_document_state(capture_editor_state(),*persisted,false)) {
-        page_stack_.set_visible_child("editor");editor_.grab_focus();return;
+        page_stack_.set_visible_child("editor");focus_common_sheet();return;
       }
     }catch(const std::exception &e){show_error("Não foi possível voltar ao texto",e);return;}
   }

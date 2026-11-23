@@ -11,6 +11,12 @@ def emit(name, replacements):
             raise RuntimeError('A base mudou: ' + name + ': ' + before[:60])
         text = text.replace(before, after)
     text = expand_objects(name, expand(name, text))
+    # Overlays retain access to private sibling headers without changing the
+    # pinned source or widening all compilation include paths.
+    if name.startswith('src/ui/writing_workspace'):
+        import re
+        text = re.sub(r'#include "([^"/]+\.hpp)"',
+            lambda m: '#include "ui/'+m[1]+'"' if (base/'src/ui'/m[1]).is_file() else m[0], text)
     path = out / name
     path.parent.mkdir(parents=True, exist_ok=True)
     if not path.exists() or path.read_text() != text:
@@ -51,3 +57,12 @@ emit("src/ui/main_window_keyboard.cpp", [])
 
 for name in ("writing_workspace", "writing_workspace_document", "writing_workspace_specializations", "writing_workspace_keyboard", "writing_workspace_visible_edit"):
     emit("src/ui/"+name+".cpp", [])
+
+# Navigation from references, search, alternatives and inspectors returns to
+# the same mixed sheet rather than attempting to focus a hidden TextView.
+for source in sorted((base / 'src/ui').glob('writing_workspace*.cpp')):
+    name = source.relative_to(base).as_posix()
+    if ('editor_.grab_focus()' in source.read_text() or source.stem in {'writing_workspace_ime', 'writing_workspace_export'}) and source.stem not in {
+        'writing_workspace', 'writing_workspace_document', 'writing_workspace_specializations',
+        'writing_workspace_keyboard', 'writing_workspace_visible_edit'}:
+        emit(name, [])

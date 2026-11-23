@@ -1,4 +1,6 @@
 #include "publication_service.hpp"
+#include "object_composite_pilot.hpp"
+#include "inde/project/document_paragraphs.hpp"
 #include <fstream>
 #include <iostream>
 #include <sstream>
@@ -51,6 +53,37 @@ int main(int argc,char **argv){try{
   fs::create_directories(composed);std::ofstream(composed/"obj01-piloto.sqlite3")<<"marker";
   rejects([&]{service.prepare(e.id,s.revision,e.revision);},"Publicação omitiu composição por objetos");
   fs::remove(composed/"obj01-piloto.sqlite3");
+  // Opening the shared sheet creates a private paragraph viewport, not a
+  // non-text publication. Verify this exception through the actual service.
+  auto plain=*source.writing().document(first);
+  if(!project::canonical_paragraphs(plain.paragraphs)) {
+    plain.paragraphs=project::identify_paragraphs(plain.content);
+    plain=source.writing().update_document(plain);
+  }
+  fs::permissions(composed.parent_path(),fs::perms::owner_all);
+  fs::permissions(composed,fs::perms::owner_all);
+  {
+    objects::pilot::Session viewport(composed,source.current()->manifest().project_id,plain,objects::pilot::DocumentBinding::Live);
+    const auto request=[&](const std::string &operation,V::Object args=V::Object{}) {
+      args["op"]=operation;args["expected"]=viewport.request(O{{"op","view"}}).at("state").at("revision");
+      auto reply=viewport.request(args);check(reply.at("accepted").as_boolean(),"Falha na fixture de folha comum");
+    };
+    request("save");
+    const auto before_check=hash(read(composed/"obj01-piloto.sqlite3"));
+    const auto author_before=hash(read(root/"Publicacao.inde/data/project.sqlite3"));
+    static_cast<void>(service.prepare(e.id,s.revision,e.revision));
+    check(hash(read(composed/"obj01-piloto.sqlite3"))==before_check,"Conferir texto simples escreveu na composição");
+    check(hash(read(root/"Publicacao.inde/data/project.sqlite3"))==author_before,"Conferir texto simples escreveu no proprietário");
+    check(!objects::pilot::Session::plain_text_compatible(composed,project::new_uuid(),plain),"Conferência aceitou outro projeto");
+    auto changed_plain=plain;changed_plain.title+=" alterado";
+    check(!objects::pilot::Session::plain_text_compatible(composed,source.current()->manifest().project_id,changed_plain),"Conferência aceitou outra versão do Documento");
+    request("create_equation",O{{"before",""},{"source","x^2"},{"mode","block"},{"label","Privada"}});
+    rejects([&]{service.prepare(e.id,s.revision,e.revision);},"Publicação omitiu equação ainda não salva");
+    request("save");
+    rejects([&]{service.prepare(e.id,s.revision,e.revision);},"Publicação omitiu equação salva");
+    request("undo");request("save");
+    static_cast<void>(service.prepare(e.id,s.revision,e.revision));
+  }
   prepared=service.prepare(e.id,s.revision,e.revision);
   auto doc=*source.writing().document(e.choices.at(nodes.back().id).documents.front());doc.content+="\nUma mudança posterior.";static_cast<void>(source.writing().update_document(doc));
   check(!service.is_current(prepared),"Texto alterado não invalidou retrato");

@@ -6,14 +6,21 @@
 #include <memory>
 #include <optional>
 namespace inde::ui {
-// Composition surface owned by WritingWorkspace. The original TextView remains
-// the text authoring surface; both specialties use the same complete Document.
+// One mixed sheet owned by WritingWorkspace. Paragraph viewports edit the
+// original Writing buffer; specialties change instruments, never the content.
 class ObjectDocumentEditor final : public Gtk::Box {
 public:
   ObjectDocumentEditor(application::ProjectService &, Gtk::Window &,
                        const std::string &document);
   ~ObjectDocumentEditor() override;
   void synchronize_document(const project::Document &);
+  void refresh_text_views();
+  void focus_text(int offset, bool reveal = true);
+  std::function<Gtk::Widget *(const std::string &)> paragraph_view;
+  std::function<std::optional<std::map<std::string, std::string>>(
+      const project::Document &)>
+      visible_paragraphs;
+  std::function<bool()> text_composing;
   void set_specialty(const std::string &);
   bool can_leave() const;
   void show_tools(bool);

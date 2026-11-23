@@ -106,6 +106,10 @@ private:
   void show_object_specialization(const std::string &);
   void flush_document_objects();
   void reset_document_objects();
+  void schedule_common_sheet();
+  void focus_common_sheet();
+  Gtk::Widget *make_paragraph_view(const std::string &);
+  sigc::connection common_sheet_idle_;
   std::unique_ptr<ObjectDocumentEditor> object_editor_;
   Gtk::Stack document_surfaces_;
   Gtk::Box specialty_strip_{Gtk::Orientation::HORIZONTAL, 2};

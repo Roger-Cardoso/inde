@@ -4,7 +4,9 @@
 #include <functional>
 #include <memory>
 
-namespace inde::project { struct Document; }
+namespace inde::project {
+struct Document;
+}
 namespace inde::objects::pilot {
 // The owner serializer uses default stream precision. Pilot geometry requires
 // round-trippable doubles; this isolated codec preserves max_digits10.
@@ -24,17 +26,24 @@ using PersistenceHook = std::function<void(std::string_view, PersistenceStage)>;
 // P2-C/D add auxiliary working recovery, without a canonical project writer.
 class Session final {
 public:
+  // Read-only proof for legacy publication: no objects/presentation may be
+  // silently discarded merely because Writing created a paragraph viewport.
+  [[nodiscard]] static bool
+  plain_text_compatible(const std::filesystem::path &workspace,
+                        const std::string &project_id,
+                        const project::Document &) noexcept;
   explicit Session(const std::filesystem::path &workspace,
                    Profile profile = Profile::P2A,
                    const std::filesystem::path &seed_previous = {},
                    PersistenceHook hook = {});
-  // Explicit native entry point: binds a composition to a real project document.
-  // The legacy pilot constructor still rejects canonical .inde paths.
+  // Explicit native entry point: binds a composition to a real project
+  // document. The legacy pilot constructor still rejects canonical .inde paths.
   Session(const std::filesystem::path &workspace, const std::string &project_id,
           const project::Document &document,
           DocumentBinding binding = DocumentBinding::Frozen);
   // The Writing workspace owns authoring. Adopt its complete current snapshot,
-  // retaining object identities, assets and presentation; never writes the owner.
+  // retaining object identities, assets and presentation; never writes the
+  // owner.
   void synchronize_document(const project::Document &);
   [[nodiscard]] project::Document current_document() const;
   ~Session();
