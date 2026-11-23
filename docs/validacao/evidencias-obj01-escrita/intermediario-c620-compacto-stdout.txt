@@ -1,0 +1,1 @@
+Native GTK/Cairo: real widgets, no WebKit/HTML/JavaScript, math, table, formula, draft protection, save/reopen and owner preservation OK

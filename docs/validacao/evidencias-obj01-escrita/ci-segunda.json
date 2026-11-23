@@ -1,0 +1,163 @@
+{
+  "run_id": 45182784133,
+  "commit": "c620df836242d783b9e486947f991a947af31366",
+  "jobs": [
+    {
+      "id": 137720584591,
+      "name": "immutable-change-plans (g++, OFF)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 137720584920,
+      "name": "immutable-change-plans (g++, ON)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 137720584977,
+      "name": "document-read-adapter (g++, OFF)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 137720584981,
+      "name": "reviewed-working-sessions (clang++, ON)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 137720585005,
+      "name": "composition-read-adapter (clang++, ON)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 137720585043,
+      "name": "composite-p2a (clang++, ON)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 137720585060,
+      "name": "composition-read-adapter (clang++, OFF)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 137720585061,
+      "name": "pinned-sources",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 137720585086,
+      "name": "immutable-change-plans (clang++, ON)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 137720585097,
+      "name": "composite-p2a (g++, ON)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 137720585130,
+      "name": "composite-p2a (g++, OFF)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 137720585134,
+      "name": "document-read-adapter (g++, ON)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 137720585149,
+      "name": "immutable-change-plans (clang++, OFF)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 137720585189,
+      "name": "reviewed-working-sessions (g++, OFF)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 137720585209,
+      "name": "reviewed-working-sessions (g++, ON)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 137720585211,
+      "name": "standalone-model (clang++, OFF)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 137720585259,
+      "name": "standalone-model (g++, ON)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 137720585260,
+      "name": "composition-read-adapter (g++, OFF)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 137720585296,
+      "name": "standalone-model (g++, OFF)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 137720585300,
+      "name": "native-objects",
+      "status": "completed",
+      "conclusion": "failure"
+    },
+    {
+      "id": 137720585307,
+      "name": "composition-read-adapter (g++, ON)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 137720585330,
+      "name": "standalone-model (clang++, ON)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 137720585354,
+      "name": "document-read-adapter (clang++, ON)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 137720585385,
+      "name": "composite-p2a (clang++, OFF)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 137720585411,
+      "name": "reviewed-working-sessions (clang++, OFF)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 137720585441,
+      "name": "document-read-adapter (clang++, OFF)",
+      "status": "completed",
+      "conclusion": "success"
+    }
+  ],
+  "classification": "GCC 13 build and 25 jobs passed; native GUI failed on smaller headless viewport: off-viewport popup warnings and next test step before deferred menu action. Final revision adds visible click coordinates, pending action barrier, separated reveal/paint steps and layout width checks; verified locally under private Xvfb."
+}

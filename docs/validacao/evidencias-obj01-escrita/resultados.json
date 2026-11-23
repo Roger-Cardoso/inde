@@ -1,0 +1,78 @@
+{
+  "generated_at": "2026-11-23T14:01:27.753157+00:00",
+  "branch": "feature/inde-obj-01-foundation",
+  "runtime_commit": "dc7cce0bc3ec51cdd9e44053a3b5c7fa687c6e27",
+  "base_commit": "52739a0ba8519c2662ba0b810701b4f0889c8d29",
+  "binary_sha256": "1cd2fac97f4fdf89126eb0d72fc34a916627daaac8e61733968a31d52261cddf",
+  "native_local": {
+    "tests": 3,
+    "status": "passed on desktop and private Xvfb",
+    "window": "compact, also private Xvfb without window manager",
+    "includes": [
+      "source edit and undo/redo",
+      "owner reading move and undo",
+      "objects and formulas",
+      "visibility apply/show all",
+      "hidden selection refusal",
+      "global save with pending title",
+      "actual document close/reopen",
+      "GTK/GDK critical refusal",
+      "useful form width",
+      "bounded tools panel",
+      "pending menu action close guard",
+      "visible viewport context click"
+    ]
+  },
+  "core_ctest": {
+    "programs": 63,
+    "passed": 63
+  },
+  "legacy_composition_ctest": {
+    "programs": 22,
+    "passed": 22
+  },
+  "publication": {
+    "tests": 4,
+    "passed": 4
+  },
+  "native_math_vendor": {
+    "files": 245,
+    "status": "verified"
+  },
+  "source_auditor": {
+    "tests": 5,
+    "passed": 5
+  },
+  "main_changed_by_task": false,
+  "previous_files_verified": 74,
+  "new_demo": "dados/obj01-escrita-integrada-r3/Projeto.inde",
+  "human_acceptance": "pending",
+  "ci": {
+    "run_id": 45188525362,
+    "jobs": 26,
+    "passed": 26,
+    "url": "https://github.com/Roger-Cardoso/inde/actions/runs/45188525362"
+  },
+  "captures": {
+    "escrita-integrada.png": [
+      1920,
+      1032
+    ],
+    "editor-matematica.png": [
+      1920,
+      1032
+    ],
+    "headless.png": [
+      1180,
+      740
+    ]
+  },
+  "runtime_cpp_unchanged_since_ci": true,
+  "demo_launcher": {
+    "syntax_checked": true,
+    "started": true,
+    "pid_at_verification": 48432,
+    "browser_runtime_loaded": false,
+    "project": "dados/obj01-escrita-integrada-r3/Projeto.inde"
+  }
+}

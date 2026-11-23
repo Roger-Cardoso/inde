@@ -1,0 +1,17 @@
+{
+  "compiler": "c++ (Ubuntu 15.2.0-14ubuntu1~24~ppa1) 15.2.0",
+  "versions": {
+    "gtk4": "4.14.5",
+    "gtkmm-4.0": "4.10.0",
+    "sqlite3": "3.45.1"
+  },
+  "headless_display": {
+    "tool": "private extracted official xvfb package",
+    "package_version": "2:21.1.12-1ubuntu1.9",
+    "sha256": "2011271eabcc2eb460e99995c5ef26e46633e87d04f570e305b62f178f7b452c",
+    "system_installation_changed": false,
+    "window_manager": false,
+    "gsk_renderer": "cairo",
+    "screen": "1280x1024x24"
+  }
+}

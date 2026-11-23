@@ -1,0 +1,26 @@
+FAIL: test_real_gtk_entry_math_objects_save_reopen_and_draft_guard (test_obj01_native.NativeObjects.test_real_gtk_entry_math_objects_save_reopen_and_draft_guard)
+2026-11-23T13:33:44.3174947Z ----------------------------------------------------------------------
+2026-11-23T13:33:44.3175565Z Traceback (most recent call last):
+2026-11-23T13:33:44.3176098Z   File "/home/runner/work/inde/inde/tests/test_obj01_native.py", line 23, in test_real_gtk_entry_math_objects_save_reopen_and_draft_guard
+2026-11-23T13:33:44.3177228Z     self.assertEqual(r.returncode,0,r.stdout+r.stderr);self.assertIn('owner preservation OK',r.stdout);self.assertNotIn('still has children left',r.stderr);self.assertNotIn('Gtk-CRITICAL',r.stderr);self.assertNotIn('Gdk-CRITICAL',r.stderr)
+2026-11-23T13:33:44.3178420Z     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-11-23T13:33:44.3178800Z AssertionError: 1 != 0 : GTK probe: criando janela principal; Objetos ainda fechado
+2026-11-23T13:33:44.3179536Z GTK probe: janela principal construída; Objetos ainda fechado
+2026-11-23T13:33:44.3179864Z GTK probe: abrindo Objetos C++/GTK
+2026-11-23T13:33:44.3180142Z GTK capture: "gtk-editor-equacao.png" size=1180x740
+2026-11-23T13:33:44.3180465Z GTK capture: "gtk-editor-equacao.png" size=1180x740
+2026-11-23T13:33:44.3180685Z
+2026-11-23T13:33:44.3180989Z (inde-especial:7222): Gdk-CRITICAL **: 13:33:38.264: gdk_monitor_get_geometry: assertion 'GDK_IS_MONITOR (monitor)' failed
+2026-11-23T13:33:44.3181367Z
+2026-11-23T13:33:44.3181646Z (inde-especial:7222): Gdk-CRITICAL **: 13:33:38.264: gdk_monitor_get_geometry: assertion 'GDK_IS_MONITOR (monitor)' failed
+2026-11-23T13:33:44.3182008Z
+2026-11-23T13:33:44.3182302Z (inde-especial:7222): Gdk-CRITICAL **: 13:33:38.272: gdk_monitor_get_geometry: assertion 'GDK_IS_MONITOR (monitor)' failed
+2026-11-23T13:33:44.3182772Z GTK capture: "native.png" size=1180x740
+2026-11-23T13:33:44.3183089Z stage=1 remaining=18 Controle nativo ausente: native-field-label
+2026-11-23T13:33:44.3183335Z
+2026-11-23T13:33:44.3183339Z
+2026-11-23T13:33:44.3183467Z ----------------------------------------------------------------------
+2026-11-23T13:33:44.3183772Z Ran 3 tests in 11.689s
+2026-11-23T13:33:44.3183897Z
+2026-11-23T13:33:44.3183975Z FAILED (failures=1)
+2026-11-23T13:33:44.3284894Z

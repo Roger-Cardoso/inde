@@ -1,0 +1,163 @@
+{
+  "run_id": 45179873468,
+  "commit": "cd61468641e0a81f0c451a8f9d28477299546a9b",
+  "jobs": [
+    {
+      "id": 137710592813,
+      "name": "document-read-adapter (clang++, ON)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 137710593045,
+      "name": "composite-p2a (clang++, OFF)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 137710593086,
+      "name": "composition-read-adapter (g++, OFF)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 137710593102,
+      "name": "pinned-sources",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 137710593132,
+      "name": "reviewed-working-sessions (clang++, ON)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 137710593144,
+      "name": "document-read-adapter (clang++, OFF)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 137710593167,
+      "name": "standalone-model (g++, ON)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 137710593184,
+      "name": "composition-read-adapter (clang++, OFF)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 137710593190,
+      "name": "composite-p2a (g++, ON)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 137710593199,
+      "name": "immutable-change-plans (clang++, OFF)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 137710593201,
+      "name": "document-read-adapter (g++, ON)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 137710593213,
+      "name": "standalone-model (clang++, OFF)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 137710593219,
+      "name": "reviewed-working-sessions (g++, OFF)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 137710593225,
+      "name": "standalone-model (g++, OFF)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 137710593230,
+      "name": "native-objects",
+      "status": "completed",
+      "conclusion": "failure"
+    },
+    {
+      "id": 137710593233,
+      "name": "reviewed-working-sessions (g++, ON)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 137710593332,
+      "name": "immutable-change-plans (g++, ON)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 137710593398,
+      "name": "standalone-model (clang++, ON)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 137710593403,
+      "name": "reviewed-working-sessions (clang++, OFF)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 137710593444,
+      "name": "document-read-adapter (g++, OFF)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 137710593446,
+      "name": "composite-p2a (clang++, ON)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 137710593448,
+      "name": "immutable-change-plans (g++, OFF)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 137710593473,
+      "name": "composition-read-adapter (clang++, ON)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 137710593509,
+      "name": "composite-p2a (g++, OFF)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 137710593561,
+      "name": "immutable-change-plans (clang++, ON)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 137710593592,
+      "name": "composition-read-adapter (g++, ON)",
+      "status": "completed",
+      "conclusion": "success"
+    }
+  ],
+  "classification": "All build and behavioral assertions passed; native Python gate rejected GDK critical popup geometry warnings at the smaller CI viewport. Fixed popup action sequencing and added compact local verification; critical-warning assertions retained."
+}

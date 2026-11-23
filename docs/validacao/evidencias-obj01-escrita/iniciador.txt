@@ -1,0 +1,13 @@
+{
+  "schema": 37,
+  "arquivos_conferidos": 758,
+  "arquivo_sha256": "554623abec5d7c3c175dab2aa6bbabc8a95abd6e3d98a27191cea0260a4965c4",
+  "resultado": "ok"
+}
+-- Configuring done (1.0s)
+-- Generating done (0.4s)
+-- Build files have been written to: /home/roger/Documents/Projects/GitHub/INDE/obj01-audit/build-nativo
+[0/2] Re-checking globbed directories...
+ninja: no work to do.
+Na Escrita, abra Matemática na narrativa e use a barra de especialidades do editor.
+[INDE] Renderer compatibility: Cairo for Intel 8086:0102; explicit GSK_RENDERER overrides this default.

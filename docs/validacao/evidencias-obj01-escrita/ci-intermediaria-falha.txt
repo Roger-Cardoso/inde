@@ -1,0 +1,13 @@
+FAIL: test_real_gtk_entry_math_objects_save_reopen_and_draft_guard (test_obj01_native.NativeObjects.test_real_gtk_entry_math_objects_save_reopen_and_draft_guard)
+2026-11-23T13:10:00.3498576Z ----------------------------------------------------------------------
+2026-11-23T13:10:00.3498871Z Traceback (most recent call last):
+2026-11-23T13:10:00.3499337Z   File "/home/runner/work/inde/inde/tests/test_obj01_native.py", line 23, in test_real_gtk_entry_math_objects_save_reopen_and_draft_guard
+2026-11-23T13:10:00.3500390Z     self.assertEqual(r.returncode,0,r.stdout+r.stderr);self.assertIn('owner preservation OK',r.stdout);self.assertNotIn('still has children left',r.stderr);self.assertNotIn('Gtk-CRITICAL',r.stderr);self.assertNotIn('Gdk-CRITICAL',r.stderr)
+2026-11-23T13:10:00.3501379Z                                                                                                                                                                                                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-11-23T13:10:00.3513864Z AssertionError: 'Gdk-CRITICAL' unexpectedly found in 'GTK probe: criando janela principal; Objetos ainda fechado\nGTK probe: janela principal construída; Objetos ainda fechado\nGTK probe: abrindo Objetos C++/GTK\nGTK capture: "gtk-editor-equacao.png" size=1190x750\nGTK capture: "gtk-editor-equacao.png" size=1190x750\n\n(inde-especial:7221): Gdk-CRITICAL **: 13:09:51.458: gdk_monitor_get_geometry: assertion \'GDK_IS_MONITOR (monitor)\' failed\n\n(inde-especial:7221): Gdk-CRITICAL **: 13:09:51.459: gdk_monitor_get_geometry: assertion \'GDK_IS_MONITOR (monitor)\' failed\n\n(inde-especial:7221): Gdk-CRITICAL **: 13:09:51.468: gdk_monitor_get_geometry: assertion \'GDK_IS_MONITOR (monitor)\' failed\nGTK capture: "native.png" size=1190x750\nGTK capture: "gtk-menu-objeto.png" size=251x196\nGTK capture: "gtk-reaberto.png" size=1190x750\n'
+2026-11-23T13:10:00.3517402Z
+2026-11-23T13:10:00.3517531Z ----------------------------------------------------------------------
+2026-11-23T13:10:00.3517825Z Ran 3 tests in 13.869s
+2026-11-23T13:10:00.3517961Z
+2026-11-23T13:10:00.3518034Z FAILED (failures=1)
+2026-11-23T13:10:00.3679839Z

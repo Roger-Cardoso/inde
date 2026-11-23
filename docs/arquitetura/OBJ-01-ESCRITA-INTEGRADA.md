@@ -42,3 +42,15 @@ A integração usa layouts de especialidades: a escrita contínua permanece na e
 A publicação/exportação dos novos objetos fica adiada por decisão do usuário, com documento HTML como destino prioritário futuro. A recusa do publicador evita omissão silenciosa dos objetos enquanto essa frente não estiver implementada. Não foram adicionados exportadores novos neste corte.
 
 Variáveis ligadas a entidades/pseudônimos, equivalência completa entre objetos da Escrita e Comic, matemática tipada em células e distribuição em arquivo único `.inde` permanecem frentes próprias. A integração desta interface não representa conclusão dessas capacidades, release ou aceite humano.
+
+## Fronteiras complementares de revisão
+
+As lentes do editor existente atualizam imediatamente a superfície de objetos. Atualizar somente a visibilidade não salva o proprietário nem o banco auxiliar; a apresentação é recalculada no fluxo de visibilidade. Uma seleção que fica oculta deixa de ser alvo dos controles de movimento, e os destinos apresentados respeitam a lente.
+
+O comando Salvar da composição passa pela barreira de salvamento da Escrita, incluindo metadados textuais pendentes. A gravação do proprietário e a do banco auxiliar continuam sequenciais; não se afirma uma transação SQLite única entre ambos. Uma interrupção entre gravações exige respeitar a autoridade do Documento e revalidar a composição ao retomar. Este corte não substitui essa fronteira por uma migração de projetos.
+
+Busca, estatísticas e semântica do corpo continuam com o alcance do texto canônico. Não se afirma que já agreguem automaticamente palavras, intervalos ou anotações dos resultados de cartões, células e fontes matemáticas. A integração visual e a ligação viva não encerram essa adaptação transversal.
+
+A checagem automática abre e aciona menus em passos distintos e captura a interface após uma pintura do GTK. Testa uma janela compacta; a demonstração registrada usa também a tela maior do ambiente local. Avisos críticos GTK/GDK continuam sendo motivo de falha, sem supressão.
+
+Os formulários usam a área central com largura de leitura útil e escondem a lateral e os comandos inativos enquanto um objeto está sendo editado. A apresentação não fica presa a um divisor de painel que reserve a maior parte da janela para instrumentos desativados. A fila curta entre escolher uma ação do menu e abrir seu formulário também participa das barreiras de edição/fechamento.

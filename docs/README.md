@@ -7,7 +7,7 @@
 
 ## Núcleo experimental de objetos
 
-- [Objetos e equações no INDE nativo](../tools/obj01-pilot/NATIVO.md), [integração na Escrita](arquitetura/OBJ-01-ESCRITA-INTEGRADA.md) e [validação GTK anterior](validacao/VALIDACAO-OBJ-01-GTK.md): entrada pelo documento real, motor compartilhado e limites de integração.
+- [Objetos e equações no INDE nativo](../tools/obj01-pilot/NATIVO.md), [integração na Escrita](arquitetura/OBJ-01-ESCRITA-INTEGRADA.md) e [validação da integração](validacao/VALIDACAO-OBJ-01-ESCRITA-INTEGRADA.md): entrada pelo documento real, motor compartilhado e limites de integração.
 
 - [Linhas e colunas recuperáveis](../tools/obj01-pilot/ESTRUTURA-TABELAS.md), [contrato](arquitetura/ESTRUTURA-TABELAS-OBJ-01.md) e [validação](validacao/VALIDACAO-OBJ-01-ESTRUTURA-TABELAS.md).
 - [Tabelas visuais](../tools/obj01-pilot/TABELAS.md), [contrato](arquitetura/TABELAS-VISUAIS-OBJ-01.md) e [validação](validacao/VALIDACAO-OBJ-01-TABELAS-VISUAIS.md).

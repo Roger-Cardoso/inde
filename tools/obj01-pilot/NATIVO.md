@@ -10,7 +10,7 @@ Os controles são C++/GTK4; as equações são desenhadas em Cairo/Pango. O exec
 bash scripts/demos/Abrir-demo-objetos-nativos.sh
 ```
 
-O iniciador verifica as fontes, compila a aplicação e cria somente a amostra `dados/obj01-escrita-integrada/Projeto.inde`, se ainda não existir. Demonstrações anteriores são preservadas. Na Escrita, abra **Matemática na narrativa** e use a barra de especialidades do próprio editor.
+O iniciador verifica as fontes, compila a aplicação e cria somente a amostra `dados/obj01-escrita-integrada-r3/Projeto.inde`, se ainda não existir. Demonstrações anteriores são preservadas. Na Escrita, abra **Matemática na narrativa** e use a barra de especialidades do próprio editor.
 
 ## Roteiro de uso
 
@@ -25,6 +25,10 @@ O iniciador verifica as fontes, compila a aplicação e cria somente a amostra `
 
 A origem arquivada do Documento continua preservada, e o estado de trabalho acompanha a Escrita. O histórico textual e o de objetos são contextuais; não se apresentam como uma cronologia global única. O banco canônico continua no schema 37; não há migração de projetos autorais em lote.
 
+Durante a edição de um objeto, a lateral é recolhida e os campos usam a área central; Aplicar ou Cancelar devolve a apresentação do Documento.
+
 A exportação dos objetos está adiada, com prioridade futura no documento HTML. O publicador ainda recusa esse conteúdo para não omitir objetos. Ligações de variáveis a entidades/pseudônimos, equivalência com Comic e arquivo `.inde` único também não estão concluídos.
 
-Arquitetura e fronteiras: [Escrita integrada](../../docs/arquitetura/OBJ-01-ESCRITA-INTEGRADA.md). A validação técnica será registrada separadamente do aceite humano.
+Arquitetura e fronteiras: [Escrita integrada](../../docs/arquitetura/OBJ-01-ESCRITA-INTEGRADA.md). Veja também a [validação desta integração](../../docs/validacao/VALIDACAO-OBJ-01-ESCRITA-INTEGRADA.md), separada do aceite humano.
+
+Para documentos com objetos novos, use a aplicação desta branch. Versões anteriores não conhecem a composição auxiliar nem a proteção de exportação que evita omiti-la.

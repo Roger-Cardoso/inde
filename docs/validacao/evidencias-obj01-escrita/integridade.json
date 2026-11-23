@@ -1,0 +1,34 @@
+{
+  "canonical": {
+    "integrity": "ok",
+    "foreign_key_violations": 0,
+    "schema": 37,
+    "user_version": 0,
+    "document_id": "171989e3-502b-4d09-9d6b-758166b9b772",
+    "title": "Matemática na narrativa",
+    "body_sha256": "fd0ca557dd0efe5cd9cb46dc706dbcf00c083c33d2bb7dd1df3d1329bb3b8643"
+  },
+  "auxiliary": {
+    "integrity": "ok",
+    "foreign_key_violations": 0,
+    "user_version": 5,
+    "format": "INDE-OBJ01-COMPOSITE-P2D2-6",
+    "saved_revision": 56,
+    "working_generation": 104,
+    "saved_equals_working": true,
+    "saved_sha256_valid": true,
+    "working_sha256_valid": true,
+    "origin_sha256_valid": true,
+    "current_document_matches_canonical_body": true,
+    "current_document_matches_canonical_title": true,
+    "original_capture_unchanged": true,
+    "document_identity_preserved": true,
+    "anchors_retained": 1,
+    "format_spans_retained": 1,
+    "visibility_profiles_retained": true,
+    "equations": 3,
+    "tables": 1,
+    "figures": 1,
+    "formulas": 4
+  }
+}
