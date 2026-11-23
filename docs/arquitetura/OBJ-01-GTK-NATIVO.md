@@ -1,5 +1,7 @@
 # OBJ-01 — correção da interface para C++/GTK4
 
+Registro histórico de 22/11. A integração ativa no editor de Escrita está descrita em [Escrita integrada](OBJ-01-ESCRITA-INTEGRADA.md).
+
 Data: 2026-11-22. Base da correção: `47328b9fc90a03beff3a640d9ec7b90ccaf62016`, branch `feature/inde-obj-01-foundation`.
 
 ## Correção do requisito

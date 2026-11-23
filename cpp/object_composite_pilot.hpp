@@ -9,6 +9,7 @@ namespace inde::objects::pilot {
 // The owner serializer uses default stream precision. Pilot geometry requires
 // round-trippable doubles; this isolated codec preserves max_digits10.
 [[nodiscard]] std::string encode_json(const persistence::json::Value &);
+enum class DocumentBinding { Frozen, Live };
 enum class Profile { P2A, P2B, P2C, P2D, P2D2 };
 enum class PersistenceStage {
   BeforeWrite,
@@ -30,7 +31,12 @@ public:
   // Explicit native entry point: binds a composition to a real project document.
   // The legacy pilot constructor still rejects canonical .inde paths.
   Session(const std::filesystem::path &workspace, const std::string &project_id,
-          const project::Document &document);
+          const project::Document &document,
+          DocumentBinding binding = DocumentBinding::Frozen);
+  // The Writing workspace owns authoring. Adopt its complete current snapshot,
+  // retaining object identities, assets and presentation; never writes the owner.
+  void synchronize_document(const project::Document &);
+  [[nodiscard]] project::Document current_document() const;
   ~Session();
   Session(const Session &) = delete;
   Session &operator=(const Session &) = delete;

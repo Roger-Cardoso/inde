@@ -48,3 +48,6 @@ emit('src/ui/overlay_dialog.cpp', [
 
 emit("src/ui/main_window_context.cpp", [])
 emit("src/ui/main_window_keyboard.cpp", [])
+
+for name in ("writing_workspace", "writing_workspace_document", "writing_workspace_specializations", "writing_workspace_keyboard"):
+    emit("src/ui/"+name+".cpp", [])

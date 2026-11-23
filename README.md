@@ -15,7 +15,7 @@ Use `sh Abrir-INDE-especial.sh --vazio` para iniciar sem abrir o projeto de demo
 
 ## Documentos por objetos e matemática
 
-Nesta branch, o botão **Objetos** abre a composição do documento selecionado na Escrita: figuras, tabelas, fórmulas e equações LaTeX editáveis, com salvamento dentro do projeto. Veja o [roteiro nativo](tools/obj01-pilot/NATIVO.md) e os limites de integração. A interface é C++/GTK4; as equações são desenhadas nativamente com Cairo/Pango.
+Nesta branch, a barra de especialidades do editor de **Escrita** incorpora Composição, Tabelas, Fórmulas e Matemática ao mesmo Documento: figuras, tabelas, fórmulas e equações LaTeX editáveis, com salvamento dentro do projeto. Veja o [roteiro nativo](tools/obj01-pilot/NATIVO.md) e os limites de integração. A interface é C++/GTK4; as equações são desenhadas nativamente com Cairo/Pango.
 
 ## Estrutura do repositório
 

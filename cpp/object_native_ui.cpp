@@ -1,4 +1,5 @@
 #include "object_native_ui.hpp"
+#include "inde/project/document_state.hpp"
 #include "object_composite_pilot.hpp"
 #include "object_formula_hub.hpp"
 #include "object_math_native.hpp"
@@ -216,8 +217,35 @@ const std::map<std::string, std::string> messages = {
      "continuar."},
     {"alt_text_required", "Descreva a figura ou marque-a como decorativa."}};
 } // namespace
-struct ObjectDocumentWindow::Impl {
-  ObjectDocumentWindow &window;
+struct ObjectDocumentEditor::Impl {
+  ObjectDocumentEditor &owner;
+  Gtk::Window &window;
+  project::Document source_document;
+  Gtk::Popover object_menu;
+  Gtk::Box *menu_holder = nullptr;
+  void close_object_menu() {
+    object_menu.popdown();
+    if (auto *child = object_menu.get_child()) {
+      g_object_ref(child->gobj());
+      object_menu.unset_child();
+      child->set_visible(false);
+      if (menu_holder)
+        menu_holder->append(*child);
+      g_object_unref(child->gobj());
+    }
+    if (object_menu.get_parent())
+      object_menu.unparent();
+    menu_holder = nullptr;
+  }
+  std::map<std::string, Gtk::Box *> menus;
+  std::string specialty = "composition";
+  std::optional<std::map<std::string, std::string>> visible_text;
+  bool shown(const std::string &id) const {
+    const auto *p = find(state, "paragraphs", id);
+    return !p || !visible_text || visible_text->contains(text(*p, "paragraph"));
+  }
+  Gtk::Revealer side_revealer;
+  std::map<std::string, Gtk::Box *> tool_groups;
   Gtk::Box root{Gtk::Orientation::VERTICAL, 8},
       toolbar{Gtk::Orientation::HORIZONTAL, 6},
       sidebar{Gtk::Orientation::VERTICAL, 8},
@@ -260,9 +288,9 @@ struct ObjectDocumentWindow::Impl {
   std::string editor_id, editor_target, editor_table, editor_cell, editor_kind;
   std::string image_bytes;
   Glib::RefPtr<Gtk::FileChooserNative> chooser;
-  Impl(application::ProjectService &service, ObjectDocumentWindow &w,
-       const std::string &document)
-      : window(w) {
+  Impl(application::ProjectService &service, ObjectDocumentEditor &w,
+       Gtk::Window &parent, const std::string &document)
+      : owner(w), window(parent) {
     const auto *project = service.current();
     if (!project)
       throw std::runtime_error(
@@ -279,7 +307,8 @@ struct ObjectDocumentWindow::Impl {
     private_directory(folder);
     try {
       runtime->session = std::make_unique<objects::pilot::Session>(
-          folder / document, project->manifest().project_id, *doc);
+          folder / document, project->manifest().project_id, *doc,
+          objects::pilot::DocumentBinding::Live);
     } catch (const std::exception &e) {
       if (std::string(e.what()) == "native_document_source_changed")
         throw std::runtime_error(
@@ -289,26 +318,54 @@ struct ObjectDocumentWindow::Impl {
     }
     state = runtime->session->request(O{{"op", "view"}}).at("state");
     selected = text(state, "selection");
-    window.set_title("INDE · Objetos · " + doc->title);
-    window.set_default_size(1280, 850);
-    window.set_size_request(900, 600);
-    window.set_child(root);
-    root.set_margin(12);
+    source_document = *doc;
+    owner.set_orientation(Gtk::Orientation::VERTICAL);
+    owner.append(root);
+    root.set_vexpand(true);
+    root.set_hexpand(true);
+    object_menu.set_name("native-object-menu");
     root.append(toolbar);
+    button(toolbar, "Instrumentos", "native-tools", [this] {
+      side_revealer.set_reveal_child(!side_revealer.get_reveal_child());
+    });
+    auto history_keys = Gtk::EventControllerKey::create();
+    history_keys->set_propagation_phase(Gtk::PropagationPhase::CAPTURE);
+    history_keys->signal_key_pressed().connect(
+        [this](guint key, guint, Gdk::ModifierType mods) {
+          if (busy || draft || choosing_image ||
+              (mods & Gdk::ModifierType::CONTROL_MASK) == Gdk::ModifierType{})
+            return false;
+          const bool redo =
+              (key == GDK_KEY_y || key == GDK_KEY_Y ||
+               ((key == GDK_KEY_z || key == GDK_KEY_Z) &&
+                (mods & Gdk::ModifierType::SHIFT_MASK) != Gdk::ModifierType{}));
+          const bool undo = (key == GDK_KEY_z || key == GDK_KEY_Z) && !redo;
+          if (!undo && !redo)
+            return false;
+          if (state.at(redo ? "can_redo" : "can_undo").as_boolean())
+            command(redo ? "redo" : "undo");
+          return true;
+        },
+        false);
+    root.add_controller(history_keys);
     root.append(status);
     status.set_wrap(true);
     status.set_xalign(0);
     status.set_name("native-status");
     root.append(paned);
     paned.set_vexpand(true);
-    paned.set_position(300);
     side_scroll.set_policy(Gtk::PolicyType::NEVER, Gtk::PolicyType::AUTOMATIC);
     side_scroll.set_child(sidebar);
     sidebar.set_margin(6);
     side_scroll.set_size_request(280, -1);
-    paned.set_start_child(side_scroll);
+    side_revealer.set_child(side_scroll);
+    side_revealer.set_transition_type(Gtk::RevealerTransitionType::SLIDE_LEFT);
+    side_revealer.set_reveal_child(false);
     paned.set_resize_start_child(false);
-    paned.set_end_child(stack);
+    paned.set_start_child(stack);
+    paned.set_end_child(side_revealer);
+    paned.set_resize_end_child(false);
+    paned.set_shrink_end_child(false);
     canvas.set_margin(20);
     content_scroll.set_child(canvas);
     content_scroll.set_policy(Gtk::PolicyType::AUTOMATIC,
@@ -317,8 +374,14 @@ struct ObjectDocumentWindow::Impl {
     editor.set_margin(18);
     edit_scroll.set_child(editor);
     stack.add(edit_scroll, "editor");
-    button(toolbar, "Salvar documento", "native-save",
-           [this] { command("save"); });
+    button(toolbar, "Salvar documento", "native-save", [this] {
+      guard([this] {
+        if (owner.save_document)
+          owner.save_document();
+        else
+          command("save");
+      });
+    });
     button(toolbar, "Desfazer", "native-undo", [this] { command("undo"); });
     button(toolbar, "Refazer", "native-redo", [this] { command("redo"); });
     button(toolbar, "Retomar trabalho", "native-working",
@@ -328,11 +391,11 @@ struct ObjectDocumentWindow::Impl {
     limit_choice(objects);
     limit_choice(formulas);
     limit_choice(context);
-    label(sidebar, "Instrumento de edição");
+    label(sidebar, "Ferramentas da especialidade");
     context.append("text", "Texto");
     context.append("structure", "Estrutura");
     context.append("composition", "Composição");
-    sidebar.append(context);
+    context.set_visible(false);
     context.signal_changed().connect([this] {
       if (!rendering)
         command("set_context", {{"context", context.get_active_id().raw()}});
@@ -346,44 +409,58 @@ struct ObjectDocumentWindow::Impl {
         command("select", {{"id", selected}});
       }
     });
-    button(sidebar, "Inserir equação", "native-new-equation",
+    auto group = [&](const std::string &id) -> Gtk::Box & {
+      auto *box = Gtk::make_managed<Gtk::Box>(Gtk::Orientation::VERTICAL, 8);
+      sidebar.append(*box);
+      tool_groups[id] = box;
+      return *box;
+    };
+    auto &math_tools = group("math");
+    button(math_tools, "Inserir equação", "native-new-equation",
            [this] { equation_editor(); });
-    button(sidebar, "Inserir tabela", "native-new-table",
+    auto &table_tools = group("tables");
+    button(table_tools, "Inserir tabela", "native-new-table",
            [this] { table_editor(); });
-    button(sidebar, "Inserir figura PNG…", "native-new-image",
+    auto &composition_tools = group("composition");
+    button(composition_tools, "Inserir figura PNG…", "native-new-image",
            [this] { pick_image(); });
-    button(sidebar, "Inserir fórmula / cartão", "native-new-formula",
+    auto &formula_tools = group("formulas");
+    button(formula_tools, "Inserir fórmula / cartão", "native-new-formula",
            [this] { formula_picker(); });
-    label(sidebar, "Biblioteca de fórmulas");
+    label(formula_tools, "Biblioteca de fórmulas");
     formulas.set_name("native-formula-library");
-    sidebar.append(formulas);
-    button(sidebar, "Editar fórmula escolhida", "native-formula-edit", [this] {
-      if (!formulas.get_active_id().empty())
-        formula_editor(formulas.get_active_id());
-    });
-    button(sidebar, "Variáveis e valores atuais", "native-variables",
+    formula_tools.append(formulas);
+    button(formula_tools, "Editar fórmula escolhida", "native-formula-edit",
+           [this] {
+             if (!formulas.get_active_id().empty())
+               formula_editor(formulas.get_active_id());
+           });
+    button(formula_tools, "Variáveis e valores atuais", "native-variables",
            [this] { variables_editor(); });
-    button(sidebar, "Usar fórmula escolhida", "native-formula-attach",
+    button(formula_tools, "Usar fórmula escolhida", "native-formula-attach",
            [this] { attach_formula(); });
-    button(sidebar, "Mover / colocar lado a lado", "native-layout",
+    button(composition_tools, "Mover / colocar lado a lado", "native-layout",
            [this] { layout_editor(); });
-    button(sidebar, "Aparência da tabela", "native-table-style",
+    button(table_tools, "Aparência da tabela", "native-table-style",
            [this] { appearance_editor(); });
-    button(sidebar, "Linhas e colunas", "native-table-structure",
+    button(table_tools, "Linhas e colunas", "native-table-structure",
            [this] { axes_editor(); });
-    button(sidebar, "Retirar selecionado", "native-remove",
+    button(composition_tools, "Retirar selecionado", "native-remove",
            [this] { command("remove", {{"id", selected}}, "structure"); });
-    button(sidebar, "Restaurar itens retirados", "native-restore",
+    button(composition_tools, "Restaurar itens retirados", "native-restore",
            [this] { removed_editor(); });
-    button(sidebar, "Restaurar apresentação pela leitura",
+    button(composition_tools, "Restaurar apresentação pela leitura",
            "native-align-reading",
            [this] { command("restore", {}, "composition"); });
     Gtk::StyleContext::add_provider_for_display(
         window.get_display(), css, GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
+    for (auto &[id, box] : tool_groups)
+      box->set_visible(id == specialty);
     render();
   }
   ~Impl() {
     life->alive = false;
+    close_object_menu();
     chooser_response.disconnect();
     if (chooser)
       chooser->hide();
@@ -419,27 +496,48 @@ struct ObjectDocumentWindow::Impl {
     args.emplace("op", op);
     args.emplace("expected", state.at("revision"));
     busy = true;
+    if (owner.editing_changed)
+      owner.editing_changed(true);
     last_error.clear();
     root.set_sensitive(false);
-    auto *work = new Work{runtime,
-                          life,
-                          V(std::move(args)),
-                          V{},
-                          required,
-                          [this, op, after](const V &result) {
-                            busy = false;
-                            root.set_sensitive(true);
-                            if (has(result, "state"))
-                              state = result.at("state");
-                            if (!result.at("accepted").as_boolean()) {
-                              error(text(result, "error"));
-                              return;
-                            }
-                            if (after)
-                              after(result);
-                            if (op != "preview_formula_hub")
-                              render();
-                          }};
+    auto *work = new Work{
+        runtime,
+        life,
+        V(std::move(args)),
+        V{},
+        required,
+        [this, op, after](const V &result) {
+          busy = false;
+          if (owner.editing_changed)
+            owner.editing_changed(draft || choosing_image);
+          root.set_sensitive(true);
+          if (has(result, "state"))
+            state = result.at("state");
+          if (!result.at("accepted").as_boolean()) {
+            error(text(result, "error"));
+            return;
+          }
+          if (op != "preview_formula_hub" && owner.commit_document) {
+            try {
+              std::lock_guard lock(runtime->mutex);
+              const auto now = runtime->session->current_document();
+              if (!project::same_document_state(source_document, now, false)) {
+                if (op == "move" || op == "undo" || op == "redo")
+                  source_document = owner.commit_document(now);
+                runtime->session->synchronize_document(source_document);
+                state =
+                    runtime->session->request(O{{"op", "view"}}).at("state");
+              }
+            } catch (const std::exception &e) {
+              error(e.what());
+              return;
+            }
+          }
+          if (after)
+            after(result);
+          if (op != "preview_formula_hub")
+            render();
+        }};
     auto *task = g_task_new(
         nullptr, nullptr,
         +[](GObject *, GAsyncResult *result, gpointer) {
@@ -513,7 +611,8 @@ struct ObjectDocumentWindow::Impl {
     context.set_active_id(text(state, "context"));
     objects.remove_all();
     for (const auto &id : state.at("visual_order").as_array())
-      objects.append(id.as_string(), title(id.as_string()));
+      if (shown(id.as_string()))
+        objects.append(id.as_string(), title(id.as_string()));
     objects.set_active_id(selected);
     const auto old = formulas.get_active_id();
     formulas.remove_all();
@@ -525,21 +624,19 @@ struct ObjectDocumentWindow::Impl {
       formulas.set_active(0);
     rendering = false;
     side_scroll.get_hadjustment()->set_value(0);
+    close_object_menu();
+    menus.clear();
     clear(canvas);
-    label(canvas, text(state, "document_title")).add_css_class("title-1");
-    label(canvas, state.at("aligned").as_boolean()
-                      ? "Apresentação acompanha a ordem de leitura."
-                      : "Apresentação independente da ordem de leitura.")
-        .add_css_class("dim-label");
+
     std::string styles =
-        ".inde-native-item { padding: 12px; border: 1px solid "
-        "alpha(currentColor, .18); border-radius: 8px; } .inde-native-selected "
+        ".inde-native-item { padding: 8px; border: 1px solid "
+        "transparent; border-radius: 8px; } .inde-native-selected "
         "{ border-color: #3b806b; } .inde-native-text { font-family: serif; "
         "font-size: 18px; }";
     std::set<std::string> paired;
     for (const auto &id : state.at("visual_order").as_array()) {
       const auto key = id.as_string();
-      if (paired.contains(key))
+      if (!shown(key) || paired.contains(key))
         continue;
       const V *row = nullptr;
       for (const auto &r : state.at("rows").as_array())
@@ -549,7 +646,12 @@ struct ObjectDocumentWindow::Impl {
         }
       if (row) {
         std::vector<Gtk::Widget *> children;
-        for (const auto &c : row->at("children").as_array()) {
+        const auto &pair = row->at("children").as_array();
+        if (!shown(pair[0].as_string()) || !shown(pair[1].as_string())) {
+          canvas.append(*item(key, styles));
+          continue;
+        }
+        for (const auto &c : pair) {
           paired.insert(c.as_string());
           children.push_back(item(c.as_string(), styles));
         }
@@ -572,22 +674,179 @@ struct ObjectDocumentWindow::Impl {
             : "Salvo e conferido");
     stack.set_visible_child("document");
   }
+  void format_paragraph(Gtk::Label &l, const std::string &paragraph) {
+    if (visible_text)
+      return; // A filtered interval has a different offset map.
+    const auto row =
+        std::find_if(source_document.paragraphs.rows.begin(),
+                     source_document.paragraphs.rows.end(),
+                     [&](const auto &r) { return r.id == paragraph; });
+    if (row == source_document.paragraphs.rows.end())
+      return;
+    const auto body = l.get_text().raw();
+    auto *attrs = pango_attr_list_new();
+    using Style = project::DocumentTextStyle;
+    for (const auto &f : source_document.formatting) {
+      const auto begin = std::max(row->start, f.start_offset),
+                 end = std::min(row->end, f.end_offset);
+      if (begin >= end)
+        continue;
+      PangoAttribute *a = nullptr;
+      switch (f.style) {
+      case Style::Bold:
+        a = pango_attr_weight_new(PANGO_WEIGHT_BOLD);
+        break;
+      case Style::Italic:
+      case Style::Quote:
+        a = pango_attr_style_new(PANGO_STYLE_ITALIC);
+        break;
+      case Style::Underline:
+        a = pango_attr_underline_new(PANGO_UNDERLINE_SINGLE);
+        break;
+      case Style::Strikethrough:
+        a = pango_attr_strikethrough_new(true);
+        break;
+      case Style::FontFamily:
+        a = pango_attr_family_new(f.value.c_str());
+        break;
+      case Style::FontSize:
+        try {
+          a = pango_attr_size_new(static_cast<int>(
+              std::clamp(std::stod(f.value), 6., 160.) * PANGO_SCALE));
+        } catch (const std::exception &) {
+        }
+        break;
+      case Style::Foreground: {
+        GdkRGBA c{};
+        if (gdk_rgba_parse(&c, f.value.c_str()))
+          a = pango_attr_foreground_new(static_cast<guint16>(c.red * 65535),
+                                        static_cast<guint16>(c.green * 65535),
+                                        static_cast<guint16>(c.blue * 65535));
+        break;
+      }
+      case Style::AlignLeft:
+        l.set_xalign(0);
+        break;
+      case Style::AlignCenter:
+        l.set_xalign(.5f);
+        break;
+      case Style::AlignRight:
+        l.set_xalign(1);
+        break;
+      case Style::AlignJustify:
+        l.set_justify(Gtk::Justification::FILL);
+        break;
+      case Style::Heading:
+      case Style::Subheading:
+      case Style::Heading2:
+      case Style::Heading3:
+      case Style::Heading4:
+      case Style::Heading5:
+      case Style::Heading6:
+        a = pango_attr_weight_new(PANGO_WEIGHT_BOLD);
+        break;
+      }
+      if (a) {
+        a->start_index = static_cast<guint>(
+            g_utf8_offset_to_pointer(body.c_str(),
+                                     static_cast<glong>(begin - row->start)) -
+            body.c_str());
+        a->end_index = static_cast<guint>(
+            g_utf8_offset_to_pointer(body.c_str(),
+                                     static_cast<glong>(end - row->start)) -
+            body.c_str());
+        pango_attr_list_insert(attrs, a);
+      }
+    }
+    gtk_label_set_attributes(l.gobj(), attrs);
+    pango_attr_list_unref(attrs);
+  }
   Gtk::Widget *item(const std::string &id, std::string &styles) {
     auto *box = Gtk::make_managed<Gtk::Box>(Gtk::Orientation::VERTICAL, 8);
     box->add_css_class("inde-native-item");
     if (id == selected)
       box->add_css_class("inde-native-selected");
-    button(*box, find(state, "paragraphs", id) ? "Texto" : title(id),
-           "native-object-" + id,
-           [this, id] {
-             selected = id;
-             command("select", {{"id", id}});
-           })
-        .add_css_class("flat");
+    box->set_name("native-object-" + id);
+    box->set_focusable(true);
+    box->set_tooltip_text("Clique direito para editar, mover ou retirar. "
+                          "Shift+F10 pelo teclado.");
+    auto *actions = Gtk::make_managed<Gtk::Box>(Gtk::Orientation::VERTICAL, 4);
+    menus[id] = actions;
+    // Menu content is parented in an invisible holder until requested.
+    actions->set_visible(false);
+    box->append(*actions);
+    const auto show_menu = [this, box, actions, id](double x, double y) {
+      if (busy || draft)
+        return;
+      selected = id;
+      rendering = true;
+      objects.set_active_id(id);
+      rendering = false;
+      close_object_menu();
+      menu_holder = box;
+      g_object_ref(actions->gobj());
+      if (auto *parent = dynamic_cast<Gtk::Box *>(actions->get_parent()))
+        parent->remove(*actions);
+      object_menu.set_child(*actions);
+      g_object_unref(actions->gobj());
+      actions->set_visible(true);
+      object_menu.set_parent(*box);
+      object_menu.set_pointing_to(
+          Gdk::Rectangle(static_cast<int>(x), static_cast<int>(y), 1, 1));
+      object_menu.popup();
+    };
+    auto click = Gtk::GestureClick::create();
+    click->set_button(3);
+    click->set_propagation_phase(Gtk::PropagationPhase::CAPTURE);
+    click->signal_pressed().connect([show_menu, gesture = click->gobj()](
+                                        int, double x, double y) {
+      show_menu(x, y);
+      if (gtk_gesture_is_recognized(GTK_GESTURE(gesture)))
+        gtk_gesture_set_state(GTK_GESTURE(gesture), GTK_EVENT_SEQUENCE_CLAIMED);
+    });
+    box->add_controller(click);
+    auto keys = Gtk::EventControllerKey::create();
+    keys->set_propagation_phase(Gtk::PropagationPhase::CAPTURE);
+    keys->signal_key_pressed().connect(
+        [show_menu](guint key, guint, Gdk::ModifierType mods) {
+          if (key == GDK_KEY_Menu ||
+              (key == GDK_KEY_F10 &&
+               (mods & Gdk::ModifierType::SHIFT_MASK) != Gdk::ModifierType{})) {
+            show_menu(8, 8);
+            return true;
+          }
+          return false;
+        },
+        false);
+    box->add_controller(keys);
+    const auto action = [this, actions](const std::string &caption,
+                                        const std::string &name,
+                                        std::function<void()> fn) {
+      button(*actions, caption, name, [this, fn] {
+        object_menu.popdown();
+        const auto lifetime = life;
+        Glib::signal_idle().connect_once([lifetime, fn] {
+          if (lifetime->alive)
+            fn();
+        });
+      });
+    };
+    action("Posição e alinhamento…", "native-object-layout-" + id,
+           [this] { layout_editor(); });
+    action("Retirar objeto", "native-object-remove-" + id,
+           [this, id] { command("remove", {{"id", id}}, "structure"); });
     if (const auto *p = find(state, "paragraphs", id)) {
-      auto &l = label(*box, text(*p, "text"));
+      const auto paragraph = text(*p, "paragraph");
+      action("Editar no texto", "native-paragraph-edit-" + id,
+             [this, paragraph] {
+               if (owner.edit_paragraph)
+                 owner.edit_paragraph(paragraph);
+             });
+      auto &l = label(*box, visible_text ? visible_text->at(paragraph)
+                                         : text(*p, "text"));
       l.set_selectable(true);
       l.add_css_class("inde-native-text");
+      format_paragraph(l, paragraph);
     } else if (const auto *e = find(state, "equations", id)) {
       auto *m = Gtk::make_managed<MathPreview>();
       m->set_name("native-math-" + id);
@@ -595,12 +854,16 @@ struct ObjectDocumentWindow::Impl {
       box->append(*m);
       if (!m->error().empty())
         label(*box, m->error()).add_css_class("error");
-      button(*box, "Editar equação", "native-equation-edit-" + id,
+      action("Editar equação", "native-equation-edit-" + id,
              [this, id] { equation_editor(id); });
-    } else if (const auto *t = find(state, "tables", id))
+    } else if (const auto *t = find(state, "tables", id)) {
       table_view(*box, *t, styles);
-    else if (const auto *u = find(state, "formula_uses", id))
-      formula_view(*box, text(*u, "object"), id);
+      action("Aparência da tabela…", "native-object-table-style-" + id,
+             [this] { appearance_editor(); });
+      action("Linhas e colunas…", "native-object-table-axes-" + id,
+             [this] { axes_editor(); });
+    } else if (const auto *u = find(state, "formula_uses", id))
+      formula_view(*box, text(*u, "object"), id, actions);
     else if (const auto *f = find(state, "figures", id)) {
       const auto resource = text(*f, "resource");
       try {
@@ -622,7 +885,7 @@ struct ObjectDocumentWindow::Impl {
       } catch (const std::exception &e) {
         label(*box, e.what());
       }
-      button(*box, "Duplicar figura", "native-duplicate-" + id, [this, id] {
+      action("Duplicar figura", "native-duplicate-" + id, [this, id] {
         command("duplicate", {{"id", id}, {"before", ""}}, "structure");
       });
     }
@@ -671,13 +934,14 @@ struct ObjectDocumentWindow::Impl {
     return box;
   }
   void formula_view(Gtk::Box &box, const std::string &id,
-                    const std::string &target) {
+                    const std::string &target, Gtk::Box *actions = nullptr) {
     const auto *f = find(state, "formulas", id);
     if (!f)
       return;
     if (f->at("command").as_boolean()) {
       label(box, "Alteração de uso único · " + text(*f, "name"));
-      button(box, "Aplicar alteração e retirar comando", "native-execute-" + id,
+      button(actions ? *actions : box, "Aplicar alteração e retirar comando",
+             "native-execute-" + id,
              [this, id] { command("execute_formula", {{"id", id}}, "text"); });
     } else {
       std::string out;
@@ -695,11 +959,12 @@ struct ObjectDocumentWindow::Impl {
       auto &l = label(box, out);
       l.set_selectable(true);
       l.add_css_class("inde-native-text");
-      button(box, "Editar frase ao redor do resultado",
+      button(actions ? *actions : box, "Editar frase ao redor do resultado",
              "native-phrase-" + target,
              [this, target] { phrase_editor(target); });
     }
-    button(box, "Editar fórmula", "native-edit-formula-" + id,
+    button(actions ? *actions : box, "Editar fórmula",
+           "native-edit-formula-" + id,
            [this, id, target] { formula_editor(id, target); });
     if (!f->at("valid").as_boolean())
       label(box, "Confira a fonte e as referências da fórmula.")
@@ -861,7 +1126,10 @@ struct ObjectDocumentWindow::Impl {
   void begin_editor(const std::string &heading) {
     if (busy || draft)
       return;
+    object_menu.popdown();
     draft = true;
+    if (owner.editing_changed)
+      owner.editing_changed(true);
     status.set_text("Edição aberta · Aplique para registrar os campos ou "
                     "cancele para conservar a versão anterior.");
     fields.clear();
@@ -974,6 +1242,8 @@ struct ObjectDocumentWindow::Impl {
     if (busy)
       return;
     draft = false;
+    if (owner.editing_changed)
+      owner.editing_changed(busy || choosing_image);
     last_error.clear();
     sidebar.set_sensitive(true);
     toolbar.set_sensitive(true);
@@ -981,6 +1251,8 @@ struct ObjectDocumentWindow::Impl {
   }
   void finish() {
     draft = false;
+    if (owner.editing_changed)
+      owner.editing_changed(busy || choosing_image);
     sidebar.set_sensitive(true);
     toolbar.set_sensitive(true);
   }
@@ -1086,6 +1358,8 @@ struct ObjectDocumentWindow::Impl {
       return;
     chooser_response.disconnect();
     choosing_image = true;
+    if (owner.editing_changed)
+      owner.editing_changed(true);
     chooser = Gtk::FileChooserNative::create("Inserir figura PNG", window,
                                              Gtk::FileChooser::Action::OPEN,
                                              "Escolher", "Cancelar");
@@ -1096,6 +1370,8 @@ struct ObjectDocumentWindow::Impl {
     chooser->set_modal(true);
     chooser_response = chooser->signal_response().connect([this](int response) {
       choosing_image = false;
+      if (owner.editing_changed)
+        owner.editing_changed(draft || busy);
       chooser->hide();
       if (response != static_cast<int>(Gtk::ResponseType::ACCEPT))
         return;
@@ -2139,52 +2415,72 @@ struct ObjectDocumentWindow::Impl {
         c->set_active(draft_model.at(key).as_boolean());
   }
 };
-ObjectDocumentWindow::ObjectDocumentWindow(application::ProjectService &s,
+ObjectDocumentEditor::ObjectDocumentEditor(application::ProjectService &s,
                                            Gtk::Window &parent,
                                            const std::string &document)
-    : impl_(std::make_unique<Impl>(s, *this, document)) {
-  set_transient_for(parent);
-  set_application(parent.get_application());
-  set_modal(true);
+    : impl_(std::make_unique<Impl>(s, *this, parent, document)) {}
+ObjectDocumentEditor::~ObjectDocumentEditor() = default;
+void ObjectDocumentEditor::synchronize_document(const project::Document &d) {
+  if (!can_leave())
+    throw std::runtime_error(
+        "Aplique ou cancele a edição aberta antes de mudar de especialidade.");
+  {
+    std::lock_guard lock(impl_->runtime->mutex);
+    impl_->runtime->session->synchronize_document(d);
+    impl_->source_document = d;
+    impl_->state =
+        impl_->runtime->session->request(O{{"op", "view"}}).at("state");
+  }
+  impl_->render();
 }
-ObjectDocumentWindow::~ObjectDocumentWindow() = default;
-void ObjectDocumentWindow::save_for_project(
+void ObjectDocumentEditor::set_specialty(const std::string &id) {
+  impl_->specialty = id;
+  for (auto &[key, box] : impl_->tool_groups)
+    box->set_visible(key == id);
+  impl_->side_revealer.set_reveal_child(false);
+}
+void ObjectDocumentEditor::set_visible_text(
+    std::optional<std::map<std::string, std::string>> visible) {
+  impl_->visible_text = std::move(visible);
+  impl_->render();
+}
+void ObjectDocumentEditor::show_tools(bool open) {
+  impl_->side_revealer.set_reveal_child(open);
+}
+bool ObjectDocumentEditor::can_leave() const {
+  return !impl_->draft && !impl_->busy && !impl_->choosing_image &&
+         text(impl_->state, "persistence_status") != "uncertain";
+}
+void ObjectDocumentEditor::save_for_project(
     const std::filesystem::path &project) {
   if (project != impl_->project_path)
     return;
   if (impl_->draft || impl_->busy || impl_->choosing_image)
     throw std::runtime_error(
         "Aplique ou cancele a edição de Objetos antes de salvar o projeto.");
-  std::lock_guard lock(impl_->runtime->mutex);
-  auto &s = *impl_->runtime->session;
-  const auto state = s.request(O{{"op", "view"}}).at("state");
-  const auto r =
-      s.request(O{{"op", "save"}, {"expected", state.at("revision")}});
-  if (!r.at("accepted").as_boolean())
-    throw std::runtime_error(
-        "Não foi possível confirmar a composição por objetos.");
-  impl_->state = r.at("state");
-}
-bool ObjectDocumentWindow::on_close_request() {
-  if (impl_->draft || impl_->busy || impl_->choosing_image ||
-      text(impl_->state, "persistence_status") == "uncertain") {
-    impl_->status.set_text("Aplique ou cancele a edição aberta antes de "
-                           "fechar. O trabalho confirmado está protegido.");
-    return true;
+  {
+    std::lock_guard lock(impl_->runtime->mutex);
+    auto &s = *impl_->runtime->session;
+    const auto state = s.request(O{{"op", "view"}}).at("state");
+    const auto r =
+        s.request(O{{"op", "save"}, {"expected", state.at("revision")}});
+    if (!r.at("accepted").as_boolean())
+      throw std::runtime_error(
+          "Não foi possível confirmar a composição por objetos.");
+    impl_->state = r.at("state");
   }
-  set_visible(false);
-  return true;
+  impl_->render();
 }
-const V &ObjectNativeProbe::state(const ObjectDocumentWindow &w) {
+const V &ObjectNativeProbe::state(const ObjectDocumentEditor &w) {
   return w.impl_->state;
 }
-bool ObjectNativeProbe::busy(const ObjectDocumentWindow &w) {
+bool ObjectNativeProbe::busy(const ObjectDocumentEditor &w) {
   return w.impl_->busy || w.impl_->choosing_image;
 }
-bool ObjectNativeProbe::draft(const ObjectDocumentWindow &w) {
+bool ObjectNativeProbe::draft(const ObjectDocumentEditor &w) {
   return w.impl_->draft;
 }
-void ObjectNativeProbe::choose_image(ObjectDocumentWindow &w,
+void ObjectNativeProbe::choose_image(ObjectDocumentEditor &w,
                                      const std::filesystem::path &p) {
   if (!w.impl_->chooser)
     throw std::runtime_error("Seletor de arquivo ausente");
@@ -2213,7 +2509,56 @@ void ObjectNativeProbe::choose_image(ObjectDocumentWindow &w,
       },
       50);
 }
-std::string ObjectNativeProbe::error(const ObjectDocumentWindow &w) {
+std::string ObjectNativeProbe::error(const ObjectDocumentEditor &w) {
   return w.impl_->last_error;
+}
+} // namespace inde::ui
+
+namespace inde::ui {
+bool ObjectNativeProbe::tools_open(const ObjectDocumentEditor &w) {
+  return w.impl_->side_revealer.get_reveal_child();
+}
+void ObjectNativeProbe::reveal_object(ObjectDocumentEditor &w,
+                                      const std::string &id) {
+  Gtk::Widget *target = nullptr;
+  std::function<void(Gtk::Widget &)> locate = [&](Gtk::Widget &v) {
+    if (v.get_name().raw() == "native-object-" + id)
+      target = &v;
+    for (auto *c = v.get_first_child(); c; c = c->get_next_sibling())
+      locate(*c);
+  };
+  locate(w);
+  if (!target)
+    throw std::runtime_error("Context object missing");
+  graphene_rect_t bounds{};
+  if (gtk_widget_compute_bounds(target->gobj(),
+                                GTK_WIDGET(w.impl_->canvas.gobj()), &bounds)) {
+    const auto a = w.impl_->content_scroll.get_vadjustment();
+    a->set_value(std::clamp(static_cast<double>(bounds.origin.y) - 32., 0.,
+                            std::max(0., a->get_upper() - a->get_page_size())));
+  }
+  target->grab_focus();
+}
+void ObjectNativeProbe::open_context(ObjectDocumentEditor &w,
+                                     const std::string &id) {
+  Gtk::Widget *target = nullptr;
+  std::function<void(Gtk::Widget &)> locate = [&](Gtk::Widget &v) {
+    if (v.get_name().raw() == "native-object-" + id)
+      target = &v;
+    for (auto *c = v.get_first_child(); c; c = c->get_next_sibling())
+      locate(*c);
+  };
+  locate(w);
+  if (!target)
+    throw std::runtime_error("Context object missing");
+  auto *controllers = gtk_widget_observe_controllers(target->gobj());
+  for (guint i = 0; i < g_list_model_get_n_items(controllers); ++i) {
+    auto *c = g_list_model_get_item(controllers, i);
+    if (GTK_IS_GESTURE_CLICK(c) &&
+        gtk_gesture_single_get_button(GTK_GESTURE_SINGLE(c)) == 3)
+      g_signal_emit_by_name(c, "pressed", 1, 8.0, 8.0);
+    g_object_unref(c);
+  }
+  g_object_unref(controllers);
 }
 } // namespace inde::ui

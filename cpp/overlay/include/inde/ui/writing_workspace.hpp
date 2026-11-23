@@ -22,6 +22,7 @@
 
 namespace inde::ui {
 class KeyboardCommands;
+class ObjectDocumentEditor;
 
 // Editor consolidation: one stable layout shared by every production UI unit.
 class WritingWorkspace final : public Gtk::Box {
@@ -37,6 +38,8 @@ public:
   void refresh();
   void reset();
   void flush_changes();
+  void show_document_objects();
+  bool objects_can_leave() const;
   bool publication_ready() const { return !composing_input() && !edit_session_.dirty() && !save_worker_.busy() && save_error_.empty(); }
   [[nodiscard]] project::Document apply_editorial_change(const project::Document &expected,
                                                         const project::Document &after,const std::string &label);
@@ -99,6 +102,14 @@ private:
   };
 
   void build_ui();
+  void build_object_specializations();
+  void show_object_specialization(const std::string &);
+  void flush_document_objects();
+  void reset_document_objects();
+  std::unique_ptr<ObjectDocumentEditor> object_editor_;
+  Gtk::Stack document_surfaces_;
+  Gtk::Box specialty_strip_{Gtk::Orientation::HORIZONTAL, 2};
+  bool committing_object_document_{};
   void build_formatting_tags();
   void build_editor_controls();
   void apply_editor_format(project::DocumentTextStyle, const std::string &value={});

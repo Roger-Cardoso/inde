@@ -10,6 +10,11 @@
 #include <iostream>
 void capture_window(Gtk::Widget &, const std::filesystem::path &);
 namespace {
+void capture_native(Gtk::Widget &w, const std::filesystem::path &p) {
+  std::cerr << "GTK capture: " << p.filename() << " size=" << w.get_width()
+            << "x" << w.get_height() << "\n";
+  capture_window(w, p);
+}
 using V = inde::persistence::json::Value;
 using Probe = inde::ui::ObjectNativeProbe;
 void need(bool value, const std::string &message) {
@@ -31,6 +36,47 @@ template <class T> T &widget(Gtk::Widget &w, const std::string &name) {
   return *v;
 }
 void click(Gtk::Widget &w, const std::string &name) {
+  auto *objects = dynamic_cast<inde::ui::ObjectDocumentEditor *>(&w);
+  if (objects) {
+    for (const auto &prefix :
+         {std::string("native-equation-edit-"),
+          std::string("native-edit-formula-"), std::string("native-execute-")})
+      if (name.starts_with(prefix)) {
+        auto id = name.substr(prefix.size());
+        if (prefix != "native-equation-edit-")
+          for (const auto &u :
+               Probe::state(*objects).at("formula_uses").as_array())
+            if (u.at("object").as_string() == id) {
+              id = u.at("id").as_string();
+              break;
+            }
+        Probe::open_context(*objects, id);
+      }
+    std::string specialty;
+    if (name == "native-new-equation")
+      specialty = "math";
+    if (name == "native-new-table" || name == "native-table-style" ||
+        name == "native-table-structure")
+      specialty = "tables";
+    if (name == "native-new-formula" || name == "native-formula-edit" ||
+        name == "native-variables")
+      specialty = "formulas";
+    if (name == "native-new-image" || name == "native-layout" ||
+        name == "native-remove" || name == "native-restore")
+      specialty = "composition";
+    if (!specialty.empty()) {
+      auto *parent = w.get_parent();
+      while (parent && !dynamic_cast<inde::ui::WritingWorkspace *>(parent))
+        parent = parent->get_parent();
+      need(parent, "Object surface outside Writing");
+      g_signal_emit_by_name(
+          widget<Gtk::ToggleButton>(*parent, "specialty-" + specialty).gobj(),
+          "clicked");
+      if (!Probe::tools_open(*objects))
+        g_signal_emit_by_name(widget<Gtk::Button>(w, "native-tools").gobj(),
+                              "clicked");
+    }
+  }
   g_signal_emit_by_name(widget<Gtk::Button>(w, name).gobj(), "clicked");
 }
 void field(Gtk::Widget &w, const std::string &key, const std::string &s) {
@@ -57,7 +103,8 @@ std::size_t math_widgets(Gtk::Widget &w) {
 int run_object_window_smoke(const Glib::RefPtr<Gtk::Application> &app,
                             const std::filesystem::path &project,
                             const std::filesystem::path &picture) {
-  std::string id, original;
+  std::string id, original, revised_body;
+  std::vector<std::string> paragraph_ids;
   try {
     inde::application::ProjectService service;
     service.create(project, "Objetos e matemática");
@@ -65,9 +112,14 @@ int run_object_window_smoke(const Glib::RefPtr<Gtk::Application> &app,
     d.content = "Uma travessia pode seguir muitas direções.\nAs relações "
                 "também podem ser expressas com matemática.";
     d.paragraphs = inde::project::identify_paragraphs(d.content);
+    d.formatting = {{inde::project::DocumentTextStyle::Bold, 0, 3, {}}};
+    d.anchors = {{inde::project::new_uuid(), "Segundo parágrafo",
+                  d.paragraphs.rows[1].start, d.paragraphs.rows[1].start + 2}};
     d = service.writing().update_document(d);
     id = d.id;
     original = inde::persistence::encode_document_snapshot(d);
+    for (const auto &p : d.paragraphs.rows)
+      paragraph_ids.push_back(p.id);
     service.close();
   } catch (const std::exception &e) {
     std::cerr << e.what() << '\n';
@@ -79,9 +131,9 @@ int run_object_window_smoke(const Glib::RefPtr<Gtk::Application> &app,
   std::filesystem::create_directories(picture.parent_path());
   png->save(image.string(), "png");
   std::unique_ptr<inde::ui::MainWindow> main;
-  inde::ui::ObjectDocumentWindow *objects = nullptr;
+  inde::ui::ObjectDocumentEditor *objects = nullptr;
   std::deque<std::function<void()>> steps;
-  int ticks = 0, stage = 0, result = 1;
+  int ticks = 0, stage = 0, result = 1, settle = 0;
   std::string table, cell, formula, equation;
   auto state = [&]() -> const V & { return Probe::state(*objects); };
   auto equation_step = [&](const std::string &name, const std::string &model) {
@@ -91,15 +143,15 @@ int run_object_window_smoke(const Glib::RefPtr<Gtk::Application> &app,
       choose(*objects, "template", model);
     });
     steps.push_back([&] {
-      capture_window(*objects,
-                     picture.parent_path() / "gtk-editor-equacao.png");
+      capture_native(*main, picture.parent_path() / "gtk-editor-equacao.png");
       click(*objects, "native-apply");
     });
   };
   steps.push_back([&] {
     click(*objects, "native-new-equation");
     need(Probe::draft(*objects), "Rascunho nativo ausente");
-    objects->close();
+    need(!widget<Gtk::Box>(*main, "writing-specialty-strip").get_sensitive(),
+         "Barra não protegeu rascunho aberto");
     main->close();
     need(objects->get_visible() && main->get_visible(), "Fechou com rascunho");
     widget<Gtk::TextView>(*objects, "native-field-source")
@@ -163,6 +215,12 @@ int run_object_window_smoke(const Glib::RefPtr<Gtk::Application> &app,
   });
   steps.push_back([&] { click(*objects, "native-kind-change"); });
   steps.push_back([&] { click(*objects, "native-apply"); });
+  steps.push_back([&] {
+    const auto &f = state().at("formulas").as_array().back();
+    for (const auto &u : state().at("formula_uses").as_array())
+      if (u.at("object").as_string() == f.at("id").as_string())
+        Probe::reveal_object(*objects, u.at("id").as_string());
+  });
   steps.push_back([&] {
     const auto &f = state().at("formulas").as_array().back();
     click(*objects, "native-execute-" + f.at("id").as_string());
@@ -278,15 +336,133 @@ int run_object_window_smoke(const Glib::RefPtr<Gtk::Application> &app,
   });
   steps.push_back([&] {
     need(!state().at("dirty").as_boolean(), "Documento não salvo");
-    capture_window(*objects, picture);
-    click(*objects, "native-equation-edit-" + equation);
-    field(*objects, "label", "Equação revisada");
+    capture_native(*main, picture);
+    Probe::reveal_object(*objects, equation);
   });
-  steps.push_back([&] { click(*objects, "native-apply"); });
+  steps.push_back([&] { click(*objects, "native-equation-edit-" + equation); });
   steps.push_back([&] {
-    need(state().at("dirty").as_boolean(),
-         "Alteração aplicada deveria aguardar Salvar projeto");
-    objects->close();
+    field(*objects, "label", "Equação revisada");
+    click(*objects, "native-apply");
+  });
+  steps.push_back([&] { click(*objects, "native-align-reading"); });
+  steps.push_back([&] {
+    widget<Gtk::ComboBoxText>(*objects, "native-selection")
+        .set_active_id(
+            state().at("paragraphs").as_array()[1].at("id").as_string());
+  });
+  steps.push_back([&] {
+    click(*objects, "native-layout");
+    choose(*objects, "intent", "authorial");
+    choose(*objects, "before",
+           state().at("paragraphs").as_array()[0].at("id").as_string());
+    click(*objects, "native-move");
+  });
+  steps.push_back([&] {
+    need(widget<Gtk::TextView>(*main, "writing-text-editor")
+             .get_buffer()
+             ->get_text()
+             .raw()
+             .starts_with("As relações"),
+         "Movimento autoral não chegou ao editor original");
+    click(*objects, "native-undo");
+  });
+  steps.push_back([&] {
+    need(widget<Gtk::TextView>(*main, "writing-text-editor")
+             .get_buffer()
+             ->get_text()
+             .raw()
+             .starts_with("Uma travessia"),
+         "Desfazer movimento não chegou ao editor original");
+  });
+  steps.push_back([&] {
+    click(*main, "specialty-text");
+    auto buffer =
+        widget<Gtk::TextView>(*main, "writing-text-editor").get_buffer();
+    auto at = buffer->begin();
+    buffer->insert(at, "Agora ");
+    revised_body = buffer->get_text();
+    click(*main, "specialty-math");
+    need(Probe::state(*objects)
+             .at("paragraphs")
+             .as_array()[0]
+             .at("text")
+             .as_string()
+             .starts_with("Agora "),
+         "Composição manteve cópia antiga do texto");
+    need(Probe::state(*objects).at("equations").as_array().size() == 3,
+         "Troca de especialidade perdeu objetos");
+    need(Probe::state(*objects)
+                 .at("paragraphs")
+                 .as_array()[0]
+                 .at("paragraph")
+                 .as_string() == paragraph_ids[0],
+         "Identidade mudou ao escrever");
+  });
+  steps.push_back([&] {
+    click(*main, "specialty-text");
+    click(*main, "writing-undo");
+    click(*main, "specialty-math");
+    need(!state()
+              .at("paragraphs")
+              .as_array()[0]
+              .at("text")
+              .as_string()
+              .starts_with("Agora "),
+         "Desfazer texto não chegou à composição");
+    click(*main, "specialty-text");
+    click(*main, "writing-redo");
+    click(*main, "specialty-math");
+    need(state()
+             .at("paragraphs")
+             .as_array()[0]
+             .at("text")
+             .as_string()
+             .starts_with("Agora "),
+         "Refazer texto não chegou à composição");
+    click(*objects, "native-undo");
+  });
+  steps.push_back([&] {
+    need(state()
+             .at("paragraphs")
+             .as_array()[0]
+             .at("text")
+             .as_string()
+             .starts_with("Agora "),
+         "Desfazer objeto trouxe texto antigo");
+    need(value() == "80", "Desfazer objeto alterou variável remota");
+    click(*objects, "native-redo");
+  });
+  steps.push_back([&] {
+    widget<Gtk::Entry>(*main, "writing-title")
+        .set_text("Matemática na narrativa revisada");
+    click(*objects, "native-save");
+    need(state().at("document_title").as_string() ==
+             "Matemática na narrativa revisada",
+         "Salvar não incluiu metadados pendentes da Escrita");
+    need(!state().at("dirty").as_boolean(),
+         "Salvar deixou a composição pendente");
+    widget<Gtk::Entry>(*main, "writing-title")
+        .set_text("Matemática na narrativa");
+    click(*objects, "native-save");
+  });
+  steps.push_back([&] {
+    click(*main, "specialty-composition");
+    objects->show_tools(false);
+    need(!Probe::tools_open(*objects), "Painel não recolheu");
+    Probe::reveal_object(
+        *objects, state().at("paragraphs").as_array()[0].at("id").as_string());
+  });
+  steps.push_back([&] {
+    const auto &first = state().at("paragraphs").as_array()[0];
+    Probe::open_context(*objects, first.at("id").as_string());
+    need(widget<Gtk::Button>(*objects, "native-paragraph-edit-" +
+                                           first.at("id").as_string())
+             .get_visible(),
+         "Menu contextual ausente");
+  });
+  steps.push_back([&] {
+    capture_native(widget<Gtk::Popover>(*objects, "native-object-menu"),
+                   picture.parent_path() / "gtk-menu-objeto.png");
     stage = 2;
   });
   app->signal_activate().connect([&] {
@@ -315,6 +491,7 @@ int run_object_window_smoke(const Glib::RefPtr<Gtk::Application> &app,
                     return p;
                 return nullptr;
               };
+              main->lookup_action("show-writing")->activate();
               auto *writing = find_writing(*main);
               need(writing, "Escrita ausente");
               writing->reveal_document(id);
@@ -326,14 +503,28 @@ int run_object_window_smoke(const Glib::RefPtr<Gtk::Application> &app,
               return true;
             }
             objects = nullptr;
-            for (auto *w : app->get_windows())
-              if (auto *p = dynamic_cast<inde::ui::ObjectDocumentWindow *>(w))
+            std::function<void(Gtk::Widget &)> locate = [&](Gtk::Widget &w) {
+              if (auto *p = dynamic_cast<inde::ui::ObjectDocumentEditor *>(&w))
                 objects = p;
+              for (auto *c = w.get_first_child(); c; c = c->get_next_sibling())
+                locate(*c);
+            };
+            locate(*main);
             if (stage == 2) {
-              need(!objects || !objects->get_visible(),
-                   "Janela deveria estar fechada");
               main->lookup_action("save-project")->activate();
+              auto *parent = objects->get_parent();
+              while (parent &&
+                     !dynamic_cast<inde::ui::WritingWorkspace *>(parent))
+                parent = parent->get_parent();
+              auto *writing =
+                  dynamic_cast<inde::ui::WritingWorkspace *>(parent);
+              need(writing, "Escrita ausente");
+              click(*main, "writing-library");
+              writing->reveal_document(id);
               main->lookup_action("document-objects")->activate();
+              main->queue_allocate();
+              main->queue_draw();
+              settle = 3;
               stage = 3;
               return true;
             }
@@ -357,21 +548,26 @@ int run_object_window_smoke(const Glib::RefPtr<Gtk::Application> &app,
               throw std::runtime_error("Operação GTK recusada: " +
                                        Probe::error(*objects));
             if (stage == 3) {
+              if (settle-- > 0)
+                return true;
               need(!state().at("dirty").as_boolean(),
                    "Salvar projeto não confirmou composição");
               need(state().at("equations").as_array().size() == 3,
                    "Equações perdidas na reabertura");
               need(value() == "80", "Fórmula perdida");
               need(math_widgets(*objects) >= 3, "Desenho nativo perdido");
-              capture_window(*objects,
-                             picture.parent_path() / "gtk-reaberto.png");
+              capture_native(*main, picture.parent_path() / "gtk-reaberto.png");
               std::ofstream out(picture.parent_path() / "gtk-smoke.json");
               out << "{\"gtk_widgets\":true,\"webkit\":false,\"html\":false,"
                      "\"javascript\":false,\"native_cairo_math\":true,"
                      "\"equations\":3,\"draft_close_guard\":true,\"remote_"
                      "change_undo_redo\":true,\"table_style_structure\":true,"
-                     "\"save_reopen\":true,\"source_document\":\""
+                     "\"integrated_writing\":true,\"tools_collapsed\":true,"
+                     "\"context_menus\":true,\"save_reopen\":true,\"source_"
+                     "document\":\""
                   << id << "\"}\n";
+              for (auto *window : app->get_windows())
+                need(window == main.get(), "Editor abriu outra janela");
               result = 0;
               app->quit();
               return false;
@@ -383,7 +579,8 @@ int run_object_window_smoke(const Glib::RefPtr<Gtk::Application> &app,
             }
             return true;
           } catch (const std::exception &e) {
-            std::cerr << e.what() << '\n';
+            std::cerr << "stage=" << stage << " remaining=" << steps.size()
+                      << " " << e.what() << '\n';
             app->quit();
             return false;
           }
@@ -395,9 +592,19 @@ int run_object_window_smoke(const Glib::RefPtr<Gtk::Application> &app,
   if (result == 0) {
     inde::application::ProjectService check;
     check.open(project);
-    need(inde::persistence::encode_document_snapshot(
-             *check.writing().document(id)) == original,
-         "Texto de origem alterado");
+    const auto saved = *check.writing().document(id);
+    need(saved.content == revised_body,
+         "Editor original não gravou o texto compartilhado");
+    need(!saved.formatting.empty(), "Formatação original perdida");
+    need(saved.anchors.size() == 1 &&
+             saved.anchors[0].label == "Segundo parágrafo",
+         "Âncora original perdida");
+    need(saved.paragraphs.rows[0].id == paragraph_ids[0],
+         "Identidade original perdida");
+    std::ifstream capture(project / "documents/composed" / id /
+                          "origem-documento.json");
+    const std::string frozen((std::istreambuf_iterator<char>(capture)), {});
+    need(frozen == original, "Proveniência original alterada");
     std::cout << "Native GTK/Cairo: real widgets, no WebKit/HTML/JavaScript, "
                  "math, table, formula, draft protection, save/reopen and "
                  "owner preservation OK\n";

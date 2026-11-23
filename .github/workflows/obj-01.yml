@@ -4,6 +4,7 @@ on:
   push:
     branches: [feature/inde-obj-01-foundation]
     paths:
+      - cpp/writing_object_integration.cpp
       - cpp/object_*
       - cpp/vendor/**
       - cpp/CMakeLists.txt
@@ -47,6 +48,7 @@ on:
       - .github/workflows/obj-01.yml
   pull_request:
     paths:
+      - cpp/writing_object_integration.cpp
       - cpp/object_*
       - cpp/vendor/**
       - cpp/CMakeLists.txt

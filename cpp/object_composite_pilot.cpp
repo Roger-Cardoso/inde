@@ -464,6 +464,7 @@ struct State {
   bool table_design_v1 = false;
   bool table_structure_v1 = false;
   bool equations_v1 = false;
+  bool live_document_v1 = false;
   std::map<std::string, V> equations;
   std::vector<std::string> removed_equations;
   std::map<std::string, TableAxes> table_structure;
@@ -626,6 +627,12 @@ void validate_owner_reorder(const State &s) {
   const auto actual = persistence::decode_document_snapshot(s.working_text);
   if (actual.id != expected.document.id)
     fail("working_document_identity_changed");
+  if (s.live_document_v1) {
+    if (!s.p2d2) fail("live_document_profile_required");
+    const auto checked = compat::read_document(s.project, actual);
+    if (!checked.projection) fail("invalid_live_document");
+    return;
+  }
   const auto target = application::reading_blocks(actual);
   auto blocks = application::reading_blocks(expected.document);
   if (target.size() != blocks.size() || target.size() > 256)
@@ -1230,7 +1237,8 @@ V encode(const State &s) {
                                 {"second", r.second},
                                 {"gap", r.gap}});
   V::Object result{
-      {"format", s.equations_v1 ? "INDE-OBJ01-COMPOSITE-P2D2-5"
+      {"format", s.live_document_v1 ? "INDE-OBJ01-COMPOSITE-P2D2-6" :
+                   s.equations_v1 ? "INDE-OBJ01-COMPOSITE-P2D2-5"
                  : s.table_structure_v1 ? "INDE-OBJ01-COMPOSITE-P2D2-4"
                  : s.table_design_v1  ? "INDE-OBJ01-COMPOSITE-P2D2-3"
                  : s.composition_v2   ? "INDE-OBJ01-COMPOSITE-P2D2-2"
@@ -1346,7 +1354,8 @@ State decode(const std::string &bytes) {
   const auto v = persistence::json::parse(bytes);
   const auto format = v.at("format").as_string();
   State s;
-  s.equations_v1 = format == "INDE-OBJ01-COMPOSITE-P2D2-5";
+  s.live_document_v1 = format == "INDE-OBJ01-COMPOSITE-P2D2-6";
+  s.equations_v1 = s.live_document_v1 || format == "INDE-OBJ01-COMPOSITE-P2D2-5";
   s.table_structure_v1 = s.equations_v1 || format == "INDE-OBJ01-COMPOSITE-P2D2-4";
   s.table_design_v1 =
       s.table_structure_v1 || format == "INDE-OBJ01-COMPOSITE-P2D2-3";
@@ -2295,7 +2304,7 @@ struct Session::Impl {
         {"document_title", p->source_snapshot().title},
         {"equations", std::move(equations)},
         {"equations_supported", p2d2},
-        {"composition_version", working.equations_v1 ? 5
+        {"composition_version", working.live_document_v1 ? 6 : working.equations_v1 ? 5
                                 : working.table_structure_v1 ? 4
                                 : working.table_design_v1  ? 3
                                 : working.composition_v2   ? 2
@@ -3471,12 +3480,144 @@ struct Session::Impl {
 Session::Session(const std::filesystem::path &path, Profile profile,
                  const std::filesystem::path &seed, PersistenceHook hook)
     : impl_(std::make_unique<Impl>(path, profile, seed, std::move(hook))) {}
-Session::Session(const std::filesystem::path &path, const std::string &project_id,
-                 const project::Document &document)
+Session::Session(const std::filesystem::path &path,
+                 const std::string &project_id,
+                 const project::Document &document, DocumentBinding binding)
     : impl_(std::make_unique<Impl>(path, Profile::P2D2, std::filesystem::path{},
-                                  PersistenceHook{}, &document, project_id)) {
-  if (impl_->working.source != persistence::encode_document_snapshot(document))
+                                   PersistenceHook{}, &document, project_id)) {
+  if (binding == DocumentBinding::Live)
+    synchronize_document(document);
+  else if (impl_->working.source !=
+           persistence::encode_document_snapshot(document))
     fail("native_document_source_changed");
+}
+project::Document Session::current_document() const {
+  return persistence::decode_document_snapshot(impl_->working.working_text);
+}
+void Session::synchronize_document(const project::Document &document) {
+  if (!impl_->native_document)
+    fail("native_document_required");
+  if (impl_->uncertain)
+    fail("persistence_outcome_uncertain");
+  const auto bytes = persistence::encode_document_snapshot(document);
+  const auto original =
+      persistence::decode_document_snapshot(impl_->working.source);
+  if (document.id != original.id)
+    fail("working_document_identity_changed");
+  if (impl_->working.live_document_v1 && impl_->working.working_text == bytes)
+    return;
+  // A successful owner commit can change timestamps only. Keep the prior
+  // reading orders in object history so a native text move stays reversible.
+  if (impl_->working.live_document_v1 &&
+      project::same_document_state(current_document(), document, false)) {
+    auto candidate = impl_->working;
+    candidate.working_text = bytes;
+    if (!impl_->fits(candidate, impl_->undo, impl_->redo))
+      fail("history_budget_limit");
+    if (impl_->revision == std::numeric_limits<std::int64_t>::max())
+      fail("revision_limit");
+    impl_->checkpoint(candidate);
+    impl_->working = std::move(candidate);
+    impl_->increment();
+    return;
+  }
+  const auto rebase = [&](State &s) {
+    const auto before = projection(s);
+    const bool aligned = s.author == s.visual;
+    s.live_document_v1 = true;
+    s.composition_v2 = s.table_design_v1 = s.table_structure_v1 =
+        s.equations_v1 = true;
+    s.working_text = bytes;
+    const auto after = projection(s);
+    std::set<std::string> old_ids, new_ids, group_ids;
+    std::map<std::string, std::string> group_for;
+    for (const auto &b : before->paragraphs())
+      old_ids.insert(b.occurrence_id);
+    for (const auto &b : after->paragraphs())
+      new_ids.insert(b.occurrence_id);
+    for (const auto &g : after->reading_groups()) {
+      group_ids.insert(g.source_block_id);
+      for (const auto &id : g.occurrence_ids)
+        group_for[id] = g.source_block_id;
+    }
+    std::erase_if(s.removed_text,
+                  [&](const auto &id) { return !group_ids.contains(id); });
+    const auto hidden = removed_paragraphs(s, *after);
+    const auto stale = [&](const auto &id) {
+      return old_ids.contains(id) &&
+             (!new_ids.contains(id) || hidden.contains(id));
+    };
+    std::map<std::string, std::vector<std::string>> anchored;
+    for (std::size_t i = 0; i < s.author.size(); ++i) {
+      const auto &id = s.author[i];
+      if (old_ids.contains(id))
+        continue;
+      std::string anchor;
+      for (std::size_t j = i + 1; j < s.author.size(); ++j)
+        if (new_ids.contains(s.author[j]) && !hidden.contains(s.author[j])) {
+          anchor = group_for.at(s.author[j]);
+          break;
+        }
+      anchored[anchor].push_back(id);
+    }
+    s.author.clear();
+    for (const auto &g : after->reading_groups()) {
+      if (hidden.contains(g.occurrence_ids.front()))
+        continue;
+      const auto &items = anchored[g.source_block_id];
+      s.author.insert(s.author.end(), items.begin(), items.end());
+      s.author.insert(s.author.end(), g.occurrence_ids.begin(),
+                      g.occurrence_ids.end());
+    }
+    s.author.insert(s.author.end(), anchored[""].begin(), anchored[""].end());
+    if (aligned)
+      s.visual = s.author;
+    else {
+      std::erase_if(s.visual, stale);
+      for (std::size_t i = 0; i < s.author.size(); ++i) {
+        const auto &id = s.author[i];
+        if (std::find(s.visual.begin(), s.visual.end(), id) != s.visual.end())
+          continue;
+        auto at = s.visual.end();
+        for (std::size_t j = i + 1; j < s.author.size(); ++j) {
+          at = std::find(s.visual.begin(), s.visual.end(), s.author[j]);
+          if (at != s.visual.end())
+            break;
+        }
+        s.visual.insert(at, id);
+      }
+    }
+    std::erase_if(s.presentation, [&](const auto &entry) {
+      return old_ids.contains(entry.first) && !new_ids.contains(entry.first);
+    });
+    std::erase_if(s.rows, [&](const auto &row) {
+      const auto at =
+          std::find(s.visual.begin(), s.visual.end(), row.children.front());
+      return at == s.visual.end() || std::next(at) == s.visual.end() ||
+             *std::next(at) != row.children.back();
+    });
+    if (stale(s.selection)) {
+      s.selection.clear();
+      s.selected_cell.clear();
+    }
+    validate(s, false);
+  };
+  auto candidate = impl_->working;
+  auto past = impl_->undo, future = impl_->redo;
+  rebase(candidate);
+  for (auto &s : past)
+    rebase(s);
+  for (auto &s : future)
+    rebase(s);
+  if (!impl_->fits(candidate, past, future))
+    fail("history_budget_limit");
+  if (impl_->revision == std::numeric_limits<std::int64_t>::max())
+    fail("revision_limit");
+  impl_->checkpoint(candidate);
+  impl_->working = std::move(candidate);
+  impl_->undo.swap(past);
+  impl_->redo.swap(future);
+  impl_->increment();
 }
 Session::~Session() = default;
 persistence::json::Value Session::request(const persistence::json::Value &v) {
