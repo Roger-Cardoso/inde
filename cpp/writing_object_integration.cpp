@@ -75,6 +75,7 @@ void WritingWorkspace::show_object_specialization(const std::string &id) {
     object_editor_->editing_changed = [this](bool editing) {
       editor_toolbar_.set_sensitive(!editing);
       specialty_strip_.set_sensitive(!editing);
+      specialization_bar_.set_sensitive(!editing);
     };
     object_editor_->edit_paragraph = [this](const std::string &paragraph) {
       const auto row =
@@ -102,7 +103,15 @@ void WritingWorkspace::show_object_specialization(const std::string &id) {
     };
     document_surfaces_.add(*object_editor_, "objects");
   }
-  object_editor_->synchronize_document(capture_editor_state());
+  flush_document_objects();
+  object_editor_->set_specialty(id);
+  document_surfaces_.set_visible_child("objects");
+}
+void WritingWorkspace::flush_document_objects() {
+  if (!object_editor_ || !current_document_ || !service_.current())
+    return;
+  if (!refreshing_visibility_)
+    object_editor_->synchronize_document(capture_editor_state());
   if (active_visibility_id_.empty())
     object_editor_->set_visible_text(std::nullopt);
   else {
@@ -126,14 +135,8 @@ void WritingWorkspace::show_object_specialization(const std::string &id) {
     }
     object_editor_->set_visible_text(std::move(visible));
   }
-  object_editor_->set_specialty(id);
-  document_surfaces_.set_visible_child("objects");
-}
-void WritingWorkspace::flush_document_objects() {
-  if (!object_editor_ || !current_document_ || !service_.current())
-    return;
-  object_editor_->synchronize_document(capture_editor_state());
-  object_editor_->save_for_project(service_.current()->path());
+  if (!refreshing_visibility_)
+    object_editor_->save_for_project(service_.current()->path());
 }
 void WritingWorkspace::reset_document_objects() {
   if (!object_editor_)

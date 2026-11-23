@@ -36,7 +36,7 @@ find_package(Python3 COMPONENTS Interpreter REQUIRED)
 execute_process(COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/integrar_gtk.py
   ${INDE_ACTIVE_SOURCE} ${CMAKE_CURRENT_SOURCE_DIR}/overlay COMMAND_ERROR_IS_FATAL ANY)
 get_target_property(INDE_UI_SOURCES inde SOURCES)
-list(REMOVE_ITEM INDE_UI_SOURCES src/main.cpp src/ui/main_window.cpp src/ui/overlay_dialog.cpp src/ui/workspace_shell.cpp src/ui/main_window_context.cpp src/ui/main_window_keyboard.cpp src/ui/writing_workspace.cpp src/ui/writing_workspace_document.cpp src/ui/writing_workspace_specializations.cpp src/ui/writing_workspace_keyboard.cpp)
+list(REMOVE_ITEM INDE_UI_SOURCES src/main.cpp src/ui/main_window.cpp src/ui/overlay_dialog.cpp src/ui/workspace_shell.cpp src/ui/main_window_context.cpp src/ui/main_window_keyboard.cpp src/ui/writing_workspace.cpp src/ui/writing_workspace_document.cpp src/ui/writing_workspace_specializations.cpp src/ui/writing_workspace_keyboard.cpp src/ui/writing_workspace_visible_edit.cpp)
 set_property(TARGET inde PROPERTY SOURCES "${INDE_UI_SOURCES}")
 target_sources(inde PRIVATE overlay/src/main.cpp overlay/src/ui/main_window.cpp overlay/src/ui/overlay_dialog.cpp
   workspace_shell.cpp overlay/src/ui/main_window_context.cpp overlay/src/ui/main_window_keyboard.cpp main_window_comic.cpp comic_workspace_start.cpp main_window_publication.cpp main_window_smoke.cpp comic_window_smoke.cpp catalog_window_smoke.cpp import_review_ui.cpp imported_window_smoke.cpp)
@@ -216,7 +216,7 @@ add_library(inde_object_document_engine STATIC object_composite_pilot.cpp object
 target_link_libraries(inde_object_document_engine PUBLIC inde_object_document_adapter PRIVATE PkgConfig::PIXBUF PkgConfig::OBJECT_SQLITE ZLIB::ZLIB)
 target_compile_options(inde_object_document_engine PRIVATE -Wall -Wextra -Wpedantic -Wconversion -Werror)
 target_sources(inde PRIVATE object_native_ui.cpp object_native_smoke.cpp writing_object_integration.cpp
-  overlay/src/ui/writing_workspace.cpp overlay/src/ui/writing_workspace_document.cpp overlay/src/ui/writing_workspace_specializations.cpp overlay/src/ui/writing_workspace_keyboard.cpp)
+  overlay/src/ui/writing_workspace.cpp overlay/src/ui/writing_workspace_document.cpp overlay/src/ui/writing_workspace_specializations.cpp overlay/src/ui/writing_workspace_keyboard.cpp overlay/src/ui/writing_workspace_visible_edit.cpp)
 target_link_libraries(inde PRIVATE inde_object_document_engine inde_math_native)
 add_executable(inde_object_native_tests object_native_tests.cpp)
 target_link_libraries(inde_object_native_tests PRIVATE inde_object_document_engine inde_web_publication)

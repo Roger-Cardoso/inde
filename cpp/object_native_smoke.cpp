@@ -9,11 +9,37 @@
 #include <fstream>
 #include <iostream>
 void capture_window(Gtk::Widget &, const std::filesystem::path &);
+Gtk::Button *find_button(Gtk::Widget &, const std::string &);
 namespace {
+bool capture_pending = false;
+std::string capture_error;
+sigc::connection capture_frame;
+// Screenshots belong after GTK has laid out and painted the current frame.
+// This is test instrumentation only; it does not drive application state.
 void capture_native(Gtk::Widget &w, const std::filesystem::path &p) {
-  std::cerr << "GTK capture: " << p.filename() << " size=" << w.get_width()
-            << "x" << w.get_height() << "\n";
-  capture_window(w, p);
+  if (capture_pending)
+    throw std::runtime_error("Captura já pendente");
+  const auto clock = w.get_frame_clock();
+  if (!clock)
+    throw std::runtime_error("Sem relógio de pintura para captura");
+  capture_pending = true;
+  capture_frame = clock->signal_paint().connect(
+      [target = &w, p] {
+        capture_frame.disconnect();
+        try {
+          std::cerr << "GTK capture: " << p.filename()
+                    << " size=" << target->get_width() << "x"
+                    << target->get_height() << "\n";
+          capture_window(*target, p);
+        } catch (const std::exception &e) {
+          capture_error = e.what();
+        }
+        capture_pending = false;
+      },
+      true);
+  w.queue_allocate();
+  w.queue_draw();
+  clock->request_phase(Gdk::FrameClock::Phase::PAINT);
 }
 using V = inde::persistence::json::Value;
 using Probe = inde::ui::ObjectNativeProbe;
@@ -38,20 +64,6 @@ template <class T> T &widget(Gtk::Widget &w, const std::string &name) {
 void click(Gtk::Widget &w, const std::string &name) {
   auto *objects = dynamic_cast<inde::ui::ObjectDocumentEditor *>(&w);
   if (objects) {
-    for (const auto &prefix :
-         {std::string("native-equation-edit-"),
-          std::string("native-edit-formula-"), std::string("native-execute-")})
-      if (name.starts_with(prefix)) {
-        auto id = name.substr(prefix.size());
-        if (prefix != "native-equation-edit-")
-          for (const auto &u :
-               Probe::state(*objects).at("formula_uses").as_array())
-            if (u.at("object").as_string() == id) {
-              id = u.at("id").as_string();
-              break;
-            }
-        Probe::open_context(*objects, id);
-      }
     std::string specialty;
     if (name == "native-new-equation")
       specialty = "math";
@@ -112,6 +124,12 @@ int run_object_window_smoke(const Glib::RefPtr<Gtk::Application> &app,
     d.content = "Uma travessia pode seguir muitas direções.\nAs relações "
                 "também podem ser expressas com matemática.";
     d.paragraphs = inde::project::identify_paragraphs(d.content);
+    d.visibility_profiles = {{inde::project::new_uuid(),
+                              "Somente segundo parágrafo",
+                              true,
+                              {},
+                              {{inde::project::VisibilityRuleKind::Paragraph,
+                                d.paragraphs.rows[0].id}}}};
     d.formatting = {{inde::project::DocumentTextStyle::Bold, 0, 3, {}}};
     d.anchors = {{inde::project::new_uuid(), "Segundo parágrafo",
                   d.paragraphs.rows[1].start, d.paragraphs.rows[1].start + 2}};
@@ -144,8 +162,8 @@ int run_object_window_smoke(const Glib::RefPtr<Gtk::Application> &app,
     });
     steps.push_back([&] {
       capture_native(*main, picture.parent_path() / "gtk-editor-equacao.png");
-      click(*objects, "native-apply");
     });
+    steps.push_back([&] { click(*objects, "native-apply"); });
   };
   steps.push_back([&] {
     click(*objects, "native-new-equation");
@@ -220,6 +238,12 @@ int run_object_window_smoke(const Glib::RefPtr<Gtk::Application> &app,
     for (const auto &u : state().at("formula_uses").as_array())
       if (u.at("object").as_string() == f.at("id").as_string())
         Probe::reveal_object(*objects, u.at("id").as_string());
+  });
+  steps.push_back([&] {
+    const auto &f = state().at("formulas").as_array().back();
+    for (const auto &u : state().at("formula_uses").as_array())
+      if (u.at("object").as_string() == f.at("id").as_string())
+        Probe::open_context(*objects, u.at("id").as_string());
   });
   steps.push_back([&] {
     const auto &f = state().at("formulas").as_array().back();
@@ -339,6 +363,7 @@ int run_object_window_smoke(const Glib::RefPtr<Gtk::Application> &app,
     capture_native(*main, picture);
     Probe::reveal_object(*objects, equation);
   });
+  steps.push_back([&] { Probe::open_context(*objects, equation); });
   steps.push_back([&] { click(*objects, "native-equation-edit-" + equation); });
   steps.push_back([&] {
     field(*objects, "label", "Equação revisada");
@@ -445,6 +470,48 @@ int run_object_window_smoke(const Glib::RefPtr<Gtk::Application> &app,
         .set_text("Matemática na narrativa");
     click(*objects, "native-save");
   });
+  const auto click_label = [&](const std::string &caption) {
+    for (auto *w : app->get_windows())
+      if (auto *b = find_button(*w, caption)) {
+        g_signal_emit_by_name(b->gobj(), "clicked");
+        return;
+      }
+    throw std::runtime_error("Botão de visibilidade ausente: " + caption);
+  };
+  steps.push_back([&] {
+    widget<Gtk::ComboBoxText>(*objects, "native-selection")
+        .set_active_id(
+            state().at("paragraphs").as_array()[0].at("id").as_string());
+  });
+  steps.push_back([&] { click(*main, "editor-visibility"); });
+  steps.push_back([&] { click_label("Somente segundo parágrafo"); });
+  steps.push_back([&] { click_label("Aplicar nesta área de escrita"); });
+  steps.push_back([&] {
+    need(!find(*objects,
+               "native-object-" +
+                   state().at("paragraphs").as_array()[0].at("id").as_string()),
+         "Lente antiga não atualizou a composição");
+    need(find(*objects,
+              "native-object-" +
+                  state().at("paragraphs").as_array()[1].at("id").as_string()),
+         "Lente ocultou o parágrafo errado");
+    need(widget<Gtk::TextView>(*main, "writing-text-editor")
+             .get_buffer()
+             ->get_text()
+             .raw()
+             .starts_with("Agora "),
+         "Visibilidade apagou origem");
+    click(*objects, "native-layout");
+    need(!Probe::draft(*objects),
+         "Objeto oculto continuou selecionado para movimentação");
+    click_label("Mostrar tudo");
+  });
+  steps.push_back([&] {
+    need(find(*objects,
+              "native-object-" +
+                  state().at("paragraphs").as_array()[0].at("id").as_string()),
+         "Mostrar tudo não restaurou a composição");
+  });
   steps.push_back([&] {
     click(*main, "specialty-composition");
     objects->show_tools(false);
@@ -471,6 +538,10 @@ int run_object_window_smoke(const Glib::RefPtr<Gtk::Application> &app,
     std::cerr
         << "GTK probe: janela principal construída; Objetos ainda fechado\n";
     app->add_window(*main);
+    if (g_getenv("INDE_OBJ01_SMOKE_COMPACT")) {
+      main->unmaximize();
+      main->set_default_size(1190, 750);
+    }
     main->present();
     Glib::signal_timeout().connect(
         [&] {
@@ -479,6 +550,10 @@ int run_object_window_smoke(const Glib::RefPtr<Gtk::Application> &app,
               throw std::runtime_error("Timeout GTK, etapa " +
                                        std::to_string(stage) + ", passos " +
                                        std::to_string(steps.size()));
+            if (!capture_error.empty())
+              throw std::runtime_error(capture_error);
+            if (capture_pending)
+              return true;
             if (stage == 0) {
               std::function<inde::ui::WritingWorkspace *(Gtk::Widget &)>
                   find_writing =
@@ -557,13 +632,18 @@ int run_object_window_smoke(const Glib::RefPtr<Gtk::Application> &app,
               need(value() == "80", "Fórmula perdida");
               need(math_widgets(*objects) >= 3, "Desenho nativo perdido");
               capture_native(*main, picture.parent_path() / "gtk-reaberto.png");
+              stage = 4;
+              return true;
+            }
+            if (stage == 4) {
               std::ofstream out(picture.parent_path() / "gtk-smoke.json");
               out << "{\"gtk_widgets\":true,\"webkit\":false,\"html\":false,"
                      "\"javascript\":false,\"native_cairo_math\":true,"
                      "\"equations\":3,\"draft_close_guard\":true,\"remote_"
                      "change_undo_redo\":true,\"table_style_structure\":true,"
                      "\"integrated_writing\":true,\"tools_collapsed\":true,"
-                     "\"context_menus\":true,\"save_reopen\":true,\"source_"
+                     "\"context_menus\":true,\"visibility_lens\":true,\"save_"
+                     "reopen\":true,\"source_"
                      "document\":\""
                   << id << "\"}\n";
               for (auto *window : app->get_windows())
@@ -588,6 +668,8 @@ int run_object_window_smoke(const Glib::RefPtr<Gtk::Application> &app,
         180);
   });
   app->run();
+  capture_frame.disconnect();
+  capture_pending = false;
   main.reset();
   if (result == 0) {
     inde::application::ProjectService check;

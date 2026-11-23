@@ -600,7 +600,8 @@ struct ObjectDocumentEditor::Impl {
   void destinations(Gtk::ComboBoxText &c, const std::string &active = "") {
     c.append("", "Fim do documento");
     for (const auto &id : state.at("visual_order").as_array())
-      c.append(id.as_string(), title(id.as_string()));
+      if (shown(id.as_string()))
+        c.append(id.as_string(), title(id.as_string()));
     c.set_active_id(active);
   }
   void render() {
@@ -608,6 +609,8 @@ struct ObjectDocumentEditor::Impl {
       return;
     rendering = true;
     selected = text(state, "selection");
+    if (!selected.empty() && !shown(selected))
+      selected.clear();
     context.set_active_id(text(state, "context"));
     objects.remove_all();
     for (const auto &id : state.at("visual_order").as_array())
@@ -938,11 +941,26 @@ struct ObjectDocumentEditor::Impl {
     const auto *f = find(state, "formulas", id);
     if (!f)
       return;
+    const auto control = [this, actions, &box](const std::string &caption,
+                                               const std::string &name,
+                                               std::function<void()> fn) {
+      button(actions ? *actions : box, caption, name, [this, actions, fn] {
+        if (!actions) {
+          fn();
+          return;
+        }
+        object_menu.popdown();
+        const auto lifetime = life;
+        Glib::signal_idle().connect_once([lifetime, fn] {
+          if (lifetime->alive)
+            fn();
+        });
+      });
+    };
     if (f->at("command").as_boolean()) {
       label(box, "Alteração de uso único · " + text(*f, "name"));
-      button(actions ? *actions : box, "Aplicar alteração e retirar comando",
-             "native-execute-" + id,
-             [this, id] { command("execute_formula", {{"id", id}}, "text"); });
+      control("Aplicar alteração e retirar comando", "native-execute-" + id,
+              [this, id] { command("execute_formula", {{"id", id}}, "text"); });
     } else {
       std::string out;
       if (state.at("formula_text").as_object().contains(target)) {
@@ -959,13 +977,11 @@ struct ObjectDocumentEditor::Impl {
       auto &l = label(box, out);
       l.set_selectable(true);
       l.add_css_class("inde-native-text");
-      button(actions ? *actions : box, "Editar frase ao redor do resultado",
-             "native-phrase-" + target,
-             [this, target] { phrase_editor(target); });
+      control("Editar frase ao redor do resultado", "native-phrase-" + target,
+              [this, target] { phrase_editor(target); });
     }
-    button(actions ? *actions : box, "Editar fórmula",
-           "native-edit-formula-" + id,
-           [this, id, target] { formula_editor(id, target); });
+    control("Editar fórmula", "native-edit-formula-" + id,
+            [this, id, target] { formula_editor(id, target); });
     if (!f->at("valid").as_boolean())
       label(box, "Confira a fonte e as referências da fórmula.")
           .add_css_class("error");
@@ -2059,7 +2075,7 @@ struct ObjectDocumentEditor::Impl {
     });
     auto &other = choice("other", "Colocar lado a lado com", {}, "");
     for (const auto &v : state.at("visual_order").as_array())
-      if (v.as_string() != id)
+      if (v.as_string() != id && shown(v.as_string()))
         other.append(v.as_string(), title(v.as_string()));
     other.set_active(0);
     choice("side", "Posição do selecionado",
