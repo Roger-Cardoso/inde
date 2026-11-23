@@ -252,7 +252,7 @@ struct ObjectDocumentEditor::Impl {
       canvas{Gtk::Orientation::VERTICAL, 18},
       editor{Gtk::Orientation::VERTICAL, 10};
   Gtk::ScrolledWindow side_scroll, content_scroll, edit_scroll;
-  Gtk::Paned paned{Gtk::Orientation::HORIZONTAL};
+  Gtk::Box surface_row{Gtk::Orientation::HORIZONTAL, 8};
   Gtk::Stack stack;
   Gtk::Label status;
   Gtk::ComboBoxText objects, formulas, context;
@@ -260,7 +260,9 @@ struct ObjectDocumentEditor::Impl {
   std::shared_ptr<Life> life = std::make_shared<Life>();
   V state;
   std::filesystem::path project_path;
-  bool busy = false, draft = false, rendering = false, choosing_image = false;
+  bool busy = false, draft = false, rendering = false, choosing_image = false,
+       draft_tools_open = false;
+  std::size_t pending_actions = 0;
   sigc::connection chooser_response;
   std::string last_error, selected;
   Glib::RefPtr<Gtk::CssProvider> css = Gtk::CssProvider::create();
@@ -352,8 +354,8 @@ struct ObjectDocumentEditor::Impl {
     status.set_wrap(true);
     status.set_xalign(0);
     status.set_name("native-status");
-    root.append(paned);
-    paned.set_vexpand(true);
+    root.append(surface_row);
+    surface_row.set_vexpand(true);
     side_scroll.set_policy(Gtk::PolicyType::NEVER, Gtk::PolicyType::AUTOMATIC);
     side_scroll.set_child(sidebar);
     sidebar.set_margin(6);
@@ -361,16 +363,22 @@ struct ObjectDocumentEditor::Impl {
     side_revealer.set_child(side_scroll);
     side_revealer.set_transition_type(Gtk::RevealerTransitionType::SLIDE_LEFT);
     side_revealer.set_reveal_child(false);
-    paned.set_resize_start_child(false);
-    paned.set_start_child(stack);
-    paned.set_end_child(side_revealer);
-    paned.set_resize_end_child(false);
-    paned.set_shrink_end_child(false);
+    stack.set_hexpand(true);
+    stack.set_vexpand(true);
+    side_revealer.set_hexpand(false);
+    side_scroll.set_name("native-tools-panel");
+    surface_row.append(stack);
+    surface_row.append(side_revealer);
     canvas.set_margin(20);
     content_scroll.set_child(canvas);
     content_scroll.set_policy(Gtk::PolicyType::AUTOMATIC,
                               Gtk::PolicyType::AUTOMATIC);
     stack.add(content_scroll, "document");
+    editor.set_name("native-editor-surface");
+    editor.set_halign(Gtk::Align::CENTER);
+    editor.set_hexpand(false);
+    editor.set_size_request(820, -1);
+    edit_scroll.set_name("native-edit-scroll");
     editor.set_margin(18);
     edit_scroll.set_child(editor);
     stack.add(edit_scroll, "editor");
@@ -474,6 +482,27 @@ struct ObjectDocumentEditor::Impl {
                           "referências; o trabalho anterior foi preservado."
                         : at->second);
     status.add_css_class("error");
+  }
+  void defer_action(std::function<void()> fn) {
+    ++pending_actions;
+    root.set_sensitive(false);
+    if (owner.editing_changed)
+      owner.editing_changed(true);
+    const auto lifetime = life;
+    Glib::signal_idle().connect_once([this, lifetime, fn] {
+      if (!lifetime->alive)
+        return;
+      --pending_actions;
+      root.set_sensitive(!busy && pending_actions == 0);
+      if (owner.editing_changed)
+        owner.editing_changed(busy || draft || choosing_image ||
+                              pending_actions != 0);
+      try {
+        fn();
+      } catch (const std::exception &e) {
+        error(e.what());
+      }
+    });
   }
   void command(const std::string &op, O args = {},
                const std::string &required = {},
@@ -827,11 +856,7 @@ struct ObjectDocumentEditor::Impl {
                                         std::function<void()> fn) {
       button(*actions, caption, name, [this, fn] {
         object_menu.popdown();
-        const auto lifetime = life;
-        Glib::signal_idle().connect_once([lifetime, fn] {
-          if (lifetime->alive)
-            fn();
-        });
+        defer_action(fn);
       });
     };
     action("Posição e alinhamento…", "native-object-layout-" + id,
@@ -950,11 +975,7 @@ struct ObjectDocumentEditor::Impl {
           return;
         }
         object_menu.popdown();
-        const auto lifetime = life;
-        Glib::signal_idle().connect_once([lifetime, fn] {
-          if (lifetime->alive)
-            fn();
-        });
+        defer_action(fn);
       });
     };
     if (f->at("command").as_boolean()) {
@@ -1144,6 +1165,10 @@ struct ObjectDocumentEditor::Impl {
       return;
     object_menu.popdown();
     draft = true;
+    draft_tools_open = draft_tools_open || side_revealer.get_reveal_child();
+    side_revealer.set_reveal_child(false);
+    side_revealer.set_visible(false);
+    toolbar.set_visible(false);
     if (owner.editing_changed)
       owner.editing_changed(true);
     status.set_text("Edição aberta · Aplique para registrar os campos ou "
@@ -1258,6 +1283,10 @@ struct ObjectDocumentEditor::Impl {
     if (busy)
       return;
     draft = false;
+    side_revealer.set_visible(true);
+    side_revealer.set_reveal_child(draft_tools_open);
+    draft_tools_open = false;
+    toolbar.set_visible(true);
     if (owner.editing_changed)
       owner.editing_changed(busy || choosing_image);
     last_error.clear();
@@ -1267,6 +1296,10 @@ struct ObjectDocumentEditor::Impl {
   }
   void finish() {
     draft = false;
+    side_revealer.set_visible(true);
+    side_revealer.set_reveal_child(draft_tools_open);
+    draft_tools_open = false;
+    toolbar.set_visible(true);
     if (owner.editing_changed)
       owner.editing_changed(busy || choosing_image);
     sidebar.set_sensitive(true);
@@ -2465,13 +2498,15 @@ void ObjectDocumentEditor::show_tools(bool open) {
 }
 bool ObjectDocumentEditor::can_leave() const {
   return !impl_->draft && !impl_->busy && !impl_->choosing_image &&
+         impl_->pending_actions == 0 &&
          text(impl_->state, "persistence_status") != "uncertain";
 }
 void ObjectDocumentEditor::save_for_project(
     const std::filesystem::path &project) {
   if (project != impl_->project_path)
     return;
-  if (impl_->draft || impl_->busy || impl_->choosing_image)
+  if (impl_->draft || impl_->busy || impl_->choosing_image ||
+      impl_->pending_actions != 0)
     throw std::runtime_error(
         "Aplique ou cancele a edição de Objetos antes de salvar o projeto.");
   {
@@ -2491,7 +2526,8 @@ const V &ObjectNativeProbe::state(const ObjectDocumentEditor &w) {
   return w.impl_->state;
 }
 bool ObjectNativeProbe::busy(const ObjectDocumentEditor &w) {
-  return w.impl_->busy || w.impl_->choosing_image;
+  return w.impl_->busy || w.impl_->choosing_image ||
+         w.impl_->pending_actions != 0;
 }
 bool ObjectNativeProbe::draft(const ObjectDocumentEditor &w) {
   return w.impl_->draft;
@@ -2567,12 +2603,27 @@ void ObjectNativeProbe::open_context(ObjectDocumentEditor &w,
   locate(w);
   if (!target)
     throw std::runtime_error("Context object missing");
+  graphene_rect_t bounds{};
+  if (!gtk_widget_compute_bounds(
+          target->gobj(), GTK_WIDGET(w.impl_->content_scroll.gobj()), &bounds))
+    throw std::runtime_error("Context object has no viewport bounds");
+  const double left = std::max(0., -static_cast<double>(bounds.origin.x)),
+               top = std::max(0., -static_cast<double>(bounds.origin.y));
+  const double right = std::min(static_cast<double>(target->get_width()),
+                                w.impl_->content_scroll.get_width() -
+                                    static_cast<double>(bounds.origin.x));
+  const double bottom = std::min(static_cast<double>(target->get_height()),
+                                 w.impl_->content_scroll.get_height() -
+                                     static_cast<double>(bounds.origin.y));
+  if (right <= left || bottom <= top)
+    throw std::runtime_error("Context object is outside the visible viewport");
+  const double x = (left + right) / 2, y = (top + bottom) / 2;
   auto *controllers = gtk_widget_observe_controllers(target->gobj());
   for (guint i = 0; i < g_list_model_get_n_items(controllers); ++i) {
     auto *c = g_list_model_get_item(controllers, i);
     if (GTK_IS_GESTURE_CLICK(c) &&
         gtk_gesture_single_get_button(GTK_GESTURE_SINGLE(c)) == 3)
-      g_signal_emit_by_name(c, "pressed", 1, 8.0, 8.0);
+      g_signal_emit_by_name(c, "pressed", 1, x, y);
     g_object_unref(c);
   }
   g_object_unref(controllers);

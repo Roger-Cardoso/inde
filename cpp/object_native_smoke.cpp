@@ -163,8 +163,29 @@ int run_object_window_smoke(const Glib::RefPtr<Gtk::Application> &app,
     steps.push_back([&] {
       capture_native(*main, picture.parent_path() / "gtk-editor-equacao.png");
     });
-    steps.push_back([&] { click(*objects, "native-apply"); });
+    steps.push_back([&] {
+      need(!Probe::tools_open(*objects),
+           "Lateral permaneceu aberta durante edição");
+      need(widget<Gtk::ScrolledWindow>(*objects, "native-edit-scroll")
+                       .get_width() *
+                   10 >=
+               objects->get_width() * 7,
+           "Área de edição espremida pela lateral");
+      need(widget<Gtk::Box>(*objects, "native-editor-surface").get_width() >=
+               600,
+           "Formulário sem largura útil para edição");
+      click(*objects, "native-apply");
+    });
   };
+  steps.push_back([&] { click(*main, "specialty-math"); });
+  steps.push_back([&] {
+    need(Probe::tools_open(*objects), "Barra não abriu instrumentos");
+    need(widget<Gtk::ScrolledWindow>(*objects, "native-tools-panel")
+                     .get_width() *
+                 100 <=
+             objects->get_width() * 45,
+         "Lateral ocupou a maior parte do editor");
+  });
   steps.push_back([&] {
     click(*objects, "native-new-equation");
     need(Probe::draft(*objects), "Rascunho nativo ausente");
@@ -361,10 +382,14 @@ int run_object_window_smoke(const Glib::RefPtr<Gtk::Application> &app,
   steps.push_back([&] {
     need(!state().at("dirty").as_boolean(), "Documento não salvo");
     capture_native(*main, picture);
-    Probe::reveal_object(*objects, equation);
   });
+  steps.push_back([&] { Probe::reveal_object(*objects, equation); });
   steps.push_back([&] { Probe::open_context(*objects, equation); });
-  steps.push_back([&] { click(*objects, "native-equation-edit-" + equation); });
+  steps.push_back([&] {
+    click(*objects, "native-equation-edit-" + equation);
+    main->close();
+    need(main->get_visible(), "Fechou com ação de menu pendente");
+  });
   steps.push_back([&] {
     field(*objects, "label", "Equação revisada");
     click(*objects, "native-apply");
@@ -516,6 +541,8 @@ int run_object_window_smoke(const Glib::RefPtr<Gtk::Application> &app,
     click(*main, "specialty-composition");
     objects->show_tools(false);
     need(!Probe::tools_open(*objects), "Painel não recolheu");
+  });
+  steps.push_back([&] {
     Probe::reveal_object(
         *objects, state().at("paragraphs").as_array()[0].at("id").as_string());
   });
