@@ -302,7 +302,8 @@ void ObjectTextProjection::focus_offset(int offset) {
   reflecting_ = true;
   grab_focus();
   reflecting_ = false;
-  auto at = get_buffer()->get_iter_at_offset(offset - start());
-  scroll_to(at, .15);
+  // The paragraph has its complete natural height. Its containing sheet owns
+  // scrolling; starting a second TextView animation here is unnecessary and
+  // can outlive the viewport when a structural edit replaces it.
 }
 } // namespace inde::ui

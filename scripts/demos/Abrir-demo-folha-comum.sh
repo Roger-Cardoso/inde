@@ -5,7 +5,7 @@ cd "$native_root"
 python3 verificar_base.py --integrado --extrair
 cmake -S cpp -B build-nativo -G Ninja -DCMAKE_BUILD_TYPE=Release
 cmake --build build-nativo --target inde --parallel 2
-native_demo="$native_root/dados/obj01-folha-comum-r5"
+native_demo="$native_root/dados/obj01-folha-comum-r6"
 mkdir -p "$native_demo"
 export XDG_DATA_HOME="$native_demo/perfil/dados"
 export XDG_CACHE_HOME="$native_demo/perfil/cache"

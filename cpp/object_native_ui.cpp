@@ -513,10 +513,6 @@ struct ObjectDocumentEditor::Impl {
   void follow_cursor() {
     if (!focused_text())
       return;
-    if (auto *viewport = dynamic_cast<Gtk::Viewport *>(canvas.get_parent()))
-      viewport->set_scroll_to_focus(false);
-    const auto adjustment = content_scroll.get_vadjustment();
-    adjustment->set_value(adjustment->get_value());
     if (cursor_follow.connected())
       return;
     const auto lifetime = life;
@@ -526,8 +522,16 @@ struct ObjectDocumentEditor::Impl {
         [this, lifetime] {
           if (!lifetime->alive)
             return false;
-          if (auto *focused = focused_text())
+          if (auto *focused = focused_text()) {
+            // Layout notifications can run inside a frame-clock phase. Do not
+            // cancel/restart adjustment animations reentrantly from that phase.
+            if (auto *viewport =
+                    dynamic_cast<Gtk::Viewport *>(canvas.get_parent()))
+              viewport->set_scroll_to_focus(false);
+            const auto adjustment = content_scroll.get_vadjustment();
+            adjustment->set_value(adjustment->get_value());
             reveal_cursor(*focused);
+          }
           return false;
         },
         1);

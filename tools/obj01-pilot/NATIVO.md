@@ -3,7 +3,7 @@
 
 A versão atual usa uma folha comum em todas as especialidades. Abra com
 `scripts/demos/Abrir-demo-folha-comum.sh`; a demonstração sintética fica em
-`dados/obj01-folha-comum-r5/Projeto.inde`, com perfil separado. As amostras anteriores
+`dados/obj01-folha-comum-r6/Projeto.inde`, com perfil separado. As amostras anteriores
 continuam preservadas. Veja [contrato e limites](../../docs/arquitetura/OBJ-01-FOLHA-COMUM.md).
 
 Roteiro curto: abra **Matemática na narrativa**, alterne Texto, Composição e
@@ -23,7 +23,7 @@ Os controles são C++/GTK4; as equações são desenhadas em Cairo/Pango. O exec
 bash scripts/demos/Abrir-demo-folha-comum.sh
 ```
 
-O iniciador verifica as fontes, compila a aplicação e cria somente a amostra `dados/obj01-folha-comum-r5/Projeto.inde`, se ainda não existir. Demonstrações anteriores são preservadas. Na Escrita, abra **Matemática na narrativa** e use a barra de especialidades do próprio editor.
+O iniciador verifica as fontes, compila a aplicação e cria somente a amostra `dados/obj01-folha-comum-r6/Projeto.inde`, se ainda não existir. Demonstrações anteriores são preservadas. Na Escrita, abra **Matemática na narrativa** e use a barra de especialidades do próprio editor.
 
 ## Roteiro de uso
 
