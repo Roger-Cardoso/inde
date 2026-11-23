@@ -1,0 +1,48 @@
+{
+  "project": "dados/obj01-folha-comum-r6/Projeto.inde",
+  "readonly": true,
+  "databases": {
+    "data/project.sqlite3": {
+      "sha256": "8c08f0f4c20d038c8d2608cdc9f14aaceea7bfc06411323525e4ffed56fff1a3",
+      "integrity_check": [
+        "ok"
+      ],
+      "foreign_key_check": [],
+      "user_version": 0,
+      "schema": 37,
+      "documents": 1
+    },
+    "documents/composed/361f27ab-184d-4dd9-a362-b82231df4ae8/obj01-piloto.sqlite3": {
+      "sha256": "93fa566d4cec2268e51259b3a71c9b4949a8a65f86db412304f719b40fe5c256",
+      "integrity_check": [
+        "ok"
+      ],
+      "foreign_key_check": [],
+      "user_version": 5,
+      "format": "INDE-OBJ01-COMPOSITE-P2D2-6",
+      "revision": 11,
+      "saved_equals_working": true,
+      "document_title_content_match_owner": true,
+      "origin_sha256": "532a38c13ed6f6740c7e840e6abd7bb5516f11ac9c665d93212d8d0de0ee4305",
+      "origin_matches_archived_file": true,
+      "paragraphs": 2,
+      "paragraph_ids": [
+        "a4b8ffdf-73cb-4746-9eff-9869a4906770",
+        "08b402c1-6079-4b4b-bd2e-459131c220dd"
+      ],
+      "equations": 3,
+      "tables": 1,
+      "formulas": 4
+    },
+    "recovery/editor-v1/1d310574-eaca-425c-9eab-fe54baf84975.sqlite3": {
+      "sha256": "1be2e8a98759b8c5b126c58b291cc51a9e595adf129e07e2fbacf4206573ab9e",
+      "integrity_check": [
+        "ok"
+      ],
+      "foreign_key_check": [],
+      "user_version": 1
+    }
+  },
+  "project_files_checked": 8,
+  "unchanged_after_checks": true
+}

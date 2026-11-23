@@ -1,0 +1,9 @@
+test_native_binary_has_no_browser_runtime_dependency (test_obj01_native.NativeObjects.test_native_binary_has_no_browser_runtime_dependency) ... ok
+test_project_binding_copy_recovery_and_source_conflict (test_obj01_native.NativeObjects.test_project_binding_copy_recovery_and_source_conflict) ... ok
+test_real_gtk_entry_math_objects_save_reopen_and_draft_guard (test_obj01_native.NativeObjects.test_real_gtk_entry_math_objects_save_reopen_and_draft_guard) ... ok
+test_shared_text_projection_guards_unicode_styles_and_visibility (test_obj01_native.NativeObjects.test_shared_text_projection_guards_unicode_styles_and_visibility) ... ok
+
+----------------------------------------------------------------------
+Ran 4 tests in 24.748s
+
+OK

@@ -1,5 +1,8 @@
 # OBJ-01 — especialidades do mesmo editor de Escrita
 
+> Atualização: a separação entre escrita linear e composição descrita neste registro histórico foi substituída pela [folha comum](../arquitetura/OBJ-01-FOLHA-COMUM.md). Consulte a nova validação para o alcance e as lacunas atuais.
+
+
 Direção de 23/11/2026, em `feature/inde-obj-01-foundation`. Este documento sucede, quanto à interface e à ligação com a Escrita, o corte [GTK nativo](OBJ-01-GTK-NATIVO.md). A validação daquele corte permanece histórica.
 
 ## Autoridade e organização

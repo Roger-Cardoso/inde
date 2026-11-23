@@ -1,0 +1,11 @@
+GTK probe: criando janela principal; Objetos ainda fechado
+GTK probe: janela principal construída; Objetos ainda fechado
+GTK probe: abrindo Objetos C++/GTK
+GTK capture: "gtk-editor-equacao.png" size=1920x1032
+GTK capture: "gtk-editor-equacao.png" size=1920x1032
+GTK capture: "demonstracao.png" size=1920x1032
+GTK capture: "gtk-folha-text.png" size=1920x1032
+GTK capture: "gtk-folha-semantic.png" size=1920x1032
+GTK capture: "gtk-folha-composition.png" size=1920x1032
+GTK capture: "gtk-menu-objeto.png" size=243x196
+GTK capture: "gtk-reaberto.png" size=1920x1032

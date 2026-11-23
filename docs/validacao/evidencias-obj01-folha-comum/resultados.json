@@ -1,0 +1,66 @@
+{
+  "date": "2026-11-23",
+  "branch": "feature/inde-obj-01-foundation",
+  "source_commit": "e285f667e24ed682bced62fe2cb8c1eefc842310",
+  "base_commit": "0a2631ce1d43732c3a5309d0750ee0c9dbaf0d29",
+  "delivery": "Corte funcional de folha comum; Fase 1 ainda com limites registrados",
+  "local": {
+    "ctest_core": {
+      "passed": 63,
+      "total": 63
+    },
+    "compatibility": {
+      "passed": 22,
+      "total": 22
+    },
+    "python": {
+      "passed": 97,
+      "total": 97,
+      "seconds": 47.645
+    },
+    "native": {
+      "passed": 4,
+      "total": 4,
+      "seconds": 24.748,
+      "fatal_criticals": true
+    },
+    "maximized_demo": {
+      "passed": true,
+      "fatal_criticals": true,
+      "size": "1920x1032"
+    }
+  },
+  "ci": {
+    "run_id": 45283287790,
+    "url": "https://github.com/Roger-Cardoso/inde/actions/runs/45283287790",
+    "status": "completed",
+    "previous_failed_run": 45280909484,
+    "conclusion": "success",
+    "passed_jobs": 26,
+    "total_jobs": 26,
+    "source_commit": "e285f667e24ed682bced62fe2cb8c1eefc842310"
+  },
+  "preservation": {
+    "protected_files": 83,
+    "unchanged": true,
+    "original_archives": 3,
+    "extracted_integrated_files": 758,
+    "math_source_files": 245,
+    "author_schema": 37,
+    "auxiliary_sqlite_version": 5,
+    "private_format_version": 6,
+    "main_head_unchanged": "d41a5c9b9809ca7d40beb6ff10f22f1a5b451e0b"
+  },
+  "demo": "dados/obj01-folha-comum-r6/Projeto.inde",
+  "known_limits": [
+    "Separate contextual text and object histories",
+    "Cross-viewport mouse selection and full vertical navigation",
+    "Legacy pointer gestures and accessibility parity",
+    "Physical IME and large manuscripts not certified",
+    "Paragraph-only search, statistics and semantics",
+    "Sequential owner/auxiliary persistence",
+    "Legacy documents require explicit canonical paragraph identification",
+    "Rich object publication deferred",
+    "Entity variable links and narrative variable snapshots deferred"
+  ]
+}

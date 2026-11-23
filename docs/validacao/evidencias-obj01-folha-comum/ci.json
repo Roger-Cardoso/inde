@@ -1,0 +1,219 @@
+{
+  "id": 45283287790,
+  "head_sha": "e285f667e24ed682bced62fe2cb8c1eefc842310",
+  "status": "completed",
+  "conclusion": "success",
+  "html_url": "https://github.com/Roger-Cardoso/inde/actions/runs/45283287790",
+  "run_started_at": "2026-11-23T22:49:20Z",
+  "updated_at": "2026-11-23T23:01:31Z",
+  "jobs": [
+    {
+      "id": 138072989826,
+      "name": "pinned-sources",
+      "conclusion": "success",
+      "html_url": "https://github.com/Roger-Cardoso/inde/actions/runs/45283287790/job/138072989826",
+      "started_at": "2026-11-23T22:49:24Z",
+      "completed_at": "2026-11-23T22:49:38Z"
+    },
+    {
+      "id": 138072990174,
+      "name": "composite-p2a (g++, OFF)",
+      "conclusion": "success",
+      "html_url": "https://github.com/Roger-Cardoso/inde/actions/runs/45283287790/job/138072990174",
+      "started_at": "2026-11-23T22:49:23Z",
+      "completed_at": "2026-11-23T22:51:07Z"
+    },
+    {
+      "id": 138072990186,
+      "name": "composition-read-adapter (clang++, ON)",
+      "conclusion": "success",
+      "html_url": "https://github.com/Roger-Cardoso/inde/actions/runs/45283287790/job/138072990186",
+      "started_at": "2026-11-23T22:49:24Z",
+      "completed_at": "2026-11-23T22:51:05Z"
+    },
+    {
+      "id": 138072990248,
+      "name": "native-objects",
+      "conclusion": "success",
+      "html_url": "https://github.com/Roger-Cardoso/inde/actions/runs/45283287790/job/138072990248",
+      "started_at": "2026-11-23T22:49:24Z",
+      "completed_at": "2026-11-23T23:01:30Z"
+    },
+    {
+      "id": 138072990312,
+      "name": "composition-read-adapter (g++, OFF)",
+      "conclusion": "success",
+      "html_url": "https://github.com/Roger-Cardoso/inde/actions/runs/45283287790/job/138072990312",
+      "started_at": "2026-11-23T22:49:23Z",
+      "completed_at": "2026-11-23T22:50:50Z"
+    },
+    {
+      "id": 138072990343,
+      "name": "composite-p2a (clang++, OFF)",
+      "conclusion": "success",
+      "html_url": "https://github.com/Roger-Cardoso/inde/actions/runs/45283287790/job/138072990343",
+      "started_at": "2026-11-23T22:49:23Z",
+      "completed_at": "2026-11-23T22:51:14Z"
+    },
+    {
+      "id": 138072990349,
+      "name": "reviewed-working-sessions (g++, OFF)",
+      "conclusion": "success",
+      "html_url": "https://github.com/Roger-Cardoso/inde/actions/runs/45283287790/job/138072990349",
+      "started_at": "2026-11-23T22:49:23Z",
+      "completed_at": "2026-11-23T22:50:35Z"
+    },
+    {
+      "id": 138072990352,
+      "name": "composite-p2a (clang++, ON)",
+      "conclusion": "success",
+      "html_url": "https://github.com/Roger-Cardoso/inde/actions/runs/45283287790/job/138072990352",
+      "started_at": "2026-11-23T22:49:24Z",
+      "completed_at": "2026-11-23T22:53:13Z"
+    },
+    {
+      "id": 138072990370,
+      "name": "standalone-model (g++, OFF)",
+      "conclusion": "success",
+      "html_url": "https://github.com/Roger-Cardoso/inde/actions/runs/45283287790/job/138072990370",
+      "started_at": "2026-11-23T22:49:23Z",
+      "completed_at": "2026-11-23T22:49:39Z"
+    },
+    {
+      "id": 138072990375,
+      "name": "document-read-adapter (g++, OFF)",
+      "conclusion": "success",
+      "html_url": "https://github.com/Roger-Cardoso/inde/actions/runs/45283287790/job/138072990375",
+      "started_at": "2026-11-23T22:49:23Z",
+      "completed_at": "2026-11-23T22:50:48Z"
+    },
+    {
+      "id": 138072990378,
+      "name": "standalone-model (g++, ON)",
+      "conclusion": "success",
+      "html_url": "https://github.com/Roger-Cardoso/inde/actions/runs/45283287790/job/138072990378",
+      "started_at": "2026-11-23T22:49:40Z",
+      "completed_at": "2026-11-23T22:50:24Z"
+    },
+    {
+      "id": 138072990386,
+      "name": "immutable-change-plans (clang++, ON)",
+      "conclusion": "success",
+      "html_url": "https://github.com/Roger-Cardoso/inde/actions/runs/45283287790/job/138072990386",
+      "started_at": "2026-11-23T22:49:23Z",
+      "completed_at": "2026-11-23T22:50:25Z"
+    },
+    {
+      "id": 138072990420,
+      "name": "composition-read-adapter (g++, ON)",
+      "conclusion": "success",
+      "html_url": "https://github.com/Roger-Cardoso/inde/actions/runs/45283287790/job/138072990420",
+      "started_at": "2026-11-23T22:49:24Z",
+      "completed_at": "2026-11-23T22:50:50Z"
+    },
+    {
+      "id": 138072990430,
+      "name": "composite-p2a (g++, ON)",
+      "conclusion": "success",
+      "html_url": "https://github.com/Roger-Cardoso/inde/actions/runs/45283287790/job/138072990430",
+      "started_at": "2026-11-23T22:49:23Z",
+      "completed_at": "2026-11-23T22:54:03Z"
+    },
+    {
+      "id": 138072990446,
+      "name": "composition-read-adapter (clang++, OFF)",
+      "conclusion": "success",
+      "html_url": "https://github.com/Roger-Cardoso/inde/actions/runs/45283287790/job/138072990446",
+      "started_at": "2026-11-23T22:49:23Z",
+      "completed_at": "2026-11-23T22:50:01Z"
+    },
+    {
+      "id": 138072990455,
+      "name": "reviewed-working-sessions (clang++, ON)",
+      "conclusion": "success",
+      "html_url": "https://github.com/Roger-Cardoso/inde/actions/runs/45283287790/job/138072990455",
+      "started_at": "2026-11-23T22:49:23Z",
+      "completed_at": "2026-11-23T22:51:19Z"
+    },
+    {
+      "id": 138072990469,
+      "name": "immutable-change-plans (g++, OFF)",
+      "conclusion": "success",
+      "html_url": "https://github.com/Roger-Cardoso/inde/actions/runs/45283287790/job/138072990469",
+      "started_at": "2026-11-23T22:50:14Z",
+      "completed_at": "2026-11-23T22:51:09Z"
+    },
+    {
+      "id": 138072990514,
+      "name": "document-read-adapter (clang++, OFF)",
+      "conclusion": "success",
+      "html_url": "https://github.com/Roger-Cardoso/inde/actions/runs/45283287790/job/138072990514",
+      "started_at": "2026-11-23T22:49:23Z",
+      "completed_at": "2026-11-23T22:50:43Z"
+    },
+    {
+      "id": 138072990537,
+      "name": "reviewed-working-sessions (clang++, OFF)",
+      "conclusion": "success",
+      "html_url": "https://github.com/Roger-Cardoso/inde/actions/runs/45283287790/job/138072990537",
+      "started_at": "2026-11-23T22:49:23Z",
+      "completed_at": "2026-11-23T22:50:52Z"
+    },
+    {
+      "id": 138072990540,
+      "name": "immutable-change-plans (g++, ON)",
+      "conclusion": "success",
+      "html_url": "https://github.com/Roger-Cardoso/inde/actions/runs/45283287790/job/138072990540",
+      "started_at": "2026-11-23T22:49:23Z",
+      "completed_at": "2026-11-23T22:50:46Z"
+    },
+    {
+      "id": 138072990575,
+      "name": "document-read-adapter (g++, ON)",
+      "conclusion": "success",
+      "html_url": "https://github.com/Roger-Cardoso/inde/actions/runs/45283287790/job/138072990575",
+      "started_at": "2026-11-23T22:49:23Z",
+      "completed_at": "2026-11-23T22:50:13Z"
+    },
+    {
+      "id": 138072990591,
+      "name": "reviewed-working-sessions (g++, ON)",
+      "conclusion": "success",
+      "html_url": "https://github.com/Roger-Cardoso/inde/actions/runs/45283287790/job/138072990591",
+      "started_at": "2026-11-23T22:49:23Z",
+      "completed_at": "2026-11-23T22:50:56Z"
+    },
+    {
+      "id": 138072990592,
+      "name": "standalone-model (clang++, ON)",
+      "conclusion": "success",
+      "html_url": "https://github.com/Roger-Cardoso/inde/actions/runs/45283287790/job/138072990592",
+      "started_at": "2026-11-23T22:49:41Z",
+      "completed_at": "2026-11-23T22:50:13Z"
+    },
+    {
+      "id": 138072990625,
+      "name": "document-read-adapter (clang++, ON)",
+      "conclusion": "success",
+      "html_url": "https://github.com/Roger-Cardoso/inde/actions/runs/45283287790/job/138072990625",
+      "started_at": "2026-11-23T22:50:15Z",
+      "completed_at": "2026-11-23T22:51:13Z"
+    },
+    {
+      "id": 138072990655,
+      "name": "standalone-model (clang++, OFF)",
+      "conclusion": "success",
+      "html_url": "https://github.com/Roger-Cardoso/inde/actions/runs/45283287790/job/138072990655",
+      "started_at": "2026-11-23T22:50:02Z",
+      "completed_at": "2026-11-23T22:50:29Z"
+    },
+    {
+      "id": 138072990830,
+      "name": "immutable-change-plans (clang++, OFF)",
+      "conclusion": "success",
+      "html_url": "https://github.com/Roger-Cardoso/inde/actions/runs/45283287790/job/138072990830",
+      "started_at": "2026-11-23T22:50:26Z",
+      "completed_at": "2026-11-23T22:51:58Z"
+    }
+  ]
+}

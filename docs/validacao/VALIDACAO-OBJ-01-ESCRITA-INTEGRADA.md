@@ -1,5 +1,8 @@
 # OBJ-01 — objetos nas especialidades da Escrita
 
+> Atualização: a separação entre escrita linear e composição descrita neste registro histórico foi substituída pela [folha comum](../arquitetura/OBJ-01-FOLHA-COMUM.md). Consulte a nova validação para o alcance e as lacunas atuais.
+
+
 Data: 23/11/2026. Branch `feature/inde-obj-01-foundation`. Base `52739a0ba8519c2662ba0b810701b4f0889c8d29`. Integração `cd61468641e0a81f0c451a8f9d28477299546a9b`; visibilidade/interação `c620df836242d783b9e486947f991a947af31366`; versão final de layout e fila de ações `dc7cce0bc3ec51cdd9e44053a3b5c7fa687c6e27`.
 
 [Arquitetura e fronteiras](../arquitetura/OBJ-01-ESCRITA-INTEGRADA.md), [roteiro de uso](../../tools/obj01-pilot/NATIVO.md), [resultados](evidencias-obj01-escrita/resultados.json), [integridade](evidencias-obj01-escrita/integridade.json), [manifesto de arquivos](evidencias-obj01-escrita/SHA256SUMS).

@@ -1,0 +1,53 @@
+native-objects	Verify pinned C++ math sources and documented patch	﻿2026-11-23T22:53:15.3409592Z ##[group]Run python3 -m unittest discover -s tests -p test_obj01_native_sources.py -v
+native-objects	Verify pinned C++ math sources and documented patch	2026-11-23T22:53:15.3410202Z ^[[36;1mpython3 -m unittest discover -s tests -p test_obj01_native_sources.py -v^[[0m
+native-objects	Verify pinned C++ math sources and documented patch	2026-11-23T22:53:15.3438218Z shell: /usr/bin/bash -e {0}
+native-objects	Verify pinned C++ math sources and documented patch	2026-11-23T22:53:15.3438516Z ##[endgroup]
+native-objects	Verify pinned C++ math sources and documented patch	2026-11-23T22:53:15.4999036Z test_imported_bytes_and_explicit_patch (test_obj01_native_sources.NativeSources.test_imported_bytes_and_explicit_patch) ... ok
+native-objects	Verify pinned C++ math sources and documented patch	2026-11-23T22:53:15.5000332Z Pinned native math files verified: 245
+native-objects	Verify pinned C++ math sources and documented patch	2026-11-23T22:53:15.5000946Z 
+native-objects	Verify pinned C++ math sources and documented patch	2026-11-23T22:53:15.5001142Z ----------------------------------------------------------------------
+native-objects	Verify pinned C++ math sources and documented patch	2026-11-23T22:53:15.5001648Z Ran 1 test in 0.021s
+native-objects	Verify pinned C++ math sources and documented patch	2026-11-23T22:53:15.5001830Z 
+native-objects	Verify pinned C++ math sources and documented patch	2026-11-23T22:53:15.5001964Z OK
+native-objects	Verify native math input boundaries	﻿2026-11-23T23:01:03.6407406Z ##[group]Run ctest --test-dir build-nativo -R "^inde_native_math_tests$" --output-on-failure
+native-objects	Verify native math input boundaries	2026-11-23T23:01:03.6407967Z ^[[36;1mctest --test-dir build-nativo -R "^inde_native_math_tests$" --output-on-failure^[[0m
+native-objects	Verify native math input boundaries	2026-11-23T23:01:03.6433607Z shell: /usr/bin/bash -e {0}
+native-objects	Verify native math input boundaries	2026-11-23T23:01:03.6433828Z ##[endgroup]
+native-objects	Verify native math input boundaries	2026-11-23T23:01:03.9710091Z Internal ctest changing into directory: /home/runner/work/inde/inde/build-nativo
+native-objects	Verify native math input boundaries	2026-11-23T23:01:04.0183204Z Test project /home/runner/work/inde/inde/build-nativo
+native-objects	Verify native math input boundaries	2026-11-23T23:01:04.1015592Z     Start 15: inde_native_math_tests
+native-objects	Verify native math input boundaries	2026-11-23T23:01:04.1417073Z 1/1 Test #15: inde_native_math_tests ...........   Passed    0.01 sec
+native-objects	Verify native math input boundaries	2026-11-23T23:01:04.1427114Z 
+native-objects	Verify native math input boundaries	2026-11-23T23:01:04.1427432Z 100% tests passed, 0 tests failed out of 1
+native-objects	Verify native math input boundaries	2026-11-23T23:01:04.1427604Z 
+native-objects	Verify native math input boundaries	2026-11-23T23:01:04.1427682Z Total Test time (real) =   0.12 sec
+native-objects	Verify project binding and actual GTK document workflow	﻿2026-11-23T23:01:04.1846023Z ##[group]Run xvfb-run -a python3 -m unittest discover -s tests -p test_obj01_native.py -v
+native-objects	Verify project binding and actual GTK document workflow	2026-11-23T23:01:04.1846497Z ^[[36;1mxvfb-run -a python3 -m unittest discover -s tests -p test_obj01_native.py -v^[[0m
+native-objects	Verify project binding and actual GTK document workflow	2026-11-23T23:01:04.1873347Z shell: /usr/bin/bash -e {0}
+native-objects	Verify project binding and actual GTK document workflow	2026-11-23T23:01:04.1873564Z env:
+native-objects	Verify project binding and actual GTK document workflow	2026-11-23T23:01:04.1873719Z   GSK_RENDERER: cairo
+native-objects	Verify project binding and actual GTK document workflow	2026-11-23T23:01:04.1873887Z   LIBGL_ALWAYS_SOFTWARE: 1
+native-objects	Verify project binding and actual GTK document workflow	2026-11-23T23:01:04.1874054Z   GTK_A11Y: none
+native-objects	Verify project binding and actual GTK document workflow	2026-11-23T23:01:04.1874203Z ##[endgroup]
+native-objects	Verify project binding and actual GTK document workflow	2026-11-23T23:01:04.8668204Z test_native_binary_has_no_browser_runtime_dependency (test_obj01_native.NativeObjects.test_native_binary_has_no_browser_runtime_dependency) ... ok
+native-objects	Verify project binding and actual GTK document workflow	2026-11-23T23:01:05.0351079Z test_project_binding_copy_recovery_and_source_conflict (test_obj01_native.NativeObjects.test_project_binding_copy_recovery_and_source_conflict) ... ok
+native-objects	Verify project binding and actual GTK document workflow	2026-11-23T23:01:26.4585323Z test_real_gtk_entry_math_objects_save_reopen_and_draft_guard (test_obj01_native.NativeObjects.test_real_gtk_entry_math_objects_save_reopen_and_draft_guard) ... ok
+native-objects	Verify project binding and actual GTK document workflow	2026-11-23T23:01:26.6649512Z test_shared_text_projection_guards_unicode_styles_and_visibility (test_obj01_native.NativeObjects.test_shared_text_projection_guards_unicode_styles_and_visibility) ... ok
+native-objects	Verify project binding and actual GTK document workflow	2026-11-23T23:01:26.6650937Z 
+native-objects	Verify project binding and actual GTK document workflow	2026-11-23T23:01:26.6652923Z ----------------------------------------------------------------------
+native-objects	Verify project binding and actual GTK document workflow	2026-11-23T23:01:26.6653545Z Ran 4 tests in 21.807s
+native-objects	Verify project binding and actual GTK document workflow	2026-11-23T23:01:26.6653778Z 
+native-objects	Verify project binding and actual GTK document workflow	2026-11-23T23:01:26.6653907Z OK
+native-objects	Verify existing publication and refusal of unsupported composition	﻿2026-11-23T23:01:26.6779841Z ##[group]Run python3 -m unittest discover -s tests -p test_sessao_nativa.py -v
+native-objects	Verify existing publication and refusal of unsupported composition	2026-11-23T23:01:26.6780481Z ^[[36;1mpython3 -m unittest discover -s tests -p test_sessao_nativa.py -v^[[0m
+native-objects	Verify existing publication and refusal of unsupported composition	2026-11-23T23:01:26.6812976Z shell: /usr/bin/bash -e {0}
+native-objects	Verify existing publication and refusal of unsupported composition	2026-11-23T23:01:26.6813215Z ##[endgroup]
+native-objects	Verify existing publication and refusal of unsupported composition	2026-11-23T23:01:27.4319262Z test_bundled_reader_and_public_package_exclude_private_source (test_sessao_nativa.NativeSessionTests.test_bundled_reader_and_public_package_exclude_private_source) ... ok
+native-objects	Verify existing publication and refusal of unsupported composition	2026-11-23T23:01:27.4320656Z test_public_numbers_come_from_persistent_reservations (test_sessao_nativa.NativeSessionTests.test_public_numbers_come_from_persistent_reservations) ... ok
+native-objects	Verify existing publication and refusal of unsupported composition	2026-11-23T23:01:27.4325717Z test_removed_or_incompatible_edition_is_refused (test_sessao_nativa.NativeSessionTests.test_removed_or_incompatible_edition_is_refused) ... ok
+native-objects	Verify existing publication and refusal of unsupported composition	2026-11-23T23:01:27.4327173Z test_service_crud_persistence_conflicts_restore_and_copy (test_sessao_nativa.NativeSessionTests.test_service_crud_persistence_conflicts_restore_and_copy) ... ok
+native-objects	Verify existing publication and refusal of unsupported composition	2026-11-23T23:01:27.4338821Z 
+native-objects	Verify existing publication and refusal of unsupported composition	2026-11-23T23:01:27.4339328Z ----------------------------------------------------------------------
+native-objects	Verify existing publication and refusal of unsupported composition	2026-11-23T23:01:27.4339925Z Ran 4 tests in 0.670s
+native-objects	Verify existing publication and refusal of unsupported composition	2026-11-23T23:01:27.4340155Z 
+native-objects	Verify existing publication and refusal of unsupported composition	2026-11-23T23:01:27.4340285Z OK

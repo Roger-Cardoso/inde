@@ -1,0 +1,17 @@
+{
+  "kind": "official Ubuntu packages extracted in tmp; no system installation",
+  "packages": [
+    {
+      "file": "libxfont2_1%3a2.0.6-1+deb13u1build0.24.04.2_amd64.deb",
+      "sha256": "e2ed49a20ccff6ffa52719a6cd118538e24c434d9035acd7fb736e7e4f8d6485"
+    },
+    {
+      "file": "xserver-common_2%3a21.1.12-1ubuntu1.9_all.deb",
+      "sha256": "ceeac76b9c94973c71e4e6566fa9ff5d3caae9716775d840810a4e1ad749a737"
+    },
+    {
+      "file": "xvfb_2%3a21.1.12-1ubuntu1.9_amd64.deb",
+      "sha256": "2011271eabcc2eb460e99995c5ef26e46633e87d04f570e305b62f178f7b452c"
+    }
+  ]
+}
