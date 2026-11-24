@@ -1,0 +1,11 @@
+{
+  "old_process_exited": true,
+  "title_content_preserved": true,
+  "schema_before": 37,
+  "schema_after": 37,
+  "databases_checked": 3,
+  "all_integrity_ok": true,
+  "foreign_key_errors": 0,
+  "closure": "normal accessibility action; no forced termination",
+  "private_backup": "not published"
+}

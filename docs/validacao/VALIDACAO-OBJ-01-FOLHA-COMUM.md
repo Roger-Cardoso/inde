@@ -2,6 +2,8 @@
 
 Data: 23/11/2026. Branch `feature/inde-obj-01-foundation`. Base anterior: `0a2631ce1d43732c3a5309d0750ee0c9dbaf0d29`. Implementação inicial: `84a277c814ec6164a26c8b0f2beddbe6e738de6a`; correção de ciclo GTK e versão validada: `e285f667e24ed682bced62fe2cb8c1eefc842310`. Estado: validação local e CI concluídas com aprovação. Este registro cobre o corte de folha comum, sem declarar encerrada toda a Fase 1.
 
+> Atualização de 23/11/2026: o relato posterior de bloqueios mostrou que os testes deste corte não bastavam para declarar usabilidade. Consulte a [correção e validação por entrada real](VALIDACAO-OBJ-01-USO-REAL.md). Os resultados abaixo são históricos e não representam aceite humano.
+
 ## Correção de direção
 
 A integração anterior usava uma superfície textual e outra de composição sincronizadas. Ela não cumpria a exigência de trabalhar a mesma folha em todas as especialidades. Este corte faz Texto, Semântica, Linguística, Estrutura, Vínculos, Composição, Tabelas, Fórmulas e Matemática operarem a folha mista, com parágrafos editáveis e objetos presentes.

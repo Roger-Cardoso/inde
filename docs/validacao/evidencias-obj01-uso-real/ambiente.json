@@ -1,0 +1,7 @@
+{
+  "platform": "Linux-6.8.0-149-generic-x86_64-with-glibc2.39",
+  "python": "3.12.3",
+  "compiler": "c++ (Ubuntu 15.2.0-14ubuntu1~24~ppa1) 15.2.0",
+  "gtkmm": "4.10.0",
+  "gtk": "4.14.5"
+}

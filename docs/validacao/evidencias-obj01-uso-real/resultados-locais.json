@@ -1,0 +1,11 @@
+{
+  "commit": "53375ee4ca360983b3cbaa1f0f89f2c1a9a58fc1",
+  "tests": 98,
+  "seconds": 95.08,
+  "result": "pass",
+  "native_four_tests_included": true,
+  "x11_input_test_included": true,
+  "human_acceptance": false,
+  "open_window_observed": true,
+  "startup_criticals": 0
+}

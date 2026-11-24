@@ -1,0 +1,19 @@
+CI do commit e015bfca94074db29a0be2c61d74f5b6fd128b09
+https://github.com/Roger-Cardoso/inde/actions/runs/45299547938/job/138128338406
+25 trabalhos aprovados; native-objects falhou apenas na nova etapa X11.
+Trechos do log remoto; AssertionError abreviado para leitura.
+
+2026-11-24T00:44:38.2863116Z Ran 1 test in 0.025s
+2026-11-24T00:52:17.6907200Z Ran 4 tests in 22.778s
+2026-11-24T00:52:18.3498513Z Ran 4 tests in 0.576s
+2026-11-24T00:52:20.6153470Z test_blank_document_specialties_validation_recovery_and_quit (test_obj01_real_input.RealWritingInput.test_blank_document_specialties_validation_recovery_and_quit) ... dbus-daemon[7483]: [session uid=1001 pid=7483] Activating service name='ca.desrt.dconf' requested by ':1.4' (uid=1001 pid=7500 comm="/home/runner/work/inde/inde/build-nativo/inde-espe" label="unconfined")
+2026-11-24T00:52:44.1779286Z FAIL: test_blank_document_specialties_validation_recovery_and_quit (test_obj01_real_input.RealWritingInput.test_blank_document_specialties_validation_recovery_and_quit)
+2026-11-24T00:52:44.1780136Z Traceback (most recent call last):
+2026-11-24T00:52:44.1780543Z   File "/home/runner/work/inde/inde/tests/test_obj01_real_input.py", line 225, in test_blank_document_specialties_validation_recovery_and_quit
+2026-11-24T00:52:44.1781623Z   File "/home/runner/work/inde/inde/tests/test_obj01_real_input.py", line 154, in choose_path
+2026-11-24T00:52:44.1783526Z   File "/home/runner/work/inde/inde/tests/test_obj01_real_input.py", line 68, in wait
+2026-11-24T00:52:44.1788747Z     self.fail(f'{description}: {json.dumps(compact, ensure_ascii=False)[:18000]}\n'
+2026-11-24T00:52:44.1835866Z AssertionError: Seletor aceita o caminho confirmado: {"busy": true, "composing": false, "content": "Primeira linha á\nSegunda linha", "controls": [{"active": false, "focus": false, "height": 36, "hittable": true [estado sintético completo disponível no log remoto]
+2026-11-24T00:52:44.1872687Z Ran 1 test in 24.790s
+2026-11-24T00:52:44.1872869Z FAILED (failures=1)
+2026-11-24T00:52:44.2099607Z ##[error]Process completed with exit code 1.

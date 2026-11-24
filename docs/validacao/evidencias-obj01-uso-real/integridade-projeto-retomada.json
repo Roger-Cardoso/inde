@@ -1,0 +1,17 @@
+{
+  "content_matches_closed_backup": true,
+  "databases": [
+    {
+      "integrity": "ok",
+      "foreign_key_errors": 0
+    },
+    {
+      "integrity": "ok",
+      "foreign_key_errors": 0
+    },
+    {
+      "integrity": "ok",
+      "foreign_key_errors": 0
+    }
+  ]
+}
