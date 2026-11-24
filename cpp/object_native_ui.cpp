@@ -480,8 +480,6 @@ struct ObjectDocumentEditor::Impl {
     auto &structure_tools = group("structure");
     label(structure_tools, "Ordem de leitura");
     label(structure_tools, "Arraste o círculo do bloco até a borda do vizinho. Texto e objetos usam a mesma sequência; blocos de texto indivisíveis são movidos juntos.");
-    button(structure_tools, "Mover bloco acima na leitura", "native-reading-up", [this] { move_step(-1); });
-    button(structure_tools, "Mover bloco abaixo na leitura", "native-reading-down", [this] { move_step(1); });
     button(structure_tools, "Escolher posição do bloco…", "native-reading-position", [this] { layout_editor(); });
     button(structure_tools, "Restaurar apresentação pela leitura", "native-reading-align", [this] { command("restore", {}, "composition"); });
     auto &math_tools = group("math");
@@ -775,6 +773,15 @@ struct ObjectDocumentEditor::Impl {
         c.append(id.as_string(), title(id.as_string()));
     c.set_active_id(active);
   }
+  void select_card(const std::string &id) {
+    selected=id;
+    rendering=true;objects.set_active_id(id);rendering=false;
+    for(const auto &[key,row]:cards)
+      if(auto *box=dynamic_cast<Gtk::Box *>(row->get_last_child())) {
+        if(key==id)box->add_css_class("inde-native-selected");
+        else box->remove_css_class("inde-native-selected");
+      }
+  }
   std::vector<std::string> reading_unit(const std::string &id) const {
     for(const auto &g:state.at("reading_groups").as_array()) {
       std::vector<std::string> ids;
@@ -1054,8 +1061,7 @@ struct ObjectDocumentEditor::Impl {
     auto focus = Gtk::EventControllerFocus::create();
     focus->signal_enter().connect([this, id] {
       if(!restoring_text_focus) {
-        selected = id;
-        rendering = true; objects.set_active_id(id); rendering = false;
+        select_card(id);
       }
       if (auto *viewport = dynamic_cast<Gtk::Viewport *>(canvas.get_parent()))
         viewport->set_scroll_to_focus(!focused_text());
@@ -1075,6 +1081,10 @@ struct ObjectDocumentEditor::Impl {
     reading_row->append(*handle);
     reading_row->append(*box);
     reading_handles[id] = handle;
+    auto handle_focus=Gtk::EventControllerFocus::create();
+    handle_focus->signal_enter().connect([this,id] {select_card(id);});
+    handle->add_controller(handle_focus);
+    handle->signal_clicked().connect([this,id] {select_card(id);});
     handle->set_visible(specialty == "structure" && leading_handle(id));
     auto drag = Gtk::GestureDrag::create();
     drag->set_button(1);

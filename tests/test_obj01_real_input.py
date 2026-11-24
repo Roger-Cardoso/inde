@@ -335,6 +335,10 @@ class RealWritingInput(unittest.TestCase):
                 snapshot('estrutura-circulos')
                 handle = 'native-reading-handle-' + first
                 click(name=handle)
+                wait(lambda s: any(c['name'] == 'native-object-' + first and c.get('selected') for c in s['controls']),
+                     'Destaque visual acompanha o círculo escolhido')
+                self.assertEqual(sum(c.get('selected', False) for c in state()['controls']
+                                     if c['name'].startswith('native-object-')), 1)
                 input_('key', 'ctrl+Down')
                 wait(lambda s: s.get('content') == 'Segunda linha\nPrimeira linha á',
                      'Reordenação estrutural pelo teclado na folha')

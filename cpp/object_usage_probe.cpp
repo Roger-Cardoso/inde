@@ -64,7 +64,7 @@ int run_object_usage_probe(const Glib::RefPtr<Gtk::Application> &app,
           const bool placed=gtk_widget_compute_bounds(w.gobj(),coordinate_root,&bounds);
           O c{{"name",name},{"label",label},{"mapped",w.get_mapped()},
               {"sensitive",bool(gtk_widget_is_sensitive(w.gobj()))},
-              {"focus",w.is_focus()}};
+              {"focus",w.is_focus()},{"selected",w.has_css_class("inde-native-selected")}};
           if(auto *b=dynamic_cast<Gtk::ToggleButton *>(&w))c["active"]=b->get_active();
           if(auto *entry=dynamic_cast<Gtk::Entry *>(&w)) {
             c["role"]="entry";c["value"]=entry->get_text().raw();
