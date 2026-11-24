@@ -61,6 +61,10 @@ void WritingWorkspace::build_object_specializations() {
 bool WritingWorkspace::objects_can_leave() const {
   return !object_editor_ || object_editor_->can_leave();
 }
+bool WritingWorkspace::request_objects_leave(const std::string &action,
+                                            std::function<void()> resume) {
+  return !object_editor_ || object_editor_->request_leave(action, std::move(resume));
+}
 void WritingWorkspace::show_document_objects() {
   set_editor_specialization("composition");
 }
@@ -122,8 +126,10 @@ void WritingWorkspace::show_object_specialization(const std::string &id) {
     };
     object_editor_->editing_changed = [this](bool editing) {
       editor_toolbar_.set_sensitive(!editing);
-      specialty_strip_.set_sensitive(!editing);
-      specialization_bar_.set_sensitive(!editing);
+      // A specialty change can offer to keep or discard an unapplied draft.
+      // Keeping these controls reachable avoids a silent, apparently frozen UI.
+      specialty_strip_.set_sensitive(true);
+      specialization_bar_.set_sensitive(true);
     };
     object_editor_->edit_paragraph = [this](const std::string &paragraph) {
       const auto row =
@@ -213,7 +219,10 @@ Gtk::Widget *WritingWorkspace::make_paragraph_view(const std::string &id) {
       static_cast<int>(row->end));
   view->set_name("writing-paragraph-" + id);
   view->editable = [this] { return objects_can_leave() || composing_input(); };
-  view->preedit = [this](const char *s) {
+  view->preedit = [this, document = current_document_->id,
+                   lifetime = std::weak_ptr<int>(clipboard_lifetime_)](const char *s) {
+    if (lifetime.expired() || !current_document_ || current_document_->id != document)
+      return;
     on_preedit_changed(s);
     if (!s || !*s)
       schedule_common_sheet();

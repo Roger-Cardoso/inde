@@ -13,7 +13,7 @@ public:
   void refresh();
   bool contains(int offset) const;
   void focus_offset(int offset);
-  bool pending_input() const { return cross_edit_; }
+  bool pending_input() const { return cross_edit_ || preedit_active_; }
   std::function<bool(guint, Gdk::ModifierType)> shortcut;
   std::function<void(const char *)> preedit;
   std::function<void(int, bool)> navigate;
@@ -34,6 +34,8 @@ private:
   sigc::connection cross_pending_;
   bool cross_edit_ = false;
   bool primary_detached_ = false;
+  bool preedit_active_ = false;
+  gulong preedit_handler_ = 0;
   int layout_width_ = -1, layout_height_ = -1;
   Glib::ustring cross_source_, cross_local_;
   int cross_cursor_{}, cross_bound_{}, cross_first_{}, cross_suffix_{};

@@ -121,7 +121,13 @@ void WritingWorkspace::set_editor_specialization(const std::string &id,
         id != "structure" && id != "bindings" && id != "composition" &&
         id != "tables" && id != "formulas" && id != "math")
       throw std::runtime_error("Especialização desconhecida");
-    if (!objects_can_leave()) throw std::runtime_error("Aplique ou cancele a edição aberta antes de mudar de especialidade.");
+    if (!objects_can_leave()) {
+      specialization_selector_.set_active_id(editor_specialization_);
+    for(auto *c=specialty_strip_.get_first_child();c;c=c->get_next_sibling()) if(auto *b=dynamic_cast<Gtk::ToggleButton*>(c)) b->set_active(b->get_name().raw()=="specialty-"+editor_specialization_);
+      for(auto *c=specialty_strip_.get_first_child();c;c=c->get_next_sibling()) if(auto *b=dynamic_cast<Gtk::ToggleButton*>(c)) b->set_active(b->get_name().raw()=="specialty-"+editor_specialization_);
+      request_objects_leave("trocar de especialidade", [this,id,focus]{set_editor_specialization(id,focus);});
+      changing_specialization_=false;return;
+    }
     require_completed_composition();
     flush_visibility_edits();
     if (current_document_)

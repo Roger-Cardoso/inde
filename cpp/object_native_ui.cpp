@@ -1,5 +1,6 @@
 #include "object_native_ui.hpp"
 #include "inde/project/document_state.hpp"
+#include "inde/ui/overlay_dialog.hpp"
 #include "object_composite_pilot.hpp"
 #include "object_formula_hub.hpp"
 #include "object_math_native.hpp"
@@ -183,6 +184,16 @@ struct Work {
   std::function<void(const V &)> done;
 };
 const std::map<std::string, std::string> messages = {
+    {"png_read_failed", "Não foi possível ler o arquivo escolhido. Escolha a figura novamente."},
+    {"png_byte_limit", "A figura deve ser um PNG com até 8 MiB."},
+    {"png_dimensions_limit", "Use uma figura com até 8192 pixels por lado e 16 milhões de pixels no total."},
+    {"invalid_png", "O arquivo escolhido não é um PNG válido."},
+    {"png_crc_mismatch", "O PNG possui dados inconsistentes. Escolha outra cópia da figura."},
+    {"invalid_png_chunk", "A estrutura do PNG está incompleta. Escolha outra cópia da figura."},
+    {"invalid_png_end", "O arquivo PNG está incompleto ou contém dados após o fim da imagem."},
+    {"invalid_png_header", "O cabeçalho do PNG não é válido. Escolha outra figura."},
+    {"png_decode_failed", "Não foi possível decodificar esse PNG. Escolha outra cópia da figura."},
+    {"animated_png_not_supported", "Essa figura é um PNG animado. Use uma versão estática."},
     {"authorial_requires_alignment",
      "Restaure a apresentação pela ordem de leitura antes de mudar a sequência "
      "autoral."},
@@ -221,6 +232,7 @@ const std::map<std::string, std::string> messages = {
 struct ObjectDocumentEditor::Impl {
   ObjectDocumentEditor &owner;
   Gtk::Window &window;
+  Glib::RefPtr<Gdk::Display> display;
   project::Document source_document;
   Gtk::Popover object_menu;
   Gtk::Box *menu_holder = nullptr;
@@ -253,7 +265,9 @@ struct ObjectDocumentEditor::Impl {
       toolbar{Gtk::Orientation::HORIZONTAL, 6},
       sidebar{Gtk::Orientation::VERTICAL, 8},
       canvas{Gtk::Orientation::VERTICAL, 18},
-      editor{Gtk::Orientation::VERTICAL, 10};
+      editor{Gtk::Orientation::VERTICAL, 10},
+      edit_page{Gtk::Orientation::VERTICAL, 8},
+      edit_actions{Gtk::Orientation::HORIZONTAL, 8};
   Gtk::ScrolledWindow side_scroll, content_scroll, edit_scroll;
   Gtk::Box surface_row{Gtk::Orientation::HORIZONTAL, 8};
   Gtk::Stack stack;
@@ -263,7 +277,7 @@ struct ObjectDocumentEditor::Impl {
   std::shared_ptr<Life> life = std::make_shared<Life>();
   V state;
   std::filesystem::path project_path;
-  bool busy = false, draft = false, rendering = false, choosing_image = false,
+  bool busy = false, draft = false, rendering = false, render_pending = true, choosing_image = false,
        draft_tools_open = false;
   std::size_t pending_actions = 0;
   sigc::connection chooser_response;
@@ -293,9 +307,10 @@ struct ObjectDocumentEditor::Impl {
   std::string editor_id, editor_target, editor_table, editor_cell, editor_kind;
   std::string image_bytes;
   Glib::RefPtr<Gtk::FileChooserNative> chooser;
+  OverlayDialog *leave_dialog = nullptr; // Responses dispose the legacy adapter.
   Impl(application::ProjectService &service, ObjectDocumentEditor &w,
        Gtk::Window &parent, const std::string &document)
-      : owner(w), window(parent) {
+      : owner(w), window(parent), display(parent.get_display()) {
     const auto *project = service.current();
     if (!project)
       throw std::runtime_error(
@@ -388,13 +403,17 @@ struct ObjectDocumentEditor::Impl {
                               Gtk::PolicyType::AUTOMATIC);
     stack.add(content_scroll, "document");
     editor.set_name("native-editor-surface");
-    editor.set_halign(Gtk::Align::CENTER);
-    editor.set_hexpand(false);
-    editor.set_size_request(820, -1);
+    editor.set_halign(Gtk::Align::FILL);
+    editor.set_hexpand(true);
+    editor.set_size_request(280, -1);
     edit_scroll.set_name("native-edit-scroll");
     editor.set_margin(18);
     edit_scroll.set_child(editor);
-    stack.add(edit_scroll, "editor");
+    edit_scroll.set_vexpand(true);
+    edit_page.append(edit_scroll);
+    edit_actions.set_margin(12);
+    edit_page.append(edit_actions);
+    stack.add(edit_page, "editor");
     button(toolbar, "Salvar documento", "native-save", [this] {
       guard([this] {
         if (owner.save_document)
@@ -482,6 +501,10 @@ struct ObjectDocumentEditor::Impl {
     render();
   }
   ObjectTextProjection *focused_text() const {
+    // A real window close can destroy the native GtkWindow before the C++
+    // workspace and its queued focus/layout callbacks are disposed.
+    if (!window.gobj() || !GTK_IS_WINDOW(window.gobj()))
+      return nullptr;
     const auto *focused = window.get_focus();
     if (!focused)
       return nullptr;
@@ -538,22 +561,28 @@ struct ObjectDocumentEditor::Impl {
   }
   ~Impl() {
     life->alive = false;
+    if (leave_dialog) {
+      delete leave_dialog;
+      leave_dialog = nullptr;
+    }
     cursor_follow.disconnect();
     focus_follow.disconnect();
     close_object_menu();
     chooser_response.disconnect();
     if (chooser)
       chooser->hide();
-    Gtk::StyleContext::remove_provider_for_display(window.get_display(), css);
+    Gtk::StyleContext::remove_provider_for_display(display, css);
   }
   void error(const std::string &code) {
     last_error = code;
+    g_warning("INDE OBJ-01: operação recusada: %s", code.c_str());
     auto at = messages.find(code);
     status.set_text(at == messages.end()
                         ? "Não foi possível aplicar. Confira os campos e as "
                           "referências; o trabalho anterior foi preservado."
                         : at->second);
     status.add_css_class("error");
+    status.set_tooltip_text(code);
   }
   void defer_action(std::function<void()> fn) {
     ++pending_actions;
@@ -716,6 +745,7 @@ struct ObjectDocumentEditor::Impl {
     c.set_active_id(active);
   }
   void render() {
+    render_pending = true;
     if (std::any_of(paragraph_views.begin(), paragraph_views.end(),
                     [](const auto &p) { return p.second->pending_input(); }))
       return;
@@ -802,6 +832,7 @@ struct ObjectDocumentEditor::Impl {
     content_scroll.get_vadjustment()->set_value(scroll_y);
     if (!focused_paragraph.empty())
       owner.focus_text(-1);
+    render_pending = false;
   }
   void format_paragraph(Gtk::Label &l, const std::string &paragraph) {
     if (visible_text)
@@ -1313,6 +1344,7 @@ struct ObjectDocumentEditor::Impl {
     rules.clear();
     runs.clear();
     clear(editor);
+    clear(edit_actions);
     label(editor, heading).add_css_class("title-2");
     stack.set_visible_child("editor");
     edit_scroll.get_vadjustment()->set_value(0);
@@ -1425,6 +1457,9 @@ struct ObjectDocumentEditor::Impl {
     last_error.clear();
     sidebar.set_sensitive(true);
     toolbar.set_sensitive(true);
+    // Return to the existing sheet even if rebuilding must await input-method
+    // delivery. A cancelled form must never remain the active workspace.
+    stack.set_visible_child("document");
     render();
   }
   void finish() {
@@ -1437,14 +1472,13 @@ struct ObjectDocumentEditor::Impl {
       owner.editing_changed(busy || choosing_image);
     sidebar.set_sensitive(true);
     toolbar.set_sensitive(true);
+    stack.set_visible_child("document");
   }
   void footer(const std::function<void()> &apply) {
-    auto *row = Gtk::make_managed<Gtk::Box>(Gtk::Orientation::HORIZONTAL, 8);
-    editor.append(*row);
-    button(*row, "Aplicar", "native-apply", [this, apply] {
+    button(edit_actions, "Aplicar", "native-apply", [this, apply] {
       guard(apply);
     }).add_css_class("suggested-action");
-    button(*row, "Cancelar", "native-cancel", [this] { cancel(); });
+    button(edit_actions, "Cancelar", "native-cancel", [this] { cancel(); });
   }
   void confirm_reopen() {
     begin_editor("Reabrir a versão salva?");
@@ -1566,7 +1600,11 @@ struct ObjectDocumentEditor::Impl {
         if (size > 8 * 1024 * 1024)
           throw std::runtime_error("png_byte_limit");
         std::ifstream in(path, std::ios::binary);
+        if (!in)
+          throw std::runtime_error("png_read_failed");
         image_bytes.assign(std::istreambuf_iterator<char>(in), {});
+        if (in.bad() || image_bytes.size() != size)
+          throw std::runtime_error("png_read_failed");
         begin_editor("Inserir figura");
         entry("caption", "Legenda",
               std::filesystem::path(path).filename().string());
@@ -1612,7 +1650,7 @@ struct ObjectDocumentEditor::Impl {
                command("detach_formula", {{"table", table}, {"cell", cell}},
                        "structure");
              });
-      button(editor, "Voltar", "native-cancel", [this] { cancel(); });
+      button(edit_actions, "Voltar", "native-cancel", [this] { cancel(); });
     } else {
       source("cell", "Texto da célula", text(*c, "text"));
       button(editor, "Inserir fórmula nesta célula", "native-cell-formula",
@@ -1677,7 +1715,7 @@ struct ObjectDocumentEditor::Impl {
         cancel();
         formula_editor("", "", table, cell, kind);
       });
-    button(editor, "Cancelar", "native-cancel", [this] { cancel(); });
+    button(edit_actions, "Cancelar", "native-cancel", [this] { cancel(); });
   }
   std::vector<std::pair<std::string, std::string>>
   references(bool variables_only = false) {
@@ -2109,7 +2147,7 @@ struct ObjectDocumentEditor::Impl {
                          {{"id", id}, {"variable", name}}, "text");
                });
     }
-    button(editor, "Voltar", "native-cancel", [this] { cancel(); });
+    button(edit_actions, "Voltar", "native-cancel", [this] { cancel(); });
   }
   void attach_formula() {
     if (formulas.get_active_id().empty())
@@ -2364,7 +2402,7 @@ struct ObjectDocumentEditor::Impl {
                        "structure", [this](const V &) { finish(); });
              });
     }
-    button(editor, "Voltar", "native-cancel", [this] { cancel(); });
+    button(edit_actions, "Voltar", "native-cancel", [this] { cancel(); });
   }
   void appearance_editor() {
     const auto *t = find(state, "tables", selected);
@@ -2627,7 +2665,7 @@ void ObjectDocumentEditor::synchronize_document(const project::Document &d) {
       shown_paragraphs.insert(text(p, "paragraph"));
   for (const auto &[id, view] : impl_->paragraph_views)
     displayed_paragraphs.insert(id);
-  if (same("visual_order") && same("rows") && same("presentation") &&
+  if (!impl_->render_pending && same("visual_order") && same("rows") && same("presentation") &&
       displayed_paragraphs == shown_paragraphs)
     refresh_text_views();
   else
@@ -2681,6 +2719,48 @@ bool ObjectDocumentEditor::can_leave() const {
          !impl_->busy && !impl_->choosing_image &&
          impl_->pending_actions == 0 &&
          text(impl_->state, "persistence_status") != "uncertain";
+}
+bool ObjectDocumentEditor::request_leave(const std::string &action,
+                                        std::function<void()> resume) {
+  if (can_leave())
+    return true;
+  if (impl_->leave_dialog) {
+    impl_->leave_dialog->present();
+    return false;
+  }
+  if (impl_->busy || impl_->pending_actions || impl_->choosing_image) {
+    impl_->status.set_text(impl_->choosing_image
+        ? "Conclua ou cancele a escolha do arquivo antes de " + action + "."
+        : "Há uma operação em andamento. Aguarde sua conclusão antes de " + action + ".");
+    return false;
+  }
+  if (impl_->draft) {
+    impl_->leave_dialog = new OverlayDialog(
+        "Há uma edição de objeto aberta", impl_->window, true);
+    auto *dialog = impl_->leave_dialog;
+    dialog->set_secondary_text(
+        "Os campos deste formulário ainda não foram aplicados. Você pode "
+        "continuar editando ou descartar somente este rascunho para " + action +
+        ". O texto e os objetos já aplicados serão conservados.");
+    dialog->add_button("Continuar editando", Gtk::ResponseType::CANCEL);
+    dialog->add_button("Descartar rascunho e continuar", Gtk::ResponseType::REJECT);
+    dialog->signal_response().connect([this, resume](int response) {
+      // OverlayDialog schedules its own deletion after delivering a response.
+      impl_->leave_dialog = nullptr;
+      impl_->defer_action([this, response, resume] {
+        if (response == static_cast<int>(Gtk::ResponseType::REJECT)) {
+          impl_->cancel();
+          resume();
+        }
+      });
+    });
+    dialog->present();
+  } else {
+    impl_->status.set_text(text(impl_->state, "persistence_status") == "uncertain"
+        ? "Confira a gravação em Reabrir salvo ou Retomar trabalho antes de " + action + "."
+        : "Confirme a entrada de texto em andamento antes de " + action + ".");
+  }
+  return false;
 }
 void ObjectDocumentEditor::save_for_project(
     const std::filesystem::path &project) {

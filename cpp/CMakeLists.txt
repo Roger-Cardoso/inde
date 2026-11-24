@@ -224,7 +224,7 @@ add_library(inde_object_document_engine STATIC object_composite_pilot.cpp object
 target_link_libraries(inde_object_document_engine PUBLIC inde_object_document_adapter PRIVATE PkgConfig::PIXBUF PkgConfig::OBJECT_SQLITE ZLIB::ZLIB)
 target_link_libraries(inde_web_publication PRIVATE inde_object_document_engine)
 target_compile_options(inde_object_document_engine PRIVATE -Wall -Wextra -Wpedantic -Wconversion -Werror)
-target_sources(inde PRIVATE object_text_projection.cpp object_native_ui.cpp object_native_smoke.cpp writing_object_integration.cpp
+target_sources(inde PRIVATE object_text_projection.cpp object_native_ui.cpp object_native_smoke.cpp object_usage_probe.cpp writing_object_integration.cpp
   overlay/src/ui/writing_workspace.cpp overlay/src/ui/writing_workspace_document.cpp overlay/src/ui/writing_workspace_specializations.cpp overlay/src/ui/writing_workspace_keyboard.cpp overlay/src/ui/writing_workspace_visible_edit.cpp)
 target_link_libraries(inde PRIVATE inde_object_document_engine inde_math_native)
 add_executable(inde_object_text_projection_tests object_text_projection.cpp object_text_projection_tests.cpp)

@@ -8,10 +8,10 @@ def expand(name,text):
         replace('  void show_publication();','  void show_publication();\n  void show_objects();')
     elif name=='include/inde/ui/writing_workspace.hpp':
         replace('class KeyboardCommands;', 'class KeyboardCommands;\nclass ObjectDocumentEditor;')
-        replace('  void flush_changes();', '  void flush_changes();\n  void show_document_objects();\n  bool objects_can_leave() const;')
+        replace('  void flush_changes();', '  void flush_changes();\n  void show_document_objects();\n  bool objects_can_leave() const;\n  bool request_objects_leave(const std::string &, std::function<void()>);')
         replace('  void build_ui();', '  void build_ui();\n  void build_object_specializations();\n  void show_object_specialization(const std::string &);\n  void flush_document_objects();\n  void reset_document_objects();\n  void schedule_common_sheet();\n  void focus_common_sheet();\n  Gtk::Widget *make_paragraph_view(const std::string &);\n  sigc::connection common_sheet_idle_;\n  std::unique_ptr<ObjectDocumentEditor> object_editor_;\n  Gtk::Stack document_surfaces_;\n  Gtk::Box specialty_strip_{Gtk::Orientation::HORIZONTAL, 2};\n  bool committing_object_document_{};')
     elif name=='src/ui/main_window.cpp':
-        replace('bool MainWindow::on_close_request() {', 'bool MainWindow::on_close_request() {\n  if(!writing_workspace_.objects_can_leave())return true;')
+        replace('bool MainWindow::on_close_request() {', 'bool MainWindow::on_close_request() {\n  if(!writing_workspace_.request_objects_leave("encerrar o programa", [this]{ close(); }))return true;')
         replace('void MainWindow::setup_actions() {','void MainWindow::setup_actions() {\n  add_action("document-objects", sigc::mem_fun(*this, &MainWindow::show_objects));')
         replace('MainWindow::~MainWindow() {', 'void MainWindow::show_objects(){ if(workspace_shell_.current()!=WorkspaceId::Writing)show_workspace(WorkspaceId::Writing); writing_workspace_.show_document_objects(); }\nMainWindow::~MainWindow() {')
     elif name=='src/ui/writing_workspace.cpp':
@@ -30,7 +30,7 @@ def expand(name,text):
     elif name=='src/ui/writing_workspace_specializations.cpp':
         replace('  set_editor_specialization("text", false);','  build_object_specializations();\n  set_editor_specialization("text", false);')
         replace('id != "structure" && id != "bindings")','id != "structure" && id != "bindings" && id != "composition" &&\n        id != "tables" && id != "formulas" && id != "math")')
-        replace('    require_completed_composition();','    if (!objects_can_leave()) throw std::runtime_error("Aplique ou cancele a edição aberta antes de mudar de especialidade.");\n    require_completed_composition();')
+        replace('    require_completed_composition();','    if (!objects_can_leave()) {\n      specialization_selector_.set_active_id(editor_specialization_);\n      for(auto *c=specialty_strip_.get_first_child();c;c=c->get_next_sibling()) if(auto *b=dynamic_cast<Gtk::ToggleButton*>(c)) b->set_active(b->get_name().raw()=="specialty-"+editor_specialization_);\n      request_objects_leave("trocar de especialidade", [this,id,focus]{set_editor_specialization(id,focus);});\n      changing_specialization_=false;return;\n    }\n    require_completed_composition();')
         replace('    editor_specialization_ = id;', '    show_object_specialization(id);\n    editor_specialization_ = id;')
         replace('    refresh_reading_blocks();', '    const bool object_mode = id=="composition" || id=="tables" || id=="formulas" || id=="math";\n    undo_button_.set_visible(!object_mode);redo_button_.set_visible(!object_mode);\n    context_menu_button_.set_visible(!object_mode && !focus_mode_);\n    if(object_mode)specialization_hint_.set_text(id=="composition" ? "Organize os mesmos parágrafos e objetos. Clique direito para suas ações." : id=="tables" ? "Tabelas: tamanho, aparência, linhas e colunas nos instrumentos." : id=="formulas" ? "Cartões, condições e variáveis do Documento nos instrumentos." : "Matemática: equações editáveis com prévia nativa.");\n    refresh_reading_blocks();')
         replace('    if (focus && current_document_)','    if (focus && current_document_ && id != "composition" && id != "tables" && id != "formulas" && id != "math")')
@@ -45,9 +45,10 @@ def expand(name,text):
     elif name=='src/ui/writing_workspace_tools.cpp':
         replace(' no Documento integral', ' nos parágrafos do Documento')
     elif name=='src/ui/writing_workspace_ime.cpp':
+        replace('    try {\n      flush_visibility_edits();', '    ime_commit_pending_=false;\n    schedule_common_sheet();\n    try {\n      flush_visibility_edits();')
         replace('      ime_commit_pending_=false;', '      ime_commit_pending_=false;\n      schedule_common_sheet();')
     elif name=='src/main.cpp':
-        replace('    // Routing belongs', '    if(argc==4 && std::string(argv[1])=="--objetos-smoke")return run_object_window_smoke(application,argv[2],argv[3]);\n    // Routing belongs')
+        replace('    // Routing belongs', '    if(argc==4 && std::string(argv[1])=="--objetos-smoke")return run_object_window_smoke(application,argv[2],argv[3]);\n    if(argc==4 && std::string(argv[1])=="--escrita-usabilidade")return run_object_usage_probe(application,argv[2],argv[3]);\n    // Routing belongs')
     if name=='src/ui/writing_workspace_specializations.cpp':
         text=text.replace('    if (focus && current_document_ && id != "composition" && id != "tables" && id != "formulas" && id != "math")\n      editor_.grab_focus();', '    if (focus && current_document_ && object_editor_) object_editor_->focus_text(cursor, false);')
         text=text.replace('#include "inde/ui/writing_workspace.hpp"', '#include "inde/ui/writing_workspace.hpp"\n#include "object_native_ui.hpp"')

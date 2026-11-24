@@ -40,6 +40,7 @@ public:
   void flush_changes();
   void show_document_objects();
   bool objects_can_leave() const;
+  bool request_objects_leave(const std::string &, std::function<void()>);
   bool publication_ready() const { return !composing_input() && !edit_session_.dirty() && !save_worker_.busy() && save_error_.empty(); }
   [[nodiscard]] project::Document apply_editorial_change(const project::Document &expected,
                                                         const project::Document &after,const std::string &label);

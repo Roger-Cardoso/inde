@@ -217,11 +217,27 @@ int run_object_window_smoke(const Glib::RefPtr<Gtk::Application> &app,
   });
   steps.push_back([&] {
     click(*objects, "native-new-equation");
+    const auto paragraph=state().at("paragraphs").as_array()[0].at("paragraph").as_string();
+    auto &input=widget<Gtk::TextView>(*objects,"writing-paragraph-"+paragraph);
+    g_signal_emit_by_name(input.gobj(),"preedit-changed","provisório");
+    click(*objects,"native-cancel");
+    need(!Probe::draft(*objects),"Cancelar não encerrou o rascunho");
+    need(widget<Gtk::ScrolledWindow>(*objects,"native-sheet-scroll").get_mapped(),
+         "Cancelar deixou o formulário preso enquanto aguardava entrada de texto");
+    need(!objects->can_leave(),"Cancelar perdeu a proteção da entrada provisória");
+    g_signal_emit_by_name(input.gobj(),"preedit-changed","");
+  });
+  steps.push_back([&] {
+    need(objects->can_leave(),"Fim da entrada provisória deixou o editor bloqueado");
+    click(*objects, "native-new-equation");
     need(Probe::draft(*objects), "Rascunho nativo ausente");
-    need(!widget<Gtk::Box>(*main, "writing-specialty-strip").get_sensitive(),
-         "Barra não protegeu rascunho aberto");
+    need(widget<Gtk::Box>(*main, "writing-specialty-strip").get_sensitive(),
+         "Barra bloqueou acesso à recuperação do rascunho");
     main->close();
     need(objects->get_visible() && main->get_visible(), "Fechou com rascunho");
+    auto *keep = visible_button(*main, "Continuar editando");
+    need(keep, "Fechamento bloqueado sem oferecer resolução do rascunho");
+    g_signal_emit_by_name(keep->gobj(), "clicked");
     widget<Gtk::TextView>(*objects, "native-field-source")
         .get_buffer()
         ->set_text(R"(x = \frac{-b\pm\sqrt{b^2-4ac}}{2a})");

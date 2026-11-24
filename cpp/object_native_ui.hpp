@@ -23,6 +23,7 @@ public:
   std::function<bool()> text_composing;
   void set_specialty(const std::string &);
   bool can_leave() const;
+  bool request_leave(const std::string &action, std::function<void()> resume);
   void show_tools(bool);
   void set_visible_text(std::optional<std::map<std::string, std::string>>);
   std::function<void(const std::string &)> edit_paragraph;

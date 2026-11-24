@@ -42,6 +42,8 @@ void WritingWorkspace::on_preedit_changed(const char *preedit) {
   // Commit once after that dispatch, not from inside the input method signal.
   ime_commit_delivery_=Glib::signal_idle().connect([this,epoch] {
     if (epoch!=edit_epoch_ || ime_active_) return false;
+    ime_commit_pending_=false;
+    schedule_common_sheet();
     try {
       flush_visibility_edits();
       commit_undo_group();

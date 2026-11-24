@@ -809,7 +809,7 @@ void MainWindow::close_project() {
 }
 
 bool MainWindow::on_close_request() {
-  if(!writing_workspace_.objects_can_leave())return true;
+  if(!writing_workspace_.request_objects_leave("encerrar o programa", [this]{ close(); }))return true;
   if(!guard_comic_project_change())return true;
   if(publication_token_ || publication_retry_.connected()){
     if(publication_page_ && !publication_page_->can_leave())return true;

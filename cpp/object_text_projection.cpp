@@ -127,15 +127,20 @@ ObjectTextProjection::ObjectTextProjection(
       },
       false);
   add_controller(keys);
-  g_signal_connect(gobj(), "preedit-changed",
+  preedit_handler_ = g_signal_connect(gobj(), "preedit-changed",
                    G_CALLBACK(+[](GtkTextView *, gchar *text, gpointer data) {
                      auto *view = static_cast<ObjectTextProjection *>(data);
+                     view->preedit_active_ = text && *text;
                      if (view->preedit)
                        view->preedit(text);
+                     if (!view->preedit_active_)
+                       view->schedule();
                    }),
                    this);
 }
 ObjectTextProjection::~ObjectTextProjection() {
+  if (preedit_handler_ && gobj() && g_signal_handler_is_connected(gobj(), preedit_handler_))
+    g_signal_handler_disconnect(gobj(), preedit_handler_);
   pending_.disconnect();
   cross_pending_.disconnect();
   for (auto &connection : connections_)
@@ -207,11 +212,15 @@ void ObjectTextProjection::select_source() {
   const int b =
       start() +
       local->get_iter_at_mark(local->get_selection_bound()).get_offset();
-  source_->select_range(source_->get_iter_at_offset(a),
-                        source_->get_iter_at_offset(b));
+  if (source_->get_iter_at_mark(source_->get_insert()).get_offset() != a ||
+      source_->get_iter_at_mark(source_->get_selection_bound()).get_offset() != b)
+    source_->select_range(source_->get_iter_at_offset(a),
+                          source_->get_iter_at_offset(b));
 }
 void ObjectTextProjection::refresh() {
-  if (reflecting_ || cross_edit_)
+  // Resetting selection during preedit makes GtkTextView reset its IM
+  // context. Keep provisional text owned by GTK until it commits/cancels.
+  if (reflecting_ || cross_edit_ || preedit_active_)
     return;
   reflecting_ = true;
   const auto local = get_buffer();
@@ -239,9 +248,12 @@ void ObjectTextProjection::refresh() {
       source_->get_iter_at_mark(source_->get_insert()).get_offset();
   const int bound =
       source_->get_iter_at_mark(source_->get_selection_bound()).get_offset();
-  local->select_range(
-      local->get_iter_at_offset(std::clamp(cursor - a, 0, b - a)),
-      local->get_iter_at_offset(std::clamp(bound - a, 0, b - a)));
+  const int local_cursor = std::clamp(cursor - a, 0, b - a);
+  const int local_bound = std::clamp(bound - a, 0, b - a);
+  if (local->get_iter_at_mark(local->get_insert()).get_offset() != local_cursor ||
+      local->get_iter_at_mark(local->get_selection_bound()).get_offset() != local_bound)
+    local->select_range(local->get_iter_at_offset(local_cursor),
+                        local->get_iter_at_offset(local_bound));
   reflecting_ = false;
 }
 bool ObjectTextProjection::begin_cross_edit() {

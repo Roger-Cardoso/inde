@@ -16,6 +16,8 @@ on:
       - cpp/publication_service.cpp
       - cpp/service_tests.cpp
       - tests/test_obj01_native.py
+      - tests/test_obj01_real_input.py
+      - tests/run_obj01_real_input.py
       - tests/test_obj01_native_sources.py
       - tests/run_object_model_tests.sh
       - tests/object_model/**
@@ -61,6 +63,8 @@ on:
       - cpp/publication_service.cpp
       - cpp/service_tests.cpp
       - tests/test_obj01_native.py
+      - tests/test_obj01_real_input.py
+      - tests/run_obj01_real_input.py
       - tests/test_obj01_native_sources.py
       - tests/run_object_model_tests.sh
       - tests/object_model/**
@@ -275,7 +279,7 @@ jobs:
       - name: Install native editor dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install --yes build-essential cmake ninja-build pkg-config libgtkmm-4.0-dev libsqlite3-dev uuid-dev libicu-dev libhunspell-dev libenchant-2-2 hunspell-pt-br xauth xvfb libfontconfig-dev
+          sudo apt-get install --yes build-essential cmake ninja-build pkg-config libgtkmm-4.0-dev libsqlite3-dev uuid-dev libicu-dev libhunspell-dev libenchant-2-2 hunspell-pt-br xauth xvfb libfontconfig-dev xfwm4 xdotool xclip dbus-x11 x11-xkb-utils
       - name: Extract verified sources
         run: python3 verificar_base.py --integrado --extrair
       - name: Verify pinned C++ math sources and documented patch
@@ -294,3 +298,5 @@ jobs:
         run: xvfb-run -a python3 -m unittest discover -s tests -p test_obj01_native.py -v
       - name: Verify existing publication and refusal of unsupported composition
         run: python3 -m unittest discover -s tests -p test_sessao_nativa.py -v
+      - name: Verify real keyboard and mouse from project creation through normal exit
+        run: python3 tests/run_obj01_real_input.py
