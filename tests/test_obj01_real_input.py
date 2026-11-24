@@ -150,7 +150,12 @@ class RealWritingInput(unittest.TestCase):
                 if title == 'Criar projeto INDE':
                     click(label='Criar', native_window=chooser_window, allow_closed=True)
                 else:
-                    input_('key', 'Return')
+                    click(name='GtkFileChooserEntry', native_window=chooser_window)
+                    wait(lambda s: any(c.get('value') == selected and c.get('focus')
+                                       and str(c.get('window')) == str(chooser_window)
+                                       for c in s['controls']),
+                         'Campo de caminho do seletor com foco')
+                    input_('key', '--delay', '100', 'Return')
                     wait(lambda s: not any(str(c.get('window', '')) == str(chooser_window)
                                           for c in s['controls']),
                          'Seletor aceita o caminho confirmado')

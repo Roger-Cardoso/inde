@@ -98,6 +98,7 @@ int run_object_usage_probe(const Glib::RefPtr<Gtk::Application> &app,
                 auto *hit=gtk_widget_pick(GTK_WIDGET(top),b.origin.x+b.size.width/2,b.origin.y+b.size.height/2,GTK_PICK_DEFAULT);
                 O c{{"name",gtk_widget_get_name(widget)},{"label",caption?caption:""},
                     {"mapped",true},{"sensitive",bool(gtk_widget_is_sensitive(widget))},
+                    {"focus",gtk_root_get_focus(GTK_ROOT(top)) == widget},
                     {"hittable",bool(hit && (hit==widget || gtk_widget_is_ancestor(hit,widget)))},
                     {"window",static_cast<std::int64_t>(xid)},
                     {"x",static_cast<std::int64_t>(std::lround(b.origin.x))},
