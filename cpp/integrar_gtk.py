@@ -62,7 +62,7 @@ for name in ("writing_workspace", "writing_workspace_document", "writing_workspa
 # the same mixed sheet rather than attempting to focus a hidden TextView.
 for source in sorted((base / 'src/ui').glob('writing_workspace*.cpp')):
     name = source.relative_to(base).as_posix()
-    if ('editor_.grab_focus()' in source.read_text() or source.stem in {'writing_workspace_ime', 'writing_workspace_export'}) and source.stem not in {
+    if ('editor_.grab_focus()' in source.read_text() or source.stem in {'writing_workspace_ime', 'writing_workspace_export', 'writing_workspace_clipboard', 'writing_workspace_reading_order', 'writing_workspace_controls', 'writing_workspace_editor'}) and source.stem not in {
         'writing_workspace', 'writing_workspace_document', 'writing_workspace_specializations',
         'writing_workspace_keyboard', 'writing_workspace_visible_edit'}:
         emit(name, [])

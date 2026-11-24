@@ -170,7 +170,8 @@ void WritingWorkspace::set_editor_specialization(const std::string &id,
                               "nenhuma entidade inferida automaticamente.");
     const bool object_mode = id=="composition" || id=="tables" || id=="formulas" || id=="math";
     undo_button_.set_visible(!object_mode);redo_button_.set_visible(!object_mode);
-    context_menu_button_.set_visible(!object_mode && !focus_mode_);
+    context_menu_button_.set_visible(!object_editor_ && !object_mode && !focus_mode_);
+    refresh_specialty_tools();
     if(object_mode)specialization_hint_.set_text(id=="composition" ? "Organize os mesmos parágrafos e objetos. Clique direito para suas ações." : id=="tables" ? "Tabelas: tamanho, aparência, linhas e colunas nos instrumentos." : id=="formulas" ? "Cartões, condições e variáveis do Documento nos instrumentos." : "Matemática: equações editáveis com prévia nativa.");
     refresh_reading_blocks();
     buffer->select_range(buffer->get_iter_at_offset(cursor),

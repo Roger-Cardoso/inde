@@ -13,6 +13,7 @@
 #include "inde/ui/view_state.hpp"
 
 #include <gtkmm.h>
+#include "inde/ui/context_menu.hpp"
 #include <optional>
 #include <future>
 #include <functional>
@@ -115,6 +116,10 @@ private:
   Gtk::Stack document_surfaces_;
   Gtk::Box specialty_strip_{Gtk::Orientation::HORIZONTAL, 2};
   bool committing_object_document_{};
+  std::vector<ContextMenuAction> editor_actions_;
+  Gtk::Box specialty_tools_{Gtk::Orientation::VERTICAL, 8};
+  void mount_specialty_tools(bool);
+  void refresh_specialty_tools();
   void build_formatting_tags();
   void build_editor_controls();
   void apply_editor_format(project::DocumentTextStyle, const std::string &value={});

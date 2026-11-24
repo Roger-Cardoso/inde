@@ -29,9 +29,10 @@ class RealWritingInput(unittest.TestCase):
             env.update(XDG_DATA_HOME=str(root / 'data'), XDG_CACHE_HOME=str(root / 'cache'),
                        GSK_RENDERER='cairo', GTK_A11Y='none', GTK_IM_MODULE='simple', G_DEBUG='fatal-criticals', GTK_USE_PORTAL='0')
             log = (root / 'application.log').open('w+')
-            process = subprocess.Popen([str(binary), '--escrita-usabilidade',
-                                        str(root / 'Teste.inde'), str(state_file)],
-                                       env=env, stdout=log, stderr=log)
+            command = [str(binary), '--escrita-usabilidade', str(root / 'Teste.inde'), str(state_file)]
+            if os.environ.get('INDE_TEST_GDB'):
+                command = ['gdb', '-q', '-batch', '-ex', 'run', '-ex', 'thread apply all bt 25', '--args', *command]
+            process = subprocess.Popen(command, env=env, stdout=log, stderr=log)
             last = {}
             expected_body = 'Primeira linha á\nSegunda linha'
 
@@ -48,7 +49,12 @@ class RealWritingInput(unittest.TestCase):
                 while time.monotonic() < until:
                     if process.poll() is not None:
                         log.flush()
-                        self.fail(f'Aplicativo encerrou ({description}): {(root / "application.log").read_text()}')
+                        artifacts = os.environ.get('INDE_TEST_ARTIFACTS')
+                        if artifacts:
+                            target = Path(artifacts); target.mkdir(parents=True, exist_ok=True)
+                            shutil.copyfile(root / 'application.log', target / 'application.log')
+                            (target / 'state.json').write_text(json.dumps(last, ensure_ascii=False, indent=2))
+                        self.fail(f'Aplicativo encerrou ({process.returncode}; {description}): {(root / "application.log").read_text()}')
                     if predicate(state()):
                         return
                     time.sleep(.08)
@@ -67,6 +73,13 @@ class RealWritingInput(unittest.TestCase):
                             subprocess.run(['xwininfo', '-root', '-tree'], env=env, stdout=output, check=False)
                 self.fail(f'{description}: {json.dumps(compact, ensure_ascii=False)[:18000]}\n'
                           + (root / 'application.log').read_text())
+
+            def snapshot(name):
+                artifacts = os.environ.get('INDE_TEST_ARTIFACTS')
+                if artifacts and shutil.which('import'):
+                    target = Path(artifacts); target.mkdir(parents=True, exist_ok=True)
+                    subprocess.run(['import', '-window', 'root', str(target / (name + '.png'))],
+                                   env=env, check=True, timeout=10)
 
             def input_(*args):
                 subprocess.run(['xdotool', *args], env=env, check=True,
@@ -109,6 +122,22 @@ class RealWritingInput(unittest.TestCase):
                        str(c['y'] + c['height'] // 2), 'click', '1')
 
 
+            def right_click(name):
+                wait(lambda s: bool(candidates(s, name=name)), 'Alvo do botão direito: ' + name)
+                c = candidates(state(), name=name)[0]
+                input_('mousemove', '--window', str(c.get('window', window)),
+                       str(c['x'] + min(30, c['width'] // 2)),
+                       str(c['y'] + c['height'] // 2), 'click', '3')
+
+            def menu_action(label):
+                wait(lambda s: any(c.get('mapped') and c.get('label') == label and
+                                  c['name'].startswith('native-writing-action-')
+                                  for c in s['controls']), 'Menu especializado: ' + label)
+                name = next(c['name'] for c in state()['controls'] if c.get('mapped') and
+                            c.get('label') == label and c['name'].startswith('native-writing-action-'))
+                scroll_to(name, 'native-context-scroll')
+                click(name=name)
+
             def scroll_to(name, area):
                 for _ in range(24):
                     if candidates(state(), name=name):
@@ -116,7 +145,7 @@ class RealWritingInput(unittest.TestCase):
                     regions = candidates(state(), name=area)
                     self.assertTrue(regions, 'Área de rolagem indisponível: ' + area)
                     c = regions[0]
-                    input_('mousemove', '--window', window, str(c['x'] + c['width'] // 2),
+                    input_('mousemove', '--window', str(c.get('window', window)), str(c['x'] + c['width'] // 2),
                            str(c['y'] + c['height'] // 2), 'click', '5')
                     time.sleep(.15)
                 self.fail('Controle não alcançado pela rolagem: ' + name)
@@ -163,7 +192,7 @@ class RealWritingInput(unittest.TestCase):
             try:
                 wait(lambda s: bool(s.get('controls')), 'Aplicativo sem projeto aberto')
                 window = subprocess.check_output(
-                    ['xdotool', 'search', '--all', '--onlyvisible', '--pid', str(process.pid),
+                    ['xdotool', 'search', '--all', '--onlyvisible', '--pid', str(state()['pid']),
                      '--name', 'INDE'], env=env, text=True).splitlines()[0]
                 input_('windowactivate', '--sync', window)
                 input_('key', 'ctrl+n')
@@ -199,10 +228,144 @@ class RealWritingInput(unittest.TestCase):
                     wait(lambda s: not s.get('busy') and any(c.get('active') for c in
                          candidates(s, name='specialty-' + specialty)) and s.get('content') ==
                          expected_body, 'Troca de especialidade ' + specialty)
-                    time.sleep(.15)
+                    tool = {'text': ('label', 'Estatísticas'),
+                            'semantic': ('label', 'Marcações do texto'),
+                            'linguistic': ('label', 'Palavras repetidas'),
+                            'structure': ('label', 'Parágrafos e identidades…'),
+                            'bindings': ('label', 'Trechos marcados'),
+                            'composition': ('name', 'native-new-image'),
+                            'tables': ('name', 'native-new-table'),
+                            'formulas': ('name', 'native-new-formula'),
+                            'math': ('name', 'native-new-equation')}[specialty]
+                    if not state().get('tools_open'):
+                        click(name='native-tools')
+                    wait(lambda s: bool(candidates(s, **{tool[0]: tool[1]})),
+                         'Ferramentas presentes em ' + specialty)
+                    self.assertGreater(next(c['width'] for c in state()['controls'] if c['name'] == 'native-sheet-scroll'), 400)
+                    if specialty == 'text':
+                        click(label='Estatísticas')
+                        wait(lambda s: bool(candidates(s, name='native-stats-words')) and
+                             any('palavra' in c.get('label', '') for c in
+                                 candidates(s, name='native-stats-words')),
+                             'Estatísticas reais no painel da folha comum')
+                        click(label='Meta')
+                        wait(lambda s: bool(candidates(s, label='Usar meta de palavras')),
+                             'Controles de meta recuperados')
+                    elif specialty == 'semantic':
+                        click(label='Marcações do texto')
+                        wait(lambda s: bool(candidates(s, label='Fechar inspetor')),
+                             'Inspetor semântico original na folha comum')
+                        self.assertGreater(next(c['width'] for c in state()['controls']
+                                                if c['name'] == 'native-sheet-scroll'), 400)
+                        snapshot('semantica-inspetor')
+                        click(label='Fechar inspetor')
+                    elif specialty == 'structure':
+                        click(label='Parágrafos e identidades…')
+                        wait(lambda s: bool(candidates(s, label='Fechar')),
+                             'Identidades dos parágrafos acessíveis em Estrutura')
+                        click(label='Fechar')
+                    elif specialty == 'bindings':
+                        click(label='Trechos marcados')
+                        click(label='Marcar trecho')
+                        wait(lambda s: bool(candidates(s, label='Criar trecho marcado')),
+                             'Vínculos abriu o formulário original')
+                        entry = next(c for c in state()['controls'] if c.get('role') == 'entry' and
+                                     c.get('hittable') and c.get('value') == '')
+                        click(name=entry['name'])
+                        input_('type', '--clearmodifiers', 'Trecho preservado')
+                        click(label='Criar trecho marcado')
+                        wait(lambda s: not candidates(s, label='Criar trecho marcado'),
+                             'Trecho marcado criado pela interface')
+                    if state().get('tools_open'):
+                        if specialty == 'text':
+                            input_('key', 'F4')
+                            wait(lambda s: not s.get('tools_open'), 'F4 fecha o painel da folha comum')
+                        else:
+                            click(name='native-tools')
+                    if specialty in ['text', 'semantic', 'linguistic', 'structure', 'bindings']:
+                        paragraph = next(c['name'] for c in state()['controls']
+                                         if c['name'].startswith('writing-paragraph-'))
+                        click(name=paragraph)
+                        input_('key', 'Home', 'shift+End')
+                        wait(lambda s: abs(s['cursor'] - s['bound']) == len(expected_body.splitlines()[0]),
+                             'Seleção no primeiro parágrafo')
+                        selection = (state()['cursor'], state()['bound'])
+                        if specialty == 'text':
+                            input_('key', 'shift+F10')
+                            wait(lambda s: any(c.get('mapped') and c.get('label') == 'Sugerir alteração…'
+                                              for c in s['controls']), 'Menu especializado também pelo teclado')
+                            input_('key', 'Escape')
+                        right_click(paragraph)
+                        expected_menu = {'text': 'Sugerir alteração…',
+                            'semantic': 'Comentar seleção…',
+                            'linguistic': 'Consultar seleção no dicionário…',
+                            'structure': 'Criar alternativa do trecho',
+                            'bindings': 'Vincular elemento da história existente…'}[specialty]
+                        wait(lambda s: any(c.get('mapped') and c.get('label') == expected_menu
+                                          for c in s['controls']), 'Menu próprio de ' + specialty)
+                        wait(lambda s: any(c['name'] == 'native-context-scroll' and c['mapped'] and
+                                          c['width'] >= 260 for c in s['controls']),
+                             'Menu especializado com largura legível após alocação')
+                        self.assertGreaterEqual(next(c['width'] for c in state()['controls']
+                                                     if c['name'] == 'native-context-scroll' and c['mapped']), 260,
+                                                'Menu especializado ficou estreito e ilegível')
+                        self.assertEqual((state()['cursor'], state()['bound']), selection,
+                                         'Botão direito alterou a seleção autoritativa')
+                        if specialty == 'linguistic':
+                            snapshot('linguistica-menu-contexto')
+                            menu_action(expected_menu)
+                            wait(lambda s: bool(candidates(s, label='Consultar alternativas')),
+                                 'Consulta linguística abriu pelo botão direito')
+                            self.assertTrue(any(c.get('value') == expected_body.splitlines()[0]
+                                                for c in state()['controls']), 'Dicionário recebeu outra seleção')
+                            click(label='Fechar')
+                        elif specialty == 'semantic':
+                            menu_action(expected_menu)
+                            wait(lambda s: bool(candidates(s, label='Salvar anotação')),
+                                 'Comentário abriu com a seleção da folha')
+                            click(label='Cancelar')
+                        else:
+                            input_('key', 'Escape')
+                        wait(lambda s: not any(c.get('mapped') and c['name'].startswith('native-writing-action-')
+                                              for c in s['controls']), 'Fechar menu da especialidade')
+                # Structural movement changes the actual owner text; undo restores it.
+                click(name='specialty-structure')
+                first = state()['objects']['paragraphs'][0]['id']
+                second = state()['objects']['paragraphs'][1]['id']
+                snapshot('estrutura-circulos')
+                handle = 'native-reading-handle-' + first
+                click(name=handle)
+                input_('key', 'ctrl+Down')
+                wait(lambda s: s.get('content') == 'Segunda linha\nPrimeira linha á',
+                     'Reordenação estrutural pelo teclado na folha')
+                input_('key', 'ctrl+Up')
+                wait(lambda s: s.get('content') == expected_body,
+                     'O círculo conserva foco para o segundo movimento por teclado')
+                click(name='native-undo')
+                wait(lambda s: s.get('content') == 'Segunda linha\nPrimeira linha á',
+                     'Desfazer o segundo movimento')
+                click(name='native-undo')
+                wait(lambda s: s.get('content') == expected_body, 'Desfazer reordenação estrutural')
+                source = candidates(state(), name=handle)[0]
+                target = next(c for c in state()['controls'] if c['name'] == 'native-object-' + second)
+                sx, sy = source['x'] + source['width']//2, source['y'] + source['height']//2
+                tx, ty = target['x'] + 30, target['y'] + target['height'] - 3
+                input_('mousemove', '--window', window, str(sx), str(sy), 'mousedown', '1')
+                for fraction in [.25, .5, .75, 1.0]:
+                    input_('mousemove', '--window', window, str(round(sx+(tx-sx)*fraction)),
+                           str(round(sy+(ty-sy)*fraction)))
+                    time.sleep(.08)
+                input_('mouseup', '1')
+                wait(lambda s: s.get('content') == 'Segunda linha\nPrimeira linha á',
+                     'Arrasto real dos círculos de Estrutura')
+                click(name='native-undo')
+                wait(lambda s: s.get('content') == expected_body, 'Desfazer arrasto conserva texto')
                 click(name='specialty-math')
                 click(name='native-new-equation')
                 wait(lambda s: s.get('draft'), 'Edição de equação aberta')
+                input_('key', 'F4')
+                wait(lambda s: s.get('draft') and not s.get('tools_open'),
+                     'F4 não invade o formulário de edição aberto')
                 input_('key', 'ctrl+q')
                 click(label='Continuar editando')
                 wait(lambda s: s.get('draft') and not candidates(s, label='Continuar editando'),
@@ -254,6 +417,16 @@ class RealWritingInput(unittest.TestCase):
                 click(name='native-apply')
                 wait(lambda s: not s.get('draft') and len(s['objects']['tables']) == 1,
                      'Tabela aplicada pelo formulário real')
+                table_id = state()['objects']['tables'][0]['id']
+                click(name='specialty-composition')
+                click(name='specialty-tables')
+                click(name='native-table-style')
+                wait(lambda s: s.get('draft') and candidates(s, name='native-field-preset'),
+                     'Troca de especialidade conserva a tabela escolhida para aparência')
+                click(name='native-cancel')
+                wait(lambda s: not s.get('draft') and candidates(s, name='native-sheet-scroll'),
+                     'Cancelar aparência devolve a folha antes de editar célula')
+                self.assertEqual(state()['objects']['tables'][0]['id'], table_id)
                 cell = state()['objects']['tables'][0]['cells'][0]['id']
                 scroll_to('native-cell-' + cell, 'native-sheet-scroll')
                 click(name='native-cell-' + cell)
@@ -277,6 +450,19 @@ class RealWritingInput(unittest.TestCase):
                 wait(lambda s: not s.get('draft') and len(s['objects']['equations']) == 1,
                      'Equação editada e aplicada pela interface')
                 self.assertEqual(state()['objects']['equations'][0]['source'], 'x^2+1')
+                click(name='specialty-structure')
+                original_order = state()['objects']['author_order']
+                image = state()['objects']['figures'][0]['id']
+                image_handle = 'native-reading-handle-' + image
+                scroll_to(image_handle, 'native-sheet-scroll')
+                click(name=image_handle)
+                input_('key', 'ctrl+Up')
+                wait(lambda s: not s.get('busy') and s['objects']['author_order'] != original_order,
+                     'Objeto também participa da reordenação estrutural')
+                self.assertEqual(state()['content'], expected_body)
+                click(name='native-undo')
+                wait(lambda s: s['objects']['author_order'] == original_order,
+                     'Desfazer movimentação do objeto preserva a folha mista')
                 click(name='specialty-text')
                 click(name='native-save')
                 wait(lambda s: not s.get('busy') and not s['objects']['dirty'], 'Salvar pelo controle real')
@@ -294,6 +480,10 @@ class RealWritingInput(unittest.TestCase):
                 self.assertEqual(connection.execute('select title from documents').fetchone()[0],
                                  'Documento de uso real')
                 self.assertEqual(connection.execute('pragma integrity_check').fetchone()[0], 'ok')
+                self.assertEqual(connection.execute('select label,start_offset,end_offset from document_anchors').fetchall(),
+                                 [('Trecho preservado', 0, len(expected_body.splitlines()[0]))],
+                                 'Reordenação e Desfazer perderam ou deslocaram o trecho marcado')
+                self.assertEqual(connection.execute('pragma foreign_key_check').fetchall(), [])
                 connection.close()
                 self.assertEqual(hashlib.sha256(Path(selected).read_bytes()).hexdigest(), image_hash,
                                  'A imagem de origem foi modificada')

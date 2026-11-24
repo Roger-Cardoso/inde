@@ -50,10 +50,18 @@ int run_object_usage_probe(const Glib::RefPtr<Gtk::Application> &app,
         }
         if(auto *b=dynamic_cast<Gtk::CheckButton *>(&w))label=b->get_label();
         const auto name=w.get_name().raw();
+        if(name.starts_with("native-"))if(auto *l=dynamic_cast<Gtk::Label *>(&w))label=l->get_text();
         if(!label.empty() || dynamic_cast<Gtk::Entry *>(&w) || name.starts_with("native-") ||
            name.starts_with("specialty-") || name.starts_with("writing-paragraph-")) {
           graphene_rect_t bounds{};
-          const bool placed=gtk_widget_compute_bounds(w.gobj(),GTK_WIDGET(main->gobj()),&bounds);
+          auto *coordinate_root=GTK_WIDGET(main->gobj());
+          auto *native=gtk_widget_get_native(w.gobj());
+          GdkSurface *popup_surface=nullptr;
+          if(native && GTK_IS_POPOVER(native)) {
+            coordinate_root=GTK_WIDGET(native);
+            popup_surface=gtk_native_get_surface(native);
+          }
+          const bool placed=gtk_widget_compute_bounds(w.gobj(),coordinate_root,&bounds);
           O c{{"name",name},{"label",label},{"mapped",w.get_mapped()},
               {"sensitive",bool(gtk_widget_is_sensitive(w.gobj()))},
               {"focus",w.is_focus()}};
@@ -62,7 +70,9 @@ int run_object_usage_probe(const Glib::RefPtr<Gtk::Application> &app,
             c["role"]="entry";c["value"]=entry->get_text().raw();
           }
           if(placed) {
-            auto *picked=gtk_widget_pick(GTK_WIDGET(main->gobj()),
+            if(popup_surface && GDK_IS_X11_SURFACE(popup_surface))
+              c["window"]=static_cast<std::int64_t>(gdk_x11_surface_get_xid(popup_surface));
+            auto *picked=gtk_widget_pick(coordinate_root,
                 bounds.origin.x+bounds.size.width/2,
                 bounds.origin.y+bounds.size.height/2,GTK_PICK_DEFAULT);
             c["hittable"]=bool(picked &&
@@ -74,8 +84,12 @@ int run_object_usage_probe(const Glib::RefPtr<Gtk::Application> &app,
           }
           controls.emplace_back(std::move(c));
         }
-        if(name=="writing-text-editor")
-          state["content"]=dynamic_cast<Gtk::TextView &>(w).get_buffer()->get_text().raw();
+        if(name=="writing-text-editor") {
+          const auto b=dynamic_cast<Gtk::TextView &>(w).get_buffer();
+          state["content"]=b->get_text().raw();
+          state["cursor"]=b->get_iter_at_mark(b->get_insert()).get_offset();
+          state["bound"]=b->get_iter_at_mark(b->get_selection_bound()).get_offset();
+        }
         if(name=="native-status")state["status"]=dynamic_cast<Gtk::Label &>(w).get_text().raw();
         for(auto *c=w.get_first_child();c;c=c->get_next_sibling())visit(*c);
       };
@@ -119,6 +133,7 @@ int run_object_usage_probe(const Glib::RefPtr<Gtk::Application> &app,
       if(auto *objects=locate<inde::ui::ObjectDocumentEditor>(*main)) {
         state["document"]=inde::ui::ObjectNativeProbe::state(*objects).at("source_document");
         state["busy"]=inde::ui::ObjectNativeProbe::busy(*objects);
+        state["tools_open"]=inde::ui::ObjectNativeProbe::tools_open(*objects);
         state["draft"]=inde::ui::ObjectNativeProbe::draft(*objects);
         state["error"]=inde::ui::ObjectNativeProbe::error(*objects);
         state["objects"]=inde::ui::ObjectNativeProbe::state(*objects);

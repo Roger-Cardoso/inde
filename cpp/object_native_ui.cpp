@@ -1,6 +1,7 @@
 #include "object_native_ui.hpp"
 #include "inde/project/document_state.hpp"
 #include "inde/ui/overlay_dialog.hpp"
+#include "inde/ui/accessibility.hpp"
 #include "object_composite_pilot.hpp"
 #include "object_formula_hub.hpp"
 #include "object_math_native.hpp"
@@ -184,6 +185,7 @@ struct Work {
   std::function<void(const V &)> done;
 };
 const std::map<std::string, std::string> messages = {
+    {"stale_reading_drag", "O documento mudou durante a movimentação. Escolha o bloco e o destino novamente."},
     {"png_read_failed", "Não foi possível ler o arquivo escolhido. Escolha a figura novamente."},
     {"png_byte_limit", "A figura deve ser um PNG com até 8 MiB."},
     {"png_dimensions_limit", "Use uma figura com até 8192 pixels por lado e 16 milhões de pixels no total."},
@@ -238,8 +240,14 @@ struct ObjectDocumentEditor::Impl {
   Gtk::Box *menu_holder = nullptr;
   void close_object_menu() {
     object_menu.popdown();
-    if (auto *child = object_menu.get_child()) {
+    auto *scroll = dynamic_cast<Gtk::ScrolledWindow *>(object_menu.get_child());
+    auto *child = scroll ? scroll->get_child() : object_menu.get_child();
+    auto *viewport = dynamic_cast<Gtk::Viewport *>(child);
+    if(viewport)child=viewport->get_child();
+    if (child) {
       g_object_ref(child->gobj());
+      if(viewport)viewport->unset_child();
+      if(scroll)scroll->unset_child();
       object_menu.unset_child();
       child->set_visible(false);
       if (menu_holder)
@@ -251,6 +259,16 @@ struct ObjectDocumentEditor::Impl {
     menu_holder = nullptr;
   }
   std::map<std::string, Gtk::Box *> menus;
+  std::map<std::string, std::function<void()>> menu_updates;
+  std::map<std::string, Gtk::Widget *> cards, reading_handles;
+  Gtk::Widget *specialty_panel = nullptr;
+  Gtk::Box specialty_host{Gtk::Orientation::VERTICAL, 8};
+  Gtk::Button *tools_toggle = nullptr;
+  sigc::connection drag_scroll, tool_follow;
+  std::string dragging, drag_reference, restore_handle;
+  bool drag_after = false;
+  double drag_y = 0, drag_initial_scroll = 0, drag_delta = 0;
+  std::int64_t drag_revision = 0;
   std::string specialty = "composition";
   std::optional<std::map<std::string, std::string>> visible_text;
   bool shown(const std::string &id) const {
@@ -277,7 +295,7 @@ struct ObjectDocumentEditor::Impl {
   std::shared_ptr<Life> life = std::make_shared<Life>();
   V state;
   std::filesystem::path project_path;
-  bool busy = false, draft = false, rendering = false, render_pending = true, choosing_image = false,
+  bool busy = false, draft = false, rendering = false, render_pending = true, choosing_image = false, restoring_text_focus = false,
        draft_tools_open = false;
   std::size_t pending_actions = 0;
   sigc::connection chooser_response;
@@ -346,10 +364,11 @@ struct ObjectDocumentEditor::Impl {
     root.set_vexpand(true);
     root.set_hexpand(true);
     object_menu.set_name("native-object-menu");
+    object_menu.add_css_class("context-menu");
+    object_menu.set_has_arrow(false);
+    object_menu.set_position(Gtk::PositionType::BOTTOM);
     root.append(toolbar);
-    button(toolbar, "Instrumentos", "native-tools", [this] {
-      side_revealer.set_reveal_child(!side_revealer.get_reveal_child());
-    });
+    tools_toggle = &button(toolbar, "Ferramentas", "native-tools", [this] { owner.toggle_tools(); });
     auto history_keys = Gtk::EventControllerKey::create();
     history_keys->set_propagation_phase(Gtk::PropagationPhase::CAPTURE);
     history_keys->signal_key_pressed().connect(
@@ -457,6 +476,14 @@ struct ObjectDocumentEditor::Impl {
       tool_groups[id] = box;
       return *box;
     };
+    sidebar.append(specialty_host);
+    auto &structure_tools = group("structure");
+    label(structure_tools, "Ordem de leitura");
+    label(structure_tools, "Arraste o círculo do bloco até a borda do vizinho. Texto e objetos usam a mesma sequência; blocos de texto indivisíveis são movidos juntos.");
+    button(structure_tools, "Mover bloco acima na leitura", "native-reading-up", [this] { move_step(-1); });
+    button(structure_tools, "Mover bloco abaixo na leitura", "native-reading-down", [this] { move_step(1); });
+    button(structure_tools, "Escolher posição do bloco…", "native-reading-position", [this] { layout_editor(); });
+    button(structure_tools, "Restaurar apresentação pela leitura", "native-reading-align", [this] { command("restore", {}, "composition"); });
     auto &math_tools = group("math");
     button(math_tools, "Inserir equação", "native-new-equation",
            [this] { equation_editor(); });
@@ -565,6 +592,8 @@ struct ObjectDocumentEditor::Impl {
       delete leave_dialog;
       leave_dialog = nullptr;
     }
+    drag_scroll.disconnect();
+    tool_follow.disconnect();
     cursor_follow.disconnect();
     focus_follow.disconnect();
     close_object_menu();
@@ -654,6 +683,7 @@ struct ObjectDocumentEditor::Impl {
           if (has(result, "state"))
             state = result.at("state");
           if (!result.at("accepted").as_boolean()) {
+            restore_handle.clear();
             error(text(result, "error"));
             return;
           }
@@ -669,6 +699,7 @@ struct ObjectDocumentEditor::Impl {
                     runtime->session->request(O{{"op", "view"}}).at("state");
               }
             } catch (const std::exception &e) {
+              restore_handle.clear();
               error(e.what());
               return;
             }
@@ -744,6 +775,84 @@ struct ObjectDocumentEditor::Impl {
         c.append(id.as_string(), title(id.as_string()));
     c.set_active_id(active);
   }
+  std::vector<std::string> reading_unit(const std::string &id) const {
+    for(const auto &g:state.at("reading_groups").as_array()) {
+      std::vector<std::string> ids;
+      bool found=false;
+      for(const auto &v:g.as_array()) {ids.push_back(v.as_string());found=found || v.as_string()==id;}
+      if(found)return ids;
+    }
+    return {id};
+  }
+  bool leading_handle(const std::string &id) const {
+    for(const auto &member:reading_unit(id))if(shown(member))return member==id;
+    return false;
+  }
+  void move_relative(const std::string &id,const std::string &reference,bool after,bool keep_focus=false) {
+    if(!owner.can_leave()) {status.set_text("Conclua a edição em andamento antes de mover blocos.");return;}
+    const auto &active=state.at("author_order").as_array();
+    if(std::none_of(active.begin(),active.end(),[&](const V &v){return v.as_string()==id;}) ||
+       std::none_of(active.begin(),active.end(),[&](const V &v){return v.as_string()==reference;})) {
+      error("stale_reading_drag");return;
+    }
+    const auto unit=reading_unit(id);
+    auto destination=reading_unit(reference);
+    // A row is one drop destination: never insert between its two children.
+    for(const auto &row:state.at("rows").as_array()) {
+      const auto &children=row.at("children").as_array();
+      if(std::any_of(children.begin(),children.end(),[&](const V &v){return std::find(destination.begin(),destination.end(),v.as_string())!=destination.end();}))
+        for(const auto &v:children)if(std::find(destination.begin(),destination.end(),v.as_string())==destination.end())destination.push_back(v.as_string());
+    }
+    if(std::any_of(destination.begin(),destination.end(),[&](const auto &v){return std::find(unit.begin(),unit.end(),v)!=unit.end();}))return;
+    const auto &order=state.at("author_order").as_array();
+    std::string before;
+    bool passed=false;
+    for(const auto &v:order) {
+      const auto key=v.as_string();
+      const bool member=std::find(destination.begin(),destination.end(),key)!=destination.end();
+      if(!after && member) {before=key;break;}
+      if(member)passed=true;
+      else if(after && passed && std::find(unit.begin(),unit.end(),key)==unit.end()) {before=key;break;}
+    }
+    if(keep_focus)restore_handle=id;
+    command("move",{{"id",id},{"before",before},{"intent","authorial"}},"structure");
+  }
+  void move_step(int direction,bool keep_focus=false) {
+    if(selected.empty()) {status.set_text("Escolha um bloco na folha antes de mover.");return;}
+    const auto unit=reading_unit(selected);
+    const auto &order=state.at("author_order").as_array();
+    std::size_t first=order.size(),last=0;
+    for(std::size_t i=0;i<order.size();++i)
+      if(std::find(unit.begin(),unit.end(),order[i].as_string())!=unit.end()) {first=std::min(first,i);last=i;}
+    if(first==order.size())return;
+    if(direction<0) {
+      for(std::size_t i=first;i>0;--i)if(shown(order[i-1].as_string())) {move_relative(selected,order[i-1].as_string(),false,keep_focus);return;}
+    } else {
+      for(std::size_t i=last+1;i<order.size();++i)if(shown(order[i].as_string())) {move_relative(selected,order[i].as_string(),true,keep_focus);return;}
+    }
+    status.set_text("O bloco já está no limite da leitura visível.");
+  }
+  void cancel_drag() {
+    dragging.clear();drag_reference.clear();drag_scroll.disconnect();
+    for(auto &[id,w]:cards) {w->remove_css_class("reading-drop-before");w->remove_css_class("reading-drop-after");}
+  }
+  void update_drag(double canvas_y) {
+    const auto unit=reading_unit(dragging);
+    drag_reference.clear();
+    double closest=1e20;
+    for(const auto &v:state.at("visual_order").as_array()) {
+      const auto id=v.as_string();
+      if(!cards.contains(id) || std::find(unit.begin(),unit.end(),id)!=unit.end())continue;
+      auto *w=cards.at(id);
+      w->remove_css_class("reading-drop-before");w->remove_css_class("reading-drop-after");
+      graphene_rect_t b{};
+      if(!gtk_widget_compute_bounds(w->gobj(),GTK_WIDGET(canvas.gobj()),&b))continue;
+      const double middle=b.origin.y+b.size.height/2.;
+      const double distance=std::abs(canvas_y-middle);
+      if(distance<closest) {closest=distance;drag_reference=id;drag_after=canvas_y>middle;}
+    }
+    if(!drag_reference.empty())cards.at(drag_reference)->add_css_class(drag_after?"reading-drop-after":"reading-drop-before");
+  }
   void render() {
     render_pending = true;
     if (std::any_of(paragraph_views.begin(), paragraph_views.end(),
@@ -754,7 +863,11 @@ struct ObjectDocumentEditor::Impl {
     const auto scroll_x = content_scroll.get_hadjustment()->get_value();
     const auto scroll_y = content_scroll.get_vadjustment()->get_value();
     auto *focused = focused_text();
-    std::string focused_paragraph;
+    std::string focused_paragraph, focused_handle;
+    if(window.gobj() && GTK_IS_WINDOW(window.gobj()))
+      if(auto *focus=window.get_focus())
+        for(const auto &[id,handle]:reading_handles)
+          if(focus==handle || gtk_widget_is_ancestor(focus->gobj(),handle->gobj()))focused_handle=id;
     for (const auto &[id, view] : paragraph_views)
       if (view == focused)
         focused_paragraph = id;
@@ -780,6 +893,10 @@ struct ObjectDocumentEditor::Impl {
     side_scroll.get_hadjustment()->set_value(0);
     close_object_menu();
     menus.clear();
+    menu_updates.clear();
+    cards.clear();
+    reading_handles.clear();
+    dragging.clear(); drag_scroll.disconnect();
     paragraph_views.clear();
     clear(canvas);
 
@@ -787,7 +904,7 @@ struct ObjectDocumentEditor::Impl {
         ".inde-native-item { padding: 8px; border: 1px solid "
         "transparent; border-radius: 8px; } .inde-native-selected "
         "{ border-color: #3b806b; } .inde-native-text { font-family: serif; "
-        "font-size: 18px; }";
+        "font-size: 18px; } .reading-drop-before { border-top: 3px solid #3b806b; } .reading-drop-after { border-bottom: 3px solid #3b806b; }";
     std::set<std::string> paired;
     for (const auto &id : state.at("visual_order").as_array()) {
       const auto key = id.as_string();
@@ -832,6 +949,9 @@ struct ObjectDocumentEditor::Impl {
     content_scroll.get_vadjustment()->set_value(scroll_y);
     if (!focused_paragraph.empty())
       owner.focus_text(-1);
+    if(!restore_handle.empty()) {focused_handle=restore_handle;restore_handle.clear();}
+    if(!focused_handle.empty() && reading_handles.contains(focused_handle) && reading_handles.at(focused_handle)->get_visible())
+      reading_handles.at(focused_handle)->grab_focus();
     render_pending = false;
   }
   void format_paragraph(Gtk::Label &l, const std::string &paragraph) {
@@ -927,9 +1047,16 @@ struct ObjectDocumentEditor::Impl {
     if (id == selected)
       box->add_css_class("inde-native-selected");
     box->set_name("native-object-" + id);
+    auto *reading_row=Gtk::make_managed<Gtk::Box>(Gtk::Orientation::HORIZONTAL,6);
+    reading_row->set_hexpand(true);
+    cards[id] = reading_row;
     box->set_focusable(true);
     auto focus = Gtk::EventControllerFocus::create();
-    focus->signal_enter().connect([this] {
+    focus->signal_enter().connect([this, id] {
+      if(!restoring_text_focus) {
+        selected = id;
+        rendering = true; objects.set_active_id(id); rendering = false;
+      }
       if (auto *viewport = dynamic_cast<Gtk::Viewport *>(canvas.get_parent()))
         viewport->set_scroll_to_focus(!focused_text());
       follow_cursor();
@@ -937,15 +1064,106 @@ struct ObjectDocumentEditor::Impl {
     box->add_controller(focus);
     box->set_tooltip_text("Clique direito para editar, mover ou retirar. "
                           "Shift+F10 pelo teclado.");
+    auto *handle = Gtk::make_managed<Gtk::Button>("●");
+    handle->set_name("native-reading-handle-" + id);
+    set_accessible_label(*handle, "Reordenar bloco · " + title(id));
+    handle->set_halign(Gtk::Align::START);
+    handle->set_tooltip_text("Arraste para reordenar a leitura. Ctrl+↑/↓ move o bloco; Escape cancela.");
+    handle->set_cursor("grab");
+    handle->set_valign(Gtk::Align::START);
+    handle->set_margin_top(8);
+    reading_row->append(*handle);
+    reading_row->append(*box);
+    reading_handles[id] = handle;
+    handle->set_visible(specialty == "structure" && leading_handle(id));
+    auto drag = Gtk::GestureDrag::create();
+    drag->set_button(1);
+    drag->set_propagation_phase(Gtk::PropagationPhase::CAPTURE);
+    drag->signal_drag_begin().connect([this, id, handle](double x, double y) {
+      if (!owner.can_leave() || specialty != "structure") return;
+      selected = id; dragging = id; drag_reference.clear();
+      drag_revision = state.at("revision").as_integer();
+      graphene_point_t a{static_cast<float>(x), static_cast<float>(y)}, b{};
+      if (!gtk_widget_compute_point(GTK_WIDGET(handle->gobj()), GTK_WIDGET(canvas.gobj()), &a, &b)) {dragging.clear();return;}
+      drag_y = b.y; drag_delta = 0;
+      drag_initial_scroll = content_scroll.get_vadjustment()->get_value();
+      handle->grab_focus();
+      drag_scroll.disconnect();
+      drag_scroll = Glib::signal_timeout().connect([this] {
+        if(dragging.empty())return false;
+        const auto a=content_scroll.get_vadjustment();
+        const double pointer=drag_y+drag_delta-drag_initial_scroll;
+        const double step=pointer<26?-18:pointer>a->get_page_size()-26?18:0;
+        if(step)a->set_value(std::clamp(a->get_value()+step,a->get_lower(),std::max(a->get_lower(),a->get_upper()-a->get_page_size())));
+        update_drag(drag_y+drag_delta+a->get_value()-drag_initial_scroll);
+        return true;
+      },60);
+    });
+    drag->signal_drag_update().connect([this](double, double y) {
+      if(dragging.empty())return;
+      drag_delta=y;
+      update_drag(drag_y + y + content_scroll.get_vadjustment()->get_value()-drag_initial_scroll);
+    });
+    drag->signal_drag_end().connect([this](double x, double y) {
+      const auto id = dragging, reference = drag_reference;
+      const auto revision = drag_revision;
+      const bool after = drag_after;
+      cancel_drag();
+      if(!id.empty() && !reference.empty() && std::hypot(x,y)>=6)
+        defer_action([this,id,reference,after,revision] {
+          if(state.at("revision").as_integer()!=revision) {error("stale_reading_drag");return;}
+          move_relative(id,reference,after,true);
+        });
+    });
+    drag->signal_cancel().connect([this](Gdk::EventSequence *) {cancel_drag();});
+    handle->add_controller(drag);
+    auto handle_keys = Gtk::EventControllerKey::create();
+    handle_keys->signal_key_pressed().connect([this,id](guint key,guint,Gdk::ModifierType mods) {
+      if(key==GDK_KEY_Escape) {cancel_drag();return true;}
+      if((mods & Gdk::ModifierType::CONTROL_MASK)!=Gdk::ModifierType{} && (key==GDK_KEY_Up || key==GDK_KEY_Down)) {
+        selected=id;move_step(key==GDK_KEY_Up?-1:1,true);return true;
+      }
+      return false;
+    },false);
+    handle->add_controller(handle_keys);
     auto *actions = Gtk::make_managed<Gtk::Box>(Gtk::Orientation::VERTICAL, 4);
     menus[id] = actions;
     // Menu content is parented in an invisible holder until requested.
     actions->set_visible(false);
     box->append(*actions);
-    const auto show_menu = [this, box, actions, id](double x, double y) {
-      if (busy || draft)
+    const auto show_menu = [this, box, actions, id](double x, double y, bool pointer) {
+      if (!owner.can_leave())
         return;
+      if(pointer) {
+        if(const auto *p=find(state,"paragraphs",id)) {
+          const auto at=paragraph_views.find(text(*p,"paragraph"));
+          if(at!=paragraph_views.end()) {
+            graphene_point_t a{static_cast<float>(x),static_cast<float>(y)},b{};
+            if(gtk_widget_compute_point(GTK_WIDGET(box->gobj()),GTK_WIDGET(at->second->gobj()),&a,&b))
+              at->second->prepare_context(b.x,b.y);
+          }
+        }
+      }
+      Gdk::Rectangle anchor(static_cast<int>(x),static_cast<int>(y),1,1);
+      if(const auto *p=find(state,"paragraphs",id)) {
+        const auto at=paragraph_views.find(text(*p,"paragraph"));
+        if(at!=paragraph_views.end()) {
+          auto *view=at->second;
+          Gtk::TextIter a,b;
+          if(view->get_buffer()->get_selection_bounds(a,b)) {
+            b.backward_char();
+            Gdk::Rectangle rect;
+            view->get_iter_location(b,rect);
+            int wx{},wy{};
+            view->buffer_to_window_coords(Gtk::TextWindowType::WIDGET,rect.get_x(),rect.get_y()+rect.get_height()+4,wx,wy);
+            graphene_point_t from{static_cast<float>(wx),static_cast<float>(wy)},to{};
+            if(gtk_widget_compute_point(GTK_WIDGET(view->gobj()),GTK_WIDGET(box->gobj()),&from,&to))
+              anchor=Gdk::Rectangle(static_cast<int>(to.x),static_cast<int>(to.y),1,1);
+          }
+        }
+      }
       selected = id;
+      if(menu_updates.contains(id))menu_updates.at(id)();
       rendering = true;
       objects.set_active_id(id);
       rendering = false;
@@ -954,12 +1172,21 @@ struct ObjectDocumentEditor::Impl {
       g_object_ref(actions->gobj());
       if (auto *parent = dynamic_cast<Gtk::Box *>(actions->get_parent()))
         parent->remove(*actions);
-      object_menu.set_child(*actions);
+      auto *scroll = Gtk::make_managed<Gtk::ScrolledWindow>();
+      scroll->set_policy(Gtk::PolicyType::NEVER,Gtk::PolicyType::AUTOMATIC);
+      scroll->set_max_content_height(360);
+      scroll->set_min_content_width(280);
+      // With horizontal scrolling disabled GTK measures the child minimum;
+      // wrapped captions still need an explicit readable widget width.
+      scroll->set_size_request(280,-1);
+      scroll->set_propagate_natural_height(true);
+      scroll->set_child(*actions);
+      scroll->set_name("native-context-scroll");
+      object_menu.set_child(*scroll);
       g_object_unref(actions->gobj());
       actions->set_visible(true);
       object_menu.set_parent(*box);
-      object_menu.set_pointing_to(
-          Gdk::Rectangle(static_cast<int>(x), static_cast<int>(y), 1, 1));
+      object_menu.set_pointing_to(anchor);
       object_menu.popup();
     };
     auto click = Gtk::GestureClick::create();
@@ -967,7 +1194,7 @@ struct ObjectDocumentEditor::Impl {
     click->set_propagation_phase(Gtk::PropagationPhase::CAPTURE);
     click->signal_pressed().connect([show_menu, gesture = click->gobj()](
                                         int, double x, double y) {
-      show_menu(x, y);
+      show_menu(x, y, true);
       if (gtk_gesture_is_recognized(GTK_GESTURE(gesture)))
         gtk_gesture_set_state(GTK_GESTURE(gesture), GTK_EVENT_SEQUENCE_CLAIMED);
     });
@@ -979,7 +1206,7 @@ struct ObjectDocumentEditor::Impl {
           if (key == GDK_KEY_Menu ||
               (key == GDK_KEY_F10 &&
                (mods & Gdk::ModifierType::SHIFT_MASK) != Gdk::ModifierType{})) {
-            show_menu(8, 8);
+            show_menu(8, 8, false);
             return true;
           }
           return false;
@@ -994,6 +1221,55 @@ struct ObjectDocumentEditor::Impl {
         defer_action(fn);
       });
     };
+    std::vector<std::function<void()>> update;
+    std::function<void()> prepare_legacy;
+    if(find(state,"paragraphs",id) && owner.paragraph_actions) {
+      auto *legacy=Gtk::make_managed<Gtk::Box>(Gtk::Orientation::VERTICAL,2);
+      actions->append(*legacy);
+      auto legacy_updates=std::make_shared<std::vector<std::function<void()>>>();
+      prepare_legacy=[this,legacy,id,legacy_updates] {
+        if(!legacy->get_first_child()) {
+      std::size_t index=0;
+      for(const auto &a:owner.paragraph_actions()) {
+        Gtk::Separator *separator=nullptr;
+        if(a.separator_before) {separator=Gtk::make_managed<Gtk::Separator>();legacy->append(*separator);}
+        auto &b=button(*legacy,a.label.raw(),"native-writing-action-"+std::to_string(index++)+"-"+id,[this,a] {
+          object_menu.popdown();
+          defer_action([a] {if(a.enabled && (!a.visible || a.visible()) && (!a.available || a.available()) && a.activate)a.activate();});
+        });
+        b.add_css_class("context-menu-item");
+        set_accessible_label(b,a.label);
+        if (!a.icon_name.empty()) {
+          auto *row = Gtk::make_managed<Gtk::Box>(Gtk::Orientation::HORIZONTAL, 9);
+          auto *icon = Gtk::make_managed<Gtk::Image>();
+          icon->set_from_icon_name(a.icon_name);
+          row->append(*icon);
+          auto *caption = Gtk::make_managed<Gtk::Label>(a.label);
+          caption->set_xalign(0);
+          caption->set_wrap(true);
+          caption->set_max_width_chars(30);
+          row->append(*caption);
+          b.set_child(*row);
+        }
+        legacy_updates->push_back([&b,separator,a] {
+          const bool visible=!a.visible || a.visible();
+          b.set_visible(visible); if(separator)separator->set_visible(visible);
+          b.set_sensitive(a.enabled && (!a.available || a.available()));
+        });
+      }
+        }
+        for(const auto &refresh:*legacy_updates)refresh();
+      };
+      actions->append(*Gtk::make_managed<Gtk::Separator>());
+    }
+    for(const auto direction:{-1,1}) {
+      auto &b=button(*actions,direction<0?"Mover bloco acima na leitura":"Mover bloco abaixo na leitura",
+        "native-context-reading-"+std::string(direction<0?"up-":"down-")+id,[this,id,direction] {
+          selected=id;object_menu.popdown();defer_action([this,direction]{move_step(direction);});
+        });
+      update.push_back([this,&b]{b.set_visible(specialty=="structure");});
+    }
+    menu_updates[id]=[update,prepare_legacy]{if(prepare_legacy)prepare_legacy();for(const auto &fn:update)fn();};
     action("Posição e alinhamento…", "native-object-layout-" + id,
            [this] { layout_editor(); });
     action("Retirar objeto", "native-object-remove-" + id,
@@ -1106,7 +1382,7 @@ struct ObjectDocumentEditor::Impl {
         auto *left = Gtk::make_managed<Gtk::Box>();
         auto *right = Gtk::make_managed<Gtk::Box>();
         return Gtk::make_managed<FractionRow>(
-            std::vector<Gtk::Widget *>{left, box, right},
+            std::vector<Gtk::Widget *>{left, reading_row, right},
             std::vector<double>{(1 - fraction) / 2, fraction,
                                 (1 - fraction) / 2},
             0);
@@ -1114,8 +1390,8 @@ struct ObjectDocumentEditor::Impl {
       if (fraction < .999) {
         auto *space = Gtk::make_managed<Gtk::Box>();
         auto *slot = Gtk::make_managed<FractionRow>(
-            horizontal == "end" ? std::vector<Gtk::Widget *>{space, box}
-                                : std::vector<Gtk::Widget *>{box, space},
+            horizontal == "end" ? std::vector<Gtk::Widget *>{space, reading_row}
+                                : std::vector<Gtk::Widget *>{reading_row, space},
             horizontal == "end" ? std::vector<double>{1 - fraction, fraction}
                                 : std::vector<double>{fraction, 1 - fraction},
             0);
@@ -1123,7 +1399,7 @@ struct ObjectDocumentEditor::Impl {
       }
     }
     box->set_hexpand(true);
-    return box;
+    return reading_row;
   }
   void formula_view(Gtk::Box &box, const std::string &id,
                     const std::string &target, Gtk::Box *actions = nullptr) {
@@ -2679,6 +2955,11 @@ void ObjectDocumentEditor::refresh_text_views() {
 void ObjectDocumentEditor::focus_text(int offset, bool reveal) {
   for (const auto &[id, view] : impl_->paragraph_views)
     if (view->contains(offset)) {
+      struct FocusGuard {
+        bool &flag; bool previous;
+        explicit FocusGuard(bool &value):flag(value),previous(value) {flag=true;}
+        ~FocusGuard() {flag=previous;}
+      } guard(impl_->restoring_text_focus);
       view->focus_offset(offset);
       if (!reveal)
         return;
@@ -2690,7 +2971,14 @@ void ObjectDocumentEditor::set_specialty(const std::string &id) {
   impl_->specialty = id;
   for (auto &[key, box] : impl_->tool_groups)
     box->set_visible(key == id);
-  impl_->side_revealer.set_reveal_child(false);
+  for(auto &[key,handle]:impl_->reading_handles)handle->set_visible(id=="structure" && impl_->leading_handle(key));
+  const bool classic=id=="text" || id=="semantic" || id=="linguistic" || id=="structure" || id=="bindings";
+  impl_->specialty_host.set_visible(classic);
+  impl_->side_scroll.set_size_request(classic?390:280,-1);
+  impl_->side_scroll.get_vadjustment()->set_value(0);
+  const std::map<std::string,std::string> names{{"text","Texto"},{"semantic","Semântica"},{"linguistic","Linguística"},{"structure","Estrutura"},{"bindings","Vínculos"},{"composition","Composição"},{"tables","Tabelas"},{"formulas","Fórmulas"},{"math","Matemática"}};
+  impl_->tools_toggle->set_label("Ferramentas · "+names.at(id));
+  show_tools(false);
 }
 void ObjectDocumentEditor::set_visible_text(
     std::optional<std::map<std::string, std::string>> visible) {
@@ -2709,8 +2997,36 @@ void ObjectDocumentEditor::set_visible_text(
     impl_->render();
 }
 void ObjectDocumentEditor::show_tools(bool open) {
+  if(open && (impl_->draft || impl_->busy || impl_->choosing_image || impl_->pending_actions)) {
+    impl_->status.set_text("Conclua ou cancele a edição em andamento antes de abrir as ferramentas.");return;
+  }
   impl_->side_revealer.set_reveal_child(open);
+  if(!open)impl_->tool_follow.disconnect();
+  if(tools_changed)tools_changed(open);
 }
+void ObjectDocumentEditor::toggle_tools() {show_tools(!impl_->side_revealer.get_reveal_child());}
+void ObjectDocumentEditor::reveal_tool(Gtk::Widget &widget) {
+  impl_->tool_follow.disconnect();
+  auto *impl=impl_.get();
+  const auto life=impl_->life;
+  impl_->tool_follow=Glib::signal_timeout().connect([impl,life,&widget,tries=0]() mutable {
+    if(!life->alive || !impl->side_revealer.get_reveal_child())return false;
+    // Wait for allocation of the reused inspector; do not adjust from inside
+    // the widget's layout or focus notification.
+    if(++tries<2)return true;
+    graphene_rect_t bounds{};
+    if(!gtk_widget_compute_bounds(widget.gobj(),GTK_WIDGET(impl->sidebar.gobj()),&bounds))return false;
+    const auto a=impl->side_scroll.get_vadjustment();
+    a->set_value(std::clamp(static_cast<double>(bounds.origin.y)-6.,a->get_lower(),std::max(a->get_lower(),a->get_upper()-a->get_page_size())));
+    return false;
+  },30);
+}
+void ObjectDocumentEditor::set_specialty_panel(Gtk::Widget *panel) {
+  if(impl_->specialty_panel)impl_->specialty_host.remove(*impl_->specialty_panel);
+  impl_->specialty_panel=panel;
+  if(panel)impl_->specialty_host.append(*panel);
+}
+void ObjectDocumentEditor::move_reading(int direction) {impl_->move_step(direction);}
 bool ObjectDocumentEditor::can_leave() const {
   for (const auto &[id, view] : impl_->paragraph_views)
     if (view->pending_input())

@@ -1,6 +1,7 @@
 #pragma once
 #include "inde/application/project_service.hpp"
 #include <functional>
+#include "inde/ui/context_menu.hpp"
 #include <gtkmm.h>
 #include <map>
 #include <memory>
@@ -25,6 +26,12 @@ public:
   bool can_leave() const;
   bool request_leave(const std::string &action, std::function<void()> resume);
   void show_tools(bool);
+  void toggle_tools();
+  void reveal_tool(Gtk::Widget &);
+  void set_specialty_panel(Gtk::Widget *);
+  void move_reading(int direction);
+  std::function<std::vector<ContextMenuAction>()> paragraph_actions;
+  std::function<void(bool)> tools_changed;
   void set_visible_text(std::optional<std::map<std::string, std::string>>);
   std::function<void(const std::string &)> edit_paragraph;
   std::function<void(bool)> editing_changed;

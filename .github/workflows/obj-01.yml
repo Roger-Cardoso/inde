@@ -5,6 +5,7 @@ on:
     branches: [feature/inde-obj-01-foundation]
     paths:
       - cpp/writing_object_integration.cpp
+      - cpp/writing_specialty_restore.cpp
       - cpp/object_*
       - cpp/vendor/**
       - cpp/CMakeLists.txt
@@ -41,6 +42,7 @@ on:
       - scripts/demos/Abrir-demo-obj01-estrutura-tabelas.sh
       - scripts/demos/Abrir-demo-objetos-nativos.sh
       - scripts/demos/Abrir-demo-folha-comum.sh
+      - scripts/demos/Abrir-demo-especialidades.sh
       - tests/audit_obj01_sources.py
       - tests/test_obj01_source_audit.py
       - fontes/*.tar.gz
@@ -52,6 +54,7 @@ on:
   pull_request:
     paths:
       - cpp/writing_object_integration.cpp
+      - cpp/writing_specialty_restore.cpp
       - cpp/object_*
       - cpp/vendor/**
       - cpp/CMakeLists.txt
@@ -88,6 +91,7 @@ on:
       - scripts/demos/Abrir-demo-obj01-estrutura-tabelas.sh
       - scripts/demos/Abrir-demo-objetos-nativos.sh
       - scripts/demos/Abrir-demo-folha-comum.sh
+      - scripts/demos/Abrir-demo-especialidades.sh
       - tests/audit_obj01_sources.py
       - tests/test_obj01_source_audit.py
       - fontes/*.tar.gz

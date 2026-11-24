@@ -86,6 +86,13 @@ void WritingWorkspace::show_object_specialization(const std::string &id) {
   if (!object_editor_) {
     object_editor_ = std::make_unique<ObjectDocumentEditor>(
         service_, *owner_window(), current_document_->id);
+    mount_specialty_tools(true);
+    object_editor_->set_specialty_panel(&specialty_tools_);
+    object_editor_->paragraph_actions = [this] { return editor_actions_; };
+    object_editor_->tools_changed = [this](bool open) {
+      tools_visible_ = open;
+      if(open) refresh_text_tools();
+    };
     object_editor_->save_document = [this] { flush_changes(); };
     object_editor_->text_composing = [this] { return composing_input(); };
     object_editor_->paragraph_view = [this](const std::string &paragraph) {
@@ -172,6 +179,8 @@ void WritingWorkspace::reset_document_objects() {
   if (!object_editor_)
     return;
   document_surfaces_.set_visible_child("text");
+  object_editor_->set_specialty_panel(nullptr);
+  mount_specialty_tools(false);
   document_surfaces_.remove(*object_editor_);
   object_editor_.reset();
 }

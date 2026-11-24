@@ -1,4 +1,5 @@
 #include "inde/ui/writing_workspace.hpp"
+#include "object_native_ui.hpp"
 #include "inde/ui/keyboard_commands.hpp"
 #include "inde/ui/overlay_dialog.hpp"
 
@@ -18,7 +19,9 @@ void WritingWorkspace::install_keyboard(KeyboardCommands &keys) {
   composition_page_.install_keyboard(keys);
   std::function<bool(Gtk::Widget *)> writing = [this](Gtk::Widget *focus) { return get_mapped() && focus_inside(focus, *this); };
   std::function<bool(Gtk::Widget *)> editor = [this](Gtk::Widget *focus) {
-    return get_mapped() && (focus_inside(focus,editor_) || (!text_input_focus(focus) && focus_inside(focus,editor_toolbar_)));
+    bool shared_text=false;
+    for(auto *w=focus;w;w=w->get_parent())if(w->get_name().raw().starts_with("writing-paragraph-"))shared_text=true;
+    return get_mapped() && (shared_text || focus_inside(focus,editor_) || (!text_input_focus(focus) && focus_inside(focus,editor_toolbar_)));
   };
   auto document = [this] { return current_document_ && page_stack_.get_visible_child_name() == "editor" ? std::string{} : "Abra um documento para usar este comando."; };
   auto selection = [this, document] {

@@ -1,4 +1,5 @@
 #include "inde/ui/writing_workspace.hpp"
+#include "object_native_ui.hpp"
 
 #include "inde/ui/accessibility.hpp"
 #include "inde/ui/context_menu.hpp"
@@ -22,6 +23,7 @@ namespace {
 } // namespace
 
 void WritingWorkspace::toggle_tools() {
+  if(object_editor_ && document_surfaces_.get_visible_child_name()=="objects") {object_editor_->toggle_tools();return;}
   tools_visible_ = !tools_visible_;
   set_overlay_revealer_open(tools_revealer_, tools_visible_);
   int minimum{},natural{},baseline{},natural_baseline{};

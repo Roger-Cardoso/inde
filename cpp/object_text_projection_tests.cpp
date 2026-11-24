@@ -92,6 +92,11 @@ int main() try {
       return true;
     };
     selected->select_range(selected->end(), selected->begin());
+    view.prepare_context(0, 0);
+    need(selected->get_iter_at_mark(selected->get_insert()).get_offset() == 7 &&
+             selected->get_iter_at_mark(selected->get_selection_bound()).get_offset() == 0,
+         "Context menu truncated the cross-paragraph selection");
+    need(selected->get_text() == "abc\ndef", "Context menu changed the source text");
     view.refresh();
     view.get_buffer()->erase(view.get_buffer()->begin(),
                              view.get_buffer()->end());

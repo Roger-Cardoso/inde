@@ -13,6 +13,7 @@ public:
   void refresh();
   bool contains(int offset) const;
   void focus_offset(int offset);
+  void prepare_context(double x, double y);
   bool pending_input() const { return cross_edit_ || preedit_active_; }
   std::function<bool(guint, Gdk::ModifierType)> shortcut;
   std::function<void(const char *)> preedit;

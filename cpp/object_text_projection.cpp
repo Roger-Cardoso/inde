@@ -305,6 +305,22 @@ void ObjectTextProjection::finish_cross_edit() {
                           .raw());
   refresh();
 }
+void ObjectTextProjection::prepare_context(double x, double y) {
+  if (pending_input()) return;
+  int bx{}, by{};
+  window_to_buffer_coords(Gtk::TextWindowType::WIDGET, static_cast<int>(x), static_cast<int>(y), bx, by);
+  Gtk::TextIter at;
+  get_iter_at_location(at, bx, by);
+  const int offset = start() + at.get_offset();
+  Gtk::TextIter a, b;
+  if (!source_->get_selection_bounds(a, b) || offset < a.get_offset() || offset > b.get_offset())
+    source_->place_cursor(source_->get_iter_at_offset(offset));
+  refresh();
+  // Focusing a paragraph must not truncate a selection spanning paragraphs.
+  reflecting_ = true;
+  grab_focus();
+  reflecting_ = false;
+}
 void ObjectTextProjection::focus_offset(int offset) {
   if (offset < 0)
     offset = source_->get_iter_at_mark(source_->get_insert()).get_offset();
