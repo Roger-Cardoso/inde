@@ -1,0 +1,9 @@
+{
+  "commit": "bc636c18aa288972b8badfde38973ff6abc8c045",
+  "tests": 98,
+  "seconds": 101.557,
+  "result": "pass",
+  "real_input": true,
+  "old_native_four_tests_included": true,
+  "human_acceptance": false
+}

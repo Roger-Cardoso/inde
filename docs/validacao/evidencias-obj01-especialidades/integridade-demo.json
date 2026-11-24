@@ -1,0 +1,19 @@
+{
+  "databases": [
+    {
+      "path": "data/project.sqlite3",
+      "integrity": "ok",
+      "foreign_key_errors": 0
+    },
+    {
+      "path": "documents/composed/6e4a9b57-2af5-4236-8d5f-1f860d0d2ece/obj01-piloto.sqlite3",
+      "integrity": "ok",
+      "foreign_key_errors": 0
+    },
+    {
+      "path": "recovery/editor-v1/e13ccef3-187c-4dd7-bbd2-02892e12aa9e.sqlite3",
+      "integrity": "ok",
+      "foreign_key_errors": 0
+    }
+  ]
+}

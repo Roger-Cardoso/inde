@@ -1,0 +1,62 @@
+CI: https://github.com/Roger-Cardoso/inde/actions/runs/45408449213
+Job: native-objects (138495402845)
+Commit: bc636c18aa288972b8badfde38973ff6abc8c045
+
+2026-11-24T14:04:21.3502018Z ##[group]Run ctest --test-dir build-nativo -R "^inde_native_math_tests$" --output-on-failure
+2026-11-24T14:04:21.3502769Z ctest --test-dir build-nativo -R "^inde_native_math_tests$" --output-on-failure
+2026-11-24T14:04:21.3539815Z shell: /usr/bin/bash -e {0}
+2026-11-24T14:04:21.3540111Z ##[endgroup]
+2026-11-24T14:04:21.5774208Z Internal ctest changing into directory: /home/runner/work/inde/inde/build-nativo
+2026-11-24T14:04:21.6243042Z Test project /home/runner/work/inde/inde/build-nativo
+2026-11-24T14:04:21.6793804Z     Start 15: inde_native_math_tests
+2026-11-24T14:04:21.6915995Z 1/1 Test #15: inde_native_math_tests ...........   Passed    0.01 sec
+2026-11-24T14:04:21.6929031Z
+2026-11-24T14:04:21.6929784Z 100% tests passed, 0 tests failed out of 1
+2026-11-24T14:04:21.6930006Z
+2026-11-24T14:04:21.6930095Z Total Test time (real) =   0.07 sec
+2026-11-24T14:04:21.7009965Z ##[group]Run xvfb-run -a python3 -m unittest discover -s tests -p test_obj01_native.py -v
+2026-11-24T14:04:21.7010409Z xvfb-run -a python3 -m unittest discover -s tests -p test_obj01_native.py -v
+2026-11-24T14:04:21.7037724Z shell: /usr/bin/bash -e {0}
+2026-11-24T14:04:21.7038047Z env:
+2026-11-24T14:04:21.7038210Z   GSK_RENDERER: cairo
+2026-11-24T14:04:21.7038382Z   LIBGL_ALWAYS_SOFTWARE: 1
+2026-11-24T14:04:21.7038551Z   GTK_A11Y: none
+2026-11-24T14:04:21.7038700Z ##[endgroup]
+2026-11-24T14:04:23.7201581Z test_native_binary_has_no_browser_runtime_dependency (test_obj01_native.NativeObjects.test_native_binary_has_no_browser_runtime_dependency) ... ok
+2026-11-24T14:04:23.8889746Z test_project_binding_copy_recovery_and_source_conflict (test_obj01_native.NativeObjects.test_project_binding_copy_recovery_and_source_conflict) ... ok
+2026-11-24T14:04:45.5776200Z test_real_gtk_entry_math_objects_save_reopen_and_draft_guard (test_obj01_native.NativeObjects.test_real_gtk_entry_math_objects_save_reopen_and_draft_guard) ... ok
+2026-11-24T14:04:46.0486014Z test_shared_text_projection_guards_unicode_styles_and_visibility (test_obj01_native.NativeObjects.test_shared_text_projection_guards_unicode_styles_and_visibility) ... ok
+2026-11-24T14:04:46.0610571Z
+2026-11-24T14:04:46.0610866Z ----------------------------------------------------------------------
+2026-11-24T14:04:46.0611296Z Ran 4 tests in 22.338s
+2026-11-24T14:04:46.0611444Z
+2026-11-24T14:04:46.0611533Z OK
+2026-11-24T14:04:46.0642937Z ##[group]Run python3 -m unittest discover -s tests -p test_sessao_nativa.py -v
+2026-11-24T14:04:46.0643533Z python3 -m unittest discover -s tests -p test_sessao_nativa.py -v
+2026-11-24T14:04:46.0676573Z shell: /usr/bin/bash -e {0}
+2026-11-24T14:04:46.0676829Z ##[endgroup]
+2026-11-24T14:04:46.8334998Z test_bundled_reader_and_public_package_exclude_private_source (test_sessao_nativa.NativeSessionTests.test_bundled_reader_and_public_package_exclude_private_source) ... ok
+2026-11-24T14:04:46.8335897Z test_public_numbers_come_from_persistent_reservations (test_sessao_nativa.NativeSessionTests.test_public_numbers_come_from_persistent_reservations) ... ok
+2026-11-24T14:04:46.8340560Z test_removed_or_incompatible_edition_is_refused (test_sessao_nativa.NativeSessionTests.test_removed_or_incompatible_edition_is_refused) ... ok
+2026-11-24T14:04:46.8341336Z test_service_crud_persistence_conflicts_restore_and_copy (test_sessao_nativa.NativeSessionTests.test_service_crud_persistence_conflicts_restore_and_copy) ... ok
+2026-11-24T14:04:46.8352874Z
+2026-11-24T14:04:46.8353030Z ----------------------------------------------------------------------
+2026-11-24T14:04:46.8353361Z Ran 4 tests in 0.674s
+2026-11-24T14:04:46.8353502Z
+2026-11-24T14:04:46.8353562Z OK
+2026-11-24T14:04:46.8495302Z ##[group]Run python3 tests/run_obj01_real_input.py
+2026-11-24T14:04:46.8495586Z python3 tests/run_obj01_real_input.py
+2026-11-24T14:04:46.8522187Z shell: /usr/bin/bash -e {0}
+2026-11-24T14:04:46.8522393Z ##[endgroup]
+2026-11-24T14:04:47.2940832Z dbus-daemon[7514]: [session uid=1001 pid=7514] Activating service name='org.xfce.Xfconf' requested by ':1.1' (uid=1001 pid=7516 comm="xfwm4 --compositor=off" label="unconfined")
+2026-11-24T14:04:47.2974047Z dbus-daemon[7514]: [session uid=1001 pid=7514] Successfully activated service 'org.xfce.Xfconf'
+2026-11-24T14:04:48.8052370Z test_blank_document_specialties_validation_recovery_and_quit (test_obj01_real_input.RealWritingInput.test_blank_document_specialties_validation_recovery_and_quit) ... dbus-daemon[7514]: [session uid=1001 pid=7514] Activating service name='ca.desrt.dconf' requested by ':1.4' (uid=1001 pid=7531 comm="/home/runner/work/inde/inde/build-nativo/inde-espe" label="unconfined")
+2026-11-24T14:04:48.8078045Z dbus-daemon[7514]: [session uid=1001 pid=7514] Successfully activated service 'ca.desrt.dconf'
+2026-11-24T14:05:31.2307272Z ok
+2026-11-24T14:05:31.2307434Z
+2026-11-24T14:05:31.2307583Z ----------------------------------------------------------------------
+2026-11-24T14:05:31.2307972Z Ran 1 test in 43.430s
+2026-11-24T14:05:31.2308128Z
+2026-11-24T14:05:31.2310019Z OK
+2026-11-24T14:05:31.2549826Z
+2026-11-24T14:05:31.2550539Z (xfconfd:7522): xfconfd-WARNING **: 14:05:31.254: Name org.xfce.Xfconf lost on the message dbus, exiting.

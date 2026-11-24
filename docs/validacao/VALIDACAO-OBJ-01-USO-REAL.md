@@ -2,6 +2,8 @@
 
 Execução: 23–24/11/2026. Branch `feature/inde-obj-01-foundation`. Base: `b6e122d`.
 
+> Complemento de 24/11/2026: os menus e as ferramentas das especialidades exigiram um resgate adicional. Consulte [Especialidades restauradas](VALIDACAO-OBJ-01-ESPECIALIDADES-RESTAURADAS.md), com cobertura ampliada de ações, painéis e reordenação. Os resultados deste relatório correspondem ao corte anterior.
+
 ## Motivo e alcance
 
 O usuário relatou que editar, trocar de especialidade e encerrar o programa estavam bloqueados. A entrega anterior passou por testes estruturais e CI, mas esses resultados foram apresentados com confiança excessiva quanto ao uso cotidiano. O teste gráfico anterior acionava sinais de widgets diretamente: ele não comprovava que um botão estava alcançável pelo mouse, que o foco estava correto ou que o encerramento normal concluía sem erro.
