@@ -13,6 +13,9 @@ void retire_file_dialog(OverlayDialog *d) {
 }
 } // namespace
 void MainWindow::flush_project_file() {
+  if (file_task_)
+    throw std::runtime_error(
+        "Aguarde a confirmação em andamento antes de iniciar outra operação.");
   if (!project_file_ || file_barrier_ready_)
     return;
   comic_workspace_.save_changes();
@@ -178,8 +181,10 @@ void MainWindow::open_project_file_at(const fs::path &path, Choice choice) {
   }
 }
 bool MainWindow::finish_project_file_close() {
-  if (!project_file_ || preserve_file_work_ || file_barrier_ready_) return true;
-  start_file_confirmation({}, true);return false;
+  if (!project_file_ || preserve_file_work_ || file_barrier_ready_)
+    return true;
+  start_file_confirmation({}, true);
+  return false;
 }
 void MainWindow::copy_project_file() {
   if (!service_.current() || modal_host_.has_dialog() ||
@@ -267,7 +272,7 @@ void MainWindow::copy_project_file() {
   mode->present();
 }
 void MainWindow::show_file_history() {
-  if (!project_file_ || modal_host_.has_dialog())
+  if (!project_file_ || file_task_ || modal_host_.has_dialog())
     return;
   try {
     flush_project_file();

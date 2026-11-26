@@ -12,7 +12,7 @@ O corte é **D1**: a confirmação de abertura/troca, criação, cópias e consu
 
 ## Propriedade e ciclo
 
-`ConfirmationTask` recebe uma sessão já preparada. O trabalhador acessa somente `FileSession`, armazenamento, transporte e controle de operação. Nenhum widget ou `ProjectService` atravessa essa fronteira. O proprietário deve manter a sessão viva e sem outras chamadas até a conclusão. A interface permite uma única tarefa e bloqueia comandos de projeto enquanto ela existe.
+`ConfirmationTask` recebe uma sessão já preparada. O trabalhador acessa somente `FileSession`, armazenamento, transporte e controle de operação. Nenhum widget ou `ProjectService` atravessa essa fronteira. O proprietário deve manter a sessão viva e sem outras chamadas até a conclusão. A interface permite uma única tarefa e bloqueia comandos de projeto enquanto ela existe. A barreira síncrona também recusa chamadas durante esse empréstimo, e o histórico verifica a tarefa explicitamente, além da camada modal.
 
 A conclusão publica o resultado por atômico com release/acquire. A interface recolhe o trabalhador antes de reutilizar a sessão, ler a sequência ou executar a continuação de fechamento. A destruição pede cancelamento quando permitido e aguarda o trabalhador antes de liberar a sessão; nenhum trabalhador fica destacado usando um proprietário destruído.
 

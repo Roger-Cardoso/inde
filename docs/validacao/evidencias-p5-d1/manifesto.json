@@ -9,7 +9,7 @@
     "cpp/CMakeLists.txt": "700631350d8165541f945eea5f577614ed437adb1c6b0a0f2d2bdc8f8904eb01",
     "cpp/integrar_project_file.py": "2c7670f19908827ffca64c17fee2aa61726d2dfc0df7668f322d712d504ff7ae",
     "cpp/main_window_comic.cpp": "b286b26a30421d2b853e6d5ba391159f623fb6f1c19ca455642b90db03f13335",
-    "cpp/main_window_project_file.cpp": "fd752d79173cbe5cf7744ab46d9a0685841a56082a0762472fa511d2f5de8965",
+    "cpp/main_window_project_file.cpp": "8e455afff14dcf247cf1dfec7f294c779c81e6e128d69965c0dfc319728aa829",
     "cpp/main_window_project_file_task.cpp": "9ad4eee731435daba3d6b130dc7bfde546d54eb317b783a6ca8c5d8627852245",
     "cpp/object_usage_probe.cpp": "400ea76089c76d15858804fb78d2ab0cc24a01918d31f9209c562e7f8fc265c1",
     "cpp/overlay/include/inde/ui/main_window.hpp": "dc084d65d99eb033ee52d1121076e8e050aea31715a269008c72341d4a9f8eb3",
@@ -33,7 +33,7 @@
     "cpp/project_file_transport.hpp": "a91c5294551d3e07c4bef797c748a88ba503887310f4efe60bcf0c8d2972fd41",
     "scripts/demos/Abrir-demo-confirmacao-assincrona.sh": "2f606eeace50ade6ca9989d489d89195c90d88c4029d80b6533758fb0896ae52",
     "tests/project_file/CMakeLists.txt": "be714916f3e47c1713a7489439486fd24174f406821257009062c02596b48d78",
-    "tests/project_file/test_native_confirmation.py": "b548d2e17473002ec4cf7aa99d2b06b0bbbefdebf1b5c2656969cfb5cb203fd0",
+    "tests/project_file/test_native_confirmation.py": "ae6fb6b45c1201b7bb7372831131747d3d61f5570428af72ff9b747883c23d56",
     "tests/project_file/test_native_session.py": "1999073d98a574f0c1abb37b3fd7a60f4bcb4dc12ef657f6cd76813263237b6f",
     "tests/project_file/verify_confirmation_evidence.py": "a306b3e7193a201b3169f6c1a298fc0d4292d610c562c2dae28108084b176804"
   },

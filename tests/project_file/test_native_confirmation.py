@@ -82,7 +82,7 @@ try:
     seq,initial=saved();start('cancel');document();append(' Cancelar e retomar.')
     expected=observed()['content'];gate('reading');heartbeat()
     assert not any(c.get('sensitive') for c in observed()['controls'] if c['name'].startswith('writing-paragraph-'))
-    input_('type','--clearmodifiers','IGNORAR');input_('key','ctrl+s')
+    input_('type','--clearmodifiers','IGNORAR');input_('key','ctrl+s','ctrl+alt+h','ctrl+alt+s')
     click(label='Cancelar salvamento')
     wait(lambda s:not s.get('file_task',{}).get('active') and 'cancelado' in s['file_task']['message'],'Cancelamento concluído')
     hold.unlink(missing_ok=True);assert saved()==(seq,initial);assert observed()['content']==expected
