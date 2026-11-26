@@ -37,10 +37,14 @@
     "docs/validacao/evidencias-p5-a/verificacao.json": "f346c67bd45a842a7e0f77af3fa48da397e45e6c9957bb392492e732064012bb",
     "docs/validacao/evidencias-p5-a/p5-native-ctest.txt": "c127ca3cfdf05923236493a8bb6bf4d3a2e080f9180709fd7906a9c322f11b9e",
     "docs/validacao/evidencias-p5-a/refusal-memory-before.txt": "db30b230578d530f398fc6669bb3a195c1ac1ff112cdc3c23a6f59f2e9898738",
-    "docs/validacao/evidencias-p5-a/refusal-memory-after.txt": "845759a7c6e8eca5dc2411b314664fc842f02957600991958739ce7506ef2c5c"
+    "docs/validacao/evidencias-p5-a/refusal-memory-after.txt": "845759a7c6e8eca5dc2411b314664fc842f02957600991958739ce7506ef2c5c",
+    "docs/validacao/evidencias-p5-a/ci.json": "28ba1650cab904611a6ba73b29f013365795f6301a45a077ff233a9ddb00207c",
+    "docs/validacao/evidencias-p5-a/ci-resultados.txt": "df72b277fddbadbb5b86810c10bb5303dcf857bb674e69b36e3a8afc28642289"
   },
   "demo_file": {
     "path": "/home/roger/Documents/Projects/GitHub/INDE/obj01-audit/dados/p5-demo-20261126-162305-14899/Projeto-portatil.inde",
     "sha256": "86bc4fddf73067b2cebbb605a44ec12b179a66d0f9fe962b954ad17789152dab"
-  }
+  },
+  "source_code_commit": "a14e2601aa153a689cdade0849119ba0e2a6ccdf",
+  "ci_run": 45883358289
 }

@@ -62,7 +62,7 @@ cmake --build build-p5 --parallel 2
 ctest --test-dir build-p5 --output-on-failure
 ```
 
-Para a camada nativa, compilar `inde_project_file_native_tests` no build `cpp`, executar o alvo e usar o roteiro do demonstrador. O [workflow](../../.github/workflows/inde-p5.yml) compila GCC/Clang com e sem instrumentação, o editor e os três alvos P5 no build nativo, executa esses três alvos e a demonstração GTK. A regressão completa de 68 CTest e os 103 testes de interface/integração estão registrados no passe local. A conferência remota será registrada após a execução identificada; a existência do workflow não é, sozinha, aprovação de CI.
+Para a camada nativa, compilar `inde_project_file_native_tests` no build `cpp`, executar o alvo e usar o roteiro do demonstrador. O [workflow](../../.github/workflows/inde-p5.yml) compila GCC/Clang com e sem instrumentação, o editor e os três alvos P5 no build nativo, executa esses três alvos e a demonstração GTK. A regressão completa de 68 CTest e os 103 testes de interface/integração estão registrados no passe local. A execução remota final [45883358289](https://github.com/Roger-Cardoso/inde/actions/runs/45883358289), sobre o código `a14e2601aa153a689cdade0849119ba0e2a6ccdf`, terminou com **5/5 trabalhos aprovados**: GCC/Clang com e sem ASan/UBSan, mais núcleo nativo P5 e demonstração GTK. [Metadados dos trabalhos](evidencias-p5-a/ci.json) e [trechos dos resultados](evidencias-p5-a/ci-resultados.txt). O commit de documentação posterior conserva os mesmos hashes dos arquivos de implementação e testes.
 
 ## Lacunas e fronteiras
 
