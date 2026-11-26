@@ -1,0 +1,39 @@
+thread-safety — success
+2026-11-26T22:22:21.2938166Z 100% tests passed, 0 tests failed out of 1
+2026-11-26T22:22:21.2938475Z Total Test time (real) =   0.45 sec
+
+native-project — success
+2026-11-26T22:33:05.4850565Z 1/7 Test #19: inde_project_file_tests .................   Passed    0.31 sec
+2026-11-26T22:33:06.1147452Z 2/7 Test #20: inde_project_file_native_tests ..........   Passed    0.62 sec
+2026-11-26T22:33:08.0298297Z 3/7 Test #21: inde_project_file_transport_tests .......   Passed    1.91 sec
+2026-11-26T22:33:08.1951648Z 4/7 Test #22: inde_project_file_session_tests .........   Passed    0.16 sec
+2026-11-26T22:33:08.3739754Z 5/7 Test #23: inde_project_file_block_session_tests ...   Passed    0.18 sec
+2026-11-26T22:33:09.0610385Z 6/7 Test #24: inde_project_file_block_native_tests ....   Passed    0.69 sec
+2026-11-26T22:33:09.2364505Z 7/7 Test #25: inde_project_file_task_tests ............   Passed    0.18 sec
+2026-11-26T22:33:09.2367021Z 100% tests passed, 0 tests failed out of 7
+2026-11-26T22:33:09.2367727Z Total Test time (real) =   4.12 sec
+2026-11-26T22:33:09.9582818Z P5 native schema37 roundtrip: full Document, PNG, table, equation, divergent row, planning/text link, edition, restoration and original preservation OK
+2026-11-26T22:33:19.2022578Z P5 GTK demo: actual launcher, keyboard Save/Quit, capture and verification OK
+2026-11-26T22:33:19.9434643Z P5 native schema37 roundtrip: full Document, PNG, table, equation, divergent row, planning/text link, edition, restoration and original preservation OK
+2026-11-26T22:33:51.9946408Z P5-B GTK: real Save, history restore, recents, crash recovery and failure-safe normal exit OK
+2026-11-26T22:33:52.8306890Z P5 native schema37 roundtrip: full Document, PNG, table, equation, divergent row, planning/text link, edition, restoration and original preservation OK
+2026-11-26T22:34:24.8831579Z P5-B GTK: real Save, history restore, recents, crash recovery and failure-safe normal exit OK
+2026-11-26T22:34:25.6828617Z P5 native schema37 roundtrip: full Document, PNG, table, equation, divergent row, planning/text link, edition, restoration and original preservation OK
+2026-11-26T22:34:40.0042698Z P5-D GTK: responsive loop, cancel boundary, rollback, queued exit, recovery and project close OK
+2026-11-26T22:34:42.6503974Z P5-C history growth and exact restoration OK
+
+versioned-store (g++, OFF) — success
+2026-11-26T22:21:50.2675942Z 100% tests passed, 0 tests failed out of 5
+2026-11-26T22:21:50.2676264Z Total Test time (real) =   3.19 sec
+
+versioned-store (clang++, ON) — success
+2026-11-26T22:22:20.2271723Z 100% tests passed, 0 tests failed out of 5
+2026-11-26T22:22:20.2272026Z Total Test time (real) =   6.36 sec
+
+versioned-store (clang++, OFF) — success
+2026-11-26T22:22:26.1596509Z 100% tests passed, 0 tests failed out of 5
+2026-11-26T22:22:26.1596780Z Total Test time (real) =   2.08 sec
+
+versioned-store (g++, ON) — success
+2026-11-26T22:22:25.8486671Z 100% tests passed, 0 tests failed out of 5
+2026-11-26T22:22:25.8486954Z Total Test time (real) =   7.31 sec

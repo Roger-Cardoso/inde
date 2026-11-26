@@ -3,7 +3,7 @@
   "date": "2026-11-26",
   "base": "21ae72c9718659d0bddd5472f7203209d7396f40",
   "branch": "feature/inde-p5-single-file",
-  "note": "Fontes D1. Aceite C informado pelo usuario; nao estendido a D1. CI sera anexada no fechamento.",
+  "note": "Fontes D1 da revisao final validada. Aceite C informado pelo usuario, nao estendido a D1. Resultados locais, CI e limites identificados separadamente.",
   "sources": {
     ".github/workflows/inde-p5.yml": "54e5ec8826094235ec735482d58f98afa11a1865e426d77fef10536f2443ec82",
     "cpp/CMakeLists.txt": "700631350d8165541f945eea5f577614ed437adb1c6b0a0f2d2bdc8f8904eb01",
@@ -39,6 +39,8 @@
   },
   "evidence": {
     "docs/validacao/evidencias-p5-d1/arquivos-fontes.json": "7100204250fd02e59bc176f9cc2b168682bd695f8f85d0ef739ee1b852077002",
+    "docs/validacao/evidencias-p5-d1/ci-resultados.txt": "294f2e54c92e6eec4bf08f0d1a5b97443a0a93d80cbaebf93b151efd9b3289a5",
+    "docs/validacao/evidencias-p5-d1/ci.json": "c3f0924be876278bc004c2df1c00126a78c5cbc65af5b9c6e61adda33fc0f55b",
     "docs/validacao/evidencias-p5-d1/clang-asan-ctest.txt": "62c72f4352775e36c94853448f474678a3b630625e6752e1bc1418c376018612",
     "docs/validacao/evidencias-p5-d1/clang-asan-detalhado.txt": "701ea3b1ea7af6ea74702d065e2cf18d36e285d1b8dfb2ddb80384a83f0fe41c",
     "docs/validacao/evidencias-p5-d1/clang-tsan-ctest.txt": "966c1de79492297b21e025b37994f60c708f70964efe94eac1704da7c13875cd",
@@ -53,5 +55,7 @@
     "docs/validacao/evidencias-p5-d1/gtk-launcher.json": "4599e7dd4a923dcaae8bb77b6b1211351fa91cec674e070c806654d96f6e2709",
     "docs/validacao/evidencias-p5-d1/gtk-launcher.txt": "e35767c898393a76d30f180cfe0151b016f0798341ed45a9efd8ee58fce14b5d",
     "docs/validacao/evidencias-p5-d1/native-ctest.txt": "00dad85ae4c88e904c45a8bdb06a7ad759bc0a619de07c0598f8553e4ab1ec43"
-  }
+  },
+  "validated_commit": "416aeb33e6098396e01b4e9fc5d7621ef75dcdd1",
+  "ci_run": 45904238149
 }
