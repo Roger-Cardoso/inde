@@ -49,7 +49,7 @@ void ContextualPlanningService::remove_visual_selection(
     if (!unique.insert(id).second)
       throw std::runtime_error("Seleção repetida; nada foi retirado.");
     const auto v = std::find_if(layout.begin(), layout.end(), [&](const auto &item) {
-      return item.id == id || (item.kind == "block" && item.participation_id == id);
+      return item.id == id;
     });
     if (v == layout.end())
       throw std::runtime_error("Elemento ausente nesta composição; atualize a seleção.");

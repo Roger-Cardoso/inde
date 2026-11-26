@@ -68,6 +68,19 @@ int main() {
     c.detach(snap(),b);
     require(snap().participations.size()==1,"Detach alias failed");
     undo();
+    // Distinct ID namespaces can legally overlap. A visual item named like a
+    // different participation must never make the list detach the wrong use.
+    items=application::contextual_visual_layout(snap());
+    for(auto &v:items) if(v.participation_id==a) v.id=b;
+    c.save_visual(snap(),items);
+    c.detach(snap(),b);
+    require(snap().participations.size()==1 && snap().participations.front().id==a,
+            "Detach confused participation and visual IDs");
+    undo();
+    c.remove_visual_selection(snap(),{b});
+    require(snap().participations.size()==1 && snap().participations.front().id==b,
+            "Canvas removal confused visual and participation IDs");
+    undo();
     const auto bridge=c.add_bridge(c.snapshot(other),reuse,snap(),a,"context","");
     blocked=snap();
     refuses([&]{c.remove_plan(blocked);});
@@ -81,7 +94,6 @@ int main() {
     const auto option=c.create_option(snap(),slot,"Opção");
     c.choose_option(snap(),slot,option); c.assign_option(snap(),b,option);
     c.declare(snap(),b,"fact","Local","Sim");
-    c.add_dependency(snap(),a,b,"context","Ligação local");
     auto doc=s.writing().create_document("Documento preservado");
     doc.content="Texto vinculado preservado.";
     doc.paragraphs=project::identify_paragraphs(doc.content);
@@ -93,6 +105,7 @@ int main() {
     c.associate_range(snap(),a,doc,0,5,"Trecho de escrita");
     blocked=snap(); refuses([&]{c.detach(blocked,a);});
     require(snap().revision==blocked.revision,"Anchor guard mutated plan");
+    c.add_dependency(snap(),a,b,"context","Ligação local");
     const auto document_bytes=persistence::encode_document_snapshot(*s.writing().document(doc.id));
     const auto complete=snap(), preserved=c.snapshot(other);
     c.remove_plan(complete);
