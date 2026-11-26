@@ -1,0 +1,1 @@
+history_invalid: Restauração diverge do estado indicado.

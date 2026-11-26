@@ -16,7 +16,9 @@ BASE = Path(__file__).resolve().parents[2]
 root = Path(sys.argv[1]).absolute()
 root.mkdir(parents=True, exist_ok=False)
 env = dict(os.environ, GSK_RENDERER='cairo', GTK_A11Y='none',
-           GTK_USE_PORTAL='0', G_DEBUG='fatal-criticals')
+           GTK_USE_PORTAL='0', G_DEBUG='fatal-criticals', GDK_BACKEND='x11',
+           XDG_CONFIG_HOME=str(root / 'config'), XDG_DATA_HOME=str(root / 'data'),
+           XDG_CACHE_HOME=str(root / 'cache'))
 if not env.get('DISPLAY'):
     raise SystemExit('Use um display X11 privado, por exemplo xvfb-run com dbus-run-session.')
 manager = process = None

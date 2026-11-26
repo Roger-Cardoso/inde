@@ -10,1780 +10,1780 @@
 [0/2] Re-checking globbed directories...
 ninja: no work to do.
 P5 native schema37 roundtrip: full Document, PNG, table, equation, divergent row, planning/text link, edition, restoration and original preservation OK
-Synthetic demonstration: "/home/roger/Documents/Projects/GitHub/INDE/obj01-audit/dados/p5-demo-20261126-160033-7506"
+Synthetic demonstration: "/home/roger/Documents/Projects/GitHub/INDE/obj01-audit/dados/p5-demo-20261126-162305-14899"
 DEMONSTRAÇÃO P5-A — projeto fictício; nenhum projeto autoral é utilizado.
-Arquivo único: /home/roger/Documents/Projects/GitHub/INDE/obj01-audit/dados/p5-demo-20261126-160033-7506/Projeto-portatil.inde
+Arquivo único: /home/roger/Documents/Projects/GitHub/INDE/obj01-audit/dados/p5-demo-20261126-162305-14899/Projeto-portatil.inde
 O editor abre uma pasta materializada. Salvar grava essa pasta.
 Depois de encerrar normalmente o editor, este demonstrador registra a pasta no arquivo único.
 O histórico já contém estado inicial, alteração e restauração com a alteração posterior preservada.
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.182: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.315: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.182: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.315: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.182: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.315: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.182: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.315: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.182: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.315: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.182: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.315: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.182: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.315: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.182: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.315: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.182: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.315: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.182: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.315: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.182: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.315: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.182: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.315: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.183: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.316: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.183: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.316: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.183: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.316: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.183: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.316: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.183: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.316: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.183: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.316: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.183: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.316: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.183: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.316: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.183: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.316: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.183: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.316: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.183: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.316: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.183: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.316: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.183: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.316: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.183: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.316: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.183: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.316: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.183: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.316: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.183: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.316: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.183: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.316: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.183: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.316: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.183: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.316: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.183: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.316: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.183: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.316: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.183: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.316: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.183: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.316: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.183: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.316: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.183: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.316: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.183: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.316: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.183: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.316: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.183: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.316: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.183: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.316: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.183: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.316: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.183: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.316: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.183: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.316: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.183: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.317: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.183: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.317: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.184: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.317: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.184: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.317: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.184: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.317: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.184: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.317: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.184: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.317: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.184: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.317: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.184: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.317: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.184: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.317: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.184: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.317: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.184: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.317: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.184: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.317: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.184: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.317: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.184: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.317: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.184: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.317: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.184: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.317: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.184: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.317: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.184: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.317: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.184: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.317: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.184: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.317: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.184: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.317: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.184: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.317: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.184: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.317: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.184: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.317: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.184: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.317: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.184: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.317: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.184: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.317: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.184: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.317: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.184: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.317: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.184: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.317: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.184: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.317: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.184: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.317: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.184: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.317: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.184: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.317: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.184: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.317: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.184: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.317: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.184: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.317: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.184: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.317: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.184: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.317: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.184: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.317: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.184: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.317: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.184: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.317: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.184: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.317: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.184: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.317: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.184: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.317: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.184: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.317: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.184: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.317: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.184: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.317: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.184: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.317: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.184: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.317: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.184: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.317: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.184: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.317: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.184: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.317: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.184: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.317: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.184: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.317: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.184: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.317: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.184: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.317: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.184: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.317: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.184: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.317: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.184: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.317: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.184: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.317: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.184: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.317: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.184: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.317: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.184: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.317: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.184: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.317: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.184: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.317: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.184: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.317: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.184: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.317: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.184: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.317: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.184: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.317: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.184: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.317: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.184: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.317: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.184: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.317: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.184: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.317: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.184: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.317: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.184: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.317: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.184: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.317: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.184: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.317: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.184: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.317: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.184: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.317: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.184: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.317: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.184: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.317: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.184: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.317: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.184: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.317: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.184: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.317: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.184: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.317: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.184: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.317: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.184: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.317: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.184: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.317: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.184: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.317: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.184: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.317: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.184: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.317: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.184: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.317: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.184: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.317: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.184: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.317: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.184: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.317: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.184: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.317: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.184: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.317: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.184: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.317: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.184: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.317: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.184: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.317: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.184: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.317: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.184: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.317: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.184: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.317: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.184: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.317: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.184: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.317: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.184: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.317: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.184: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.317: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.184: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.317: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.184: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.317: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.184: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.317: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.184: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.317: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.184: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.317: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.184: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.317: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.184: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.317: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.184: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.317: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.184: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.317: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.184: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.317: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.184: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.317: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.184: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.317: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.184: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.317: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.184: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.317: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.184: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.317: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.184: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.317: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.184: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.317: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.184: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.317: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.184: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.317: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.184: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.317: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.184: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.317: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.184: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.317: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.184: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.317: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.184: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.317: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.184: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.317: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.184: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.317: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.184: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.317: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.184: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.317: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.184: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.317: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.184: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.317: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.184: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.317: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.184: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.317: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.184: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.317: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.184: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.317: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.184: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.317: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.184: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.317: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.184: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.317: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.184: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.317: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.184: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.317: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.184: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.317: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.184: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.317: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.184: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.317: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.184: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.317: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.185: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.317: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.185: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.317: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.185: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.317: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.185: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.317: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.185: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.317: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.185: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.317: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.185: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.317: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.185: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.317: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.185: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.317: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.185: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.318: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.185: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.318: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.185: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.318: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.185: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.318: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.185: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.318: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.185: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.318: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.185: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.318: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.185: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.318: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.185: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.318: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.185: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.318: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.185: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.318: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.185: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.318: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.185: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.318: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.185: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.318: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.185: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.318: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.185: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.318: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.185: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.318: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.185: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.318: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.185: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.318: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.185: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.318: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.185: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.318: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.185: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.318: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.185: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.318: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.185: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.318: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.185: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.318: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.185: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.318: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.185: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.318: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.185: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.318: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.185: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.318: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.185: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.318: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.185: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.318: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.185: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.318: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.185: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.318: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.185: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.318: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.185: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.318: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.185: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.318: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.185: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.318: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.185: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.318: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.185: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.318: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.185: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.318: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.185: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.318: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.185: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.318: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.185: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.318: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.185: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.318: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.185: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.318: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.185: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.318: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.185: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.318: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.185: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.318: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.185: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.318: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.185: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.318: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.185: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.318: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.185: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.318: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.185: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.318: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.185: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.318: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.185: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.318: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.185: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.318: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.185: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.318: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.185: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.318: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.185: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.318: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.185: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.318: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.185: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.318: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.185: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.318: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.185: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.318: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.185: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.318: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.185: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.318: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.185: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.318: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.185: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.318: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.185: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.318: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.185: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.318: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.185: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.318: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.185: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.318: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.185: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.318: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.185: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.318: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.185: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.318: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.185: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.318: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.185: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.318: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.185: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.318: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.185: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.318: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.185: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.318: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.185: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.318: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.185: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.318: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.185: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.318: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.185: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.318: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.185: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.318: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.185: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.318: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.185: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.318: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.185: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.318: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.185: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.318: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.185: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.318: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.185: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.318: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.185: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.318: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.185: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.318: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.185: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.318: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.185: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.318: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.185: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.318: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.185: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.318: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.185: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.318: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.185: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.318: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.185: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.318: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.185: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.318: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.185: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.318: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.185: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.318: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.185: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.318: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.185: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.318: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.185: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.318: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.185: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.318: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.185: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.318: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.185: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.318: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.185: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.318: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.185: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.318: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.185: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.318: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.185: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.318: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.185: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.318: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.185: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.318: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.185: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.318: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.185: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.318: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.185: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.318: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.185: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.318: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.185: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.318: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.185: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.318: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.185: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.318: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.185: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.318: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.185: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.318: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.185: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.318: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.185: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.318: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.185: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.318: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.185: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.318: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.185: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.318: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.185: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.318: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.185: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.318: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.185: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.318: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.185: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.318: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.185: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.318: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.185: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.318: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.185: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.318: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.185: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.318: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.185: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.318: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.185: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.318: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.185: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.318: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.185: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.318: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.185: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.318: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.185: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.318: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.185: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.318: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.185: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.318: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.185: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.318: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.185: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.318: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.185: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.318: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.185: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.318: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.185: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.318: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.185: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.318: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.186: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.318: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.186: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.318: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.186: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.318: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.186: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.318: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.186: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.318: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.186: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.318: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.186: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.319: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.186: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.319: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.186: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.319: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.186: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.319: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.186: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.319: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.186: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.319: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.186: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.319: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.186: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.319: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.186: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.319: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.186: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.319: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.186: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.319: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.186: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.319: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.186: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.319: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.186: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.319: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.186: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.319: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.186: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.319: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.186: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.319: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.186: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.319: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.186: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.319: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.186: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.319: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.186: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.319: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.186: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.319: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.186: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.319: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.186: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.319: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.186: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.319: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.186: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.319: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.186: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.319: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.186: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.319: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.186: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.319: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.186: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.319: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.186: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.319: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.186: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.319: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.186: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.319: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.186: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.319: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.186: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.319: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.186: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.319: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.186: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.319: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.186: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.319: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.186: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.319: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.186: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.319: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.186: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.319: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.186: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.319: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.186: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.319: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.186: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.319: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.186: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.319: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.186: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.319: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.186: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.319: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.186: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.319: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.186: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.319: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.186: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.319: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.186: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.319: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.186: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.319: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.186: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.319: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.186: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.319: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.186: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.319: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.186: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.319: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.186: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.319: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.186: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.319: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.186: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.319: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.186: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.319: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.186: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.319: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.186: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.319: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.186: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.319: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.186: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.319: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.186: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.319: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.186: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.319: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.186: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.319: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.186: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.319: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.186: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.319: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.186: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.319: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.186: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.319: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.186: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.319: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.186: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.319: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.186: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.319: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.186: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.319: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.186: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.319: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.186: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.319: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.186: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.319: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.186: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.319: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.186: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.319: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.186: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.319: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.186: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.319: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.186: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.319: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.186: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.319: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.186: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.319: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.186: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.319: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.186: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.319: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.186: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.319: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.187: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.320: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.187: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.320: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.187: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.320: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.187: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.320: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.187: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.320: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.187: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.320: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.187: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.320: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.187: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.320: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.187: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.320: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.187: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.320: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.187: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.320: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.187: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.320: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.187: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.320: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.187: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.320: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.187: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.320: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.187: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.320: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.188: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.320: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.188: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.320: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.188: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.321: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.188: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.321: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.188: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.321: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.188: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.321: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.188: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.321: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.188: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.321: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.188: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.321: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.188: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.321: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.188: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.321: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.188: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.321: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.188: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.321: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.188: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.321: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.188: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.321: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.188: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.321: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.188: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.321: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.188: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.321: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.188: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.321: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.188: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.321: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.188: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.321: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.188: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.321: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.188: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.321: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.188: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.321: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.188: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.321: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.188: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.321: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.189: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.321: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.189: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.321: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.189: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.321: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.189: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.322: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.189: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.322: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.189: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.322: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.189: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.322: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.189: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.322: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.189: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.322: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.189: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.322: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.189: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.322: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.189: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.322: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.189: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.322: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.189: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.322: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.189: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.322: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.189: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.322: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.189: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.322: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.189: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.322: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.189: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.322: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.189: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.322: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.189: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.322: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.189: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.322: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.189: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.322: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.189: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.322: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.189: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.322: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.189: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.322: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.189: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.322: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.189: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.322: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.191: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.324: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.191: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.324: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.192: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.325: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.192: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.325: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.192: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.325: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.192: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.325: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.192: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.325: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.192: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.325: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.192: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.325: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.192: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.325: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.192: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.325: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.192: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.325: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.192: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.325: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.192: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.325: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.192: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.325: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.192: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.325: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.192: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.325: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.192: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.325: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.192: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.325: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.192: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.325: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.192: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.325: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.192: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.325: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.192: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.325: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.192: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.325: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.192: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.325: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.192: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.325: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.192: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.325: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.192: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.325: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.192: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.325: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.192: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.325: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.192: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.325: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.192: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.325: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.192: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.325: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.192: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.325: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.192: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.325: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.192: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.326: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.192: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.326: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.192: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.326: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.192: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.326: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.192: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.326: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.192: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.326: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.192: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.326: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.192: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.326: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.192: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.326: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.192: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.326: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.192: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.326: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.193: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.326: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.193: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.326: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.193: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.326: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.193: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.326: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.193: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.326: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.193: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.326: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.193: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.326: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.193: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.326: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.193: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.326: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.193: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.326: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.193: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.326: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.193: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.326: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.193: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.326: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.193: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.326: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.193: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.326: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.193: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.326: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.193: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.326: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.193: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.326: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.193: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.326: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.193: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.326: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.193: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.326: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.193: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.326: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.193: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.326: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.193: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.326: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.193: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.326: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.193: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.326: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.193: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.326: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.193: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.326: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.193: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.326: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.193: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.326: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.193: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.326: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.193: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.326: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.193: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.326: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.193: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.326: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.193: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.326: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.193: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.326: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.193: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.326: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.193: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.326: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.193: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.326: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.193: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.326: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.193: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.326: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.193: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.326: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.193: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.326: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.193: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.326: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.193: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.326: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.193: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.326: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.193: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.326: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.193: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.326: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.193: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.326: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.193: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.326: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.193: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.326: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.193: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.326: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.193: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.326: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.193: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.326: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.193: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.326: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.193: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.326: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.193: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.326: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.193: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.326: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.193: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.326: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.193: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.326: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.193: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.326: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.193: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.326: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.193: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.326: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.193: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.326: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.193: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.326: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.193: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.326: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.193: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.326: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.193: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.326: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.193: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.326: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.193: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.326: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.193: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.326: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.193: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.326: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.193: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.326: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.193: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.326: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.193: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.326: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.193: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.326: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.193: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.326: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.193: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.326: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.193: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.326: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.193: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.326: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.193: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.326: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.193: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.326: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.193: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.326: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.193: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.326: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.193: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.326: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.193: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.326: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.193: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.326: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.193: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.326: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.193: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.326: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.193: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.326: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.193: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.326: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.193: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.326: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.193: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.326: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.193: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.326: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.193: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.326: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.193: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.326: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.193: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.326: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.193: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.326: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.193: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.326: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.193: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.326: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.193: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.326: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.193: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.326: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.193: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.326: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.193: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.326: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.193: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.326: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.193: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.326: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.193: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.326: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.193: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.326: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.193: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.326: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.193: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.326: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.193: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.326: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.193: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.327: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.193: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.327: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.193: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.327: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.193: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.327: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.194: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.327: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.194: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.327: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.194: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.327: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.194: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.327: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.194: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.327: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.194: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.327: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.194: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.327: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.194: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.327: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.194: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.327: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.194: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.327: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.194: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.327: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.194: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.327: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.194: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.327: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.194: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.327: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.194: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.327: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.194: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.327: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.194: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.327: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.194: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.327: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.194: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.327: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.194: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.327: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.194: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.327: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.194: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.327: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.194: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.327: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.194: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.327: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.194: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.327: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.194: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.327: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.194: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.327: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.194: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.327: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.194: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.327: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.194: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.327: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.194: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.327: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.194: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.327: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.194: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.327: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.194: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.327: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.194: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.327: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.194: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.327: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.194: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.327: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.194: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.327: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.194: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.327: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.194: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.327: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.194: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.327: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.194: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.327: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.194: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.327: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.194: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.327: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.194: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.327: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.194: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.327: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.194: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.327: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.194: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.327: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.194: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.327: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.194: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.327: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.194: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.327: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.194: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.327: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.194: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.327: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.194: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.327: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.194: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.327: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.194: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.327: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.194: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.327: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.194: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.327: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.194: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.327: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.194: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.327: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.194: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.327: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.194: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.327: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.194: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.327: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.194: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.327: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.194: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.327: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.194: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.327: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.194: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.327: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.194: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.327: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.194: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.327: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.194: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.327: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.194: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.327: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.194: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.327: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.194: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.327: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.194: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.327: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.194: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.327: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.194: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.327: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.194: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.327: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.194: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.327: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.194: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.327: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.194: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.327: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.194: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.327: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.194: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.327: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.194: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.327: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.194: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.327: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.194: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.327: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.194: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.327: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.194: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.327: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.194: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.327: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.194: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.327: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.194: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.327: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.194: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.327: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.194: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.327: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.194: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.327: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.194: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.327: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.194: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.327: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.194: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.327: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.194: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.327: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.194: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.327: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.195: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.328: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.195: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.328: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.195: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.328: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.195: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.328: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.195: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.328: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.195: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.328: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.195: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.328: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.195: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.328: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.196: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.329: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.196: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.329: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.196: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.329: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.196: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.329: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.196: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.329: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.196: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.329: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.196: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.329: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.196: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.329: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.196: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.329: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.196: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.329: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.196: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.329: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.196: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.329: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.196: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.329: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.196: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.329: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.196: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.329: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.196: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.329: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.196: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.329: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.196: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.329: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.196: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.329: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.196: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.329: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.196: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.329: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.196: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.329: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.196: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.329: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.196: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.329: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.196: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.329: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.196: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.329: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.196: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.329: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.196: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.329: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.196: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.329: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.196: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.329: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.196: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.329: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.196: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.329: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.196: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.329: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.196: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.329: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.196: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.329: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.196: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.329: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.196: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.329: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.196: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.329: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.196: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.329: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.196: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.329: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.196: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.329: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.196: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.329: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.196: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.329: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.196: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.329: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.196: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.329: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.196: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.329: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.196: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.329: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.196: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.329: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.196: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.329: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.196: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.329: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.196: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.329: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.196: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.329: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.196: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.329: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.196: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.329: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.196: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.329: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.196: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.329: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.196: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.329: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.196: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.329: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.196: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.329: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.196: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.329: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.196: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.329: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.196: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.329: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.196: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.329: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.196: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.329: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.196: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.329: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.196: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.329: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.196: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.329: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.196: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.329: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.196: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.329: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.196: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.329: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.196: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.329: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.196: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.329: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.196: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.329: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.196: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.329: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.196: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.329: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.196: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.329: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.196: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.329: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.196: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.329: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.196: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.329: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.196: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.329: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.196: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.329: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.196: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.329: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.196: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.329: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.196: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.330: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.196: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.330: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.197: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.330: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.197: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.330: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.197: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.330: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.197: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.330: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.197: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.330: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.197: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.330: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.197: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.330: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.197: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.330: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.197: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.330: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.197: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.330: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.197: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.330: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.197: Can't handle >16bit keyvals
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.330: Can't handle >16bit keyvals
 
-(inde-especial:104776): Gtk-WARNING **: 16:00:36.197: Can't handle >16bit keyvals
-Gravação e integridade conferidas. Todos os arquivos foram preservados em /home/roger/Documents/Projects/GitHub/INDE/obj01-audit/dados/p5-demo-20261126-160033-7506
+(inde-especial:112276): Gtk-WARNING **: 16:23:08.330: Can't handle >16bit keyvals
+Gravação e integridade conferidas. Todos os arquivos foram preservados em /home/roger/Documents/Projects/GitHub/INDE/obj01-audit/dados/p5-demo-20261126-162305-14899

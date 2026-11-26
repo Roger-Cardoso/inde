@@ -68,6 +68,8 @@ Conversão e reabertura:
 
 Falhas deixam uma cópia pendente identificada, sem apagar a origem e sem substituir destinos. Os caminhos de componentes são relativos, canônicos e confinados à pasta. A conferência do conversor não equivale a uma análise de segurança completa de bancos maliciosos para execução posterior no editor.
 
+O transporte incorpora o que está dentro da pasta capturada. Ele não descobre nem reescreve dependências externas mencionadas por conteúdo, e não incorpora automaticamente fontes, dicionários e bibliotecas globais do aplicativo. A demonstração comprova seus recursos incorporados; a autonomia de todo tipo de projeto real ainda exige inventário dessas dependências antes da adoção autoral.
+
 ## Limites deste perfil
 
 | Limite padrão | Valor | Ao atingir |

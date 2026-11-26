@@ -396,7 +396,7 @@ struct Store::Impl {
   }
   ~Impl() {
     if (db && owner_pid == getpid())
-      sqlite3_close(db);
+      sqlite3_close_v2(db);
     if (fd >= 0)
       ::close(fd);
   }
@@ -560,18 +560,22 @@ Store Store::create(const std::filesystem::path &path,
   auto *uuid = g_uuid_string_random();
   const std::string store_id(uuid);
   g_free(uuid);
-  Query meta(p->db, "INSERT INTO meta VALUES(1,?,?,1)");
-  meta.bind(1, project);
-  meta.bind(2, store_id);
-  meta.step();
+  {
+    Query meta(p->db, "INSERT INTO meta VALUES(1,?,?,1)");
+    meta.bind(1, project);
+    meta.bind(2, store_id);
+    meta.step();
+  }
   State empty;
   empty.project_id = project;
   empty.store_id = store_id;
   empty.hash = state_hash(empty);
-  Query initial(p->db, "INSERT INTO states VALUES(0,NULL,NULL,?,'Início',?)");
-  initial.bind(1, empty.hash);
-  initial.bind(2, now());
-  initial.step();
+  {
+    Query initial(p->db, "INSERT INTO states VALUES(0,NULL,NULL,?,'Início',?)");
+    initial.bind(1, empty.hash);
+    initial.bind(2, now());
+    initial.step();
+  }
   sql(p->db, "INSERT INTO head VALUES(1,0)");
   sql(p->db, "COMMIT");
   tx.done = true;
@@ -600,12 +604,14 @@ Store Store::open(const std::filesystem::path &path, Options options) {
        "Este arquivo não é um projeto INDE-P5-1 reconhecido.");
   need(schema_digest(p->db) == expected_schema(), "schema_changed",
        "A estrutura do arquivo diverge do formato reconhecido.");
-  Query meta(p->db, "SELECT project_id,store_id FROM meta WHERE id=1");
-  need(meta.step(), "project_identity", "Identificação ausente.");
-  p->project_id = meta.str(0);
-  p->store_id = meta.str(1);
+  {
+    Query meta(p->db, "SELECT project_id,store_id FROM meta WHERE id=1");
+    need(meta.step(), "project_identity", "Identificação ausente.");
+    p->project_id = meta.str(0);
+    p->store_id = meta.str(1);
+  }
   need(g_uuid_string_is_valid(p->project_id.c_str()) &&
-           g_uuid_string_is_valid(meta.str(1).c_str()),
+           g_uuid_string_is_valid(p->store_id.c_str()),
        "project_identity", "Identificação inválida.");
   p->data_version = integer(p->db, "PRAGMA data_version");
   Store result(std::move(p));

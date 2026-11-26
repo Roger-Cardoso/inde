@@ -28,8 +28,9 @@ class ProjectFile(unittest.TestCase):
     def tearDown(self): self.tmp.cleanup()
     def run_cli(self,*args,ok=True):
         r=subprocess.run([str(BINARY),*map(str,args)],capture_output=True,text=True,timeout=40)
+        self.assertNotRegex(r.stderr,r'AddressSanitizer|LeakSanitizer|UndefinedBehaviorSanitizer|runtime error:')
         if ok:self.assertEqual(r.returncode,0,r.stdout+r.stderr)
-        else:self.assertNotEqual(r.returncode,0,r.stdout+r.stderr)
+        else:self.assertEqual(r.returncode,1,r.stdout+r.stderr)
         return json.loads(r.stdout) if ok else r
     def inspect(self):return self.run_cli('inspecionar',self.package)
     def pack(self):return self.run_cli('converter',self.source,self.package)

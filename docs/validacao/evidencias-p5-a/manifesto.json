@@ -8,9 +8,9 @@
     "Clang 18.1.8 Debug ASan/UBSan + LeakSanitizer"
   ],
   "sources": {
-    ".github/workflows/inde-p5.yml": "c4de5a50487cccdb008ebe8812d2f25fa716ee2888db596295c1c707e675a482",
+    ".github/workflows/inde-p5.yml": "d81a91dcdb219273971bf679385261b157f1b31805f3f06192c39981148a5d16",
     "cpp/CMakeLists.txt": "2e7d3223c10de6e208c6e30b6d3127ea16293b946c6d2d7d5333feda4883eab3",
-    "cpp/project_file.cpp": "d59785955fb2148631388eb98d9df151f3334e5b135330adb8c1531a651e72d3",
+    "cpp/project_file.cpp": "6559007940212960632dc7806c146cb29a3ac7908b814c5afa99ada7b7e08cdb",
     "cpp/project_file.hpp": "393833a2325f8b18288202d6ece517baa647056233f8a96d3edd75cb22f46a72",
     "cpp/project_file_main.cpp": "f3fbb20d74269da5241e390cb1bc4d2989ed06d521e9e34a990ec126101558e6",
     "cpp/project_file_native_tests.cpp": "a7a2f4125efd878f8988cebdfb5d597918a7576474b4397571794552aabd38d6",
@@ -19,26 +19,28 @@
     "cpp/project_file_transport.hpp": "f679ea99843c7aaf4ff42e0783f498a16e728e8df17142f9d28b774a6fbe6080",
     "scripts/demos/Abrir-demo-arquivo-unico.sh": "52ce05f4356010b5e5c3abd3e425e12b4ea61259815fbd02034d34acf2436b3f",
     "tests/project_file/CMakeLists.txt": "de98543c9dbc567305759adb9c2aaada280aa643c9f2b0625e4e9d20388f14fd",
-    "tests/project_file/test_native_demo.py": "270aab578f02e641b402eb5d5ecf0abbaddce36a49a3ce994fd1f82ef53b5369",
-    "tests/project_file/test_transport.py": "e64ee3ba921befdadec5fc640f169aa4b114b4736bccdb25c0bb8138d5861276",
+    "tests/project_file/test_native_demo.py": "12e791f0c86a384ecbf98cf8a9d2830f67d63420d79a49d54a090e62c244169d",
+    "tests/project_file/test_transport.py": "f79145c8640d2f2c32395996387edea5efafa95c1de6c46026b26d9e34164480",
     "tests/project_file/verify_evidence.py": "f5541b3743c2ce5c093f4d8a5751e08f5994c2f24af43281580cfbe21bb3b757"
   },
   "evidence": {
     "docs/validacao/evidencias-p5-a/arquivos-fontes.json": "7100204250fd02e59bc176f9cc2b168682bd695f8f85d0ef739ee1b852077002",
-    "docs/validacao/evidencias-p5-a/clang-asan-ctest.txt": "319574f07f303a8d717b437375230a95dd3448806fe19022a1d90103efbfffcc",
+    "docs/validacao/evidencias-p5-a/clang-asan-ctest.txt": "1dad202b24435ecd47fa173ee6f33f458f2466c51f9a3503dbd5c00119139c24",
     "docs/validacao/evidencias-p5-a/editor-regressoes.txt": "e480072ac7e713a98ec7ca44cbb76c31adcc01a3eb723058115be5379909f480",
     "docs/validacao/evidencias-p5-a/fontes-fixadas.json": "7824d5412db6a5a48cdde16f533a8c21bf972cf94651c62c1294a4b2758766b2",
-    "docs/validacao/evidencias-p5-a/gcc-release-ctest.txt": "01be4d980aa417933c6e854415ac936643b134e8182e8fe5b02c8a8ac347b683",
-    "docs/validacao/evidencias-p5-a/gtk-demonstracao.json": "bac03076ce03793011e58f31587c1f396f3e6faff81172ed064c42bf35c1f474",
-    "docs/validacao/evidencias-p5-a/gtk-launcher.txt": "4b522be410b157296f097bffcbbce8cd50ed3391945151f5bafb9b472244eefc",
-    "docs/validacao/evidencias-p5-a/historico-final.json": "144d9142e43108fd4277af966265f1d5bb1d7df0766bdc1fc589094f29f4cfca",
-    "docs/validacao/evidencias-p5-a/integridade-final.json": "d56755bbec41d44509c57f2033ce076cab12c56313843c3aa10f8d625cd01d9f",
+    "docs/validacao/evidencias-p5-a/gcc-release-ctest.txt": "cb6620b3eeda53d206dbc001ec5bfac997e058b64bb046a8a45a2320f22bcf9f",
+    "docs/validacao/evidencias-p5-a/gtk-demonstracao.json": "21daf48724f3a3d43088f02f92cbb5f570c6b56499cc6a1aafd743e6bdbc84dc",
+    "docs/validacao/evidencias-p5-a/gtk-launcher.txt": "2c2ad4dea42304e32dd0dfb5e748c14e8877c2c1fb067e158bd61df4f1526f90",
+    "docs/validacao/evidencias-p5-a/historico-final.json": "2cf55f498bf191cb53c9928d2b1be2a76f9302b03b3f83370bcd683fed8c1770",
+    "docs/validacao/evidencias-p5-a/integridade-final.json": "3a208d11a0f270a9d1347ef0bf52b218d6c6606fa4926c1a430886386c53cfe1",
     "docs/validacao/evidencias-p5-a/native-ctest.txt": "0bf4d91fe70b0aec56b3c2c7797baf370ce970aa56fa5e51421ae92def8c7f49",
-    "docs/validacao/evidencias-p5-a/verificacao.json": "ff8ddeb25f39c5d09f14c840e083becdc38c7374fa2b9502a059f3fe0bdf569c",
-    "docs/validacao/evidencias-p5-a/p5-native-ctest.txt": "925fecc3242e05346513201cd451d5600a1c788e92fa39000fb73f07c7c8be8e"
+    "docs/validacao/evidencias-p5-a/verificacao.json": "f346c67bd45a842a7e0f77af3fa48da397e45e6c9957bb392492e732064012bb",
+    "docs/validacao/evidencias-p5-a/p5-native-ctest.txt": "c127ca3cfdf05923236493a8bb6bf4d3a2e080f9180709fd7906a9c322f11b9e",
+    "docs/validacao/evidencias-p5-a/refusal-memory-before.txt": "db30b230578d530f398fc6669bb3a195c1ac1ff112cdc3c23a6f59f2e9898738",
+    "docs/validacao/evidencias-p5-a/refusal-memory-after.txt": "845759a7c6e8eca5dc2411b314664fc842f02957600991958739ce7506ef2c5c"
   },
   "demo_file": {
-    "path": "/home/roger/Documents/Projects/GitHub/INDE/obj01-audit/dados/p5-demo-20261126-160033-7506/Projeto-portatil.inde",
-    "sha256": "b78bd48d8de6d8c2ae5ada66fe7f1e721aa5c7f41fde1c1e84c05fc384de030a"
+    "path": "/home/roger/Documents/Projects/GitHub/INDE/obj01-audit/dados/p5-demo-20261126-162305-14899/Projeto-portatil.inde",
+    "sha256": "86bc4fddf73067b2cebbb605a44ec12b179a66d0f9fe962b954ad17789152dab"
   }
 }

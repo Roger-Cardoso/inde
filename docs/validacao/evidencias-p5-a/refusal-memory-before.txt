@@ -1,0 +1,3 @@
+history_invalid: Restauração diverge do estado indicado.
+==111091==ERROR: LeakSanitizer: detected memory leaks
+SUMMARY: AddressSanitizer: 2289744 byte(s) leaked in 867 allocation(s).

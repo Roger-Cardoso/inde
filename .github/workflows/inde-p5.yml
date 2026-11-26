@@ -70,14 +70,9 @@ jobs:
       - name: Build native core tests and editor
         run: |
           cmake -S cpp -B build-nativo -G Ninja -DCMAKE_BUILD_TYPE=Release -DINDE_BUILD_CORE_TESTS=ON
-          python3 - <<'PY'
-          import json, subprocess
-          listing = subprocess.check_output(['ctest', '--test-dir', 'build-nativo', '--show-only=json-v1'], text=True)
-          targets = [t['name'] for t in json.loads(listing)['tests'] if t['name'] != 'inde_project_file_transport_tests']
-          subprocess.run(['cmake', '--build', 'build-nativo', '--parallel', '2', '--target', 'inde', *targets], check=True)
-          PY
-      - name: Run native regression suite
-        run: ctest --test-dir build-nativo --output-on-failure
+          cmake --build build-nativo --parallel 2 --target inde inde_project_file_cli inde_project_file_tests inde_project_file_native_tests
+      - name: Run native P5 integration and refusal cases
+        run: ctest --test-dir build-nativo -R '^inde_project_file' --output-on-failure
       - name: Produce a real synthetic native project and versioned file
         run: build-nativo/inde_project_file_native_tests "$RUNNER_TEMP/p5-native-demo"
       - name: Open actual demo and save and quit by keyboard

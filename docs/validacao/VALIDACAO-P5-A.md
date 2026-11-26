@@ -19,6 +19,10 @@ O primeiro passe do detector de vazamentos foi impedido pela restrição de obse
 
 Na revisão final foi reproduzida outra borda do parser herdado: `std::stod` interpreta o ponto decimal segundo o locale, podendo truncar o valor silenciosamente em ambiente brasileiro. O invólucro P5 foi corrigido, e o teste usa um locale `pt_BR.UTF-8` real, verifica o valor `0.6120081954998241`, zero negativo, gravação/reabertura e restauração do locale do chamador tanto no sucesso quanto no erro. O CI instala e exige esse locale; não aceita omitir esse caso. A [repetição dos três alvos P5 no build nativo](evidencias-p5-a/p5-native-ctest.txt) e os logs independentes incluem a correção final.
 
+A revisão das recusas revelou um defeito no teste inicialmente escrito: aceitar qualquer retorno não zero também aceitava a saída do detector de memória. A conferência direta de um arquivo fictício adulterado identificou uma conexão SQLite não liberada quando a validação falhava com uma consulta de metadados ainda preparada. Foram encerradas as consultas antes da conferência e adotado fechamento diferido seguro como proteção. O teste agora exige o código de recusa esperado e rejeita explicitamente qualquer diagnóstico ASan/LSan/UBSan, inclusive nas recusas. O log instrumentado final foi obtido **após essa correção**; os primeiros passes não foram considerados prova suficiente de ausência de vazamentos.
+
+O caso de recusa tem [evidência anterior](evidencias-p5-a/refusal-memory-before.txt) e [posterior à correção](evidencias-p5-a/refusal-memory-after.txt). A segunda execução conserva a recusa `history_invalid`, com retorno 1 e sem diagnóstico do detector de memória.
+
 ## Regras exercitadas
 
 | Caso | Comprovação |
@@ -58,12 +62,15 @@ cmake --build build-p5 --parallel 2
 ctest --test-dir build-p5 --output-on-failure
 ```
 
-Para a camada nativa, compilar `inde_project_file_native_tests` no build `cpp`, executar o alvo e usar o roteiro do demonstrador. O [workflow](../../.github/workflows/inde-p5.yml) compila GCC/Clang com e sem instrumentação, o editor e todos os alvos listados pelo CTest, executa a suíte nativa e a demonstração GTK. A conferência remota será registrada após a execução identificada; a existência do workflow não é, sozinha, aprovação de CI.
+Para a camada nativa, compilar `inde_project_file_native_tests` no build `cpp`, executar o alvo e usar o roteiro do demonstrador. O [workflow](../../.github/workflows/inde-p5.yml) compila GCC/Clang com e sem instrumentação, o editor e os três alvos P5 no build nativo, executa esses três alvos e a demonstração GTK. A regressão completa de 68 CTest e os 103 testes de interface/integração estão registrados no passe local. A conferência remota será registrada após a execução identificada; a existência do workflow não é, sozinha, aprovação de CI.
 
 ## Lacunas e fronteiras
 
+A primeira execução remota completa (`45881440736`) compilou o editor e aprovou 67 dos 68 testes nativos; o transporte falhou porque a seleção automática de alvos pelo nome do CTest não incluiu seu executável auxiliar `inde_project_file`. A configuração foi corrigida para compilar explicitamente editor, ferramenta e testes P5. A matriz remota atual concentra-se nas quatro configurações da biblioteca e nos três alvos P5 ligados ao núcleo real, mais a demonstração GTK; as suítes completas de regressão permanecem registradas no passe local. Esse erro de configuração não foi registrado como aprovação de CI.
+
 - Abertura/Salvamento/Salvar como/Recentes/recuperação nativos ainda precisam usar diretamente a sessão do arquivo único. O launcher é uma prova de transporte e confirmação ao encerrar.
 - A captura do projeto real é por componente: banco canônico modificado implica outra cópia daquele banco no histórico. A biblioteca de elementos não converte automaticamente cada entidade real em descrição textual.
+- A captura abrange o interior da pasta. Dependências externas citadas pelo conteúdo e bibliotecas globais do aplicativo não são descobertas/incorporadas automaticamente; a autonomia de todos os tipos de projeto ainda não foi certificada.
 - Não foram convertidos projetos autorais nem promovidas mudanças a main. O checkout principal continua em `d41a5c9`, com a alteração preexistente em `Preparar-ponte.sh` preservada.
 - Limites de volume são deliberados; bancos WAL e origens com arquivos de trabalho SQLite são recusados. Não há migração implícita nem reparo automático.
 - A preservação binária cobre o que foi capturado; o uso posterior de um projeto hostil no editor não foi certificado como seguro.
