@@ -84,7 +84,7 @@ jobs:
       - name: Build native core tests and editor
         run: |
           cmake -S cpp -B build-nativo -G Ninja -DCMAKE_BUILD_TYPE=Release -DINDE_BUILD_CORE_TESTS=ON
-          cmake --build build-nativo --parallel 2 --target inde inde_project_file_cli inde_project_file_tests inde_project_file_native_tests inde_project_file_session_tests
+          cmake --build build-nativo --parallel 2 --target inde inde_project_file_cli inde_project_file_tests inde_project_file_native_tests inde_project_file_session_tests inde_project_file_benchmark
       - name: Run native P5 integration and refusal cases
         run: ctest --test-dir build-nativo -R '^inde_project_file' --output-on-failure
       - name: Produce a real synthetic native project and versioned file
@@ -93,6 +93,24 @@ jobs:
         run: xvfb-run -a dbus-run-session -- python3 tests/project_file/test_native_demo.py "$RUNNER_TEMP/p5-gtk-demo"
       - name: Verify native file Save, restore, both copies, crash recovery and safe exit
         run: xvfb-run -a dbus-run-session -- python3 tests/project_file/test_native_session.py "$RUNNER_TEMP/p5b-native-session"
+      - name: Exercise block format in the native lifecycle
+        env:
+          P5_TRANSPORT_BLOCKS: "1"
+        run: xvfb-run -a dbus-run-session -- python3 tests/project_file/test_native_session.py "$RUNNER_TEMP/p5c-native-session"
+      - name: Measure persistent confirmation and history growth
+        run: |
+          mkdir -p "$RUNNER_TEMP/p5c-performance"
+          build-nativo/inde_project_file_benchmark "$RUNNER_TEMP/p5c-performance/whole" 4 whole > "$RUNNER_TEMP/p5c-performance/whole.json"
+          build-nativo/inde_project_file_benchmark "$RUNNER_TEMP/p5c-performance/blocks" 4 blocks > "$RUNNER_TEMP/p5c-performance/blocks.json"
+          python3 - "$RUNNER_TEMP/p5c-performance" <<'PY'
+          import json, pathlib, sys
+          root = pathlib.Path(sys.argv[1])
+          whole = json.loads((root/'whole.json').read_text())
+          blocks = json.loads((root/'blocks.json').read_text())
+          assert whole['history_and_restore_verified'] and blocks['history_and_restore_verified']
+          assert blocks['new_blob_bytes'] < whole['new_blob_bytes']/8
+          print('P5-C history growth and exact restoration OK')
+          PY
       - name: Preserve synthetic project evidence
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
@@ -102,6 +120,8 @@ jobs:
             ${{ runner.temp }}/p5-native-demo
             ${{ runner.temp }}/p5-gtk-demo
             ${{ runner.temp }}/p5b-native-session
+            ${{ runner.temp }}/p5c-native-session
+            ${{ runner.temp }}/p5c-performance
             dados/p5-demo-*
           if-no-files-found: warn
           retention-days: 7

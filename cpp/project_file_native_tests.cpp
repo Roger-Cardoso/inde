@@ -161,7 +161,8 @@ int main(int argc, char **argv) {
     fs::create_directories(source / "vazia");
     const auto source_bytes = inventory(source);
     const auto packet = root / "Projeto-portatil.inde";
-    const auto first = pack_directory(source, packet);
+    const auto first = pack_directory(source, packet, g_getenv("P5_TRANSPORT_BLOCKS") ?
+        TransportProfile::Blocks : TransportProfile::WholeFile);
     {
       auto store = Store::open(packet);
       unpack_directory(store, first.sequence, root / "Reaberta.inde");

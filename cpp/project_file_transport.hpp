@@ -1,10 +1,13 @@
 #pragma once
 #include "project_file.hpp"
 namespace inde::project_file {
+enum class TransportProfile { WholeFile, Blocks };
+TransportProfile directory_profile(const State &);
 // Compatibility bridge: exact directory components, not a semantic migration of
 // schema 37. Only a closed rollback-journal project is accepted in this cut.
 State pack_directory(const std::filesystem::path &source,
-                     const std::filesystem::path &new_file);
+                     const std::filesystem::path &new_file,
+                     TransportProfile = TransportProfile::WholeFile);
 State update_directory(Store &, const State &expected,
                        const std::filesystem::path &source,
                        const std::filesystem::path &store_path,

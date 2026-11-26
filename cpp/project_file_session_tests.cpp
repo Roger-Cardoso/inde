@@ -53,7 +53,10 @@ int main() {
         "VALUES(37); INSERT INTO projects VALUES('" +
             owner + "');");
     std::ofstream(source / "texto.txt") << "Original";
-    const auto first = pack_directory(source, file);
+    const auto first = pack_directory(source, file,
+                                      g_getenv("P5_TRANSPORT_BLOCKS")
+                                          ? TransportProfile::Blocks
+                                          : TransportProfile::WholeFile);
     fs::path work;
     State second;
     {

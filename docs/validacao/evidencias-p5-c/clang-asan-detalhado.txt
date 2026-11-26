@@ -1,0 +1,106 @@
+Start testing: Nov 26 17:57 -03
+----------------------------------------------------------
+1/4 Testing: inde_project_file_tests
+1/4 Test: inde_project_file_tests
+Command: "/home/roger/Documents/Projects/GitHub/INDE/obj01-audit/build-p5-sanitize/inde_project_file_tests"
+Directory: /home/roger/Documents/Projects/GitHub/INDE/obj01-audit/build-p5-sanitize
+"inde_project_file_tests" start time: Nov 26 17:57 -03
+Output:
+----------------------------------------------------------
+P5 pt_BR decimal precision and caller locale restoration OK
+P5 states, links, immutable versions, restore, bytes, stale requests, failure and crash recovery OK
+<end of output>
+Test time =   1.32 sec
+----------------------------------------------------------
+Test Passed.
+"inde_project_file_tests" end time: Nov 26 17:57 -03
+"inde_project_file_tests" time elapsed: 00:00:01
+----------------------------------------------------------
+
+2/4 Testing: inde_project_file_transport_tests
+2/4 Test: inde_project_file_transport_tests
+Command: "/usr/bin/python3.12" "/home/roger/Documents/Projects/GitHub/INDE/obj01-audit/tests/project_file/test_transport.py" "/home/roger/Documents/Projects/GitHub/INDE/obj01-audit/build-p5-sanitize/inde_project_file"
+Directory: /home/roger/Documents/Projects/GitHub/INDE/obj01-audit/build-p5-sanitize
+"inde_project_file_transport_tests" start time: Nov 26 17:57 -03
+Output:
+----------------------------------------------------------
+test_boundaries_empty_repeated_and_shared_blocks (__main__.BlockProjectFile.test_boundaries_empty_repeated_and_shared_blocks) ... ok
+test_corruption_in_past_state_is_detected_even_after_restore (__main__.BlockProjectFile.test_corruption_in_past_state_is_detected_even_after_restore) ... ok
+test_demo_and_strict_request_fields (__main__.BlockProjectFile.test_demo_and_strict_request_fields) ... ok
+test_exact_roundtrip_without_original_location (__main__.BlockProjectFile.test_exact_roundtrip_without_original_location) ... ok
+test_grow_truncate_remove_and_restore_keeps_old_resources (__main__.BlockProjectFile.test_grow_truncate_remove_and_restore_keeps_old_resources) ... ok
+test_invalid_block_length_and_recipe_count_are_refused (__main__.BlockProjectFile.test_invalid_block_length_and_recipe_count_are_refused) ... ok
+test_invalid_chunk_descriptor_is_refused (__main__.BlockProjectFile.test_invalid_chunk_descriptor_is_refused) ... ok
+test_materialization_rejects_path_escape_before_writing (__main__.BlockProjectFile.test_materialization_rejects_path_escape_before_writing) ... ok
+test_other_project_and_noop_capture (__main__.BlockProjectFile.test_other_project_and_noop_capture) ... ok
+test_outer_wal_and_truncation_are_refused (__main__.BlockProjectFile.test_outer_wal_and_truncation_are_refused) ... ok
+test_profiles_remain_distinct_after_save (__main__.BlockProjectFile.test_profiles_remain_distinct_after_save) ... ok
+test_reordered_blocks_require_correct_whole_file_hash (__main__.BlockProjectFile.test_reordered_blocks_require_correct_whole_file_hash) ... ok
+test_restore_origin_must_match_its_content (__main__.BlockProjectFile.test_restore_origin_must_match_its_content) ... ok
+test_small_database_change_reuses_large_unchanged_content (__main__.BlockProjectFile.test_small_database_change_reuses_large_unchanged_content) ... ok
+test_source_invalid_foreign_key_is_refused (__main__.BlockProjectFile.test_source_invalid_foreign_key_is_refused) ... ok
+test_source_wal_is_refused_without_touching_source (__main__.BlockProjectFile.test_source_wal_is_refused_without_touching_source) ... ok
+test_stale_request_and_existing_destination_preserve_bytes (__main__.BlockProjectFile.test_stale_request_and_existing_destination_preserve_bytes) ... ok
+test_unknown_file_and_sqlite_are_untouched (__main__.BlockProjectFile.test_unknown_file_and_sqlite_are_untouched) ... ok
+test_unknown_links_and_destination_inside_source_are_refused (__main__.BlockProjectFile.test_unknown_links_and_destination_inside_source_are_refused) ... ok
+test_unknown_profile_never_changes_source_or_creates_target (__main__.BlockProjectFile.test_unknown_profile_never_changes_source_or_creates_target) ... ok
+test_update_versions_restore_both_directions_and_resource_reuse (__main__.BlockProjectFile.test_update_versions_restore_both_directions_and_resource_reuse) ... ok
+test_corruption_in_past_state_is_detected_even_after_restore (__main__.ProjectFile.test_corruption_in_past_state_is_detected_even_after_restore) ... ok
+test_demo_and_strict_request_fields (__main__.ProjectFile.test_demo_and_strict_request_fields) ... ok
+test_exact_roundtrip_without_original_location (__main__.ProjectFile.test_exact_roundtrip_without_original_location) ... ok
+test_materialization_rejects_path_escape_before_writing (__main__.ProjectFile.test_materialization_rejects_path_escape_before_writing) ... ok
+test_other_project_and_noop_capture (__main__.ProjectFile.test_other_project_and_noop_capture) ... ok
+test_outer_wal_and_truncation_are_refused (__main__.ProjectFile.test_outer_wal_and_truncation_are_refused) ... ok
+test_restore_origin_must_match_its_content (__main__.ProjectFile.test_restore_origin_must_match_its_content) ... ok
+test_source_invalid_foreign_key_is_refused (__main__.ProjectFile.test_source_invalid_foreign_key_is_refused) ... ok
+test_source_wal_is_refused_without_touching_source (__main__.ProjectFile.test_source_wal_is_refused_without_touching_source) ... ok
+test_stale_request_and_existing_destination_preserve_bytes (__main__.ProjectFile.test_stale_request_and_existing_destination_preserve_bytes) ... ok
+test_unknown_file_and_sqlite_are_untouched (__main__.ProjectFile.test_unknown_file_and_sqlite_are_untouched) ... ok
+test_unknown_links_and_destination_inside_source_are_refused (__main__.ProjectFile.test_unknown_links_and_destination_inside_source_are_refused) ... ok
+test_update_versions_restore_both_directions_and_resource_reuse (__main__.ProjectFile.test_update_versions_restore_both_directions_and_resource_reuse) ... ok
+
+----------------------------------------------------------------------
+Ran 34 tests in 14.406s
+
+OK
+<end of output>
+Test time =  14.54 sec
+----------------------------------------------------------
+Test Passed.
+"inde_project_file_transport_tests" end time: Nov 26 17:57 -03
+"inde_project_file_transport_tests" time elapsed: 00:00:14
+----------------------------------------------------------
+
+3/4 Testing: inde_project_file_session_tests
+3/4 Test: inde_project_file_session_tests
+Command: "/home/roger/Documents/Projects/GitHub/INDE/obj01-audit/build-p5-sanitize/inde_project_file_session_tests"
+Directory: /home/roger/Documents/Projects/GitHub/INDE/obj01-audit/build-p5-sanitize
+"inde_project_file_session_tests" start time: Nov 26 17:57 -03
+Output:
+----------------------------------------------------------
+P5 native session: explicit Save, crash, both recovery choices, history/copy, restore, lost receipt and source preservation OK
+<end of output>
+Test time =   1.26 sec
+----------------------------------------------------------
+Test Passed.
+"inde_project_file_session_tests" end time: Nov 26 17:57 -03
+"inde_project_file_session_tests" time elapsed: 00:00:01
+----------------------------------------------------------
+
+4/4 Testing: inde_project_file_block_session_tests
+4/4 Test: inde_project_file_block_session_tests
+Command: "/usr/bin/cmake" "-E" "env" "P5_TRANSPORT_BLOCKS=1" "/home/roger/Documents/Projects/GitHub/INDE/obj01-audit/build-p5-sanitize/inde_project_file_session_tests"
+Directory: /home/roger/Documents/Projects/GitHub/INDE/obj01-audit/build-p5-sanitize
+"inde_project_file_block_session_tests" start time: Nov 26 17:57 -03
+Output:
+----------------------------------------------------------
+P5 native session: explicit Save, crash, both recovery choices, history/copy, restore, lost receipt and source preservation OK
+<end of output>
+Test time =   1.50 sec
+----------------------------------------------------------
+Test Passed.
+"inde_project_file_block_session_tests" end time: Nov 26 17:58 -03
+"inde_project_file_block_session_tests" time elapsed: 00:00:01
+----------------------------------------------------------
+
+End testing: Nov 26 17:58 -03

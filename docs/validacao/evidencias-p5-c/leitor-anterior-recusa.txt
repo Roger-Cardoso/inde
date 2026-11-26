@@ -1,0 +1,1 @@
+transport_profile: Este estado não é uma captura de pasta INDE.

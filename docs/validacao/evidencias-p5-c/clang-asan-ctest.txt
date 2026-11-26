@@ -1,0 +1,13 @@
+Test project /home/roger/Documents/Projects/GitHub/INDE/obj01-audit/build-p5-sanitize
+    Start 1: inde_project_file_tests
+1/4 Test #1: inde_project_file_tests .................   Passed    1.32 sec
+    Start 2: inde_project_file_transport_tests
+2/4 Test #2: inde_project_file_transport_tests .......   Passed   14.54 sec
+    Start 3: inde_project_file_session_tests
+3/4 Test #3: inde_project_file_session_tests .........   Passed    1.26 sec
+    Start 4: inde_project_file_block_session_tests
+4/4 Test #4: inde_project_file_block_session_tests ...   Passed    1.50 sec
+
+100% tests passed out of 4
+
+Total Test time (real) =  18.62 sec

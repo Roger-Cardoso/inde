@@ -27,7 +27,11 @@ def saved_text(path=None,title='Uma obra transportável'):
     if path is None:path=packet
     with sqlite3.connect(f'file:{path}?mode=ro',uri=True) as db:
         seq=db.execute('SELECT seq FROM head').fetchone()[0]
-        blob=db.execute("SELECT b.data FROM entries e JOIN record_versions v ON v.id=e.version_id JOIN blobs b ON b.hash=v.blob_hash WHERE e.seq=? AND e.key='file/data/project.sqlite3'",(seq,)).fetchone()[0]
+        kind,payload,blob_hash=db.execute("SELECT v.kind,v.payload,v.blob_hash FROM entries e JOIN record_versions v ON v.id=e.version_id WHERE e.seq=? AND e.key='file/data/project.sqlite3'",(seq,)).fetchone()
+        if kind=='chunked-file':
+            parts=json.loads(payload)['chunks']
+            blob=b''.join(db.execute('SELECT data FROM blobs WHERE hash=?',(h,)).fetchone()[0] for h in parts)
+        else:blob=db.execute('SELECT data FROM blobs WHERE hash=?',(blob_hash,)).fetchone()[0]
     with sqlite3.connect(':memory:') as inner:
         inner.deserialize(blob)
         row=inner.execute("SELECT content FROM documents WHERE title=?",(title,)).fetchone();content=row[0] if row else None

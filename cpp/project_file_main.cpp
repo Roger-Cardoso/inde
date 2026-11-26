@@ -53,6 +53,7 @@ void usage() {
       << "  inde_project_file restaurar ARQUIVO.inde ESTADO SEQUENCIA_ESPERADA "
          "HASH_ESPERADO\n"
       << "  inde_project_file converter PASTA.inde ARQUIVO_NOVO.inde\n"
+      << "  inde_project_file converter-blocos PASTA.inde ARQUIVO_NOVO.inde\n"
       << "  inde_project_file reabrir ARQUIVO.inde PASTA_NOVA.inde [ESTADO]\n"
       << "  inde_project_file registrar ARQUIVO.inde PASTA.inde "
          "SEQUENCIA_ESPERADA HASH_ESPERADO ROTULO\n"
@@ -71,8 +72,12 @@ int main(int argc, char **argv) {
       print(summary(s.head()));
       return 0;
     }
-    if (command == "converter" && argc == 4) {
-      print(summary(pack_directory(argv[2], argv[3])));
+    if ((command == "converter" || command == "converter-blocos") &&
+        argc == 4) {
+      print(summary(pack_directory(argv[2], argv[3],
+                                   command == "converter-blocos"
+                                       ? TransportProfile::Blocks
+                                       : TransportProfile::WholeFile)));
       return 0;
     }
     if (command == "demonstrar" && argc == 3) {
@@ -172,8 +177,7 @@ int main(int argc, char **argv) {
       if (!f)
         throw Error("request_read", "Pedido não pôde ser aberto.");
       const std::string raw{std::istreambuf_iterator<char>(f), {}};
-      const auto v =
-          parse_json(raw, 16 * 1024 * 1024);
+      const auto v = parse_json(raw, 16 * 1024 * 1024);
       fields(v, {"format", "project_id", "store_id", "expected_sequence",
                  "expected_hash", "label", "edits"});
       if (v.at("format").as_string() != "INDE-P5-REQUEST-1")

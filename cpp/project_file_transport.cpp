@@ -16,6 +16,7 @@ using V = persistence::json::Value;
 namespace {
 constexpr std::uint64_t max_bytes = 128ULL * 1024 * 1024;
 constexpr std::size_t max_files = 4096;
+constexpr std::size_t block_bytes = 65536;
 [[noreturn]] void fail(const std::string &code, const std::string &message) {
   throw Error(code, message);
 }
@@ -44,7 +45,8 @@ void safe_relative(const std::string &s) {
     need(part != "." && part != ".." && !part.empty(), "unsafe_path",
          "Caminho fora do projeto.");
 }
-Bytes read_file(const fs::path &path) {
+Bytes read_file(const fs::path &path,
+                std::size_t prefix = std::numeric_limits<std::size_t>::max()) {
   const int fd = ::open(path.c_str(), O_RDONLY | O_CLOEXEC | O_NOFOLLOW);
   need(fd >= 0, "source_read", "Não foi possível ler um componente.");
   try {
@@ -53,7 +55,7 @@ Bytes read_file(const fs::path &path) {
              st.st_size >= 0 &&
              static_cast<std::uint64_t>(st.st_size) <= 64ULL * 1024 * 1024,
          "source_file", "Componente excessivo, com links ou inválido.");
-    Bytes result(static_cast<std::size_t>(st.st_size));
+    Bytes result(std::min(static_cast<std::size_t>(st.st_size), prefix));
     std::size_t at = 0;
     while (at < result.size()) {
       const auto n = ::read(fd, result.data() + at, result.size() - at);
@@ -61,8 +63,9 @@ Bytes read_file(const fs::path &path) {
       at += static_cast<std::size_t>(n);
     }
     std::uint8_t tail{};
-    need(::read(fd, &tail, 1) == 0, "source_changed",
-         "O componente cresceu durante a leitura.");
+    need((result.size() < static_cast<std::size_t>(st.st_size)) ||
+             ::read(fd, &tail, 1) == 0,
+         "source_changed", "O componente cresceu durante a leitura.");
     struct stat end {};
     need(fstat(fd, &end) == 0 && end.st_size == st.st_size &&
              end.st_mtim.tv_sec == st.st_mtim.tv_sec &&
@@ -142,6 +145,7 @@ struct Captured {
   std::map<std::string, std::string, std::less<>> witness;
   std::vector<std::unique_ptr<ReadDb>> locks;
   fs::path source;
+  std::map<std::string, bool, std::less<>> components;
 };
 std::map<std::string, bool, std::less<>> inventory(const fs::path &root) {
   std::map<std::string, bool, std::less<>> result;
@@ -168,7 +172,8 @@ std::string parent_key(const std::string &path) {
   const auto parent = name(fs::path(path).parent_path());
   return parent.empty() ? "project" : "dir/" + parent;
 }
-Captured capture(const fs::path &given, const fs::path &store) {
+Captured capture(const fs::path &given, const fs::path &store,
+                 TransportProfile profile) {
   need(!fs::is_symlink(fs::symlink_status(given)), "unsafe_source",
        "Origem simbólica não aceita.");
   Captured c;
@@ -179,6 +184,7 @@ Captured capture(const fs::path &given, const fs::path &store) {
   need(!below(destination, c.source), "destination_inside_source",
        "O arquivo de destino precisa ficar fora da origem.");
   const auto list = inventory(c.source);
+  c.components = list;
   need(list.contains("manifest.json") && !list.at("manifest.json") &&
            list.contains("data/project.sqlite3"),
        "source_project", "Manifesto ou banco canônico ausente.");
@@ -187,7 +193,7 @@ Captured capture(const fs::path &given, const fs::path &store) {
   // discarded.
   for (const auto &[path, directory] : list)
     if (!directory) {
-      const auto raw = read_file(c.source / path);
+      const auto raw = read_file(c.source / path, 100);
       if (raw.size() >= 16 &&
           string_bytes(Bytes(raw.begin(), raw.begin() + 16)) ==
               std::string("SQLite format 3\0", 16)) {
@@ -204,7 +210,9 @@ Captured capture(const fs::path &given, const fs::path &store) {
   for (const auto &[path, directory] : list) {
     Record r;
     r.key = (directory ? "dir/" : "file/") + path;
-    r.kind = directory ? "legacy-directory" : "legacy-file";
+    r.kind = directory                             ? "legacy-directory"
+             : profile == TransportProfile::Blocks ? "chunked-file"
+                                                   : "legacy-file";
     r.references = {parent_key(path)};
     V::Object body{{"path", path}};
     if (!directory) {
@@ -212,8 +220,8 @@ Captured capture(const fs::path &given, const fs::path &store) {
       total += raw.size();
       need(total <= max_bytes, "project_limit",
            "A cópia excede 128 MiB neste primeiro perfil.");
-      r.blob = sha256(raw);
-      c.witness[path] = r.blob;
+      const auto full_hash = sha256(raw);
+      c.witness[path] = full_hash;
       body["bytes"] = static_cast<std::int64_t>(raw.size());
       if (path == "manifest.json") {
         const auto manifest = parse_json(string_bytes(raw));
@@ -222,8 +230,36 @@ Captured capture(const fs::path &given, const fs::path &store) {
              "source_format", "Formato de pasta não reconhecido.");
         c.owner = manifest.at("project_id").as_string();
       }
-      if (seen_blobs.insert(r.blob).second)
-        c.blobs.push_back({r.blob, std::move(raw)});
+      if (profile == TransportProfile::WholeFile) {
+        r.blob = full_hash;
+        if (seen_blobs.insert(r.blob).second)
+          c.blobs.push_back({r.blob, std::move(raw)});
+      } else {
+        V::Array parts;
+        std::set<std::string> refs{parent_key(path)};
+        for (std::size_t at = 0; at < raw.size(); at += block_bytes) {
+          const auto last = std::min(at + block_bytes, raw.size());
+          Bytes data(raw.begin() + static_cast<std::ptrdiff_t>(at),
+                     raw.begin() + static_cast<std::ptrdiff_t>(last));
+          const auto hash = sha256(data);
+          const auto key = "chunk/" + hash;
+          parts.emplace_back(hash);
+          refs.insert(key);
+          Record chunk{key,
+                       "transport-chunk",
+                       json(V::Object{
+                           {"bytes", static_cast<std::int64_t>(data.size())}}),
+                       hash,
+                       {},
+                       0};
+          c.records.emplace(key, std::move(chunk));
+          if (seen_blobs.insert(hash).second)
+            c.blobs.push_back({hash, std::move(data)});
+        }
+        body["sha256"] = full_hash;
+        body["chunks"] = std::move(parts);
+        r.references.assign(refs.begin(), refs.end());
+      }
     }
     r.payload = json(body);
     c.records.emplace(r.key, std::move(r));
@@ -239,17 +275,19 @@ Captured capture(const fs::path &given, const fs::path &store) {
        "source_identity", "Schema ou identidade canônica incompatível.");
   Record root;
   root.key = "project";
-  root.kind = "legacy-project";
-  root.payload =
-      json(V::Object{{"format", "INDE-DIRECTORY-37"}, {"project_id", c.owner}});
+  root.kind = profile == TransportProfile::Blocks ? "chunked-project"
+                                                  : "legacy-project";
+  root.payload = json(V::Object{{"format", profile == TransportProfile::Blocks
+                                               ? "INDE-DIRECTORY-37-CHUNKS-1"
+                                               : "INDE-DIRECTORY-37"},
+                                {"project_id", c.owner}});
   root.references = {"file/data/project.sqlite3", "file/manifest.json"};
   c.records.emplace(root.key, std::move(root));
   return c;
 }
 void unchanged(const Captured &c) {
   const auto list = inventory(c.source);
-  need(list.size() + 1 == c.records.size(), "source_changed",
-       "O inventário de origem mudou.");
+  need(list == c.components, "source_changed", "O inventário de origem mudou.");
   for (const auto &[path, directory] : list) {
     need(c.records.contains((directory ? "dir/" : "file/") + path),
          "source_changed", "A origem mudou de tipo ou caminho.");
@@ -264,6 +302,10 @@ std::vector<Edit> edits(const State &old, const Captured &next) {
   std::vector<Edit> result;
   for (const auto &[key, r] : next.records) {
     const auto at = old.records.find(key);
+    if (at != old.records.end() && at->second.kind == r.kind &&
+        at->second.payload == r.payload && at->second.blob == r.blob &&
+        at->second.references == r.references)
+      continue;
     result.push_back(
         {key, at == old.records.end() ? 0 : at->second.version, r});
   }
@@ -271,6 +313,19 @@ std::vector<Edit> edits(const State &old, const Captured &next) {
     if (!next.records.contains(key))
       result.push_back({key, r.version, std::nullopt});
   return result;
+}
+State publish_capture(Store &store, const State &old, Captured &captured,
+                      const std::string &label) {
+  const auto changes = edits(old, captured);
+  std::set<std::string> needed;
+  for (const auto &change : changes)
+    if (change.value && !change.value->blob.empty())
+      needed.insert(change.value->blob);
+  std::vector<Blob> supplied;
+  for (auto &b : captured.blobs)
+    if (needed.contains(b.hash))
+      supplied.push_back(std::move(b));
+  return store.apply(old, changes, supplied, label);
 }
 void sync_dir(const fs::path &p) {
   const int fd = ::open(p.c_str(), O_RDONLY | O_DIRECTORY | O_CLOEXEC);
@@ -299,11 +354,34 @@ void write_new(const fs::path &p, const Bytes &b) {
   }
 }
 } // namespace
+TransportProfile directory_profile(const State &state) {
+  need(state.records.contains("project") &&
+           (state.records.at("project").kind == "legacy-project" ||
+            state.records.at("project").kind == "chunked-project"),
+       "transport_profile", "Estado sem perfil de transporte reconhecido.");
+  const auto root = parse_json(state.records.at("project").payload);
+  need(root.as_object().size() == 2 &&
+           root.at("project_id").as_string() == state.project_id &&
+           state.records.at("project").blob.empty() &&
+           state.records.at("project").references ==
+               std::vector<std::string>{"file/data/project.sqlite3",
+                                        "file/manifest.json"},
+       "transport_profile", "Identidade de transporte inválida.");
+  const auto format = root.at("format").as_string();
+  need(format == "INDE-DIRECTORY-37" || format == "INDE-DIRECTORY-37-CHUNKS-1",
+       "transport_profile", "Perfil de transporte não reconhecido.");
+  need(state.records.at("project").kind == (format == "INDE-DIRECTORY-37"
+                                                ? "legacy-project"
+                                                : "chunked-project"),
+       "transport_profile", "Tipo e perfil do projeto divergem.");
+  return format == "INDE-DIRECTORY-37" ? TransportProfile::WholeFile
+                                       : TransportProfile::Blocks;
+}
 bool directory_matches(Store &store, const State &state, const fs::path &source,
                        const fs::path &file) {
   need(store.head().store_id == state.store_id, "stale_state",
        "Outro armazenamento.");
-  const auto captured = capture(source, file);
+  const auto captured = capture(source, file, directory_profile(state));
   unchanged(captured);
   if (captured.owner != state.project_id ||
       captured.records.size() != state.records.size())
@@ -317,10 +395,11 @@ bool directory_matches(Store &store, const State &state, const fs::path &source,
   }
   return true;
 }
-State pack_directory(const fs::path &source, const fs::path &new_file) {
+State pack_directory(const fs::path &source, const fs::path &new_file,
+                     TransportProfile profile) {
   need(!fs::exists(fs::symlink_status(new_file)), "destination_exists",
        "O destino precisa ser um arquivo novo.");
-  auto captured = capture(source, new_file);
+  auto captured = capture(source, new_file, profile);
   unchanged(captured);
   auto *uuid = g_uuid_string_random();
   const auto pending = fs::absolute(new_file).parent_path() /
@@ -331,8 +410,8 @@ State pack_directory(const fs::path &source, const fs::path &new_file) {
     auto store = Store::create(pending, captured.owner);
     const auto old = store.head();
     unchanged(captured);
-    result = store.apply(old, edits(old, captured), captured.blobs,
-                         "Importar cópia da pasta de projeto");
+    result = publish_capture(store, old, captured,
+                             "Importar cópia da pasta de projeto");
     store.verify();
   }
   need(::renameat2(AT_FDCWD, pending.c_str(), AT_FDCWD, new_file.c_str(),
@@ -346,16 +425,11 @@ State pack_directory(const fs::path &source, const fs::path &new_file) {
 State update_directory(Store &store, const State &expected,
                        const fs::path &source, const fs::path &store_path,
                        const std::string &label) {
-  auto captured = capture(source, store_path);
+  auto captured = capture(source, store_path, directory_profile(expected));
   need(captured.owner == expected.project_id, "source_identity",
        "A pasta pertence a outro projeto.");
-  need(expected.records.contains("project") &&
-           expected.records.at("project").kind == "legacy-project",
-       "transport_profile",
-       "O arquivo não pertence ao perfil de transporte de pasta.");
   unchanged(captured);
-  return store.apply(expected, edits(expected, captured), captured.blobs,
-                     label);
+  return publish_capture(store, expected, captured, label);
 }
 void unpack_directory(Store &store, std::int64_t sequence,
                       const fs::path &given) {
@@ -364,33 +438,44 @@ void unpack_directory(Store &store, std::int64_t sequence,
   const auto target = fs::absolute(given);
   need(!fs::exists(fs::symlink_status(target)), "destination_exists",
        "A reabertura exige uma pasta nova; nada será sobrescrito.");
-  need(state.records.contains("project") &&
-           state.records.at("project").kind == "legacy-project",
-       "transport_profile", "Este estado não é uma captura de pasta INDE.");
-  const auto root = parse_json(state.records.at("project").payload);
-  need(root.at("format").as_string() == "INDE-DIRECTORY-37" &&
-           root.at("project_id").as_string() == state.project_id,
-       "transport_profile", "Identidade de transporte inválida.");
-  std::map<std::string, const Record *, std::less<>> files, dirs;
+  const auto profile = directory_profile(state);
+  std::map<std::string, const Record *, std::less<>> files, dirs, chunks;
+  std::set<std::string> used_chunks;
   std::uint64_t total = 0;
   for (const auto &[key, r] : state.records) {
     if (key == "project")
       continue;
+    if (r.kind == "transport-chunk" && profile == TransportProfile::Blocks) {
+      const auto size = parse_json(r.payload);
+      need(!r.blob.empty() && key == "chunk/" + r.blob &&
+               size.as_object().size() == 1 &&
+               size.at("bytes").as_integer() > 0 &&
+               size.at("bytes").as_integer() <=
+                   static_cast<std::int64_t>(block_bytes) &&
+               r.references.empty(),
+           "transport_profile", "Bloco inválido.");
+      chunks.emplace(key, &r);
+      continue;
+    }
     const bool directory = r.kind == "legacy-directory";
-    need(directory || r.kind == "legacy-file", "transport_profile",
+    need(directory ||
+             r.kind == (profile == TransportProfile::Blocks ? "chunked-file"
+                                                            : "legacy-file"),
+         "transport_profile",
          "Estado contém elementos que este conversor ainda não materializa.");
     const auto body = parse_json(r.payload);
     const auto path = body.at("path").as_string();
     safe_relative(path);
-    need(key == (directory ? "dir/" : "file/") + path &&
-             r.references == std::vector<std::string>{parent_key(path)},
-         "transport_profile", "Vínculos de pasta inválidos.");
+    need(key == (directory ? "dir/" : "file/") + path, "transport_profile",
+         "Vínculos de pasta inválidos.");
     if (directory)
       need(r.blob.empty(), "transport_profile",
            "Diretório não pode carregar bytes de arquivo.");
     else {
       const auto size = body.at("bytes").as_integer();
-      need(!r.blob.empty() && size >= 0 && size <= 64LL * 1024 * 1024,
+      need(size >= 0 && size <= 64LL * 1024 * 1024 &&
+               (profile == TransportProfile::Blocks ? r.blob.empty()
+                                                    : !r.blob.empty()),
            "transport_profile",
            "Arquivo sem recurso incorporado ou excessivo.");
       total += static_cast<std::uint64_t>(size);
@@ -400,6 +485,36 @@ void unpack_directory(Store &store, std::int64_t sequence,
     need((directory ? dirs : files).emplace(path, &r).second,
          "transport_profile", "Caminho repetido.");
   }
+  for (const auto &[path, r] : dirs)
+    need(r->references == std::vector<std::string>{parent_key(path)},
+         "transport_profile", "Vínculos de diretório inválidos.");
+  for (const auto &[path, r] : files) {
+    std::set<std::string> refs{parent_key(path)};
+    if (profile == TransportProfile::Blocks) {
+      const auto body = parse_json(r->payload);
+      const auto size = static_cast<std::size_t>(body.at("bytes").as_integer());
+      const auto &parts = body.at("chunks").as_array();
+      need(body.as_object().size() == 4 &&
+               body.at("sha256").as_string().size() == 64 &&
+               parts.size() == (size + block_bytes - 1) / block_bytes,
+           "transport_profile", "Descritor de blocos inválido.");
+      for (std::size_t i = 0; i < parts.size(); ++i) {
+        const auto key = "chunk/" + parts[i].as_string();
+        need(chunks.contains(key), "transport_profile", "Bloco ausente.");
+        const auto bytes =
+            parse_json(chunks.at(key)->payload).at("bytes").as_integer();
+        need(bytes == static_cast<std::int64_t>(
+                          std::min(block_bytes, size - i * block_bytes)),
+             "transport_profile", "Comprimento de bloco inválido.");
+        refs.insert(key);
+        used_chunks.insert(key);
+      }
+    }
+    need(r->references == std::vector<std::string>(refs.begin(), refs.end()),
+         "transport_profile", "Vínculos de arquivo inválidos.");
+  }
+  need(used_chunks.size() == chunks.size(), "transport_profile",
+       "Bloco sem arquivo dono.");
   need(files.size() + dirs.size() <= max_files, "file_limit",
        "Quantidade de componentes excede o perfil de transporte.");
   need(files.contains("manifest.json") &&
@@ -421,14 +536,29 @@ void unpack_directory(Store &store, std::int64_t sequence,
          "Falha ao criar uma pasta do projeto.");
   }
   for (const auto &[path, r] : files) {
-    const auto bytes = store.blob(r->blob);
     const auto body = parse_json(r->payload);
+    Bytes bytes;
+    if (profile == TransportProfile::WholeFile)
+      bytes = store.blob(r->blob);
+    else {
+      bytes.reserve(static_cast<std::size_t>(body.at("bytes").as_integer()));
+      for (const auto &part : body.at("chunks").as_array()) {
+        const auto &chunk = *chunks.at("chunk/" + part.as_string());
+        const auto data = store.blob(chunk.blob);
+        need(static_cast<std::int64_t>(data.size()) ==
+                 parse_json(chunk.payload).at("bytes").as_integer(),
+             "transport_profile", "Bloco diverge do descritor.");
+        bytes.insert(bytes.end(), data.begin(), data.end());
+      }
+      need(sha256(bytes) == body.at("sha256").as_string(), "transport_profile",
+           "Hash do arquivo reconstruído divergente.");
+    }
     need(static_cast<std::int64_t>(bytes.size()) ==
              body.at("bytes").as_integer(),
          "transport_profile", "Tamanho do recurso diverge do descritor.");
     write_new(stage / path, bytes);
   }
-  auto candidate = capture(stage, target);
+  auto candidate = capture(stage, target, profile);
   need(candidate.owner == state.project_id &&
            candidate.records.size() == state.records.size(),
        "transport_compare",

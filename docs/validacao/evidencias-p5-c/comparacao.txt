@@ -1,0 +1,9 @@
+1MiB-baseline 52.16 ms 6635520 new bytes
+1MiB-whole_current 54.41 ms 6635520 new bytes
+1MiB-blocks_current 47.02 ms 393216 new bytes
+4MiB-baseline 212.67 ms 26099712 new bytes
+4MiB-whole_current 174.98 ms 26099712 new bytes
+4MiB-blocks_current 139.91 ms 393216 new bytes
+16MiB-baseline 748.64 ms 103956480 new bytes
+16MiB-whole_current 759.42 ms 103956480 new bytes
+16MiB-blocks_current 554.49 ms 393216 new bytes

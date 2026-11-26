@@ -84,7 +84,8 @@ void MainWindow::choose_project_file(bool create) {
         builder.create(root / "source.inde", path.stem().string());
         builder.save();
         builder.close();
-        project_file::pack_directory(root / "source.inde", path);
+        project_file::pack_directory(root / "source.inde", path,
+                                     project_file::TransportProfile::Blocks);
       }
       open_project_at(path);
     } catch (const std::exception &e) {
@@ -233,7 +234,8 @@ void MainWindow::copy_project_file() {
           remember_context();
           if (!project_file_)
             service_.save();
-          project_file::pack_directory(service_.current()->path(), path);
+          project_file::pack_directory(service_.current()->path(), path,
+                                       project_file::TransportProfile::Blocks);
           if (current_only) {
             // The new file has been verified and published. Release the old
             // lease without trying another write to a full/unavailable file.

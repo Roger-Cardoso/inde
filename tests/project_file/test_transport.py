@@ -153,4 +153,74 @@ class ProjectFile(unittest.TestCase):
         s=self.inspect();p=self.request([],s);v=json.loads(p.read_text());v['unexpected']=True;p.write_text(json.dumps(v))
         self.run_cli('aplicar',self.package,p,ok=False);self.assertEqual(self.inspect()['sequence'],s['sequence'])
 
+
+class BlockProjectFile(ProjectFile):
+    def pack(self):return self.run_cli('converter-blocos',self.source,self.package)
+    def file_record(self,key):return next(r for r in self.inspect()['records'] if r['key']==key)
+    def edit_record(self,r):
+        self.run_cli('aplicar',self.package,self.request([dict(key=r['key'],expected_version=r['version'],value={k:r[k] for k in ['kind','payload','blob','references']})]))
+    def refuse_materialization(self):
+        target=self.root/'Recusado.inde'
+        r=self.run_cli('reabrir',self.package,target,ok=False)
+        self.assertIn('transport_profile',r.stderr);self.assertFalse(target.exists())
+    def test_materialization_rejects_path_escape_before_writing(self):
+        self.pack()
+        data=dict(kind='chunked-file',payload=dict(path='../fora',bytes=0,sha256=hashlib.sha256(b'').hexdigest(),chunks=[]),blob='',references=['project'])
+        self.run_cli('aplicar',self.package,self.request([dict(key='file/../fora',expected_version=0,value=data)]))
+        target=self.root/'Perigoso.inde';r=self.run_cli('reabrir',self.package,target,ok=False)
+        self.assertIn('unsafe_path',r.stderr);self.assertFalse((self.root/'fora').exists());self.assertFalse(target.exists())
+    def test_boundaries_empty_repeated_and_shared_blocks(self):
+        for size in [0,1,65535,65536,65537,131072]:
+            (self.source/f'limite-{size}.bin').write_bytes((bytes(range(256))*513)[:size])
+        original=self.files(self.source);self.pack()
+        target=self.root/'Limites.inde';self.run_cli('reabrir',self.package,target)
+        self.assertEqual(self.files(target),original)
+        r=self.file_record('file/limite-131072.bin')
+        self.assertEqual(r['payload']['chunks'][0],r['payload']['chunks'][1])
+        self.assertEqual(len(r['references']),2) # parent plus one shared block
+        self.assertEqual(r['blob'],'')
+    def test_small_database_change_reuses_large_unchanged_content(self):
+        import random
+        with sqlite3.connect(self.source/'data/project.sqlite3') as db:
+            db.execute('CREATE TABLE stable(id INTEGER PRIMARY KEY, value BLOB)')
+            db.executemany('INSERT INTO stable(value) VALUES(?)',[(random.Random(i).randbytes(16384),) for i in range(128)])
+        first=self.pack()
+        with sqlite3.connect(self.package) as db:before=db.execute('SELECT sum(size) FROM blobs').fetchone()[0]
+        for i in range(4):
+            with sqlite3.connect(self.source/'data/project.sqlite3') as db:db.execute('UPDATE documents SET content=?',(f'Pequena troca {i}',))
+            s=self.inspect();self.run_cli('registrar',self.package,self.source,s['sequence'],s['hash'],'Troca pequena')
+        with sqlite3.connect(self.package) as db:after=db.execute('SELECT sum(size) FROM blobs').fetchone()[0]
+        self.assertLess(after-before,4*131072)
+        target=self.root/'Passado.inde';self.run_cli('reabrir',self.package,target,first['sequence'])
+        with sqlite3.connect(target/'data/project.sqlite3') as db:self.assertEqual(db.execute('SELECT content FROM documents').fetchone()[0],'Texto inicial 🙂')
+        with sqlite3.connect(target/'data/project.sqlite3') as db:self.assertEqual(db.execute('SELECT count(*) FROM stable').fetchone()[0],128)
+    def test_grow_truncate_remove_and_restore_keeps_old_resources(self):
+        p=self.source/'grande.bin';p.write_bytes(b'A'*65536+b'B'*65536+b'C')
+        first=self.pack();original=self.files(self.source)
+        for data in [b'Z'*196608,b'',None]:
+            if data is None:p.unlink()
+            else:p.write_bytes(data)
+            s=self.inspect();self.run_cli('registrar',self.package,self.source,s['sequence'],s['hash'],'Tamanho e retirada')
+            out=self.root/('Tamanho-'+str(self.inspect()['sequence']));self.run_cli('reabrir',self.package,out)
+            self.assertEqual(self.files(out),self.files(self.source))
+        s=self.inspect();self.run_cli('restaurar',self.package,first['sequence'],s['sequence'],s['hash'])
+        out=self.root/'Restaurado';self.run_cli('reabrir',self.package,out);self.assertEqual(self.files(out),original)
+    def test_reordered_blocks_require_correct_whole_file_hash(self):
+        (self.source/'ordem.bin').write_bytes(b'A'*65536+b'B'*65536)
+        self.pack();r=self.file_record('file/ordem.bin');r['payload']['chunks'].reverse();self.edit_record(r);self.refuse_materialization()
+    def test_invalid_block_length_and_recipe_count_are_refused(self):
+        self.pack();r=self.file_record('file/nota.txt');r['payload']['chunks'].append(r['payload']['chunks'][0]);self.edit_record(r);self.refuse_materialization()
+    def test_invalid_chunk_descriptor_is_refused(self):
+        self.pack();r=next(r for r in self.inspect()['records'] if r['kind']=='transport-chunk');r['payload']['bytes']+=1;self.edit_record(r);self.refuse_materialization()
+    def test_unknown_profile_never_changes_source_or_creates_target(self):
+        self.pack();r=self.file_record('project');r['payload']['format']='INDE-DIRECTORY-FUTURE';self.edit_record(r)
+        source=self.files(self.source);self.refuse_materialization()
+        s=self.inspect();failure=self.run_cli('registrar',self.package,self.source,s['sequence'],s['hash'],'Incompativel',ok=False)
+        self.assertIn('transport_profile',failure.stderr);self.assertEqual(self.files(self.source),source)
+    def test_profiles_remain_distinct_after_save(self):
+        first=self.pack();s=self.run_cli('registrar',self.package,self.source,first['sequence'],first['hash'],'Sem efeito')
+        self.assertEqual(s['sequence'],first['sequence'])
+        self.assertEqual(self.file_record('project')['payload']['format'],'INDE-DIRECTORY-37-CHUNKS-1')
+        self.assertEqual(self.file_record('file/nota.txt')['kind'],'chunked-file')
+
 if __name__=='__main__':unittest.main(verbosity=2)

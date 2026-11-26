@@ -14,6 +14,8 @@ O editor tem uma base nativa aproveitável e recursos reais, mas ainda não ofer
 
 **Fase 5 antecipada em 26/11/2026:** por escolha e autorização expressa do usuário, o trabalho de arquivo único foi iniciado antes dos cortes restantes da série E. O [contrato P5-A](ARQUIVO-UNICO-P5-A.md) entrega estados imutáveis e transporte reversível, com limites e demonstração próprios. Isso não encerra E3–E7; a próxima continuidade do editor deve considerar a integração de abertura/salvamento/recuperação do arquivo único, mantendo as prioridades e pendências aqui registradas.
 
+**Continuidade de armazenamento em 26/11/2026:** [P5-B](ARQUIVO-UNICO-P5-B.md) integrou abertura, confirmação e recuperação ao aplicativo nativo. [P5-C](ARQUIVO-UNICO-P5-C.md) atua na granularidade dos recursos e nas medições de confirmação, mantendo os arquivos anteriores no perfil original. Esses cortes não encerram E3–E7 nem tornam assíncrona a confirmação do arquivo.
+
 ## 1. O resultado a alcançar
 
 Um escritor deve conseguir abrir seu projeto, escrever, inserir uma imagem, criar duas tabelas, colocá-las lado a lado, continuar escrevendo, reorganizar o conjunto, consultar suas marcações, desfazer um engano, salvar, encerrar e retomar sem desmontar o documento nem precisar compreender as divisões internas do programa.

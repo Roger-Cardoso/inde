@@ -7,6 +7,10 @@
 
 ## Fase 5 antecipada — arquivo de projeto
 
+- [P5-C: confirmação e histórico por blocos](arquitetura/ARQUIVO-UNICO-P5-C.md), [demonstração e comparação](roteiros/ARQUIVO-UNICO-P5-C.md), [validação](validacao/VALIDACAO-P5-C.md).
+
+P5-C conserva os arquivos anteriores no perfil original; novos arquivos nativos usam blocos. Os manifestos A e B abaixo correspondem às revisões históricas identificadas nos respectivos relatórios.
+
 - [P5-B: abertura, confirmação e recuperação no editor nativo](arquitetura/ARQUIVO-UNICO-P5-B.md).
 - [Experimentar a integração nativa](roteiros/ARQUIVO-UNICO-P5-B.md) e [validação P5-B](validacao/VALIDACAO-P5-B.md).
 

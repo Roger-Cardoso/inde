@@ -1,0 +1,16 @@
+{
+  "native_single_file": true,
+  "native_create": true,
+  "native_open_dialog": true,
+  "open_saved_preserves_pending_work": true,
+  "explicit_save": true,
+  "no_per_keystroke_capture": true,
+  "history_restore": true,
+  "later_history_preserved": true,
+  "full_history_copy": true,
+  "current_state_copy": true,
+  "recents_real_file": true,
+  "crash_recovery": true,
+  "failed_file_save_can_quit": true,
+  "preserved_work_reopened": true
+}
