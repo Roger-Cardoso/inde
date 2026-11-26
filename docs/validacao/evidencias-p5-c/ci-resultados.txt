@@ -1,0 +1,32 @@
+native-project — success
+2026-11-26T21:13:59.3149632Z 1/6 Test #19: inde_project_file_tests .................   Passed    0.29 sec
+2026-11-26T21:13:59.8168592Z 2/6 Test #20: inde_project_file_native_tests ..........   Passed    0.50 sec
+2026-11-26T21:14:01.4347248Z 3/6 Test #21: inde_project_file_transport_tests .......   Passed    1.62 sec
+2026-11-26T21:14:01.5830149Z 4/6 Test #22: inde_project_file_session_tests .........   Passed    0.14 sec
+2026-11-26T21:14:01.7389968Z 5/6 Test #23: inde_project_file_block_session_tests ...   Passed    0.16 sec
+2026-11-26T21:14:02.3191927Z 6/6 Test #24: inde_project_file_block_native_tests ....   Passed    0.58 sec
+2026-11-26T21:14:02.3193774Z 100% tests passed, 0 tests failed out of 6
+2026-11-26T21:14:02.3194096Z Total Test time (real) =   3.34 sec
+2026-11-26T21:14:02.8963217Z P5 native schema37 roundtrip: full Document, PNG, table, equation, divergent row, planning/text link, edition, restoration and original preservation OK
+2026-11-26T21:14:10.9311097Z P5 GTK demo: actual launcher, keyboard Save/Quit, capture and verification OK
+2026-11-26T21:14:11.5059959Z P5 native schema37 roundtrip: full Document, PNG, table, equation, divergent row, planning/text link, edition, restoration and original preservation OK
+2026-11-26T21:14:40.5861009Z P5-B GTK: real Save, history restore, recents, crash recovery and failure-safe normal exit OK
+2026-11-26T21:14:41.2649928Z P5 native schema37 roundtrip: full Document, PNG, table, equation, divergent row, planning/text link, edition, restoration and original preservation OK
+2026-11-26T21:15:10.1868581Z P5-B GTK: real Save, history restore, recents, crash recovery and failure-safe normal exit OK
+2026-11-26T21:15:12.3245938Z P5-C history growth and exact restoration OK
+
+versioned-store (g++, ON) — success
+2026-11-26T21:06:41.3026739Z 100% tests passed, 0 tests failed out of 4
+2026-11-26T21:06:41.3027257Z Total Test time (real) =   7.01 sec
+
+versioned-store (clang++, OFF) — success
+2026-11-26T21:06:36.5564265Z 100% tests passed, 0 tests failed out of 4
+2026-11-26T21:06:36.5564707Z Total Test time (real) =   1.85 sec
+
+versioned-store (clang++, ON) — success
+2026-11-26T21:06:27.0120319Z 100% tests passed, 0 tests failed out of 4
+2026-11-26T21:06:27.0120965Z Total Test time (real) =  11.03 sec
+
+versioned-store (g++, OFF) — success
+2026-11-26T21:06:14.5739366Z 100% tests passed, 0 tests failed out of 4
+2026-11-26T21:06:14.5739661Z Total Test time (real) =   2.21 sec

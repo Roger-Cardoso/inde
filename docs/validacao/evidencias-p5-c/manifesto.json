@@ -3,7 +3,7 @@
   "date": "2026-11-26",
   "base": "e605b3726522fd0d17943287c7950a6ed7777e23",
   "branch": "feature/inde-p5-single-file",
-  "note": "Fontes do corte C; A e B permanecem historicos. Fechamento de CI e regressao de interface sera anexado.",
+  "note": "Fontes do corte C no commit validado; evidencias A e B permanecem historicas. CI, comparacao de versoes, regressao existente e percursos novos identificados separadamente.",
   "sources": {
     ".github/workflows/inde-p5.yml": "d8cea3e938f1a7f0b2214fa328b1ceccbc586658c74d49e5d084d704e82352c6",
     "cpp/CMakeLists.txt": "411ebcbeccad081e761f333146ccfcb831e512661e23c58de3aaba19729db527",
@@ -28,10 +28,14 @@
   },
   "evidence": {
     "docs/validacao/evidencias-p5-c/arquivos-fontes.json": "7100204250fd02e59bc176f9cc2b168682bd695f8f85d0ef739ee1b852077002",
+    "docs/validacao/evidencias-p5-c/ci-resultados.txt": "6afbe179d972bb2a88291af34bbb020c4e0a11e76008c0c8e587d81758629300",
+    "docs/validacao/evidencias-p5-c/ci.json": "0cf1f0f207fd40a3e85a578d630b6644eb725937b87993a1dcb1542257be5608",
     "docs/validacao/evidencias-p5-c/clang-asan-ctest.txt": "25add78c1da372e318eeea66ceed101f340d0ab60d8e029cc4366e7e5cda06a9",
     "docs/validacao/evidencias-p5-c/clang-asan-detalhado.txt": "f48737e270e57d6c679916f6d3b048437b6fb56c4f3735825275f70951fc0944",
     "docs/validacao/evidencias-p5-c/comparacao.json": "e77007dd27a041a9aa00952e899db122c18a6df86d9cab4c1d7f258112e43304",
     "docs/validacao/evidencias-p5-c/comparacao.txt": "50a2d4cd48dec7de9c8e12ae970ed8732961526ec8dc5b488575d86d30541dee",
+    "docs/validacao/evidencias-p5-c/conferir-perfis-interface.py": "037e6ac652a7bde57f360226c666cbdf857429491e22a4492b71fcbb66668be5",
+    "docs/validacao/evidencias-p5-c/editor-regressoes.txt": "dbaedf78d763cf72cfbb4e6bc228df8c96657c1428bde76fe9da16655fd519c2",
     "docs/validacao/evidencias-p5-c/fontes-fixadas.json": "7824d5412db6a5a48cdde16f533a8c21bf972cf94651c62c1294a4b2758766b2",
     "docs/validacao/evidencias-p5-c/gcc-release-ctest.txt": "a64094c5ede783510e50d15b23bc4b8202af1ddcafb86883c207fbe369173e3c",
     "docs/validacao/evidencias-p5-c/gtk-anterior.json": "19d14dae89fd60aa24e43b73a679bd19b5a9c65dec96ec7fcaa208133a0d2a89",
@@ -40,6 +44,10 @@
     "docs/validacao/evidencias-p5-c/gtk-launcher.json": "e81b75d1f2fea9f4cff862c26487730a0df301a9561096ebc8d6bc13a2e6bae4",
     "docs/validacao/evidencias-p5-c/gtk-launcher.txt": "59d50bffe2f9116d97773326df4f6685647e49694fc562b6ec6a25c3755cf6e2",
     "docs/validacao/evidencias-p5-c/leitor-anterior-recusa.txt": "cf7a7a3bdf02bbfd4d4dbb027ce933bf1ba63bb20b73c50b79b7fcc76e9f0a9d",
-    "docs/validacao/evidencias-p5-c/native-ctest.txt": "04fde3d29b5145deb1f12169026eee9214469aab97885acbbc6779d85878ae13"
-  }
+    "docs/validacao/evidencias-p5-c/native-ctest.txt": "04fde3d29b5145deb1f12169026eee9214469aab97885acbbc6779d85878ae13",
+    "docs/validacao/evidencias-p5-c/observacao-interface.json": "e18419798621f3e22374a5a326d223b2a449c049361fa0ce380c90d33b0d0134",
+    "docs/validacao/evidencias-p5-c/perfis-interface.json": "a476dad7d9da71262f6b8a836263ab65e36118e6056816bec3ddab2dd57a4387"
+  },
+  "validated_commit": "e1659e4565aa2ca73490ea1df9a1af5471813803",
+  "ci_run": 45895692547
 }

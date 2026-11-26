@@ -1,0 +1,167 @@
+{
+  "fluency": {
+    "timing_scope": "X11 input through low-priority observer; includes polling, not pure paint latency",
+    "samples": [
+      {
+        "stage": "paste",
+        "paragraphs": 20,
+        "mixed": false,
+        "observed_ms": 371.124
+      },
+      {
+        "stage": "delete",
+        "paragraphs": 20,
+        "mixed": false,
+        "observed_ms": 190.15
+      },
+      {
+        "stage": "delete",
+        "paragraphs": 20,
+        "mixed": false,
+        "observed_ms": 188.964
+      },
+      {
+        "stage": "delete",
+        "paragraphs": 20,
+        "mixed": false,
+        "observed_ms": 190.064
+      },
+      {
+        "stage": "backspace",
+        "paragraphs": 20,
+        "mixed": false,
+        "observed_ms": 106.13
+      },
+      {
+        "stage": "delete_burst",
+        "paragraphs": 20,
+        "mixed": false,
+        "observed_ms": 215.208
+      },
+      {
+        "stage": "paste",
+        "paragraphs": 200,
+        "mixed": false,
+        "observed_ms": 3150.547
+      },
+      {
+        "stage": "delete",
+        "paragraphs": 200,
+        "mixed": false,
+        "observed_ms": 499.041
+      },
+      {
+        "stage": "delete",
+        "paragraphs": 200,
+        "mixed": false,
+        "observed_ms": 400.133
+      },
+      {
+        "stage": "delete",
+        "paragraphs": 200,
+        "mixed": false,
+        "observed_ms": 487.431
+      },
+      {
+        "stage": "backspace",
+        "paragraphs": 200,
+        "mixed": false,
+        "observed_ms": 498.166
+      },
+      {
+        "stage": "delete_burst",
+        "paragraphs": 200,
+        "mixed": false,
+        "observed_ms": 505.415
+      },
+      {
+        "stage": "paste",
+        "paragraphs": 200,
+        "mixed": true,
+        "observed_ms": 3800.967
+      },
+      {
+        "stage": "delete",
+        "paragraphs": 200,
+        "mixed": true,
+        "observed_ms": 493.224
+      },
+      {
+        "stage": "delete",
+        "paragraphs": 200,
+        "mixed": true,
+        "observed_ms": 488.367
+      },
+      {
+        "stage": "delete",
+        "paragraphs": 200,
+        "mixed": true,
+        "observed_ms": 395.839
+      },
+      {
+        "stage": "backspace",
+        "paragraphs": 200,
+        "mixed": true,
+        "observed_ms": 488.844
+      },
+      {
+        "stage": "delete_burst",
+        "paragraphs": 200,
+        "mixed": true,
+        "observed_ms": 506.39
+      }
+    ],
+    "normal_exit": true,
+    "saved_text_exact": true
+  },
+  "reorder_samples": [
+    {
+      "stage": "move_down",
+      "prose_lines": 20,
+      "step": 1,
+      "observed_ms": 287.562,
+      "retained_views": 20,
+      "total_views": 20
+    },
+    {
+      "stage": "move_down",
+      "prose_lines": 20,
+      "step": 2,
+      "observed_ms": 204.85,
+      "retained_views": 20,
+      "total_views": 20
+    },
+    {
+      "stage": "move_down",
+      "prose_lines": 20,
+      "step": 3,
+      "observed_ms": 287.871,
+      "retained_views": 20,
+      "total_views": 20
+    },
+    {
+      "stage": "move_down",
+      "prose_lines": 200,
+      "step": 1,
+      "observed_ms": 987.308,
+      "retained_views": 200,
+      "total_views": 200
+    },
+    {
+      "stage": "move_down",
+      "prose_lines": 200,
+      "step": 2,
+      "observed_ms": 1077.989,
+      "retained_views": 200,
+      "total_views": 200
+    },
+    {
+      "stage": "move_down",
+      "prose_lines": 200,
+      "step": 3,
+      "observed_ms": 817.058,
+      "retained_views": 200,
+      "total_views": 200
+    }
+  ]
+}

@@ -17,14 +17,16 @@ Data: 2026-11-26. Base: `e605b3726522fd0d17943287c7950a6ed7777e23`. Branch `feat
 | GCC Release | 4/4 testes CTest, 9,64 s; transporte contém 34 casos Python |
 | Clang + ASan/UBSan/LeakSanitizer | 4/4, 18,62 s |
 | Suíte nativa completa | 71/71, 175,42 s |
+| Regressão completa da interface e integrações | 103/103, 249,04 s |
 | Percurso GTK com arquivo anterior | 14 verificações aprovadas |
 | Percurso GTK por blocos | 14 verificações aprovadas |
+| Perfil persistido pelo editor | Oito arquivos fictícios conferidos por leitura: anteriores, cópias com histórico, cópias atuais e arquivos novos |
 | Demonstrador entregue, aplicativo normal | Arquivo direto, Salvar/Sair por teclado e integridade aprovados |
 | Comparação P5-B/P5-C | Nove execuções, três tamanhos e seis confirmações por execução |
 | Leitor P5-B | Perfil anterior aceito; blocos recusados sem alterar origem |
 | Preservação | 758 fontes integradas e três compactados conferidos |
 
-A regressão de interface existente e a CI são registradas no fechamento deste relatório. Os manifestos A e B continuam sendo evidências das revisões históricas, não dos arquivos atuais. A [conferência deste corte](../../tests/project_file/verify_block_evidence.py) verifica fontes e evidências C.
+Código validado: `e1659e4565aa2ca73490ea1df9a1af5471813803`. A [CI 45895692547](https://github.com/Roger-Cardoso/inde/actions/runs/45895692547) terminou em 26/11/2026, às 21:15:18 UTC, com **5/5 jobs aprovados**: GCC e Clang com e sem ASan/UBSan/LeakSanitizer (quatro testes em cada combinação), mais integração nativa (seis testes P5, demonstração anterior, percursos gráficos com arquivo anterior e por blocos, e medição com restauração e crescimento de recursos inferior a 1/8 do perfil inteiro no ensaio de 4 MiB). Os trechos de resultados e passos da execução são preservados nas evidências. Os manifestos A e B continuam sendo evidências das revisões históricas, não dos arquivos atuais. A [conferência deste corte](../../tests/project_file/verify_block_evidence.py) verifica fontes e evidências C.
 
 ## Medições
 
@@ -46,6 +48,12 @@ Os bancos gerados ocupam aproximadamente 1,05, 4,15 e 16,52 MiB, incluindo suas 
 A otimização do perfil antigo não trouxe melhora uniforme: no maior perfil, sua mediana ficou ligeiramente acima da anterior. Não se promete aceleração universal. A memória máxima observada no processo do perfil de 16 MiB caiu de 95.676 KiB para 79.336 KiB com blocos; esse pico inclui geração, captura inicial, confirmação, restauração e verificação, não só Salvar.
 
 O leitor P5-B materializou um arquivo no perfil anterior escrito pela versão atual e recusou o perfil por blocos, mantendo o hash do arquivo de origem. A [comparação completa](evidencias-p5-c/comparacao.json) contém amostras individuais, bytes, memória e proveniência das fontes anteriores.
+
+## Observação da experiência existente
+
+Os 103 testes aprovam os resultados funcionais dos percursos exercitados. As [amostras de interface](evidencias-p5-c/observacao-interface.json), porém, ainda mostram aproximadamente 396–506 ms em exclusões com 200 parágrafos e 817–1.078 ms na reordenação de prosa com 200 linhas. O passe anterior B já registrava atrasos dessa ordem; não é uma comparação controlada de melhora/piora da edição.
+
+Essas observações incluem entrada X11, consulta por observador de baixa prioridade e polling, e não isolam o tempo de pintura. Ainda assim, impedem tratar aprovação funcional como fluidez concluída. As pendências de E1/E3–E7 continuam no plano de maturidade; P5-C não altera os algoritmos de exclusão/reordenação de parágrafos nem encerra esse trabalho.
 
 ## Preservação e limitações
 

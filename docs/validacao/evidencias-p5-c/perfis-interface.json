@@ -1,0 +1,45 @@
+{
+  "format": "INDE-P5C-GTK-PROFILES-1",
+  "checks": [
+    {
+      "file": "/home/roger/Documents/Projects/GitHub/INDE/obj01-audit/dados/p5c-gtk-legacy-20261126/fixture/Projeto-portatil.inde",
+      "kind": "legacy-project",
+      "verified": true
+    },
+    {
+      "file": "/home/roger/Documents/Projects/GitHub/INDE/obj01-audit/dados/p5c-gtk-legacy-20261126/Com-historico.inde",
+      "kind": "legacy-project",
+      "verified": true
+    },
+    {
+      "file": "/home/roger/Documents/Projects/GitHub/INDE/obj01-audit/dados/p5c-gtk-legacy-20261126/Estado-atual.inde",
+      "kind": "chunked-project",
+      "verified": true
+    },
+    {
+      "file": "/home/roger/Documents/Projects/GitHub/INDE/obj01-audit/dados/p5c-gtk-legacy-20261126/Novo.inde",
+      "kind": "chunked-project",
+      "verified": true
+    },
+    {
+      "file": "/home/roger/Documents/Projects/GitHub/INDE/obj01-audit/dados/p5c-gtk-blocks-20261126/fixture/Projeto-portatil.inde",
+      "kind": "chunked-project",
+      "verified": true
+    },
+    {
+      "file": "/home/roger/Documents/Projects/GitHub/INDE/obj01-audit/dados/p5c-gtk-blocks-20261126/Com-historico.inde",
+      "kind": "chunked-project",
+      "verified": true
+    },
+    {
+      "file": "/home/roger/Documents/Projects/GitHub/INDE/obj01-audit/dados/p5c-gtk-blocks-20261126/Estado-atual.inde",
+      "kind": "chunked-project",
+      "verified": true
+    },
+    {
+      "file": "/home/roger/Documents/Projects/GitHub/INDE/obj01-audit/dados/p5c-gtk-blocks-20261126/Novo.inde",
+      "kind": "chunked-project",
+      "verified": true
+    }
+  ]
+}
