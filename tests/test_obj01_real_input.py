@@ -240,7 +240,7 @@ class RealWritingInput(unittest.TestCase):
                 click(name=paragraph)
                 if reordering:
                     from obj01_reordering_cases import exercise_reordering
-                    exercise_reordering(self, root, env, process, window, input_, click, wait, state, scroll_to)
+                    exercise_reordering(self, root, env, process, window, input_, click, wait, state, scroll_to, choose_path)
                     return
                 if fluency:
                     from obj01_fluency_cases import exercise_blank_paragraphs

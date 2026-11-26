@@ -1,0 +1,83 @@
+{
+  "include/inde/application/contextual_planning.hpp": [
+    [
+      "  ContextualSnapshot save_visual(",
+      "  // Remove local uses and visual annotations atomically; shared moments survive.\n  void remove_visual_selection(const ContextualSnapshot &, const std::vector<std::string> &ids);\n  // Remove this plan and its local links; refuse external bridges/interior owners.\n  void remove_plan(const ContextualSnapshot &);\n  ContextualSnapshot save_visual(",
+      1
+    ]
+  ],
+  "CMakeLists.txt": [
+    [
+      "    src/application/contextual_planning.cpp",
+      "    src/application/contextual_planning.cpp\n    src/application/contextual_planning_removal.cpp",
+      1
+    ],
+    [
+      "    src/ui/contextual_planning_visual.cpp",
+      "    src/ui/contextual_planning_visual.cpp\n    src/ui/contextual_planning_removal.cpp",
+      1
+    ]
+  ],
+  "src/ui/contextual_planning_page.hpp": [
+    [
+      "  void remove();",
+      "  void remove();\n  void remove_visual_selection();\n  void remove_plan();",
+      1
+    ],
+    [
+      "  Gtk::Button new_plan_{\"Nova composição contextual\"},",
+      "  Gtk::Button delete_plan_{\"Excluir composição visual…\"};\n  Gtk::Button new_plan_{\"Nova composição contextual\"},",
+      1
+    ]
+  ],
+  "src/ui/contextual_planning_page.cpp": [
+    [
+      "{&new_plan_, &reuse_, &compose_, &group_, &slots_, &refresh_}",
+      "{&new_plan_, &reuse_, &compose_, &group_, &slots_, &refresh_, &delete_plan_}",
+      2
+    ],
+    [
+      "  new_plan_.signal_clicked().connect(",
+      "  delete_plan_.signal_clicked().connect(sigc::mem_fun(*this, &ContextualPlanningPage::remove_plan));\n  new_plan_.signal_clicked().connect(",
+      1
+    ],
+    [
+      "  compose_.set_sensitive(!snapshot_.plan_id.empty());",
+      "  compose_.set_sensitive(!snapshot_.plan_id.empty());\n  delete_plan_.set_sensitive(!snapshot_.plan_id.empty());",
+      1
+    ]
+  ],
+  "src/ui/contextual_canvas.hpp": [
+    [
+      "properties_requested, group_requested, expand_requested;",
+      "properties_requested, group_requested, expand_requested, remove_requested;",
+      1
+    ]
+  ],
+  "src/ui/contextual_canvas.cpp": [
+    [
+      "  if (k == GDK_KEY_Escape) {",
+      "  if (mask == 0 && k == GDK_KEY_Delete && !dragging_ && !rubber_) {\n    if (!selection_.empty()) remove_requested.emit();\n    return true;\n  }\n  if (k == GDK_KEY_Escape) {",
+      1
+    ]
+  ],
+  "src/ui/contextual_planning_visual.cpp": [
+    [
+      "      {\"Remover faixa ou marco visual\",\n       [this] {\n         const auto ids = canvas_.selection();\n         auto values = canvas_.items();\n         std::erase_if(values, [&](const auto &v) {\n           return v.kind != \"block\" && ids.contains(v.id);\n         });\n         execute([&] { commit_visual(snapshot_, values); });\n       },\n       \"\", true, true, true,\n       [this] {\n         return std::any_of(canvas_.items().begin(), canvas_.items().end(),\n                            [this](const auto &v) {\n                              return v.kind != \"block\" &&\n                                     canvas_.selection().contains(v.id);\n                            });\n       }}};",
+      "      {\"Excluir elementos selecionados…\", [this] { remove_visual_selection(); },\n       \"\", true, true, true, [this] { return !canvas_.selection().empty(); }}};",
+      1
+    ],
+    [
+      "  canvas_.capture_requested.connect([this] {",
+      "  canvas_.remove_requested.connect(sigc::mem_fun(*this, &ContextualPlanningPage::remove_visual_selection));\n  canvas_.capture_requested.connect([this] {",
+      1
+    ]
+  ],
+  "src/application/contextual_planning.cpp": [
+    [
+      "  const auto &p = current(service_);\n  auto db = open(p);\n  SqliteTransaction tx(db, \"Retirar participação sem excluir acontecimento\");\n  auto actual = check(db, p, s);\n  participation(actual, id);\n  auto uses = db.prepare(\n      \"SELECT (SELECT count(*) FROM contextual_option_members WHERE \"\n      \"participation_id=?1)+\"\n      \"(SELECT count(*) FROM contextual_declarations WHERE \"\n      \"participation_id=?1)+\"\n      \"(SELECT count(*) FROM contextual_dependencies WHERE source_id=?1 OR \"\n      \"target_id=?1)+\"\n      \"(SELECT count(*) FROM contextual_text_links WHERE participation_id=?1)\");\n  uses.bind(1, id);\n  uses.step();\n  if (uses.column_integer(0))\n    throw std::runtime_error(\n        \"Retire explicitamente encaixe, declarações, dependências e vínculos \"\n        \"textuais antes de retirar a participação. Nada foi alterado\");\n  auto role =\n      db.prepare(\"DELETE FROM contextual_roles WHERE participation_id=?\");\n  role.bind(1, id);\n  role.run();\n  auto visual = db.prepare(\"DELETE FROM contextual_visual_items WHERE participation_id=?\");\n  visual.bind(1, id);\n  visual.run();\n  auto q = db.prepare(\"DELETE FROM contextual_participations WHERE id=?\");\n  q.bind(1, id);\n  q.run();\n  tx.commit();",
+      "  remove_visual_selection(s, {id});",
+      1
+    ]
+  ]
+}

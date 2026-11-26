@@ -201,6 +201,8 @@ const std::map<std::string, std::string> messages = {
     {"authorial_requires_alignment",
      "Restaure a apresentação pela ordem de leitura antes de mudar a sequência "
      "autoral."},
+    {"author_destination_not_found", "O destino na ordem de leitura mudou. Atualize o formulário."},
+    {"unsupported_insertion_intent", "Esse destino de leitura não se aplica a esta operação."},
     {"owner_text_move_refused", "Esse movimento dividiria um grupo textual "
                                 "protegido. Escolha outro destino."},
     {"formula_symbol_immutable",
@@ -671,6 +673,10 @@ struct ObjectDocumentEditor::Impl {
       status.set_text("Aplique ou cancele a edição aberta antes de continuar.");
       return;
     }
+    if (draft && choices.contains("author-before") &&
+        (op == "import" || op == "create_table_sized" ||
+         op == "create_equation" || op == "create_formula_hub" || op == "restore_removed"))
+      args.emplace("author_before", chosen("author-before"));
     args.emplace("op", op);
     args.emplace("expected", state.at("revision"));
     busy = true;
@@ -787,6 +793,27 @@ struct ObjectDocumentEditor::Impl {
       if (shown(id.as_string()))
         c.append(id.as_string(), title(id.as_string()));
     c.set_active_id(active);
+  }
+  void insertion_destinations() {
+    auto &visual = choice("before", "Posição visual: inserir antes de", {}, "");
+    visual.append("", "Fim do documento");
+    for (const auto &id : state.at("visual_order").as_array()) {
+      bool second = false;
+      for (const auto &row : state.at("rows").as_array())
+        if (row.at("children").as_array()[1].as_string() == id.as_string()) second = true;
+      if (shown(id.as_string()) && !second) visual.append(id.as_string(), title(id.as_string()));
+    }
+    visual.set_active_id("");
+    if (persistence::json::serialize(state.at("author_order")) !=
+        persistence::json::serialize(state.at("visual_order"))) {
+      label(editor, "A disposição visual e a ordem de leitura são diferentes. "
+                    "Escolha onde o novo objeto entra em cada uma; os elementos existentes conservam sua ordem.");
+      auto &author = choice("author-before", "Ordem de leitura: inserir antes de", {}, "");
+      author.append("", "Fim do documento");
+      for (const auto &id : state.at("author_order").as_array())
+        if (shown(id.as_string())) author.append(id.as_string(), title(id.as_string()));
+      author.set_active_id("");
+    }
   }
   void select_card(const std::string &id) {
     selected = id;
@@ -1595,6 +1622,8 @@ struct ObjectDocumentEditor::Impl {
         auto *view = owner.paragraph_view(paragraph);
         if (!view)
           throw std::runtime_error("Parágrafo sem origem na Escrita.");
+        if (auto *text_view = dynamic_cast<Gtk::TextView *>(view))
+          text_view->set_justification(Gtk::Justification::LEFT);
         if (auto *projection = dynamic_cast<ObjectTextProjection *>(view)) {
           projection->layout_changed = [this, lifetime = life, projection] {
             if (lifetime->alive && focused_text() == projection)
@@ -1674,6 +1703,14 @@ struct ObjectDocumentEditor::Impl {
                       : vertical == "center" ? Gtk::Align::CENTER
                                              : Gtk::Align::START);
       const auto ta = text(p, "text_align");
+      // Paragraph editors live inside a ScrolledWindow, not as direct children.
+      if (const auto *paragraph = find(state, "paragraphs", id)) {
+        const auto at = paragraph_views.find(text(*paragraph, "paragraph"));
+        if (at != paragraph_views.end())
+          at->second->set_justification(ta == "center" ? Gtk::Justification::CENTER
+              : ta == "right" ? Gtk::Justification::RIGHT
+              : ta == "justify" ? Gtk::Justification::FILL : Gtk::Justification::LEFT);
+      }
       for (auto *w = box->get_first_child(); w; w = w->get_next_sibling())
         if (auto *l = dynamic_cast<Gtk::Label *>(w)) {
           l->set_xalign(ta == "center" ? .5f : ta == "right" ? 1.f : 0.f);
@@ -2060,8 +2097,8 @@ struct ObjectDocumentEditor::Impl {
     toolbar.set_sensitive(true);
     stack.set_visible_child("document");
   }
-  void footer(const std::function<void()> &apply) {
-    button(edit_actions, "Aplicar", "native-apply", [this, apply] {
+  void footer(const std::function<void()> &apply, const std::string &caption = "Aplicar") {
+    button(edit_actions, caption, "native-apply", [this, apply] {
       guard(apply);
     }).add_css_class("suggested-action");
     button(edit_actions, "Cancelar", "native-cancel", [this] { cancel(); });
@@ -2117,8 +2154,7 @@ struct ObjectDocumentEditor::Impl {
     });
     update();
     if (id.empty()) {
-      auto &before = choice("before", "Inserir antes de", {}, "");
-      destinations(before);
+      insertion_destinations();
     }
     footer([this, id] {
       O args{{"source", source_text("source")},
@@ -2139,8 +2175,7 @@ struct ObjectDocumentEditor::Impl {
     entry("rows", "Linhas (1–64)", "2");
     entry("columns", "Colunas (1–32)", "3");
     check("header", "Primeira linha é cabeçalho", true);
-    auto &b = choice("before", "Inserir antes de", {}, "");
-    destinations(b);
+    insertion_destinations();
     footer([this] {
       const auto r = number("rows"), c = number("columns");
       if (r != std::floor(r) || c != std::floor(c) || r < 1 || r > 64 ||
@@ -2196,8 +2231,7 @@ struct ObjectDocumentEditor::Impl {
               std::filesystem::path(path).filename().string());
         entry("alt", "Descrição para leitura alternativa");
         check("decorative", "Figura decorativa", false);
-        auto &b = choice("before", "Inserir antes de", {}, "");
-        destinations(b);
+        insertion_destinations();
         footer([this] {
           command("import",
                   {{"data", Glib::Base64::encode(image_bytes)},
@@ -2639,8 +2673,7 @@ struct ObjectDocumentEditor::Impl {
       entry("suffix", "Texto depois do resultado", suffix);
     }
     if (id.empty() && cell.empty()) {
-      auto &before = choice("before", "Inserir antes de", {}, "");
-      destinations(before);
+      insertion_destinations();
     }
     preview = &label(editor, "");
     button(editor, "Conferir resultado / alterações", "native-preview", [this] {
@@ -2849,6 +2882,9 @@ struct ObjectDocumentEditor::Impl {
     if (selected.empty())
       return;
     begin_editor("Posição e alinhamento · " + title(selected));
+    label(editor, "Cada seção tem seu próprio botão de confirmação. "
+                  "Ao confirmar, a alteração é aplicada e este formulário fecha.");
+    label(editor, "Mover na sequência").add_css_class("heading");
     const auto id = selected;
     auto &before = choice("before", "Mover antes de", {}, "");
     destinations(before);
@@ -2863,6 +2899,7 @@ struct ObjectDocumentEditor::Impl {
       else command("move", {{"id",id},{"before",chosen("before")},{"intent","visual"}},
                    "structure", [this](const V &) { finish(); });
     });
+    label(editor, "Compor uma linha lado a lado").add_css_class("heading");
     auto &other = choice("other", "Colocar lado a lado com", {}, "");
     for (const auto &v : state.at("visual_order").as_array())
       if (v.as_string() != id && shown(v.as_string()))
@@ -2885,6 +2922,7 @@ struct ObjectDocumentEditor::Impl {
                 "composition", [this](const V &) { finish(); });
       });
     });
+    label(editor, "Retirar da linha ou restaurar aparência").add_css_class("heading");
     button(editor, "Voltar o selecionado à coluna única", "native-stack",
            [this, id] {
              command("stack", {{"id", id}}, "composition",
@@ -2895,6 +2933,8 @@ struct ObjectDocumentEditor::Impl {
              command("reset_presentation", {{"id", id}}, "composition",
                      [this](const V &) { finish(); });
            });
+    label(editor, "Tamanho e alinhamento").add_css_class("heading");
+    label(editor, "Confirme estes campos em Aplicar tamanho e alinhamento.");
     V p = O{{"width", 100},
             {"horizontal", "start"},
             {"text_align", "left"},
@@ -2923,7 +2963,7 @@ struct ObjectDocumentEditor::Impl {
                {"text_align", chosen("text_align")},
                {"vertical", chosen("vertical")}},
               "composition", [this](const V &) { finish(); });
-    });
+    }, "Aplicar tamanho e alinhamento");
   }
   void removed_editor() {
     begin_editor("Restaurar itens retirados");

@@ -19,6 +19,7 @@ int main(int argc, char* argv[]) {
     if(argc==4 && std::string(argv[1])=="--pub03b-smoke")return run_imported_window_smoke(application,argv[2],argv[3]);
     if(argc==4 && std::string(argv[1])=="--pub02b-smoke")return run_catalog_window_smoke(application,argv[2],argv[3]);
     if(argc==4 && std::string(argv[1])=="--pub02-smoke")return run_main_window_smoke(application,argv[2],argv[3]);
+    if(argc==4 && std::string(argv[1])=="--planejamento-exclusao-smoke")return run_planning_removal_smoke(application,argv[2],argv[3]);
     if(argc==4 && std::string(argv[1])=="--objetos-smoke")return run_object_window_smoke(application,argv[2],argv[3]);
     if(argc==4 && std::string(argv[1])=="--escrita-usabilidade")return run_object_usage_probe(application,argv[2],argv[3]);
     // Routing belongs to the owning window and its focused context. Global

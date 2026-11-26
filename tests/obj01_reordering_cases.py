@@ -6,9 +6,11 @@ import shutil
 import sqlite3
 import subprocess
 import time
+import struct
+import zlib
 
 
-def exercise_reordering(test, root, env, process, window, input_, click, wait, state, scroll_to):
+def exercise_reordering(test, root, env, process, window, input_, click, wait, state, scroll_to, choose_path):
     report = []
     baseline = os.environ.get('INDE_REORDER_BASELINE') == '1'
 
@@ -61,11 +63,21 @@ def exercise_reordering(test, root, env, process, window, input_, click, wait, s
         wait(lambda s: ready(s, original), 'Desfazer os três movimentos conserva o texto')
 
     if not baseline:
-        exercise_lateral(test, root, env, window, input_, click, wait, state, scroll_to, paste, report)
+        exercise_lateral(test, root, env, window, input_, click, wait, state, scroll_to, paste, report, choose_path)
 
     expected = state()['content']
     click(name='native-save')
     wait(lambda s: not s.get('busy') and not s['objects']['dirty'], 'Salvar reordenação')
+    if not baseline:
+        saved_objects=state()['objects']
+        click(name='native-reopen')
+        wait(lambda s:s.get('draft'),'Confirmar reabertura da versão salva')
+        click(name='native-apply')
+        wait(lambda s:not s.get('draft') and s['content']==expected,'Documento reaberto depois das inserções')
+        for key in ['rows','author_order','visual_order','presentation']:
+            test.assertEqual(state()['objects'][key],saved_objects[key])
+        test.assertTrue(any(c.get('justification')=='center' for c in state()['controls']
+                            if c['name'].startswith('writing-paragraph-')))
     input_('key', 'ctrl+q')
     process.wait(timeout=15)
     test.assertEqual(process.returncode, 0)
@@ -91,7 +103,7 @@ def exercise_reordering(test, root, env, process, window, input_, click, wait, s
         shutil.copytree(project, target/'Editor-reordenacao.inde')
 
 
-def exercise_lateral(test, root, env, window, input_, click, wait, state, scroll_to, paste, report):
+def exercise_lateral(test, root, env, window, input_, click, wait, state, scroll_to, paste, report, choose_path):
     click(name='specialty-text')
     lines = ['Bloco %d para arrastar.' % i for i in range(6)]
     body = paste(lines)
@@ -205,6 +217,17 @@ def exercise_lateral(test, root, env, window, input_, click, wait, state, scroll
     wait(lambda s: s['objects']['rows'] == [row], 'Voltar ao par original')
     click(name='native-undo')
     wait(lambda s: not s['objects']['rows'], 'Voltar à coluna única antes de inserir tabelas')
+    def chunk(kind,data):
+        return struct.pack('>I',len(data))+kind+data+struct.pack('>I',zlib.crc32(kind+data))
+    png=root/'insercao-apos-arranjo.png'
+    png.write_bytes(b'\x89PNG\r\n\x1a\n'+chunk(b'IHDR',struct.pack('>IIBBBBB',160,120,8,6,0,0,0))+
+                    chunk(b'IDAT',zlib.compress((b'\0'+b'\x40\x80\xc0\xff'*160)*120))+chunk(b'IEND',b''))
+    click(name='specialty-composition');click(name='native-new-image')
+    choose_path('Inserir figura PNG',str(png))
+    input_('windowactivate','--sync',window)
+    wait(lambda s:s.get('draft'),'Primeiro PNG antes da composição')
+    click(name='native-field-decorative');click(name='native-apply')
+    wait(lambda s:not s.get('draft') and len(s['objects']['figures'])==1,'Primeiro PNG aplicado')
     for count in [1,2]:
         click(name='specialty-tables'); click(name='native-new-table')
         wait(lambda s: s.get('draft'), 'Formulário de tabela aberto')
@@ -237,3 +260,66 @@ def exercise_lateral(test, root, env, window, input_, click, wait, state, scroll
         click(name='specialty-'+specialty)
         wait(lambda s: not s.get('busy') and s['objects']['rows'] == [table_row]
                        and s['content'] == body, 'A mesma linha permanece na especialidade '+specialty)
+
+    # E2: inserting after visual/reading divergence must preserve the existing
+    # orders and row; the two destinations are independently editable.
+    original = state()['objects']
+    test.assertNotEqual(original['author_order'], original['visual_order'])
+    click(name='specialty-tables'); click(name='native-new-table')
+    wait(lambda s: s.get('draft') and any(c['name']=='native-field-author-before' for c in s['controls']),
+         'Destinos visual e de leitura aparecem após divergência')
+    for field in ['rows','columns']:
+        scroll_to('native-field-'+field,'native-edit-scroll')
+        click(name='native-field-'+field); input_('key','ctrl+a');input_('type','1')
+    click(name='native-apply')
+    wait(lambda s: not s.get('draft') and len(s['objects']['tables'])==3,
+         'Terceira tabela inserida sem restaurar apresentação')
+    inserted = state()['objects']['selection']
+    for key in ['author_order','visual_order']:
+        test.assertEqual([i for i in state()['objects'][key] if i != inserted],original[key])
+    test.assertEqual(state()['objects']['rows'],[table_row])
+    click(name='native-undo')
+    wait(lambda s: len(s['objects']['tables'])==2 and s['objects']['rows']==[table_row], 'Desfazer inserção preserva par')
+    click(name='native-redo')
+    wait(lambda s: len(s['objects']['tables'])==3 and s['objects']['rows']==[table_row], 'Refazer inserção preserva par')
+    click(name='specialty-composition');click(name='native-new-image')
+    choose_path('Inserir figura PNG',str(png))
+    input_('windowactivate','--sync',window)
+    wait(lambda s:s.get('draft'),'Formulário de imagem após arranjo')
+    click(name='native-field-decorative')
+    scroll_to('native-field-before','native-edit-scroll')
+    click(name='native-field-before');input_('key','Down','Return')
+    wait(lambda s:any(c['name']=='native-field-before' and c.get('value')==ids[0] for c in s['controls']),
+         'Destino visual escolhido pelo teclado')
+    # Reading destination stays explicitly at the end; visual destination is first.
+    original = state()['objects']
+    click(name='native-apply')
+    wait(lambda s:not s.get('draft') and len(s['objects']['figures'])==2,'Segundo PNG aplicado em ordens divergentes')
+    image=state()['objects']['selection']
+    for key in ['author_order','visual_order']:
+        test.assertEqual([i for i in state()['objects'][key] if i!=image],original[key])
+    test.assertEqual(state()['objects']['author_order'][-1],image)
+    test.assertEqual(state()['objects']['visual_order'][0],image)
+    test.assertEqual(state()['objects']['rows'],[table_row])
+    click(name='specialty-text')
+    last_paragraph=next(p['paragraph'] for p in state()['objects']['paragraphs'] if p['id']==ids[-1])
+    scroll_to('writing-paragraph-'+last_paragraph,'native-sheet-scroll')
+    click(name='writing-paragraph-'+last_paragraph);input_('key','End');input_('type',' Continuidade.')
+    wait(lambda s:s['content']==body+' Continuidade.','Continuar escrevendo após novas inserções')
+    test.assertEqual(state()['objects']['rows'],[table_row])
+    report.append(dict(stage='E2_insertion_after_divergence',png=True,table=True,independent_destinations=True,
+                       pair_preserved=True,continued_writing=True,images=2))
+
+    click(name='specialty-structure')
+    scroll_to('native-reading-handle-'+ids[-1],'native-sheet-scroll')
+    click(name='native-reading-handle-'+ids[-1])
+    click(name='specialty-composition');click(name='native-layout')
+    wait(lambda s:s.get('draft'),'Posição e alinhamento de parágrafo')
+    scroll_to('native-field-text_align','native-edit-scroll')
+    click(name='native-field-text_align');input_('key','Down','Return')
+    click(name='native-apply')
+    wait(lambda s:not s.get('draft') and any(c['name']=='writing-paragraph-'+last_paragraph
+         and c.get('justification')=='center' for c in s['controls']),
+         'Alinhamento central chega ao campo editável real')
+    test.assertEqual(state()['objects']['rows'],[table_row])
+    report.append(dict(stage='E2_effective_paragraph_alignment',actual_text_view='center'))

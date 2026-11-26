@@ -6,13 +6,14 @@ import sys
 
 def materialize(base, target, performance):
     patches = json.loads(Path(__file__).with_name('base_patches.json').read_text())
+    patches['planning'] = json.loads(Path(__file__).with_name('planning_patches.json').read_text())
     changed = []
     for source in sorted(base.rglob('*')):
         if not source.is_file():
             continue
         name = source.relative_to(base).as_posix()
         data = source.read_bytes()
-        for group in ('diagnostics', 'performance') if performance else ('diagnostics',):
+        for group in ('diagnostics', 'planning', 'performance') if performance else ('diagnostics', 'planning'):
             for replacement in patches[group].get(name, []):
                 before, after = replacement[:2]
                 expected = replacement[2] if len(replacement) == 3 else 1
@@ -26,6 +27,16 @@ def materialize(base, target, performance):
         out.parent.mkdir(parents=True, exist_ok=True)
         if not out.exists() or out.read_bytes() != data:
             out.write_bytes(data)
+    for source in sorted(Path(__file__).with_name('base_additions').rglob('*')):
+        if source.is_file():
+            name = source.relative_to(Path(__file__).with_name('base_additions')).as_posix()
+            if (base / name).exists():
+                raise RuntimeError(f'Addition shadows pinned source: {name}')
+            out = target / name
+            out.parent.mkdir(parents=True, exist_ok=True)
+            if not out.exists() or out.read_bytes() != source.read_bytes():
+                out.write_bytes(source.read_bytes())
+            changed.append(name)
     (target.parent / 'base-transformada.json').write_text(json.dumps({
         'base': str(base), 'performance': performance, 'changed': changed,
     }, ensure_ascii=False, indent=2) + '\n')

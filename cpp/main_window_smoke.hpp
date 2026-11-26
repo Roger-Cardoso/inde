@@ -16,3 +16,5 @@ int run_review_integration_smoke(const Glib::RefPtr<Gtk::Application> &,const st
 
 int run_object_window_smoke(const Glib::RefPtr<Gtk::Application> &,const std::filesystem::path &,const std::filesystem::path &);
 int run_object_usage_probe(const Glib::RefPtr<Gtk::Application> &,const std::filesystem::path &,const std::filesystem::path &);
+
+int run_planning_removal_smoke(const Glib::RefPtr<Gtk::Application> &,const std::filesystem::path &,const std::filesystem::path &);

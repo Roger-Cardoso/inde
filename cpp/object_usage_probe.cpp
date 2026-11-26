@@ -77,6 +77,11 @@ int run_object_usage_probe(const Glib::RefPtr<Gtk::Application> &app,
             if (w.has_css_class(std::string("reading-drop-")+direction)) c["drop"]=direction;
           if(name.starts_with("writing-paragraph-"))
             c["instance"]=std::to_string(reinterpret_cast<std::uintptr_t>(&w));
+          if(auto *v=dynamic_cast<Gtk::TextView *>(&w)) {
+            const auto j=v->get_justification();
+            c["justification"]= j==Gtk::Justification::CENTER ? "center" :
+                j==Gtk::Justification::RIGHT ? "right" : j==Gtk::Justification::FILL ? "justify" : "left";
+          }
           if(auto *b=dynamic_cast<Gtk::ToggleButton *>(&w))c["active"]=b->get_active();
           if(auto *entry=dynamic_cast<Gtk::Entry *>(&w)) {
             c["role"]="entry";c["value"]=entry->get_text().raw();

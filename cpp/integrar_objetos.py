@@ -63,7 +63,7 @@ def expand(name,text):
         replace('    try {\n      flush_visibility_edits();', '    ime_commit_pending_=false;\n    schedule_common_sheet();\n    try {\n      flush_visibility_edits();')
         replace('      ime_commit_pending_=false;', '      ime_commit_pending_=false;\n      schedule_common_sheet();')
     elif name=='src/main.cpp':
-        replace('    // Routing belongs', '    if(argc==4 && std::string(argv[1])=="--objetos-smoke")return run_object_window_smoke(application,argv[2],argv[3]);\n    if(argc==4 && std::string(argv[1])=="--escrita-usabilidade")return run_object_usage_probe(application,argv[2],argv[3]);\n    // Routing belongs')
+        replace('    // Routing belongs', '    if(argc==4 && std::string(argv[1])=="--planejamento-exclusao-smoke")return run_planning_removal_smoke(application,argv[2],argv[3]);\n    if(argc==4 && std::string(argv[1])=="--objetos-smoke")return run_object_window_smoke(application,argv[2],argv[3]);\n    if(argc==4 && std::string(argv[1])=="--escrita-usabilidade")return run_object_usage_probe(application,argv[2],argv[3]);\n    // Routing belongs')
     if name=='src/ui/writing_workspace_specializations.cpp':
         text=text.replace('    if (focus && current_document_ && id != "composition" && id != "tables" && id != "formulas" && id != "math")\n      editor_.grab_focus();', '    if (focus && current_document_ && object_editor_) object_editor_->focus_text(cursor, false);')
         text=text.replace('#include "inde/ui/writing_workspace.hpp"', '#include "inde/ui/writing_workspace.hpp"\n#include "object_native_ui.hpp"')

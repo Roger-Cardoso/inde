@@ -295,15 +295,20 @@ jobs:
       - name: Configure actual INDE application
         run: cmake -S cpp -B build-nativo -G Ninja -DCMAKE_BUILD_TYPE=Release -DINDE_BUILD_CORE_TESTS=ON
       - name: Compile actual application and project-bound tests
-        run: cmake --build build-nativo --target inde inde_object_native_tests inde_object_text_projection_tests inde_native_math_tests inde_web_bridge inde_publication_tests --parallel 2
+        run: cmake --build build-nativo --target inde inde_planning_removal_tests inde_native_insertion_tests inde_object_native_tests inde_object_text_projection_tests inde_native_math_tests inde_web_bridge inde_publication_tests --parallel 2
       - name: Verify native math input boundaries
-        run: ctest --test-dir build-nativo -R "^inde_native_math_tests$" --output-on-failure
+        run: ctest --test-dir build-nativo -R "^(inde_native_math_tests|inde_planning_removal_tests|inde_native_insertion_tests)$" --output-on-failure
       - name: Verify project binding and actual GTK document workflow
         env:
           GSK_RENDERER: cairo
           LIBGL_ALWAYS_SOFTWARE: "1"
           GTK_A11Y: none
         run: xvfb-run -a python3 -m unittest discover -s tests -p test_obj01_native.py -v
+      - name: Verify native planning deletion and insertion destinations
+        env:
+          GSK_RENDERER: cairo
+          GTK_A11Y: none
+        run: xvfb-run -a python3 -m unittest discover -s tests -p test_obj01_planning_removal.py -v
       - name: Verify existing publication and refusal of unsupported composition
         run: python3 -m unittest discover -s tests -p test_sessao_nativa.py -v
       - name: Verify real keyboard and mouse from project creation through normal exit

@@ -2629,6 +2629,19 @@ struct Session::Impl {
     try {
       auto v = input;
       auto op = v.at("op").as_string();
+      std::optional<std::string> author_before;
+      if (v.as_object().contains("author_before")) {
+        if (!native_document || !working.live_document_v1 ||
+            (op != "import" && op != "duplicate" && op != "create_table" &&
+             op != "create_table_sized" && op != "create_equation" &&
+             op != "create_formula" && op != "create_formula_hub" &&
+             op != "create_formula_cards" && op != "attach_formula" &&
+             op != "restore_removed")) fail("unsupported_insertion_intent");
+        author_before = v.at("author_before").as_string();
+        auto object = v.as_object();
+        object.erase("author_before");
+        v = V(std::move(object));
+      }
       V authoring_model;
       bool visual_cards = false;
       const bool from_hub = op == "create_formula_hub" ||
@@ -2887,11 +2900,13 @@ struct Session::Impl {
             std::string presentation_target;
             const auto table = v.at("table").as_string(),
                        cell = v.at("cell").as_string();
+            if (author_before && (!table.empty() || !cell.empty()))
+              fail("unsupported_insertion_intent");
             if (table.empty() && cell.empty() && op != "detach_formula") {
-              if (candidate.author != candidate.visual)
+              if (!(native_document && candidate.live_document_v1) && candidate.author != candidate.visual)
                 fail("authorial_requires_alignment");
               const auto occurrence = project::new_uuid();
-              insert_id(candidate, occurrence, v.at("before").as_string());
+              insert_id(candidate, occurrence, v.at("before").as_string(), author_before);
               candidate.formula_uses.push_back({occurrence, object});
               presentation_target = occurrence;
             } else {
@@ -3044,9 +3059,9 @@ struct Session::Impl {
           std::int64_t revision = 0;
           std::string object;
           if (op == "create_equation") {
-            if (candidate.author != candidate.visual) fail("authorial_requires_alignment");
+            if (!(native_document && candidate.live_document_v1) && candidate.author != candidate.visual) fail("authorial_requires_alignment");
             id = project::new_uuid(); object = project::new_uuid();
-            insert_id(candidate, id, v.at("before").as_string());
+            insert_id(candidate, id, v.at("before").as_string(), author_before);
           } else {
             id = v.at("id").as_string(); require_active(candidate, id);
             const auto e = candidate.equations.find(id);
@@ -3068,7 +3083,7 @@ struct Session::Impl {
                        "columns"});
           else
             fields(v, {"op", "expected", "before", "title", "header", "cells"});
-          if (candidate.author != candidate.visual)
+          if (!(native_document && candidate.live_document_v1) && candidate.author != candidate.visual)
             fail("authorial_requires_alignment");
           if (!sized && v.at("cells").as_array().size() != 6)
             fail("initial_table_requires_2x3");
@@ -3095,7 +3110,7 @@ struct Session::Impl {
                   {project::new_uuid(), row, column,
                    sized ? std::string{}
                          : v.at("cells").as_array()[index++].as_string()});
-          insert_id(candidate, t.occurrence, v.at("before").as_string());
+          insert_id(candidate, t.occurrence, v.at("before").as_string(), author_before);
           candidate.tables.push_back(std::move(t));
           candidate.selected_cell.clear();
         } else if (op == "insert_table_axis" || op == "remove_table_axis" ||
@@ -3262,7 +3277,7 @@ struct Session::Impl {
           if (!p2d2)
             fail("p2d2_profile_required");
           fields(v, {"op", "expected", "id", "before"});
-          if (candidate.author != candidate.visual)
+          if (!(native_document && candidate.live_document_v1) && candidate.author != candidate.visual)
             fail("authorial_requires_alignment");
           const auto id = v.at("id").as_string(),
                      before = v.at("before").as_string();
@@ -3282,6 +3297,7 @@ struct Session::Impl {
                            candidate.retired_formula_uses.end(),
                            [&](const auto &u) { return u.occurrence == id; });
           if (hidden != candidate.removed_text.end()) {
+            if (author_before) fail("unsupported_insertion_intent");
             const auto p = projection(candidate);
             const auto g = std::find_if(
                 p->reading_groups().begin(), p->reading_groups().end(),
@@ -3308,13 +3324,13 @@ struct Session::Impl {
               candidate.retired_formula_uses.erase(u);
             } else
               fail("removed_item_not_found");
-            insert_id(candidate, id, before);
+            insert_id(candidate, id, before, author_before);
           }
         } else if (op == "import") {
 
           fields(v, {"op", "expected", "data", "before", "caption", "alt",
                      "decorative"});
-          if (candidate.author != candidate.visual)
+          if (!(native_document && candidate.live_document_v1) && candidate.author != candidate.visual)
             fail("authorial_requires_alignment");
           auto bytes = base64(v.at("data").as_string());
           const auto [w, h] = png(bytes);
@@ -3328,16 +3344,16 @@ struct Session::Impl {
                    v.at("decorative").as_boolean(),
                    w,
                    h};
-          insert(candidate, f, v.at("before").as_string());
+          insert(candidate, f, v.at("before").as_string(), author_before);
           candidate.blobs.emplace(
               hash, std::make_shared<const Bytes>(std::move(bytes)));
         } else if (op == "duplicate") {
           fields(v, {"op", "expected", "id", "before"});
-          if (candidate.author != candidate.visual)
+          if (!(native_document && candidate.live_document_v1) && candidate.author != candidate.visual)
             fail("authorial_requires_alignment");
           auto f = figure(candidate, v.at("id").as_string());
           f.occurrence = project::new_uuid();
-          insert(candidate, f, v.at("before").as_string());
+          insert(candidate, f, v.at("before").as_string(), author_before);
         } else if (op == "move_unit") {
           if (!p2d2) fail("p2d2_profile_required");
           fields(v, {"op", "expected", "id", "reference", "after"});
@@ -3588,7 +3604,8 @@ struct Session::Impl {
     }
   }
   static void insert_id(State &s, const std::string &id,
-                        const std::string &before) {
+                        const std::string &before,
+                        const std::optional<std::string> &author_before = {}) {
     const auto at = before.empty()
                         ? s.visual.end()
                         : std::find(s.visual.begin(), s.visual.end(), before);
@@ -3597,13 +3614,21 @@ struct Session::Impl {
     for (const auto &r : s.rows)
       if (r.children[1] == before)
         fail("destination_inside_row");
+    const auto author_target = author_before.value_or(before);
+    const auto author_at = author_target.empty() ? s.author.end()
+        : std::find(s.author.begin(), s.author.end(), author_target);
+    if (!author_target.empty() && author_at == s.author.end())
+      fail("author_destination_not_found");
+    // Each order keeps its own existing sequence. Inserting an object never
+    // promotes the visual arrangement to the reading order of the document.
+    s.author.insert(author_at, id);
     s.visual.insert(at, id);
-    s.author = s.visual;
     s.selection = id;
     s.selected_cell.clear();
   }
-  static void insert(State &s, const Figure &f, const std::string &before) {
-    insert_id(s, f.occurrence, before);
+  static void insert(State &s, const Figure &f, const std::string &before,
+                     const std::optional<std::string> &author_before = {}) {
+    insert_id(s, f.occurrence, before, author_before);
     s.figures.push_back(f);
   }
 };

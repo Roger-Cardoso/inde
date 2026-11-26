@@ -16,6 +16,9 @@ set(INDE_ACTIVE_SOURCE ${CMAKE_BINARY_DIR}/inde-source)
 set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS
   ${CMAKE_CURRENT_SOURCE_DIR}/base_patches.json ${CMAKE_CURRENT_SOURCE_DIR}/otimizar_base.py
   ${CMAKE_CURRENT_SOURCE_DIR}/integrar_objetos.py ${CMAKE_CURRENT_SOURCE_DIR}/integrar_gtk.py)
+file(GLOB_RECURSE INDE_PLANNING_ADDITIONS CONFIGURE_DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/base_additions/*)
+set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS
+  ${CMAKE_CURRENT_SOURCE_DIR}/planning_patches.json ${INDE_PLANNING_ADDITIONS})
 set(INDE_OPTIMIZATION_PHASE OFF)
 if(INDE_CODE_OPTIMIZATIONS)
   set(INDE_OPTIMIZATION_PHASE ON)
@@ -24,6 +27,12 @@ execute_process(COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/otimiz
   ${INDE_FROZEN_SOURCE} ${INDE_ACTIVE_SOURCE} ${INDE_OPTIMIZATION_PHASE}
   COMMAND_ERROR_IS_FATAL ANY)
 add_subdirectory(${INDE_ACTIVE_SOURCE} inde-base EXCLUDE_FROM_ALL)
+add_executable(inde_planning_removal_tests planning_removal_tests.cpp)
+target_link_libraries(inde_planning_removal_tests PRIVATE inde_core PkgConfig::GLIB)
+if(INDE_BUILD_CORE_TESTS)
+  add_test(NAME inde_planning_removal_tests COMMAND inde_planning_removal_tests)
+  set_tests_properties(inde_planning_removal_tests PROPERTIES TIMEOUT 120)
+endif()
 add_library(inde_web_publication snapshot_model.cpp publication_service.cpp public_identity.cpp comic_model.cpp comic_service.cpp)
 target_include_directories(inde_web_publication PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 target_link_libraries(inde_web_publication PUBLIC inde_production PkgConfig::GLIB PkgConfig::PIXBUF)
@@ -224,7 +233,7 @@ add_library(inde_object_document_engine STATIC object_composite_pilot.cpp object
 target_link_libraries(inde_object_document_engine PUBLIC inde_object_document_adapter PRIVATE PkgConfig::PIXBUF PkgConfig::OBJECT_SQLITE ZLIB::ZLIB)
 target_link_libraries(inde_web_publication PRIVATE inde_object_document_engine)
 target_compile_options(inde_object_document_engine PRIVATE -Wall -Wextra -Wpedantic -Wconversion -Werror)
-target_sources(inde PRIVATE object_text_projection.cpp object_native_ui.cpp object_native_smoke.cpp object_usage_probe.cpp writing_object_integration.cpp writing_specialty_restore.cpp
+target_sources(inde PRIVATE object_text_projection.cpp object_native_ui.cpp object_native_smoke.cpp planning_removal_smoke.cpp object_usage_probe.cpp writing_object_integration.cpp writing_specialty_restore.cpp
   overlay/src/ui/writing_workspace.cpp overlay/src/ui/writing_workspace_document.cpp overlay/src/ui/writing_workspace_specializations.cpp overlay/src/ui/writing_workspace_keyboard.cpp overlay/src/ui/writing_workspace_visible_edit.cpp)
 target_link_libraries(inde PRIVATE inde_object_document_engine inde_math_native)
 add_executable(inde_object_text_projection_tests object_text_projection.cpp object_text_projection_tests.cpp)
@@ -235,4 +244,11 @@ target_link_libraries(inde_object_native_tests PRIVATE inde_object_document_engi
 target_compile_options(inde_object_native_tests PRIVATE -Wall -Wextra -Wpedantic -Wconversion -Werror)
 if(INDE_BUILD_CORE_TESTS)
   add_test(NAME inde_object_native_tests COMMAND inde_object_native_tests)
+endif()
+
+add_executable(inde_native_insertion_tests native_insertion_tests.cpp)
+target_link_libraries(inde_native_insertion_tests PRIVATE inde_object_document_engine inde_web_publication)
+if(INDE_BUILD_CORE_TESTS)
+  add_test(NAME inde_native_insertion_tests COMMAND inde_native_insertion_tests)
+  set_tests_properties(inde_native_insertion_tests PROPERTIES TIMEOUT 120)
 endif()
