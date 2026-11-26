@@ -151,6 +151,7 @@ def exercise_lateral(test, root, env, window, input_, click, wait, state, scroll
         area = control('native-sheet-scroll')
         test.assertGreater(ty, area['y'], 'Destino do arrasto não está na folha visível')
         test.assertLess(ty, area['y']+area['height'], 'Destino do arrasto está fora da folha visível')
+        test.assertTrue(h['hittable'], 'Origem deve continuar visível depois de enquadrar o destino')
         original = state()['objects']
         input_('mousemove', '--window', window, str(sx), str(sy), 'mousedown', '1')
         for f in [.25, .5, .75, 1.]:
@@ -226,7 +227,12 @@ def exercise_lateral(test, root, env, window, input_, click, wait, state, scroll
     choose_path('Inserir figura PNG',str(png))
     input_('windowactivate','--sync',window)
     wait(lambda s:s.get('draft'),'Primeiro PNG antes da composição')
-    click(name='native-field-decorative');click(name='native-apply')
+    click(name='native-field-decorative')
+    scroll_to('native-field-before','native-edit-scroll')
+    click(name='native-field-before');input_('key','Down','Return')
+    wait(lambda s:any(c['name']=='native-field-before' and c.get('value')==ids[0] for c in s['controls']),
+         'Primeiro PNG antes da prosa deixa os alvos do arrasto próximos')
+    click(name='native-apply')
     wait(lambda s:not s.get('draft') and len(s['objects']['figures'])==1,'Primeiro PNG aplicado')
     for count in [1,2]:
         click(name='specialty-tables'); click(name='native-new-table')
