@@ -13,7 +13,7 @@ void retire_file_dialog(OverlayDialog *d) {
 }
 } // namespace
 void MainWindow::flush_project_file() {
-  if (!project_file_)
+  if (!project_file_ || file_barrier_ready_)
     return;
   comic_workspace_.save_changes();
   writing_workspace_.flush_changes();
@@ -24,7 +24,7 @@ void MainWindow::flush_project_file() {
 void MainWindow::create_legacy_project(const fs::path &p,
                                        const std::string &name) {
   flush_project_file();
-  if (project_file_)
+  if (project_file_ && !file_barrier_ready_)
     project_file_->finish();
   service_.set_recent_location(std::nullopt);
   try {
@@ -39,7 +39,7 @@ void MainWindow::create_legacy_project(const fs::path &p,
 }
 void MainWindow::open_legacy_project(const fs::path &p) {
   flush_project_file();
-  if (project_file_)
+  if (project_file_ && !file_barrier_ready_)
     project_file_->finish();
   service_.set_recent_location(std::nullopt);
   try {
@@ -178,32 +178,8 @@ void MainWindow::open_project_file_at(const fs::path &path, Choice choice) {
   }
 }
 bool MainWindow::finish_project_file_close() {
-  if (!project_file_ || preserve_file_work_)
-    return true;
-  try {
-    flush_project_file();
-    project_file_->finish();
-    return true;
-  } catch (const std::exception &e) {
-    auto *d =
-        new OverlayDialog("Gravação do arquivo não confirmada", *this, true);
-    d->set_secondary_text(
-        author::diagnostic(e.what()) +
-        "\nO trabalho permanece em: " + project_file_->working().string() +
-        "\nVocê pode voltar e tentar novamente ou encerrar mantendo essa área "
-        "para a recuperação na próxima abertura.");
-    d->add_button("Voltar ao editor", Gtk::ResponseType::CANCEL);
-    d->add_button("Encerrar preservando o trabalho", Gtk::ResponseType::YES);
-    d->signal_response().connect([this, d](int r) {
-      retire_file_dialog(d);
-      if (r == Gtk::ResponseType::YES) {
-        preserve_file_work_ = true;
-        close();
-      }
-    });
-    d->present();
-    return false;
-  }
+  if (!project_file_ || preserve_file_work_ || file_barrier_ready_) return true;
+  start_file_confirmation({}, true);return false;
 }
 void MainWindow::copy_project_file() {
   if (!service_.current() || modal_host_.has_dialog() ||

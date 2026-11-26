@@ -9,12 +9,14 @@ on:
       - cpp/base_patches.json
       - cpp/integrar_project_file.py
       - cpp/integrar_gtk.py
-      - cpp/main_window_project_file.cpp
+      - cpp/main_window_project_file*.cpp
+      - cpp/main_window_comic.cpp
       - cpp/main_window_smoke.hpp
       - cpp/object_usage_probe.cpp
       - cpp/overlay/**
       - tests/project_file/**
       - scripts/demos/Abrir-demo-arquivo-unico*.sh
+      - scripts/demos/Abrir-demo-confirmacao-assincrona.sh
       - .github/workflows/inde-p5.yml
   pull_request:
     paths:
@@ -23,12 +25,14 @@ on:
       - cpp/base_patches.json
       - cpp/integrar_project_file.py
       - cpp/integrar_gtk.py
-      - cpp/main_window_project_file.cpp
+      - cpp/main_window_project_file*.cpp
+      - cpp/main_window_comic.cpp
       - cpp/main_window_smoke.hpp
       - cpp/object_usage_probe.cpp
       - cpp/overlay/**
       - tests/project_file/**
       - scripts/demos/Abrir-demo-arquivo-unico*.sh
+      - scripts/demos/Abrir-demo-confirmacao-assincrona.sh
       - .github/workflows/inde-p5.yml
   workflow_dispatch:
 
@@ -65,6 +69,25 @@ jobs:
           UBSAN_OPTIONS: halt_on_error=1:print_stacktrace=1
           P5_REQUIRE_COMMA_LOCALE: "1"
         run: ctest --test-dir build-p5 --output-on-failure
+  thread-safety:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+      - name: Install store dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install --yes ninja-build libglib2.0-dev libsqlite3-dev
+      - name: Verify and extract pinned source
+        run: python3 verificar_base.py --integrado --extrair
+      - name: Build confirmation worker with ThreadSanitizer
+        run: |
+          cmake -S tests/project_file -B build-p5-thread -G Ninja -DCMAKE_BUILD_TYPE=Debug -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_CXX_FLAGS="-g1 -fsanitize=thread -fno-omit-frame-pointer" -DCMAKE_EXE_LINKER_FLAGS="-fsanitize=thread"
+          cmake --build build-p5-thread --parallel 2 --target inde_project_file_task_tests
+      - name: Verify cancellation races, exclusive ownership and teardown
+        env:
+          TSAN_OPTIONS: halt_on_error=1
+        run: ctest --test-dir build-p5-thread -R inde_project_file_task_tests --output-on-failure
   native-project:
     runs-on: ubuntu-24.04
     timeout-minutes: 60
@@ -84,7 +107,7 @@ jobs:
       - name: Build native core tests and editor
         run: |
           cmake -S cpp -B build-nativo -G Ninja -DCMAKE_BUILD_TYPE=Release -DINDE_BUILD_CORE_TESTS=ON
-          cmake --build build-nativo --parallel 2 --target inde inde_project_file_cli inde_project_file_tests inde_project_file_native_tests inde_project_file_session_tests inde_project_file_benchmark
+          cmake --build build-nativo --parallel 2 --target inde inde_project_file_cli inde_project_file_tests inde_project_file_native_tests inde_project_file_session_tests inde_project_file_task_tests inde_project_file_benchmark
       - name: Run native P5 integration and refusal cases
         run: ctest --test-dir build-nativo -R '^inde_project_file' --output-on-failure
       - name: Produce a real synthetic native project and versioned file
@@ -97,6 +120,8 @@ jobs:
         env:
           P5_TRANSPORT_BLOCKS: "1"
         run: xvfb-run -a dbus-run-session -- python3 tests/project_file/test_native_session.py "$RUNNER_TEMP/p5c-native-session"
+      - name: Verify responsive confirmation, cancellation, queued exit and recovery
+        run: xvfb-run -a dbus-run-session -- python3 tests/project_file/test_native_confirmation.py "$RUNNER_TEMP/p5d-native-confirmation"
       - name: Measure persistent confirmation and history growth
         run: |
           mkdir -p "$RUNNER_TEMP/p5c-performance"
@@ -122,6 +147,7 @@ jobs:
             ${{ runner.temp }}/p5b-native-session
             ${{ runner.temp }}/p5c-native-session
             ${{ runner.temp }}/p5c-performance
+            ${{ runner.temp }}/p5d-native-confirmation
             dados/p5-demo-*
           if-no-files-found: warn
           retention-days: 7

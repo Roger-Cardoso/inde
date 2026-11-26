@@ -1,5 +1,6 @@
 #include "project_file_transport.hpp"
 #include "inde/persistence/json.hpp"
+#include "project_file_operation.hpp"
 #include <algorithm>
 #include <fcntl.h>
 #include <fstream>
@@ -46,7 +47,8 @@ void safe_relative(const std::string &s) {
          "Caminho fora do projeto.");
 }
 Bytes read_file(const fs::path &path,
-                std::size_t prefix = std::numeric_limits<std::size_t>::max()) {
+                std::size_t prefix = std::numeric_limits<std::size_t>::max(),
+                OperationControl *control = nullptr) {
   const int fd = ::open(path.c_str(), O_RDONLY | O_CLOEXEC | O_NOFOLLOW);
   need(fd >= 0, "source_read", "Não foi possível ler um componente.");
   try {
@@ -58,7 +60,10 @@ Bytes read_file(const fs::path &path,
     Bytes result(std::min(static_cast<std::size_t>(st.st_size), prefix));
     std::size_t at = 0;
     while (at < result.size()) {
-      const auto n = ::read(fd, result.data() + at, result.size() - at);
+      if (control)
+        control->check();
+      const auto n = ::read(fd, result.data() + at,
+                            std::min<std::size_t>(65536, result.size() - at));
       need(n > 0, "source_read", "Leitura incompleta.");
       at += static_cast<std::size_t>(n);
     }
@@ -77,6 +82,21 @@ Bytes read_file(const fs::path &path,
     ::close(fd);
     throw;
   }
+}
+std::string checked_hash(const Bytes &bytes, OperationControl *control) {
+  if (!control)
+    return sha256(bytes);
+  const auto checksum = std::unique_ptr<GChecksum, decltype(&g_checksum_free)>(
+      g_checksum_new(G_CHECKSUM_SHA256), &g_checksum_free);
+  need(bool(checksum), "checksum", "Não foi possível conferir os dados.");
+  for (std::size_t at = 0; at < bytes.size(); at += 65536) {
+    control->check();
+    g_checksum_update(
+        checksum.get(), bytes.data() + at,
+        static_cast<gssize>(std::min<std::size_t>(65536, bytes.size() - at)));
+  }
+  control->check();
+  return g_checksum_get_string(checksum.get());
 }
 std::string string_bytes(const Bytes &b) {
   return b.empty()
@@ -173,7 +193,8 @@ std::string parent_key(const std::string &path) {
   return parent.empty() ? "project" : "dir/" + parent;
 }
 Captured capture(const fs::path &given, const fs::path &store,
-                 TransportProfile profile) {
+                 TransportProfile profile,
+                 OperationControl *control = nullptr) {
   need(!fs::is_symlink(fs::symlink_status(given)), "unsafe_source",
        "Origem simbólica não aceita.");
   Captured c;
@@ -183,6 +204,8 @@ Captured capture(const fs::path &given, const fs::path &store,
       store.filename();
   need(!below(destination, c.source), "destination_inside_source",
        "O arquivo de destino precisa ficar fora da origem.");
+  if (control)
+    control->checkpoint(OperationPhase::Reading);
   const auto list = inventory(c.source);
   c.components = list;
   need(list.contains("manifest.json") && !list.at("manifest.json") &&
@@ -193,7 +216,7 @@ Captured capture(const fs::path &given, const fs::path &store,
   // discarded.
   for (const auto &[path, directory] : list)
     if (!directory) {
-      const auto raw = read_file(c.source / path, 100);
+      const auto raw = read_file(c.source / path, 100, control);
       if (raw.size() >= 16 &&
           string_bytes(Bytes(raw.begin(), raw.begin() + 16)) ==
               std::string("SQLite format 3\0", 16)) {
@@ -216,11 +239,12 @@ Captured capture(const fs::path &given, const fs::path &store,
     r.references = {parent_key(path)};
     V::Object body{{"path", path}};
     if (!directory) {
-      auto raw = read_file(c.source / path);
+      auto raw = read_file(c.source / path,
+                           std::numeric_limits<std::size_t>::max(), control);
       total += raw.size();
       need(total <= max_bytes, "project_limit",
            "A cópia excede 128 MiB neste primeiro perfil.");
-      const auto full_hash = sha256(raw);
+      const auto full_hash = checked_hash(raw, control);
       c.witness[path] = full_hash;
       body["bytes"] = static_cast<std::int64_t>(raw.size());
       if (path == "manifest.json") {
@@ -241,7 +265,7 @@ Captured capture(const fs::path &given, const fs::path &store,
           const auto last = std::min(at + block_bytes, raw.size());
           Bytes data(raw.begin() + static_cast<std::ptrdiff_t>(at),
                      raw.begin() + static_cast<std::ptrdiff_t>(last));
-          const auto hash = sha256(data);
+          const auto hash = checked_hash(data, control);
           const auto key = "chunk/" + hash;
           parts.emplace_back(hash);
           refs.insert(key);
@@ -285,7 +309,9 @@ Captured capture(const fs::path &given, const fs::path &store,
   c.records.emplace(root.key, std::move(root));
   return c;
 }
-void unchanged(const Captured &c) {
+void unchanged(const Captured &c, OperationControl *control = nullptr) {
+  if (control)
+    control->checkpoint(OperationPhase::Checking);
   const auto list = inventory(c.source);
   need(list == c.components, "source_changed", "O inventário de origem mudou.");
   for (const auto &[path, directory] : list) {
@@ -293,7 +319,10 @@ void unchanged(const Captured &c) {
          "source_changed", "A origem mudou de tipo ou caminho.");
     if (!directory)
       need(c.witness.contains(path) &&
-               sha256(read_file(c.source / path)) == c.witness.at(path),
+               checked_hash(read_file(c.source / path,
+                                      std::numeric_limits<std::size_t>::max(),
+                                      control),
+                            control) == c.witness.at(path),
            "source_changed",
            "O conteúdo da origem mudou. Nenhum estado foi confirmado.");
   }
@@ -315,7 +344,8 @@ std::vector<Edit> edits(const State &old, const Captured &next) {
   return result;
 }
 State publish_capture(Store &store, const State &old, Captured &captured,
-                      const std::string &label) {
+                      const std::string &label,
+                      OperationControl *control = nullptr) {
   const auto changes = edits(old, captured);
   std::set<std::string> needed;
   for (const auto &change : changes)
@@ -325,7 +355,7 @@ State publish_capture(Store &store, const State &old, Captured &captured,
   for (auto &b : captured.blobs)
     if (needed.contains(b.hash))
       supplied.push_back(std::move(b));
-  return store.apply(old, changes, supplied, label);
+  return store.apply(old, changes, supplied, label, control);
 }
 void sync_dir(const fs::path &p) {
   const int fd = ::open(p.c_str(), O_RDONLY | O_DIRECTORY | O_CLOEXEC);
@@ -424,12 +454,13 @@ State pack_directory(const fs::path &source, const fs::path &new_file,
 }
 State update_directory(Store &store, const State &expected,
                        const fs::path &source, const fs::path &store_path,
-                       const std::string &label) {
-  auto captured = capture(source, store_path, directory_profile(expected));
+                       const std::string &label, OperationControl *control) {
+  auto captured =
+      capture(source, store_path, directory_profile(expected), control);
   need(captured.owner == expected.project_id, "source_identity",
        "A pasta pertence a outro projeto.");
-  unchanged(captured);
-  return publish_capture(store, expected, captured, label);
+  unchanged(captured, control);
+  return publish_capture(store, expected, captured, label, control);
 }
 void unpack_directory(Store &store, std::int64_t sequence,
                       const fs::path &given) {

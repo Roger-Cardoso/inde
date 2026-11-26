@@ -1,6 +1,7 @@
 #include "inde/ui/main_window.hpp"
 namespace inde::ui {
 bool MainWindow::guard_comic_project_change() {
+  if(file_task_)return false;
   if (comic_workspace_.can_leave())
     return true;
   if (service_.current())

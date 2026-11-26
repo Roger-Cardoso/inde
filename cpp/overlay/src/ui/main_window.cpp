@@ -39,7 +39,8 @@ auto display = Gdk::Display::get_default();
   build_ui();
   setup_actions();
   setup_keyboard();
-  modal_host_.signal_active_changed().connect([this](bool active){header_.set_sensitive(!active);});
+  setup_file_confirmation();
+  modal_host_.signal_active_changed().connect([this](bool active){header_.set_sensitive(!active && !file_task_);});
   setup_menus();
   ProofreadingController::set_global(&proofreading_controller_);
   proofreading_controller_.watch(*this);
@@ -54,7 +55,7 @@ auto display = Gdk::Display::get_default();
 }
 
 void MainWindow::show_objects(){ if(workspace_shell_.current()!=WorkspaceId::Writing)show_workspace(WorkspaceId::Writing); writing_workspace_.show_document_objects(); }
-MainWindow::~MainWindow() { publication_retry_.disconnect(); if(publication_token_)modal_host_.dismiss_dialog(publication_token_); publication_page_.reset(); context_save_.disconnect(); maximize_idle_.disconnect(); }
+MainWindow::~MainWindow() { stop_file_confirmation(); publication_retry_.disconnect(); if(publication_token_)modal_host_.dismiss_dialog(publication_token_); publication_page_.reset(); context_save_.disconnect(); maximize_idle_.disconnect(); }
 
 void MainWindow::build_ui() {
   add_css_class("inde-window");
@@ -732,6 +733,7 @@ void MainWindow::open_project_at(const std::filesystem::path &path) {
 }
 
 void MainWindow::save_project() {
+  if(project_file_){start_file_confirmation();return;}
   if(modal_host_.has_dialog())return;
   try {
     comic_workspace_.save_changes();
@@ -788,6 +790,7 @@ void MainWindow::save_project_as() {
 void MainWindow::close_project() {
   if(!guard_comic_project_change())return;
   if(modal_host_.has_dialog())return;
+  if(project_file_ && !file_barrier_ready_){start_file_confirmation([this]{close_project();});return;}
   try {
     writing_workspace_.flush_changes();
     remember_context();
@@ -796,7 +799,7 @@ void MainWindow::close_project() {
     focus_button_.set_sensitive(false);
     comic_workspace_.reset();
     flush_project_file();
-    if(project_file_)project_file_->finish();
+    if(project_file_ && !file_barrier_ready_)project_file_->finish();
     service_.close();
     project_file_.reset();service_.set_recent_location(std::nullopt);
   } catch (const std::exception &error) {
@@ -830,6 +833,8 @@ void MainWindow::close_project() {
 }
 
 bool MainWindow::on_close_request() {
+  if(file_exit_ready_){file_exit_ready_=false;context_save_.disconnect();maximize_idle_.disconnect();return Gtk::ApplicationWindow::on_close_request();}
+  if(file_task_){queue_file_confirmation_exit();return true;}
   if(!writing_workspace_.request_objects_leave("encerrar o programa", [this]{ close(); }))return true;
   if(!guard_comic_project_change())return true;
   if(publication_token_ || publication_retry_.connected()){

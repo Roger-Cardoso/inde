@@ -255,7 +255,7 @@ endif()
 
 # P5-A: an independent versioned SQLite file, with an explicit compatibility bridge.
 pkg_check_modules(P5_SQLITE REQUIRED IMPORTED_TARGET sqlite3>=3.37)
-add_library(inde_project_file STATIC project_file.cpp project_file_transport.cpp project_file_session.cpp)
+add_library(inde_project_file STATIC project_file.cpp project_file_transport.cpp project_file_session.cpp project_file_operation.cpp project_file_task.cpp)
 target_include_directories(inde_project_file PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 target_link_libraries(inde_project_file PUBLIC inde_core PkgConfig::GLIB PkgConfig::P5_SQLITE)
 target_compile_options(inde_project_file PRIVATE -Wall -Wextra -Wpedantic -Wconversion -Werror)
@@ -278,7 +278,7 @@ if(INDE_BUILD_CORE_TESTS)
     inde_project_file_transport_tests PROPERTIES TIMEOUT 180)
 endif()
 
-target_sources(inde PRIVATE main_window_project_file.cpp)
+target_sources(inde PRIVATE main_window_project_file.cpp main_window_project_file_task.cpp)
 target_link_libraries(inde PRIVATE inde_project_file)
 
 add_executable(inde_project_file_session_tests project_file_session_tests.cpp)
@@ -301,4 +301,15 @@ endif()
 if(BUILD_TESTING)
   add_test(NAME inde_project_file_block_native_tests COMMAND ${CMAKE_COMMAND} -E env P5_TRANSPORT_BLOCKS=1 $<TARGET_FILE:inde_project_file_native_tests>)
   set_tests_properties(inde_project_file_block_native_tests PROPERTIES TIMEOUT 180)
+endif()
+
+find_package(Threads REQUIRED)
+target_link_libraries(inde_project_file PUBLIC Threads::Threads)
+
+add_executable(inde_project_file_task_tests project_file_task_tests.cpp)
+target_link_libraries(inde_project_file_task_tests PRIVATE inde_project_file)
+target_compile_options(inde_project_file_task_tests PRIVATE -Wall -Wextra -Wpedantic -Wconversion -Werror)
+if(BUILD_TESTING)
+  add_test(NAME inde_project_file_task_tests COMMAND inde_project_file_task_tests)
+  set_tests_properties(inde_project_file_task_tests PROPERTIES TIMEOUT 120)
 endif()

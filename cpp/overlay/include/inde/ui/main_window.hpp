@@ -18,7 +18,7 @@
 
 #include <gtkmm.h>
 #include "publication_service.hpp"
-namespace inde::project_file { class FileSession; enum class RecoveryChoice; }
+namespace inde::project_file { class FileSession; class ConfirmationTask; class OperationControl; enum class RecoveryChoice; }
 #include "comic_ui.hpp"
 #include <optional>
 
@@ -34,6 +34,7 @@ public:
 
 private:
   friend struct ComicWorkspaceProbe;
+  friend struct ProjectFileTaskProbe;
   bool on_close_request() override;
   void build_ui();
   void show_publication();
@@ -52,6 +53,14 @@ private:
   bool finish_project_file_close();
   void copy_project_file();
   void show_file_history();
+  void setup_file_confirmation();
+  void start_file_confirmation(std::function<void()> = {}, bool = false);
+  void present_file_confirmation();
+  void cancel_file_confirmation();
+  void queue_file_confirmation_exit();
+  bool poll_file_confirmation();
+  void stop_file_confirmation();
+  void file_confirmation_failed(std::exception_ptr, bool);
   void open_project_at(const std::filesystem::path &path);
   void save_project();
   void save_project_as();
@@ -94,6 +103,17 @@ private:
   application::ProjectService service_;
   std::unique_ptr<project_file::FileSession> project_file_;
   bool preserve_file_work_{};
+  std::shared_ptr<project_file::ConfirmationTask> file_task_;
+  std::function<void(project_file::OperationControl &)> file_task_observe_;
+  std::function<void()> file_task_next_;
+  sigc::connection file_task_poll_, file_task_retry_;
+  std::uint64_t file_task_token_{};
+  bool file_task_exit_{}, file_task_cancelled_{}, file_barrier_ready_{}, file_exit_ready_{};
+  Gtk::Box file_task_panel_{Gtk::Orientation::VERTICAL};
+  Gtk::Spinner file_task_spinner_;
+  Gtk::Label file_task_status_;
+  Gtk::Button file_task_cancel_{"Cancelar salvamento"};
+  Gtk::Button file_task_exit_button_{"Sair após salvar"};
   publication::Service publication_service_{service_};
   ComicWorkspace comic_workspace_{publication_service_};
   std::unique_ptr<PublicationPage> publication_page_;

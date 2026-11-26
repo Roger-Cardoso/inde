@@ -228,13 +228,13 @@ bool FileSession::needs_reopen() const {
     return true;
   }
 }
-State FileSession::save(const std::string &label) {
+State FileSession::save(const std::string &label, OperationControl *control) {
   need(!impl_->uncertain, "reopen_required",
        "Reabra o arquivo para conferir a confirmação anterior; a área de "
        "trabalho foi preservada.");
   // Capture retains all SQLite read reservations until publication completes.
   auto next = update_directory(impl_->store, impl_->base, impl_->work,
-                               impl_->file, label);
+                               impl_->file, label, control);
   impl_->base = std::move(next);
   try {
     impl_->metadata("working");

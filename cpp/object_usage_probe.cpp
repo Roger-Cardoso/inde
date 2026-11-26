@@ -3,6 +3,9 @@
 #include "inde/ui/main_window.hpp"
 #include "object_native_probe.hpp"
 #include "object_native_ui.hpp"
+#include "project_file_task.hpp"
+#include <thread>
+#include <chrono>
 #include <cmath>
 #include <cstdint>
 #include <fstream>
@@ -20,6 +23,45 @@ template<class T> T *locate(Gtk::Widget &w) {
 }
 }
 
+namespace inde::ui {
+struct ProjectFileTaskProbe {
+  static std::string phase(project_file::OperationPhase p) {
+    switch(p) {
+      case project_file::OperationPhase::Reading:return "reading";
+      case project_file::OperationPhase::Checking:return "checking";
+      case project_file::OperationPhase::Writing:return "writing";
+      case project_file::OperationPhase::Committing:return "committing";
+      case project_file::OperationPhase::Finishing:return "finishing";
+      case project_file::OperationPhase::Done:return "done";
+    }
+    return "unknown";
+  }
+  static void attach(MainWindow &window,const std::filesystem::path &state) {
+    const auto root=state.parent_path();
+    window.file_task_observe_=[root](project_file::OperationControl &control) {
+      // Deterministic observation gates exist only in this explicit test host.
+      // Normal applications never read these files or delay the worker.
+      const auto hold=root/"file-task-hold";
+      std::ifstream f(hold);std::string requested;std::getline(f,requested);
+      if(requested!=phase(control.phase()))return;
+      std::ofstream(root/"file-task-entered")<<requested;
+      const auto end=std::chrono::steady_clock::now()+std::chrono::seconds(12);
+      while(std::filesystem::exists(hold)) {
+        control.check();
+        if(std::chrono::steady_clock::now()>=end)throw std::runtime_error("Tempo do gate de observação excedido");
+        std::this_thread::sleep_for(std::chrono::milliseconds(5));
+      }
+    };
+  }
+  static persistence::json::Value::Object observe(MainWindow &window) {
+    persistence::json::Value::Object s{{"active",bool(window.file_task_)},
+      {"exit_requested",window.file_task_exit_},{"message",window.status_bar_.get_text().raw()}};
+    if(window.file_task_){s["phase"]=phase(window.file_task_->phase());s["cancellable"]=window.file_task_->cancellable();}
+    return s;
+  }
+};
+}
+
 // Isolated input-test host. The probe observes widgets; all mutations in the
 // driver come through X11 pointer/keyboard events, including focus and dialogs.
 int run_object_usage_probe(const Glib::RefPtr<Gtk::Application> &app,
@@ -29,13 +71,16 @@ int run_object_usage_probe(const Glib::RefPtr<Gtk::Application> &app,
     throw std::runtime_error("O teste de uso exige um destino novo e descartável.");
   std::unique_ptr<inde::ui::MainWindow> main;
   sigc::connection poll;
+  std::int64_t ticks{};
   app->signal_activate().connect([&] {
     main=std::make_unique<inde::ui::MainWindow>(open_existing?std::optional<std::filesystem::path>(project):std::nullopt);
+    inde::ui::ProjectFileTaskProbe::attach(*main,state_file);
     app->add_window(*main);main->unmaximize();main->set_default_size(1190,750);
     main->present();
     poll=Glib::signal_timeout().connect([&] {
       if(!main->gobj() || !GTK_IS_WINDOW(main->gobj()) || !main->get_visible())return false;
-      O state{{"pid",static_cast<std::int64_t>(::getpid())}};
+      O state{{"pid",static_cast<std::int64_t>(::getpid())},{"observer_tick",++ticks},
+              {"file_task",inde::ui::ProjectFileTaskProbe::observe(*main)}};
       if (auto *native=gtk_widget_get_native(GTK_WIDGET(main->gobj()))) {
         auto *surface=gtk_native_get_surface(native);
         if(surface && GDK_IS_X11_SURFACE(surface))

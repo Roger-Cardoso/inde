@@ -1,0 +1,36 @@
+dbus-daemon[174961]: [session uid=1000 pid=174961] Activating service name='org.gtk.vfs.Daemon' requested by ':1.0' (uid=1000 pid=174964 comm="xfwm4 --compositor=off" label="chatgpt (unconfined)")
+dbus-daemon[174961]: [session uid=1000 pid=174961] Successfully activated service 'org.gtk.vfs.Daemon'
+fusermount3: failed to access mountpoint /run/user/1000/gvfs: Permission denied
+dbus-daemon[174961]: [session uid=1000 pid=174961] Activating service name='org.a11y.Bus' requested by ':1.2' (uid=1000 pid=174964 comm="xfwm4 --compositor=off" label="chatgpt (unconfined)")
+dbus-daemon[174961]: [session uid=1000 pid=174961] Successfully activated service 'org.a11y.Bus'
+dbus-daemon[174986]: Activating service name='org.a11y.atspi.Registry' requested by ':1.0' (uid=1000 pid=174964 comm="xfwm4 --compositor=off" label="chatgpt (unconfined)")
+dbus-daemon[174961]: [session uid=1000 pid=174961] Activating service name='org.xfce.Xfconf' requested by ':1.0' (uid=1000 pid=174964 comm="xfwm4 --compositor=off" label="chatgpt (unconfined)")
+dbus-daemon[174986]: Successfully activated service 'org.a11y.atspi.Registry'
+SpiRegistry daemon is running with well-known name - org.a11y.atspi.Registry
+dbus-daemon[174961]: [session uid=1000 pid=174961] Successfully activated service 'org.xfce.Xfconf'
+dbus-daemon[174961]: [session uid=1000 pid=174961] Activating service name='org.freedesktop.portal.Desktop' requested by ':1.7' (uid=1000 pid=175023 comm="/home/roger/Documents/Projects/GitHub/INDE/obj01-a" label="chatgpt (unconfined)")
+dbus-daemon[174961]: [session uid=1000 pid=174961] Activating service name='org.freedesktop.portal.Documents' requested by ':1.8' (uid=1000 pid=175169 comm="/usr/libexec/xdg-desktop-portal" label="chatgpt (unconfined)")
+dbus-daemon[174961]: [session uid=1000 pid=174961] Activating service name='org.freedesktop.impl.portal.PermissionStore' requested by ':1.9' (uid=1000 pid=175175 comm="/usr/libexec/xdg-document-portal" label="chatgpt (unconfined)")
+dbus-daemon[174961]: [session uid=1000 pid=174961] Successfully activated service 'org.freedesktop.impl.portal.PermissionStore'
+dbus-daemon[174961]: [session uid=1000 pid=174961] Successfully activated service 'org.freedesktop.portal.Documents'
+fusermount3: failed to access mountpoint /run/user/1000/doc: Permission denied
+error: fuse init failed: Can't mount path /run/user/1000/doc
+
+(/usr/libexec/xdg-desktop-portal:175169): xdg-desktop-portal-WARNING **: 19:08:29.040: Choosing gtk.portal for org.freedesktop.impl.portal.Lockdown as a last-resort fallback
+
+(/usr/libexec/xdg-desktop-portal:175169): xdg-desktop-portal-WARNING **: 19:08:29.040: The preferred method to match portal implementations to desktop environments is to use the portals.conf(5) configuration file
+dbus-daemon[174961]: [session uid=1000 pid=174961] Activating service name='org.freedesktop.impl.portal.desktop.gtk' requested by ':1.8' (uid=1000 pid=175169 comm="/usr/libexec/xdg-desktop-portal" label="chatgpt (unconfined)")
+dbus-daemon[174961]: [session uid=1000 pid=174961] Successfully activated service 'org.freedesktop.impl.portal.desktop.gtk'
+dbus-daemon[174961]: [session uid=1000 pid=174961] Activating service name='org.freedesktop.impl.portal.desktop.kde' requested by ':1.8' (uid=1000 pid=175169 comm="/usr/libexec/xdg-desktop-portal" label="chatgpt (unconfined)")
+dbus-daemon[174961]: [session uid=1000 pid=174961] Successfully activated service 'org.freedesktop.impl.portal.desktop.kde'
+[W][32332.944775] pw.conf      | [          conf.c: 1031 try_load_conf()] can't load config client.conf: No such file or directory
+[E][32332.944921] pw.conf      | [          conf.c: 1060 pw_conf_load_conf_for_context()] can't load config client.conf: No such file or directory
+
+(/usr/libexec/xdg-desktop-portal:175169): xdg-desktop-portal-WARNING **: 19:08:29.480: Failed connect to PipeWire: Couldn't create PipeWire context
+dbus-daemon[174961]: [session uid=1000 pid=174961] Successfully activated service 'org.freedesktop.portal.Desktop'
+P5-D1 launcher: normal native application, direct file, Save/Quit and integrity OK
+A connection to the bus can't be made
+
+(xfconfd:174991): xfconfd-WARNING **: 19:08:37.212: Name org.xfce.Xfconf lost on the message dbus, exiting.
+The X11 connection broke (error 1). Did the X11 server die?
+X connection to :100 broken (explicit kill or server shutdown).

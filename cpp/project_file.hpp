@@ -14,6 +14,7 @@ class Value;
 }
 
 namespace inde::project_file {
+class OperationControl;
 using Bytes = std::vector<std::uint8_t>;
 struct Error : std::runtime_error {
   std::string code;
@@ -60,7 +61,7 @@ struct Options {
 std::string sha256(const Bytes &);
 std::string encode_json(const persistence::json::Value &);
 persistence::json::Value parse_json(const std::string &,
-                                   std::size_t limit = 1024 * 1024);
+                                    std::size_t limit = 1024 * 1024);
 std::string canonical_json(const std::string &,
                            std::size_t limit = 1024 * 1024);
 
@@ -82,7 +83,8 @@ public:
   std::vector<Revision> history() const;
   Bytes blob(const std::string &hash) const;
   State apply(const State &expected, const std::vector<Edit> &,
-              const std::vector<Blob> &, const std::string &label);
+              const std::vector<Blob> &, const std::string &label,
+              OperationControl * = nullptr);
   State restore(const State &expected, std::int64_t sequence,
                 const std::string &label);
   void verify() const;

@@ -7,6 +7,10 @@
 
 ## Fase 5 antecipada — arquivo de projeto
 
+- [P5-D1: confirmação em segundo plano, cancelamento e saída](arquitetura/ARQUIVO-UNICO-P5-D1.md), [demonstração](roteiros/ARQUIVO-UNICO-P5-D1.md), [validação](validacao/VALIDACAO-P5-D1.md).
+
+D1 sucede o aceite informado do teste C. Os manifestos A/B/C representam os cortes históricos; o manifesto D1 corresponde às fontes atuais.
+
 - [P5-C: confirmação e histórico por blocos](arquitetura/ARQUIVO-UNICO-P5-C.md), [demonstração e comparação](roteiros/ARQUIVO-UNICO-P5-C.md), [validação](validacao/VALIDACAO-P5-C.md).
 
 P5-C conserva os arquivos anteriores no perfil original; novos arquivos nativos usam blocos. Os manifestos A e B abaixo correspondem às revisões históricas identificadas nos respectivos relatórios.

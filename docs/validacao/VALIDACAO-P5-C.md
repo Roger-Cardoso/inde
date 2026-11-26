@@ -60,3 +60,7 @@ Essas observações incluem entrada X11, consulta por observador de baixa priori
 Main, projetos autorais e schemas internos ficam preservados. As fontes e compactados são novamente conferidos. Os testes usam somente conteúdo sintético. Os bancos existentes no perfil anterior continuam nele; a comparação inclui materialização com o leitor P5-B e recusa segura do formato novo por esse leitor.
 
 A confirmação permanece síncrona e lê os componentes completos. A economia de histórico não prova a maturidade da edição composta, a latência de telas, a recuperação de toda falha física ou o desempenho em acervos grandes. As áreas reservadas não são apagadas. Aceite humano e adoção autoral geral continuam separados.
+
+## Aceite informado
+
+Na continuidade após esta entrega, o usuário informou “teste aprovado” e autorizou prosseguimento. O relato registra aceite do teste C, sem estendê-lo aos cortes posteriores. A continuidade D1 tem relatório e evidências próprios.

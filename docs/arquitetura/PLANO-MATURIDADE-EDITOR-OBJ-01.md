@@ -16,6 +16,8 @@ O editor tem uma base nativa aproveitável e recursos reais, mas ainda não ofer
 
 **Continuidade de armazenamento em 26/11/2026:** [P5-B](ARQUIVO-UNICO-P5-B.md) integrou abertura, confirmação e recuperação ao aplicativo nativo. [P5-C](ARQUIVO-UNICO-P5-C.md) atua na granularidade dos recursos e nas medições de confirmação, mantendo os arquivos anteriores no perfil original. Esses cortes não encerram E3–E7 nem tornam assíncrona a confirmação do arquivo.
 
+**Aceite e continuidade:** após o usuário informar aprovação do teste C, [P5-D1](ARQUIVO-UNICO-P5-D1.md) separa a confirmação de Salvar/fechar/encerrar do processamento da interface, com pausa de edição, cancelamento antes da confirmação final e saída pendente. Abertura, criação, cópias e histórico ainda têm trechos síncronos. As pendências de fluidez e E3–E7 permanecem.
+
 ## 1. O resultado a alcançar
 
 Um escritor deve conseguir abrir seu projeto, escrever, inserir uma imagem, criar duas tabelas, colocá-las lado a lado, continuar escrevendo, reorganizar o conjunto, consultar suas marcações, desfazer um engano, salvar, encerrar e retomar sem desmontar o documento nem precisar compreender as divisões internas do programa.

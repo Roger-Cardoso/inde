@@ -127,6 +127,8 @@ try:
     assert saved_text()==(initial_seq,initial)
     input_('key','ctrl+s')
     wait(lambda s:saved_text()[1].endswith(' Mudanca confirmada.'),'Salvar atingiu o arquivo único')
+    confirmation_tick=observed().get('observer_tick',0)
+    wait(lambda s:s.get('observer_tick',0)>confirmation_tick and not s.get('file_task',{}).get('active'),'Confirmação concluída')
     with sqlite3.connect(f'file:{packet}?mode=ro',uri=True) as db:saved_seq=db.execute('SELECT seq FROM head').fetchone()[0]
     full_copy=root/'Com-historico.inde'
     input_('key','ctrl+alt+s');click(label='Copiar com o histórico');choose_destination(full_copy)
@@ -157,6 +159,8 @@ try:
     wait(lambda s:s.get('content','').endswith(' Recuperar esta escrita.'),'Trabalho recuperado')
     input_('key','ctrl+s')
     wait(lambda s:saved_text()[1].endswith(' Recuperar esta escrita.'),'Recuperação salva no arquivo')
+    confirmation_tick=observed().get('observer_tick',0)
+    wait(lambda s:s.get('observer_tick',0)>confirmation_tick and not s.get('file_task',{}).get('active'),'Confirmação concluída')
     # Finalization failure must offer a normal exit retaining a durable workspace.
     append(' Saida com recuperacao.')
     os.chmod(packet.parent,0o500)
@@ -188,6 +192,8 @@ try:
     append('Primeira escrita em arquivo.')
     input_('key','ctrl+s')
     wait(lambda s:saved_text(title='Documento no arquivo unico')[1]=='Primeira escrita em arquivo.','Novo arquivo salvo')
+    confirmation_tick=observed().get('observer_tick',0)
+    wait(lambda s:s.get('observer_tick',0)>confirmation_tick and not s.get('file_task',{}).get('active'),'Confirmação concluída')
     input_('key','ctrl+alt+o');choose_destination(new_file,'Abrir arquivo único INDE')
     wait(lambda s:not any(c.get('mapped') and c.get('window') and str(c['window'])!=str(s.get('window')) and c.get('role')=='entry' for c in s.get('controls',[])),'Seletor de abertura fechado')
     quit_normal()

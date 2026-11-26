@@ -6,7 +6,7 @@ void MainWindow::setup_keyboard() {
   header_.pack_end(commands_button_);
   set_accessible_label(commands_button_, "Buscar comandos — Ctrl+Shift+P");
   keyboard_ = std::make_unique<KeyboardCommands>(*this, commands_button_,
-      [this] { return modal_host_.has_dialog() || writing_workspace_.composing_input() || comic_workspace_.composing_input(); },
+      [this] { return bool(file_task_) || modal_host_.has_dialog() || writing_workspace_.composing_input() || comic_workspace_.composing_input(); },
       [this](const std::string &message) { status_bar_.set_text(message); });
   auto any = [](Gtk::Widget *) { return true; };
   auto project = [this] { return service_.current() ? std::string{} : "Abra ou crie um projeto primeiro. Não é necessário cadastrar uma obra para escrever."; };

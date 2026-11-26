@@ -1,5 +1,6 @@
 #include "project_file.hpp"
 #include "inde/persistence/json.hpp"
+#include "project_file_operation.hpp"
 #include <algorithm>
 #include <array>
 #include <charconv>
@@ -498,7 +499,8 @@ struct Store::Impl {
          "O projeto mudou desde a observação; nenhuma alteração foi aplicada.");
   }
   void publish(State &next, const std::string &label,
-               std::optional<std::int64_t> restored, Transaction &tx) {
+               std::optional<std::int64_t> restored, Transaction &tx,
+               OperationControl *control = nullptr) {
     text(label, 500);
     next.hash = state_hash(next);
     Query q(db, "INSERT INTO states VALUES(?,?,?,?,?,?)");
@@ -513,6 +515,8 @@ struct Store::Impl {
     q.bind(6, now());
     q.step();
     for (const auto &[key, r] : next.records) {
+      if (control)
+        control->check();
       Query e(db, "INSERT INTO entries VALUES(?,?,?)");
       e.bind(1, next.sequence);
       e.bind(2, key);
@@ -528,6 +532,8 @@ struct Store::Impl {
     same_file();
     if (options.observe)
       options.observe(CommitStage::BeforeCommit);
+    if (control)
+      control->seal();
     try {
       sql(db, "COMMIT");
       tx.done = true;
@@ -759,7 +765,10 @@ void Store::copy_to(const std::filesystem::path &given) const {
        "A cópia foi gravada, mas sua confirmação final foi incerta.");
 }
 State Store::apply(const State &expected, const std::vector<Edit> &edits,
-                   const std::vector<Blob> &blobs, const std::string &label) {
+                   const std::vector<Blob> &blobs, const std::string &label,
+                   OperationControl *control) {
+  if (control)
+    control->checkpoint(OperationPhase::Writing);
   impl_->ready();
   Transaction tx(impl_->db);
   impl_->expected(expected);
@@ -770,6 +779,8 @@ State Store::apply(const State &expected, const std::vector<Edit> &edits,
   std::set<std::string> keys;
   std::map<std::string, const Bytes *, std::less<>> supplied;
   for (const auto &b : blobs) {
+    if (control)
+      control->check();
     need(b.bytes.size() <= impl_->options.limits.blob_bytes &&
              hash_ok(b.hash) && sha256(b.bytes) == b.hash,
          "blob_invalid", "Recurso inválido ou maior que o limite.");
@@ -777,6 +788,8 @@ State Store::apply(const State &expected, const std::vector<Edit> &edits,
          "Recurso repetido no pedido.");
   }
   for (const auto &edit : edits) {
+    if (control)
+      control->check();
     text(edit.key, 1024);
     need(keys.insert(edit.key).second, "duplicate_edit",
          "Identidade repetida no mesmo pedido.");
@@ -823,9 +836,14 @@ State Store::apply(const State &expected, const std::vector<Edit> &edits,
       need(next.records.contains(ref), "dangling_reference",
            "Uma alteração deixaria referência sem destino; nada foi aplicado.");
   }
-  if (state_hash(next) == expected.hash)
+  if (state_hash(next) == expected.hash) {
+    if (control)
+      control->seal();
     return impl_->current();
+  }
   for (auto &[key, r] : next.records) {
+    if (control)
+      control->check();
     static_cast<void>(key);
     if (r.version)
       continue;
@@ -862,7 +880,7 @@ State Store::apply(const State &expected, const std::vector<Edit> &edits,
       link.step();
     }
   }
-  impl_->publish(next, label, std::nullopt, tx);
+  impl_->publish(next, label, std::nullopt, tx, control);
   return next;
 }
 State Store::restore(const State &expected, std::int64_t sequence,
