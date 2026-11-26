@@ -1,18 +1,19 @@
-Start testing: Nov 26 16:00 -03
+Start testing: Nov 26 16:05 -03
 ----------------------------------------------------------
 1/2 Testing: inde_project_file_tests
 1/2 Test: inde_project_file_tests
 Command: "/home/roger/Documents/Projects/GitHub/INDE/obj01-audit/build-p5-sanitize/inde_project_file_tests"
 Directory: /home/roger/Documents/Projects/GitHub/INDE/obj01-audit/build-p5-sanitize
-"inde_project_file_tests" start time: Nov 26 16:00 -03
+"inde_project_file_tests" start time: Nov 26 16:05 -03
 Output:
 ----------------------------------------------------------
+P5 pt_BR decimal precision and caller locale restoration OK
 P5 states, links, immutable versions, restore, bytes, stale requests, failure and crash recovery OK
 <end of output>
-Test time =   1.17 sec
+Test time =   1.21 sec
 ----------------------------------------------------------
 Test Passed.
-"inde_project_file_tests" end time: Nov 26 16:00 -03
+"inde_project_file_tests" end time: Nov 26 16:05 -03
 "inde_project_file_tests" time elapsed: 00:00:01
 ----------------------------------------------------------
 
@@ -20,7 +21,7 @@ Test Passed.
 2/2 Test: inde_project_file_transport_tests
 Command: "/usr/bin/python3.12" "/home/roger/Documents/Projects/GitHub/INDE/obj01-audit/tests/project_file/test_transport.py" "/home/roger/Documents/Projects/GitHub/INDE/obj01-audit/build-p5-sanitize/inde_project_file"
 Directory: /home/roger/Documents/Projects/GitHub/INDE/obj01-audit/build-p5-sanitize
-"inde_project_file_transport_tests" start time: Nov 26 16:00 -03
+"inde_project_file_transport_tests" start time: Nov 26 16:05 -03
 Output:
 ----------------------------------------------------------
 test_corruption_in_past_state_is_detected_even_after_restore (__main__.ProjectFile.test_corruption_in_past_state_is_detected_even_after_restore) ... ok
@@ -37,15 +38,15 @@ test_unknown_links_and_destination_inside_source_are_refused (__main__.ProjectFi
 test_update_versions_restore_both_directions_and_resource_reuse (__main__.ProjectFile.test_update_versions_restore_both_directions_and_resource_reuse) ... ok
 
 ----------------------------------------------------------------------
-Ran 12 tests in 18.036s
+Ran 12 tests in 36.598s
 
 OK
 <end of output>
-Test time =  18.16 sec
+Test time =  36.71 sec
 ----------------------------------------------------------
 Test Passed.
-"inde_project_file_transport_tests" end time: Nov 26 16:00 -03
-"inde_project_file_transport_tests" time elapsed: 00:00:18
+"inde_project_file_transport_tests" end time: Nov 26 16:05 -03
+"inde_project_file_transport_tests" time elapsed: 00:00:36
 ----------------------------------------------------------
 
-End testing: Nov 26 16:00 -03
+End testing: Nov 26 16:05 -03

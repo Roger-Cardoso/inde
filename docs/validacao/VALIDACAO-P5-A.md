@@ -17,6 +17,8 @@ Data: 2026-11-26. Branch: `feature/inde-p5-single-file`, derivada de `1b77951e7b
 
 O primeiro passe do detector de vazamentos foi impedido pela restrição de observação de processos do ambiente (`LeakSanitizer ... does not work under ptrace`). O passe foi repetido fora dessa restrição, ainda apenas sobre projetos fictícios, e passou com detecção de vazamentos ativa. A primeira compilação Clang também apontou conversões com sinal no parser JSON congelado: a configuração foi corrigida para aplicar aos arquivos herdados as advertências do build proprietário e manter `-Wconversion -Werror` em todos os arquivos novos, sem editar a fonte congelada.
 
+Na revisão final foi reproduzida outra borda do parser herdado: `std::stod` interpreta o ponto decimal segundo o locale, podendo truncar o valor silenciosamente em ambiente brasileiro. O invólucro P5 foi corrigido, e o teste usa um locale `pt_BR.UTF-8` real, verifica o valor `0.6120081954998241`, zero negativo, gravação/reabertura e restauração do locale do chamador tanto no sucesso quanto no erro. O CI instala e exige esse locale; não aceita omitir esse caso. A [repetição dos três alvos P5 no build nativo](evidencias-p5-a/p5-native-ctest.txt) e os logs independentes incluem a correção final.
+
 ## Regras exercitadas
 
 | Caso | Comprovação |

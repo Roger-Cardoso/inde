@@ -59,6 +59,8 @@ struct Options {
 };
 std::string sha256(const Bytes &);
 std::string encode_json(const persistence::json::Value &);
+persistence::json::Value parse_json(const std::string &,
+                                   std::size_t limit = 1024 * 1024);
 std::string canonical_json(const std::string &,
                            std::size_t limit = 1024 * 1024);
 

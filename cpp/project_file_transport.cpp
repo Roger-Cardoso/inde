@@ -217,7 +217,7 @@ Captured capture(const fs::path &given, const fs::path &store) {
       body["bytes"] = static_cast<std::int64_t>(raw.size());
       if (path == "manifest.json") {
         const auto manifest =
-            persistence::json::parse(canonical_json(string_bytes(raw)));
+            parse_json(string_bytes(raw));
         need(manifest.at("format").as_string() == "INDE" &&
                  manifest.at("format_version").as_integer() == 2,
              "source_format", "Formato de pasta não reconhecido.");
@@ -351,7 +351,7 @@ void unpack_directory(Store &store, std::int64_t sequence,
            state.records.at("project").kind == "legacy-project",
        "transport_profile", "Este estado não é uma captura de pasta INDE.");
   const auto root =
-      persistence::json::parse(state.records.at("project").payload);
+      parse_json(state.records.at("project").payload);
   need(root.at("format").as_string() == "INDE-DIRECTORY-37" &&
            root.at("project_id").as_string() == state.project_id,
        "transport_profile", "Identidade de transporte inválida.");
@@ -363,7 +363,7 @@ void unpack_directory(Store &store, std::int64_t sequence,
     const bool directory = r.kind == "legacy-directory";
     need(directory || r.kind == "legacy-file", "transport_profile",
          "Estado contém elementos que este conversor ainda não materializa.");
-    const auto body = persistence::json::parse(r.payload);
+    const auto body = parse_json(r.payload);
     const auto path = body.at("path").as_string();
     safe_relative(path);
     need(key == (directory ? "dir/" : "file/") + path &&
@@ -406,7 +406,7 @@ void unpack_directory(Store &store, std::int64_t sequence,
   }
   for (const auto &[path, r] : files) {
     const auto bytes = store.blob(r->blob);
-    const auto body = persistence::json::parse(r->payload);
+    const auto body = parse_json(r->payload);
     need(static_cast<std::int64_t>(bytes.size()) ==
              body.at("bytes").as_integer(),
          "transport_profile", "Tamanho do recurso diverge do descritor.");

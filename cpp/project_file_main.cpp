@@ -34,7 +34,7 @@ V summary(const State &s, bool content = false) {
                   {"blob", r.blob},
                   {"references", refs}};
     if (content)
-      row["payload"] = inde::persistence::json::parse(r.payload);
+      row["payload"] = parse_json(r.payload);
     records.emplace_back(row);
   }
   return V::Object{{"format", "INDE-P5-1"},  {"project_id", s.project_id},
@@ -173,7 +173,7 @@ int main(int argc, char **argv) {
         throw Error("request_read", "Pedido não pôde ser aberto.");
       const std::string raw{std::istreambuf_iterator<char>(f), {}};
       const auto v =
-          inde::persistence::json::parse(canonical_json(raw, 16 * 1024 * 1024));
+          parse_json(raw, 16 * 1024 * 1024);
       fields(v, {"format", "project_id", "store_id", "expected_sequence",
                  "expected_hash", "label", "edits"});
       if (v.at("format").as_string() != "INDE-P5-REQUEST-1")

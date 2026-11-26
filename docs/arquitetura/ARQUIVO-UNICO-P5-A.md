@@ -20,6 +20,8 @@ A referência Projeção Narrativa separa o estado produzido pelo autor das ferr
 
 As descrições de elementos são texto estruturado. Recursos binários são guardados como bytes, sem conversão obrigatória para Base64. Identidade, conteúdo, referências e apresentação precisam ter donos explícitos; não é necessário reproduzir cliques antigos para abrir o último estado. O histórico neste corte guarda estados completos quanto à composição e reutiliza as versões de conteúdo; não é um diário de eventos que precisa ser reexecutado.
 
+O parser JSON herdado interpreta reais com `std::stod`, dependente da configuração numérica. A fundação P5 envolve toda sua leitura JSON em um locale numérico C **local à thread**, restaurado inclusive em erro, e codifica reais com `to_chars` e precisão de ida e volta. Isso conserva decimais e zero negativo sob `pt_BR` sem alterar a configuração regional do processo ou do sistema. O parser congelado permanece intacto; outros consumidores legados fora desta fundação não foram corrigidos por esse invólucro.
+
 ## Contrato de alteração
 
 1. Observar o projeto e guardar UUID do projeto/armazenamento, sequência e hash do estado observado.

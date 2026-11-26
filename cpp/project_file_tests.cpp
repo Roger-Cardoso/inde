@@ -1,6 +1,10 @@
 #include "project_file.hpp"
+#include "inde/persistence/json.hpp"
+#include <cmath>
+#include <cstdlib>
 #include <glib.h>
 #include <iostream>
+#include <locale.h>
 #include <sqlite3.h>
 #include <sys/wait.h>
 #include <unistd.h>
@@ -32,6 +36,46 @@ int main() {
       std::filesystem::temp_directory_path() / ("inde-p5-" + owner);
   std::filesystem::create_directory(root);
   try {
+    const auto comma = newlocale(LC_NUMERIC_MASK, "pt_BR.UTF-8", nullptr);
+    if (comma) {
+      const auto previous = uselocale(comma);
+      check(previous != nullptr, "Set test numeric locale");
+      try {
+        check(std::strtod("1.5", nullptr) == 1.0,
+              "Regression fixture must actually use a decimal comma");
+        const std::string raw = "{\"x\":0.6120081954998241,\"zero\":-0.0}";
+        const auto value = parse_json(raw);
+        check(std::get<double>(value.at("x").storage()) == 0.6120081954998241 &&
+                  std::signbit(std::get<double>(value.at("zero").storage())),
+              "Locale corrupted a JSON decimal or negative zero");
+        check(uselocale(nullptr) == comma, "Parser changed caller locale");
+        refuses([&] { canonical_json("{invalid}"); }, "invalid_json");
+        check(uselocale(nullptr) == comma, "Failure changed caller locale");
+        State saved;
+        {
+          auto store = Store::create(root / "decimal.inde", owner);
+          saved = store.apply(store.head(), {{"decimal", 0, record("decimal", raw)}},
+                              {}, "Decimal em ambiente brasileiro");
+        }
+        {
+          auto store = Store::open(root / "decimal.inde");
+          check(store.head().hash == saved.hash &&
+                    store.head().records.at("decimal").payload.find("0.612008195499824") !=
+                        std::string::npos, "Reopen lost decimal precision");
+        }
+      } catch (...) {
+        uselocale(previous);
+        freelocale(comma);
+        throw;
+      }
+      uselocale(previous);
+      freelocale(comma);
+      std::cout << "P5 pt_BR decimal precision and caller locale restoration OK\n";
+    } else {
+      check(g_getenv("P5_REQUIRE_COMMA_LOCALE") == nullptr,
+            "Install pt_BR.UTF-8 to exercise required decimal-comma regression");
+      std::cout << "P5 decimal-comma locale unavailable; CI requires this case\n";
+    }
     const auto path = root / "Obra.inde";
     State before, after;
     {

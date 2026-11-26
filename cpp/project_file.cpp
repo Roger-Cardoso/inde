@@ -8,6 +8,7 @@
 #include <fcntl.h>
 #include <glib.h>
 #include <limits>
+#include <locale.h>
 #include <set>
 #include <sqlite3.h>
 #include <sys/file.h>
@@ -238,6 +239,26 @@ bool same_record(const Record &a, const Record &b) {
   return a.kind == b.kind && a.payload == b.payload && a.blob == b.blob &&
          a.references == b.references;
 }
+// The pinned parser uses std::stod. Keep its decimal interpretation local to
+// this thread and restore the caller's locale, including on parser failures.
+struct NumericLocale {
+  locale_t numeric{}, previous{};
+  NumericLocale() {
+    numeric = newlocale(LC_NUMERIC_MASK, "C", nullptr);
+    need(numeric != nullptr, "numeric_locale", "Não foi possível ler números JSON.");
+    previous = uselocale(numeric);
+    if (!previous) {
+      freelocale(numeric);
+      fail("numeric_locale", "Não foi possível reservar a leitura numérica.");
+    }
+  }
+  ~NumericLocale() {
+    uselocale(previous);
+    freelocale(numeric);
+  }
+  NumericLocale(const NumericLocale &) = delete;
+  NumericLocale &operator=(const NumericLocale &) = delete;
+};
 } // namespace
 std::string sha256(const Bytes &bytes) {
   return digest(bytes.empty()
@@ -250,7 +271,7 @@ std::string encode_json(const V &v) {
   encode(out, v, 0);
   return out;
 }
-std::string canonical_json(const std::string &s, std::size_t limit) {
+V parse_json(const std::string &s, std::size_t limit) {
   text(s, limit);
   // Bound nesting before the owner's recursive parser allocates its tree.
   unsigned depth = 0;
@@ -273,6 +294,7 @@ std::string canonical_json(const std::string &s, std::size_t limit) {
     }
   }
   V value;
+  NumericLocale numeric;
   try {
     value = persistence::json::parse(s);
   } catch (const std::exception &e) {
@@ -280,6 +302,10 @@ std::string canonical_json(const std::string &s, std::size_t limit) {
   }
   need(std::holds_alternative<V::Object>(value.storage()), "payload_object",
        "A descrição do elemento precisa ser um objeto JSON.");
+  return value;
+}
+std::string canonical_json(const std::string &s, std::size_t limit) {
+  const auto value = parse_json(s, limit);
   std::string result;
   encode(result, value, 0);
   text(result, limit);
