@@ -17,6 +17,8 @@ O driver GTK observa widgets e usa eventos reais de teclado/mouse. Não chama si
 
 ## Resultados
 
+Código validado: `f5001baab10424d62ec6da809eed2808009e1b5a`. A [execução de CI 45892089650](https://github.com/Roger-Cardoso/inde/actions/runs/45892089650) concluiu em 26/11/2026, às 20:45:20 UTC, com **5/5 jobs aprovados**: GCC e Clang com e sem ASan/UBSan/LeakSanitizer (3 testes em cada combinação), mais integração nativa (4 testes P5, demonstração anterior e percurso gráfico P5-B completo). O demonstrador novo também foi verificado localmente no aplicativo normal.
+
 O passe local e a execução de CI identificada são registrados nas [evidências](evidencias-p5-b/manifesto.json). Os logs separam testes de biblioteca, testes nativos, regressão da interface existente e o percurso do novo formato. A existência de botões ou de um workflow não é aprovação de funcionalidade; o aceite humano continua separado.
 
 Passe local em 26/11/2026:
@@ -28,6 +30,7 @@ Passe local em 26/11/2026:
 | Regressões nativas após correção decimal | 69/69, 163,88 s |
 | Interface existente, suíte completa | 103/103, 267,55 s |
 | Percurso novo GTK | 14 condições verificadas; resultado e log próprios |
+| Demonstrador P5-B entregue | Aplicativo normal, arquivo direto, Ctrl+S, Ctrl+Q e integridade aprovados |
 | Fontes integradas e compactados | 758 arquivos preservados e três arquivos compactados conferidos |
 
 A suíte de 103 casos antecede apenas a correção decimal e a invalidação final das visualizações na troca de materialização. O passe nativo de 69 casos inclui a correção decimal; o percurso GTK final inclui as duas correções. Os testes têm dados fictícios e não constituem aceite humano de obras reais.

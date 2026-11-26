@@ -3,7 +3,7 @@
   "date": "2026-11-26",
   "base": "cefde34789d4216804208d61b8030adc0d5225a9",
   "branch": "feature/inde-p5-single-file",
-  "note": "Fontes do corte B; evidencias A permanecem historicas. CI sera registrada apos a execucao.",
+  "note": "Fontes do corte B no commit validado; evidencias A permanecem historicas. CI e passes locais identificados separadamente.",
   "sources": {
     ".github/workflows/inde-p5.yml": "52a75f811de1a78a3527f08c71f7d37927e874eea9af2a3181bc1184268f5786",
     "cpp/CMakeLists.txt": "fd049baf22ac6d45c0cd22a10348172d1c7302da23e77339699c3a16635fd859",
@@ -34,13 +34,20 @@
   },
   "evidence": {
     "docs/validacao/evidencias-p5-b/arquivos-fontes.json": "7100204250fd02e59bc176f9cc2b168682bd695f8f85d0ef739ee1b852077002",
+    "docs/validacao/evidencias-p5-b/ci-resultados.txt": "401671020eeb5f2eac72ac0190fe297857ee73b0aeabb8d9429e5b67c3305dba",
+    "docs/validacao/evidencias-p5-b/ci.json": "dedaf5682ac7bf931e90d597367299f3c991df64c4b06279b4235b6db5d1a399",
     "docs/validacao/evidencias-p5-b/clang-asan-ctest.txt": "b729039b5e6db191d5be0c903d489eca5359eb4c43b629ac1fac16e056084724",
     "docs/validacao/evidencias-p5-b/clang-asan-detalhado.txt": "580a0ed263ec6007346a64f29a0bf8298e84d7899a52ea08a60675b84886f995",
     "docs/validacao/evidencias-p5-b/editor-regressoes.txt": "713930bc85565829d52f0b9fe7635a5ca7ac3abeb92dceeca2668b2b004ab974",
     "docs/validacao/evidencias-p5-b/fontes-fixadas.json": "7824d5412db6a5a48cdde16f533a8c21bf972cf94651c62c1294a4b2758766b2",
     "docs/validacao/evidencias-p5-b/gcc-release-ctest.txt": "5dd5230959445d005038174c43784b51bba5fb72b52826b6a5470a3369ced392",
+    "docs/validacao/evidencias-p5-b/gtk-launcher-driver.py": "f7178d15c4a85481a605fdb205996e533cf1bd396a3413ebf5cef14e03877c51",
+    "docs/validacao/evidencias-p5-b/gtk-launcher.json": "4d48cee9d22da08f2ad77b64d9540b0f04c1018b53352c1c07efc43ebefd6e21",
+    "docs/validacao/evidencias-p5-b/gtk-launcher.txt": "8f7edb92864ee6ceb5a1cdfd69a625ff1cc5db470d3db7e4f10b2a7daa9640ec",
     "docs/validacao/evidencias-p5-b/gtk-sessao.json": "19d14dae89fd60aa24e43b73a679bd19b5a9c65dec96ec7fcaa208133a0d2a89",
     "docs/validacao/evidencias-p5-b/gtk-sessao.txt": "5ddff37697b82cd307aba707aa8ec4402f6ad4bb62b5a9c9e0a7f5ee1b480111",
     "docs/validacao/evidencias-p5-b/native-ctest.txt": "ba059a37844d8ca233f238a4ddfddb8e8b2e084a75fef98ca30c3b5044b99868"
-  }
+  },
+  "validated_commit": "f5001baab10424d62ec6da809eed2808009e1b5a",
+  "ci_run": 45892089650
 }

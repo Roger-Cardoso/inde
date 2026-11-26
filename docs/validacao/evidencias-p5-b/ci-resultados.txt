@@ -1,0 +1,27 @@
+native-project — success
+2026-11-26T20:44:36.0213522Z 1/4 Test #19: inde_project_file_tests .............   Passed    0.31 sec
+2026-11-26T20:44:36.5679843Z 2/4 Test #20: inde_project_file_native_tests ......   Passed    0.54 sec
+2026-11-26T20:44:36.9652425Z 3/4 Test #21: inde_project_file_transport_tests ...   Passed    0.40 sec
+2026-11-26T20:44:37.1201788Z 4/4 Test #22: inde_project_file_session_tests .....   Passed    0.15 sec
+2026-11-26T20:44:37.1203997Z 100% tests passed, 0 tests failed out of 4
+2026-11-26T20:44:37.1204379Z Total Test time (real) =   1.46 sec
+2026-11-26T20:44:37.7957261Z P5 native schema37 roundtrip: full Document, PNG, table, equation, divergent row, planning/text link, edition, restoration and original preservation OK
+2026-11-26T20:44:44.6320256Z P5 GTK demo: actual launcher, keyboard Save/Quit, capture and verification OK
+2026-11-26T20:44:45.2782181Z P5 native schema37 roundtrip: full Document, PNG, table, equation, divergent row, planning/text link, edition, restoration and original preservation OK
+2026-11-26T20:45:14.8993218Z P5-B GTK: real Save, history restore, recents, crash recovery and failure-safe normal exit OK
+
+versioned-store (clang++, OFF) — success
+2026-11-26T20:36:04.6084336Z 100% tests passed, 0 tests failed out of 3
+2026-11-26T20:36:04.6084717Z Total Test time (real) =   0.75 sec
+
+versioned-store (clang++, ON) — success
+2026-11-26T20:35:47.7135217Z 100% tests passed, 0 tests failed out of 3
+2026-11-26T20:35:47.7135734Z Total Test time (real) =   3.39 sec
+
+versioned-store (g++, OFF) — success
+2026-11-26T20:35:44.7431863Z 100% tests passed, 0 tests failed out of 3
+2026-11-26T20:35:44.7432224Z Total Test time (real) =   2.45 sec
+
+versioned-store (g++, ON) — success
+2026-11-26T20:36:01.6032799Z 100% tests passed, 0 tests failed out of 3
+2026-11-26T20:36:01.6033295Z Total Test time (real) =   2.34 sec
