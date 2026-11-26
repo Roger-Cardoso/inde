@@ -1,0 +1,47 @@
+[
+  {
+    "file": "dados/obj01-exclusao-e2-final-r4/Editor-fluidez.inde/data/project.sqlite3",
+    "sha256": "bc4d7853032dfdf13106a2ba97d997a6d63b6a382842b1e3b5690e548901db27",
+    "integrity": "ok",
+    "foreign_keys": [],
+    "schema": 37
+  },
+  {
+    "file": "dados/obj01-exclusao-e2-final-r4/Editor-fluidez.inde/documents/composed/32acd65c-f29c-49b6-bdfa-eb6b9ca1cc30/obj01-piloto.sqlite3",
+    "sha256": "54b87f143fbef6cdc631b3ffc99320ba37075ef2f7fe9ac9811b1338a24f76d1",
+    "integrity": "ok",
+    "foreign_keys": []
+  },
+  {
+    "file": "dados/obj01-exclusao-e2-final-r4/Editor-fluidez.inde/recovery/editor-v1/9dfe3ddf-e465-49ce-b23a-5e635e995994.sqlite3",
+    "sha256": "7adafe1eb3c4ce4f443179ff347c127f62286fc2c1e99d7322e99476833387d0",
+    "integrity": "ok",
+    "foreign_keys": []
+  },
+  {
+    "file": "dados/obj01-exclusao-e2-final-r4/Editor-reordenacao.inde/data/project.sqlite3",
+    "sha256": "6bd00c53aea70d14533a8ee38817e3abd9b39ebef855012f689c654abd167630",
+    "integrity": "ok",
+    "foreign_keys": [],
+    "schema": 37
+  },
+  {
+    "file": "dados/obj01-exclusao-e2-final-r4/Editor-reordenacao.inde/documents/composed/5355ac19-7bc0-4a17-94ba-220cbca8f832/obj01-piloto.sqlite3",
+    "sha256": "e3b10fbf8512fa5dc8b763659ea37da59231cae2cea4fadd143f7a7d78fff7a9",
+    "integrity": "ok",
+    "foreign_keys": []
+  },
+  {
+    "file": "dados/obj01-exclusao-e2-final-r4/Editor-reordenacao.inde/recovery/editor-v1/10376782-ecc7-471c-ad7d-6c0de88cc4a1.sqlite3",
+    "sha256": "0283346f070dbbf8e968130bd6659d31b91f0167079eca6378fcda8d1f77cfc3",
+    "integrity": "ok",
+    "foreign_keys": []
+  },
+  {
+    "file": "dados/obj01-exclusao-e2-final-r4/Demo-planejamento.inde/data/project.sqlite3",
+    "sha256": "8ec7ee24245378457b44c786568007f9d74793cb073d0f7f029ceed4ddbb872a",
+    "integrity": "ok",
+    "foreign_keys": [],
+    "schema": 37
+  }
+]

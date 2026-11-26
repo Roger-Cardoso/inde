@@ -1,0 +1,7 @@
+{
+  "launcher": "scripts/demos/Abrir-demo-planejamento-exclusao.sh",
+  "normal_window": true,
+  "normal_exit": true,
+  "planning_content_preserved": true,
+  "synthetic_project": "dados/obj01-demo-planejamento-exclusao/Demo-planejamento.inde"
+}

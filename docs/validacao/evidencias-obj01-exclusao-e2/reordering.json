@@ -1,0 +1,89 @@
+{
+  "baseline": false,
+  "samples": [
+    {
+      "stage": "move_down",
+      "prose_lines": 20,
+      "step": 1,
+      "observed_ms": 287.584,
+      "retained_views": 20,
+      "total_views": 20
+    },
+    {
+      "stage": "move_down",
+      "prose_lines": 20,
+      "step": 2,
+      "observed_ms": 204.533,
+      "retained_views": 20,
+      "total_views": 20
+    },
+    {
+      "stage": "move_down",
+      "prose_lines": 20,
+      "step": 3,
+      "observed_ms": 203.404,
+      "retained_views": 20,
+      "total_views": 20
+    },
+    {
+      "stage": "move_down",
+      "prose_lines": 200,
+      "step": 1,
+      "observed_ms": 799.135,
+      "retained_views": 200,
+      "total_views": 200
+    },
+    {
+      "stage": "move_down",
+      "prose_lines": 200,
+      "step": 2,
+      "observed_ms": 785.454,
+      "retained_views": 200,
+      "total_views": 200
+    },
+    {
+      "stage": "move_down",
+      "prose_lines": 200,
+      "step": 3,
+      "observed_ms": 691.293,
+      "retained_views": 200,
+      "total_views": 200
+    },
+    {
+      "stage": "drop_after",
+      "observed_ms": 339.007
+    },
+    {
+      "stage": "drop_right",
+      "observed_ms": 255.048
+    },
+    {
+      "stage": "drop_left",
+      "observed_ms": 343.286
+    },
+    {
+      "stage": "drop_left",
+      "observed_ms": 265.06
+    },
+    {
+      "stage": "drop_before",
+      "observed_ms": 256.015
+    },
+    {
+      "stage": "E2_insertion_after_divergence",
+      "png": true,
+      "table": true,
+      "independent_destinations": true,
+      "pair_preserved": true,
+      "continued_writing": true,
+      "images": 2
+    },
+    {
+      "stage": "E2_effective_paragraph_alignment",
+      "actual_text_view": "center"
+    }
+  ],
+  "timing_scope": "Real X11 input through low-priority state observer; not pure paint latency",
+  "normal_exit": true,
+  "saved_text_exact": true
+}

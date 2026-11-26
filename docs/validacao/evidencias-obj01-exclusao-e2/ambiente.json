@@ -1,0 +1,10 @@
+{
+  "platform": "Linux-6.8.0-149-generic-x86_64-with-glibc2.39",
+  "python": "3.12.3",
+  "native_cxx": "c++ (Ubuntu 15.2.0-14ubuntu1~24~ppa1) 15.2.0",
+  "test_command": "GTK_THEME=Adwaita INDE_REAL_INPUT_FULL_SUITE=1 INDE_TEST_ARTIFACTS=dados/obj01-exclusao-e2-final-r4 python3 tests/run_obj01_real_input.py",
+  "sanitizers": {
+    "ASAN_OPTIONS": "detect_leaks=1:halt_on_error=1",
+    "UBSAN_OPTIONS": "halt_on_error=1"
+  }
+}

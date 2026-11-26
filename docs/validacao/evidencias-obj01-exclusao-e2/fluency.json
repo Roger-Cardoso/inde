@@ -1,0 +1,115 @@
+{
+  "timing_scope": "X11 input through low-priority observer; includes polling, not pure paint latency",
+  "samples": [
+    {
+      "stage": "paste",
+      "paragraphs": 20,
+      "mixed": false,
+      "observed_ms": 365.005
+    },
+    {
+      "stage": "delete",
+      "paragraphs": 20,
+      "mixed": false,
+      "observed_ms": 186.82
+    },
+    {
+      "stage": "delete",
+      "paragraphs": 20,
+      "mixed": false,
+      "observed_ms": 188.498
+    },
+    {
+      "stage": "delete",
+      "paragraphs": 20,
+      "mixed": false,
+      "observed_ms": 441.308
+    },
+    {
+      "stage": "backspace",
+      "paragraphs": 20,
+      "mixed": false,
+      "observed_ms": 187.641
+    },
+    {
+      "stage": "delete_burst",
+      "paragraphs": 20,
+      "mixed": false,
+      "observed_ms": 296.959
+    },
+    {
+      "stage": "paste",
+      "paragraphs": 200,
+      "mixed": false,
+      "observed_ms": 2629.412
+    },
+    {
+      "stage": "delete",
+      "paragraphs": 200,
+      "mixed": false,
+      "observed_ms": 399.951
+    },
+    {
+      "stage": "delete",
+      "paragraphs": 200,
+      "mixed": false,
+      "observed_ms": 484.043
+    },
+    {
+      "stage": "delete",
+      "paragraphs": 200,
+      "mixed": false,
+      "observed_ms": 395.146
+    },
+    {
+      "stage": "backspace",
+      "paragraphs": 200,
+      "mixed": false,
+      "observed_ms": 400.463
+    },
+    {
+      "stage": "delete_burst",
+      "paragraphs": 200,
+      "mixed": false,
+      "observed_ms": 505.25
+    },
+    {
+      "stage": "paste",
+      "paragraphs": 200,
+      "mixed": true,
+      "observed_ms": 3160.653
+    },
+    {
+      "stage": "delete",
+      "paragraphs": 200,
+      "mixed": true,
+      "observed_ms": 504.372
+    },
+    {
+      "stage": "delete",
+      "paragraphs": 200,
+      "mixed": true,
+      "observed_ms": 674.188
+    },
+    {
+      "stage": "delete",
+      "paragraphs": 200,
+      "mixed": true,
+      "observed_ms": 672.035
+    },
+    {
+      "stage": "backspace",
+      "paragraphs": 200,
+      "mixed": true,
+      "observed_ms": 395.171
+    },
+    {
+      "stage": "delete_burst",
+      "paragraphs": 200,
+      "mixed": true,
+      "observed_ms": 503.838
+    }
+  ],
+  "normal_exit": true,
+  "saved_text_exact": true
+}

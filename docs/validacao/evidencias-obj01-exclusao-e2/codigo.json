@@ -1,0 +1,33 @@
+{
+  "commit": "40b9baf443f5120d80318e517f66704b722b14b1",
+  "implementation_commits": [
+    "c0dac1c3ce66b9d695a44222c431d1ee482fc8ef",
+    "40b9baf443f5120d80318e517f66704b722b14b1"
+  ],
+  "files": {
+    ".github/workflows/obj-01.yml": "b9160077d6f49b427bb87fa6adb500f3b2a3b02e3578cd69d36e1e4cbb52dc7d",
+    "cpp/CMakeLists.txt": "443bab82385fdd1ce32dc7837d217b24fad2a1070b131053ff5b517a98e67f03",
+    "cpp/base_additions/src/application/contextual_planning_removal.cpp": "d9caf2607a5765e9188e2da735450d086a5f14dbb4302f414a2f34f496186725",
+    "cpp/base_additions/src/ui/contextual_planning_removal.cpp": "33200f604713bc99e00f3e7660466bdb241f8efff736237d2f9c01d494f65f93",
+    "cpp/integrar_objetos.py": "4e94140a297217c156aae94ca4c8d9ab0fe9198597bb5bdaa8193c34b91bda72",
+    "cpp/main_window_smoke.hpp": "17550150f48c9e24a4afd9cd6688e2752b58a305ec6513a40f7cbba532a2dd17",
+    "cpp/native_insertion_tests.cpp": "9d62833dc6a8eee0f2c0fe33ef5e3c6b6e1874e7be894019a3efe77d807b094e",
+    "cpp/object_composite_pilot.cpp": "d55a9ccebd13c1bc4e525de638189f4f063dd6fc9ab87bd8589cdc11b1fef19c",
+    "cpp/object_native_ui.cpp": "f5becc78b74b90b7fa68fa556f73d844e1f7109c51f73424af93ced619e34836",
+    "cpp/object_usage_probe.cpp": "ae7cdfe52355d169b4f6e3748e00090408d7cea00f3a644e9f9c2d097d45c658",
+    "cpp/otimizar_base.py": "dbbdb5b8e1d0c4c8a7367db21369e2b884463aa0f0b821387d05a9b28e0f4ceb",
+    "cpp/overlay/src/main.cpp": "57ee5109bd9ec25e6f9e501d359580bd4e9c5b8a80be10511a5149e7b6c97d0b",
+    "cpp/planning_patches.json": "9b45e6e6fd72d8b2305b0e955bb1acad1b6509c99fc1217a7102586da83ea99a",
+    "cpp/planning_removal_smoke.cpp": "30815b50ac3110811bd0adf48ad088cd9330aa3460af1f3bd4013f2a8266cfd8",
+    "cpp/planning_removal_tests.cpp": "ae89a60b628d818a609e36fa2eabe726c1ab903198346b50508ff8f237eded42",
+    "scripts/demos/Abrir-demo-planejamento-exclusao.sh": "71e6682c316a2ebea105bd7d6583e31c0a3cbbfa5dfad4f04a345e579c0e80c2",
+    "tests/obj01_fluency_cases.py": "91e4e4f074e7c9c6553baae300d9ee3bc932d09f5727f7768168ec2af7f6ebe5",
+    "tests/obj01_reordering_cases.py": "aeec47276f872c0a30eddebd90040e72e3df5b746750be16552d352da85db4cc",
+    "tests/test_obj01_planning_removal.py": "c1467b3f9ce58cd6ddd48f6a2e3422cedf3f825587e2582e82530494958cac14",
+    "tests/test_obj01_real_input.py": "124d350d67859c41d3e93b9967a26ea11126936cdb73baf83bb67a23e801465f"
+  },
+  "binary": {
+    "path": "build-nativo/inde-especial",
+    "sha256": "ec3e7ade6c3162ac88964c8340f1d2491f13ce98e60f7a48460339ad56ac98c9"
+  }
+}

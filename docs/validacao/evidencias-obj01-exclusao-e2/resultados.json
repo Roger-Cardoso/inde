@@ -1,0 +1,47 @@
+{
+  "code_commit": "40b9baf443f5120d80318e517f66704b722b14b1",
+  "local": {
+    "python": {
+      "passed": 103,
+      "total": 103,
+      "seconds": 240.781,
+      "all_real_input_cases": true
+    },
+    "native": {
+      "passed": 65,
+      "total": 65,
+      "seconds": 155.05
+    },
+    "compatibility": {
+      "passed": 23,
+      "total": 23,
+      "seconds": 121.54
+    },
+    "compatibility_asan_ubsan": {
+      "passed": 23,
+      "total": 23,
+      "seconds": 438.86,
+      "detect_leaks": true,
+      "scope": "Legacy profile/domain; not whole GTK or all new native insertion/removal paths"
+    }
+  },
+  "database_checks": 7,
+  "ci": {
+    "run_id": 45862971684,
+    "url": "https://github.com/Roger-Cardoso/inde/actions/runs/45862971684",
+    "status": "completed",
+    "conclusion": "success",
+    "jobs_passed": 26,
+    "jobs_total": 26
+  },
+  "superseded_runs": [
+    45860771450,
+    45861147087,
+    45862532092
+  ],
+  "main_preserved": {
+    "head": "d41a5c9b9809ca7d40beb6ff10f22f1a5b451e0b",
+    "preexisting_change": "Preparar-ponte.sh mode only"
+  },
+  "no_real_project_migration": true
+}

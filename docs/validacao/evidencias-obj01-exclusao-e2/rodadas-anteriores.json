@@ -1,0 +1,21 @@
+{
+  "first": {
+    "total": 103,
+    "failed": 2,
+    "sha": "c0dac1c3ce66b9d695a44222c431d1ee482fc8ef",
+    "failures": [
+      "Unhittable first paragraph after wheel scrolling",
+      "Drag source clipped after framing target separated by PNG"
+    ]
+  },
+  "second": {
+    "total": 103,
+    "failed": 2,
+    "sha": "fa0f4494afae137240f6200580135f6404a2e0a2",
+    "failures": [
+      "Scroll animation moved first paragraph after driver returned",
+      "Second PNG dropdown index assumed no preceding image"
+    ]
+  },
+  "preservation": "Fixtures are synthetic. The complete original logs are retained compressed; failed runs are not counted as passes."
+}

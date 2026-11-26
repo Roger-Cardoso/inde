@@ -1,0 +1,13 @@
+[0/2] Re-checking globbed directories...
+[1/2] Re-running CMake...
+-- Configuring done (0.9s)
+-- Generating done (0.4s)
+-- Build files have been written to: /home/roger/Documents/Projects/GitHub/INDE/obj01-audit/build-nativo
+[0/2] Re-checking globbed directories...
+[1/7] Building CXX object CMakeFiles/inde_native_insertion_tests.dir/native_insertion_tests.cpp.o
+[2/7] Building CXX object inde-base/CMakeFiles/inde.dir/src/ui/contextual_planning_page.cpp.o
+[3/7] Building CXX object CMakeFiles/inde_object_document_engine.dir/object_composite_pilot.cpp.o
+[4/7] Linking CXX static library libinde_object_document_engine.a
+[5/7] Linking CXX executable inde_native_insertion_tests
+[6/7] Linking CXX executable inde_object_native_tests
+[7/7] Linking CXX executable inde-especial
