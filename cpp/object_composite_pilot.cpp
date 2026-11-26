@@ -1639,6 +1639,76 @@ void place_text(State &s, const compat::DocumentReadProjection &p,
   s.selection = group.occurrence_ids.front();
   s.selected_cell.clear();
 }
+// Structural drag moves a complete row and every owner reading group it
+// touches. The two orders are edited independently; a visual arrangement is
+// never silently promoted to the authorial order of the whole document.
+std::set<std::string> structural_unit(const State &s,
+                                    const compat::DocumentReadProjection &p,
+                                    const std::string &id) {
+  std::set<std::string> ids{id};
+  bool changed = true;
+  while (changed) {
+    const auto count = ids.size();
+    const auto extend = [&](const auto &members) {
+      if (std::any_of(members.begin(), members.end(),
+                      [&](const auto &v) { return ids.contains(v); }))
+        ids.insert(members.begin(), members.end());
+    };
+    for (const auto &group : p.reading_groups()) extend(group.occurrence_ids);
+    for (const auto &row : s.rows) extend(row.children);
+    changed = ids.size() != count;
+  }
+  return ids;
+}
+void move_unit(State &s, const std::string &id, const std::string &reference,
+               bool after) {
+  require_active(s, id);
+  if (!reference.empty()) require_active(s, reference);
+  const auto p = projection(s);
+  const auto unit = structural_unit(s, *p, id);
+  const auto target = reference.empty() ? std::set<std::string>{}
+                                      : structural_unit(s, *p, reference);
+  if (std::any_of(target.begin(), target.end(),
+                  [&](const auto &v) { return unit.contains(v); }))
+    fail("reading_group_target_selected");
+  const auto relocate = [&](auto &order) {
+    std::vector<std::string> moving;
+    for (const auto &v : order) if (unit.contains(v)) moving.push_back(v);
+    std::erase_if(order, [&](const auto &v) { return unit.contains(v); });
+    auto at = order.end();
+    if (!reference.empty()) {
+      at = std::find_if(order.begin(), order.end(),
+                        [&](const auto &v) { return target.contains(v); });
+      if (at == order.end()) fail("destination_not_found");
+      if (after)
+        for (auto it = at; it != order.end(); ++it)
+          if (target.contains(*it)) at = std::next(it);
+    }
+    order.insert(at, moving.begin(), moving.end());
+  };
+  relocate(s.author);
+  relocate(s.visual);
+  std::string owner_before;
+  bool passed = false;
+  for (const auto &v : s.author) {
+    if (unit.contains(v)) { passed = true; continue; }
+    if (!passed) continue;
+    const auto found = std::find_if(p->paragraphs().begin(), p->paragraphs().end(),
+                                    [&](const auto &b) { return b.occurrence_id == v; });
+    if (found != p->paragraphs().end()) { owner_before = found->paragraph_id; break; }
+  }
+  auto document = p->source_snapshot();
+  try {
+    for (const auto &group : p->reading_groups())
+      if (unit.contains(group.occurrence_ids.front()))
+        document = application::move_reading_block({document, {}},
+                    group.source_block_id, owner_before).document;
+  } catch (const std::bad_alloc &) { throw; }
+  catch (const std::exception &) { fail("owner_text_move_refused"); }
+  s.working_text = persistence::encode_document_snapshot(document);
+  s.selection = id;
+  s.selected_cell.clear();
+}
 // Undo changes active occurrences, not the existence of immutable resources.
 // Retained records are library entries, never hidden reading-order items.
 void retain_assets(State &target, const State &current) {
@@ -2637,7 +2707,8 @@ struct Session::Impl {
             op == "create_equation" || op == "create_table" || op == "create_table_sized" ||
             op == "insert_table_axis" || op == "remove_table_axis" ||
             op == "restore_table_axis" || op == "import" || op == "duplicate" ||
-            op == "move" || op == "remove" || op == "restore_removed" ||
+            op == "move" || op == "move_unit" || op == "place_beside" ||
+            op == "remove" || op == "restore_removed" ||
             op == "reorder_text" || op == "create_formula" ||
             op == "attach_formula" || op == "detach_formula";
         const bool composition =
@@ -3267,6 +3338,11 @@ struct Session::Impl {
           auto f = figure(candidate, v.at("id").as_string());
           f.occurrence = project::new_uuid();
           insert(candidate, f, v.at("before").as_string());
+        } else if (op == "move_unit") {
+          if (!p2d2) fail("p2d2_profile_required");
+          fields(v, {"op", "expected", "id", "reference", "after"});
+          move_unit(candidate, v.at("id").as_string(),
+                    v.at("reference").as_string(), v.at("after").as_boolean());
         } else if (op == "move") {
           fields(v, {"op", "expected", "id", "before", "intent"});
           const auto id = v.at("id").as_string(),
@@ -3348,11 +3424,11 @@ struct Session::Impl {
               candidate.selected_cell.clear();
             candidate.selection = id;
           }
-        } else if (op == "arrange_objects") {
+        } else if (op == "arrange_objects" || op == "place_beside") {
           if (!p2d2)
             fail("p2d2_profile_required");
-          fields(v, {"op", "expected", "id", "other", "side", "first", "second",
-                     "gap"});
+          if (op == "place_beside") fields(v, {"op", "expected", "id", "other", "side"});
+          else fields(v, {"op", "expected", "id", "other", "side", "first", "second", "gap"});
           const auto id = v.at("id").as_string(),
                      other = v.at("other").as_string(),
                      side = v.at("side").as_string();
@@ -3360,6 +3436,23 @@ struct Session::Impl {
           require_active(candidate, other);
           if (id == other || (side != "left" && side != "right"))
             fail("invalid_row_target");
+          std::optional<Row> existing_row;
+          if (op == "place_beside") {
+            const auto p = projection(candidate);
+            for (const auto &group : p->reading_groups())
+              if (group.occurrence_ids.size() != 1 &&
+                  (std::find(group.occurrence_ids.begin(), group.occurrence_ids.end(), id) != group.occurrence_ids.end() ||
+                   std::find(group.occurrence_ids.begin(), group.occurrence_ids.end(), other) != group.occurrence_ids.end()))
+                fail("reading_group_split");
+            for (const auto &row : candidate.rows) {
+              if (std::find(row.children.begin(), row.children.end(), other) != row.children.end() &&
+                  std::find(row.children.begin(), row.children.end(), id) == row.children.end())
+                fail("row_target_occupied");
+              if (std::find(row.children.begin(), row.children.end(), other) != row.children.end() &&
+                  std::find(row.children.begin(), row.children.end(), id) != row.children.end())
+                existing_row = row;
+            }
+          }
           candidate.composition_v2 = true;
           unpair(candidate, id);
           unpair(candidate, other);
@@ -3367,11 +3460,16 @@ struct Session::Impl {
           const auto at = std::find(candidate.visual.begin(),
                                     candidate.visual.end(), other);
           candidate.visual.insert(side == "left" ? at : std::next(at), id);
-          candidate.rows.push_back(
-              {project::new_uuid(), project::new_uuid(), project::new_uuid(),
-               side == "left" ? std::vector<std::string>{id, other}
-                              : std::vector<std::string>{other, id},
-               real(v.at("first")), real(v.at("second")), real(v.at("gap"))});
+          const auto children = side == "left" ? std::vector<std::string>{id, other}
+                                               : std::vector<std::string>{other, id};
+          if (existing_row) {
+            existing_row->children = children;
+            candidate.rows.push_back(*existing_row);
+          } else candidate.rows.push_back(
+              {project::new_uuid(), project::new_uuid(), project::new_uuid(), children,
+               op == "place_beside" ? .5 : real(v.at("first")),
+               op == "place_beside" ? .5 : real(v.at("second")),
+               op == "place_beside" ? 16 : real(v.at("gap"))});
           candidate.selection = id;
           candidate.selected_cell.clear();
         } else if (op == "edit_table_design") {

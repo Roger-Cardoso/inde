@@ -35,6 +35,7 @@ O iniciador verifica as fontes, compila a aplicação e cria somente a amostra `
 6. Em Fórmulas, escolha Texto por condição, Guardar valor, Calcular, Alterar à distância ou Escrita livre. Condições podem comparar números ou texto. As frases podem combinar texto editável e resultados. Alterações de uso único atualizam a variável de destino e retiram seu comando.
 7. Em Matemática, escolha um modelo ou digite a fonte LaTeX. A fonte permanece salva mesmo se a prévia indicar um comando não suportado. Aplicar confirma; Cancelar conserva a versão anterior.
 8. Salve pelo Documento/projeto. Rascunhos precisam ser aplicados ou cancelados antes de sair ou trocar de especialidade.
+9. Em **Estrutura**, arraste o círculo até a borda superior/inferior para mover o bloco ou a linha inteira. Para compor lado a lado, desloque também o ponteiro horizontalmente até a borda esquerda/direita do vizinho e siga o traço verde. Escape cancela. A composição lateral conserva a leitura; Ctrl+↑/↓ continua movendo a unidade na leitura, inclusive depois de uma organização visual diferente. Linhas ocupadas por outro par e grupos de texto indivisíveis não aceitam a soltura lateral. Veja [provas e limites da reordenação](../../docs/validacao/VALIDACAO-OBJ-01-REORDENACAO-LATERAL.md).
 
 A origem arquivada do Documento continua preservada, e o estado de trabalho acompanha a Escrita. O histórico textual e o de objetos são contextuais; não se apresentam como uma cronologia global única. O banco canônico continua no schema 37; não há migração de projetos autorais em lote.
 

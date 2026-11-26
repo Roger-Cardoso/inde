@@ -23,7 +23,10 @@ class RealWritingInput(unittest.TestCase):
     def test_empty_paragraph_fluency_and_save(self):
         self._run_editor(fluency=True)
 
-    def _run_editor(self, fluency=False):
+    def test_structural_reorder_and_lateral_drag(self):
+        self._run_editor(reordering=True)
+
+    def _run_editor(self, fluency=False, reordering=False):
         binary = Path(os.environ.get('INDE_TEST_BINARY', BASE / 'build-nativo/inde-especial'))
         if (not binary.exists() or not os.environ.get('DISPLAY') or not shutil.which('xdotool')
                 or os.environ.get('INDE_REAL_INPUT_OWN_DISPLAY') != '1'):
@@ -34,7 +37,7 @@ class RealWritingInput(unittest.TestCase):
             env = native_environment(root / 'profile', BASE)
             env.update(XDG_DATA_HOME=str(root / 'data'), XDG_CACHE_HOME=str(root / 'cache'),
                        GSK_RENDERER='cairo', GTK_A11Y='none', GTK_IM_MODULE='simple', G_DEBUG='fatal-criticals', GTK_USE_PORTAL='0')
-            if fluency:
+            if fluency or reordering:
                 env['INDE_EDITOR_PROFILE'] = '1'
             log = (root / 'application.log').open('w+')
             command = [str(binary), '--escrita-usabilidade', str(root / 'Teste.inde'), str(state_file)]
@@ -147,7 +150,7 @@ class RealWritingInput(unittest.TestCase):
                 click(name=name)
 
             def scroll_to(name, area):
-                for _ in range(24):
+                for _ in range(80):
                     if candidates(state(), name=name):
                         return
                     regions = candidates(state(), name=area)
@@ -155,8 +158,12 @@ class RealWritingInput(unittest.TestCase):
                         wait(lambda s: bool(candidates(s, name=area)), 'Área de rolagem disponível: ' + area)
                         regions = candidates(state(), name=area)
                     c = regions[0]
+                    targets = [v for v in state()['controls'] if v['name'] == name]
+                    above = targets and targets[0].get('y', c['y']) < c['y']
+                    far = targets and abs(targets[0].get('y', c['y'])-c['y']) > c['height']
                     input_('mousemove', '--window', str(c.get('window', window)), str(c['x'] + min(6, c['width'] // 2)),
-                           str(c['y'] + c['height'] // 2), 'click', '5')
+                           str(c['y'] + c['height'] // 2), 'click', '--repeat', '8' if far else '1',
+                           '--delay', '10', '4' if above else '5')
                     time.sleep(.15)
                 wait(lambda s: False, 'Controle não alcançado pela rolagem: ' + name, timeout=.1)
 
@@ -223,6 +230,10 @@ class RealWritingInput(unittest.TestCase):
                                   if c['name'].startswith('writing-paragraph-')), None)
                 self.assertIsNotNone(paragraph, 'Documento vazio não oferece área para escrever')
                 click(name=paragraph)
+                if reordering:
+                    from obj01_reordering_cases import exercise_reordering
+                    exercise_reordering(self, root, env, process, window, input_, click, wait, state, scroll_to)
+                    return
                 if fluency:
                     from obj01_fluency_cases import exercise_blank_paragraphs
                     exercise_blank_paragraphs(self, root, env, process, window, input_, click, wait, state, scroll_to)

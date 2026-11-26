@@ -6,6 +6,8 @@ Data: 24/11/2026. Análise da branch `feature/inde-obj-01-foundation`, documenta
 
 **Retomada em 26/11/2026:** o usuário autorizou iniciar o trabalho. O primeiro corte de implementação atua em E1a, reaproveitando vistas de parágrafos, atualizando a lista de alvos de forma incremental e evitando decodificações repetidas do mesmo Documento na adoção do histórico, com os mecanismos de checkpoint existentes conservados. O avanço, as medições e as lacunas ficam no [relatório de fluidez](../validacao/VALIDACAO-OBJ-01-FLUIDEZ-E1A.md). Essa retomada não declara E1, E1a ou a maturidade completa concluídos; especialmente o objetivo de resposta de até 100 ms e os perfis maiores exigem prova adicional.
 
+**Corte adicional de 26/11/2026, solicitado pelo usuário:** otimização da reordenação e arrasto dos círculos para formar linhas lado a lado. O [relatório de reordenação](../validacao/VALIDACAO-OBJ-01-REORDENACAO-LATERAL.md) registra a conservação das vistas, os indicadores nas quatro bordas e o movimento da linha inteira mesmo com ordens divergentes. É avanço em M08/M09/M11 e E1a/E2; a inserção depois de arranjos divergentes (A02/M10), os perfis maiores e a meta de latência continuam separados e abertos.
+
 O editor tem uma base nativa aproveitável e recursos reais, mas ainda não oferece confiança suficiente para o trabalho diário com conteúdo misto. O próximo investimento deve completar os percursos de uso e suas combinações, preservando o Documento, as especialidades e o trabalho já realizado. A quantidade de controles, testes ou trabalhos de CI não substitui essa comprovação.
 
 ## 1. O resultado a alcançar

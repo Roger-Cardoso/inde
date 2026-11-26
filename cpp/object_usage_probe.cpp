@@ -66,6 +66,8 @@ int run_object_usage_probe(const Glib::RefPtr<Gtk::Application> &app,
           O c{{"name",name},{"label",label},{"mapped",w.get_mapped()},
               {"sensitive",bool(gtk_widget_is_sensitive(w.gobj()))},
               {"focus",w.is_focus()},{"selected",w.has_css_class("inde-native-selected")}};
+          for (const auto *direction : {"before", "after", "left", "right"})
+            if (w.has_css_class(std::string("reading-drop-")+direction)) c["drop"]=direction;
           if(name.starts_with("writing-paragraph-"))
             c["instance"]=std::to_string(reinterpret_cast<std::uintptr_t>(&w));
           if(auto *b=dynamic_cast<Gtk::ToggleButton *>(&w))c["active"]=b->get_active();

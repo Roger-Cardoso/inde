@@ -186,6 +186,7 @@ struct Work {
   std::function<void(const V &)> done;
 };
 const std::map<std::string, std::string> messages = {
+    {"row_target_occupied", "Essa linha já tem duas colunas. Escolha um bloco livre ou mova a linha inteira."},
     {"stale_reading_drag", "O documento mudou durante a movimentação. Escolha o bloco e o destino novamente."},
     {"png_read_failed", "Não foi possível ler o arquivo escolhido. Escolha a figura novamente."},
     {"png_byte_limit", "A figura deve ser um PNG com até 8 MiB."},
@@ -267,8 +268,13 @@ struct ObjectDocumentEditor::Impl {
   Gtk::Button *tools_toggle = nullptr;
   sigc::connection drag_scroll, tool_follow;
   std::string dragging, drag_reference, restore_handle;
-  bool drag_after = false;
-  double drag_y = 0, drag_initial_scroll = 0, drag_delta = 0;
+  enum class DropPosition { Before, After, Left, Right };
+  DropPosition drag_position = DropPosition::Before;
+  struct DragTarget { std::string id; graphene_rect_t bounds; bool beside; };
+  std::vector<DragTarget> drag_targets;
+  std::set<std::string> drag_unit;
+  double drag_pointer_x = 0, drag_pointer_y = 0, drag_start_x = 0;
+  int drag_width = 0, drag_height = 0;
   std::int64_t drag_revision = 0;
   std::string specialty = "composition";
   std::optional<std::map<std::string, std::string>> visible_text;
@@ -484,7 +490,7 @@ struct ObjectDocumentEditor::Impl {
     sidebar.append(specialty_host);
     auto &structure_tools = group("structure");
     label(structure_tools, "Ordem de leitura");
-    label(structure_tools, "Arraste o círculo do bloco até a borda do vizinho. Texto e objetos usam a mesma sequência; blocos de texto indivisíveis são movidos juntos.");
+    label(structure_tools, "Arraste o círculo até a borda superior/inferior para reordenar, ou lateral para colocar lado a lado. A linha inteira se move na vertical; blocos de texto indivisíveis permanecem juntos.");
     button(structure_tools, "Escolher posição do bloco…", "native-reading-position", [this] { layout_editor(); });
     button(structure_tools, "Restaurar apresentação pela leitura", "native-reading-align", [this] { command("restore", {}, "composition"); });
     auto &math_tools = group("math");
@@ -657,7 +663,7 @@ struct ObjectDocumentEditor::Impl {
         op != "edit_equation" && op != "edit_formula" &&
         op != "create_table_sized" && op != "create_formula_hub" &&
         op != "edit_formula_hub" && op != "edit_table_design" &&
-        op != "import" && op != "move" && op != "set_presentation" &&
+        op != "import" && op != "move" && op != "move_unit" && op != "place_beside" && op != "set_presentation" &&
         op != "arrange_objects" && op != "stack" && op != "insert_table_axis" &&
         op != "remove_table_axis" && op != "restore_table_axis" &&
         op != "restore_removed" && op != "reset_presentation" &&
@@ -679,10 +685,12 @@ struct ObjectDocumentEditor::Impl {
         V{},
         required,
         [this, op, after](const V &result) {
+          EditorPhaseTimer measurement("object_command_apply");
           busy = false;
           if (owner.editing_changed)
             owner.editing_changed(draft || choosing_image);
           root.set_sensitive(true);
+          const auto before = state;
           if (has(result, "state"))
             state = result.at("state");
           if (!result.at("accepted").as_boolean()) {
@@ -695,8 +703,9 @@ struct ObjectDocumentEditor::Impl {
               std::lock_guard lock(runtime->mutex);
               const auto now = runtime->session->current_document();
               if (!project::same_document_state(source_document, now, false)) {
-                if (op == "move" || op == "undo" || op == "redo")
-                  source_document = owner.commit_document(now);
+                if (op == "move" || op == "move_unit" || op == "undo" || op == "redo")
+                  { EditorPhaseTimer commit_measurement("object_owner_commit");
+                    source_document = owner.commit_document(now); }
                 runtime->session->synchronize_document(source_document);
                 state =
                     runtime->session->request(O{{"op", "view"}}).at("state");
@@ -709,7 +718,7 @@ struct ObjectDocumentEditor::Impl {
           }
           if (after)
             after(result);
-          if (op != "preview_formula_hub")
+          if (op != "preview_formula_hub" && !reconcile_paragraphs(before))
             render();
         }};
     auto *task = g_task_new(
@@ -726,6 +735,7 @@ struct ObjectDocumentEditor::Impl {
     g_task_run_in_thread(
         task, +[](GTask *t, gpointer, gpointer data, GCancellable *) {
           auto &work = *static_cast<Work *>(data);
+          EditorPhaseTimer measurement("object_command_worker");
           try {
             std::lock_guard lock(work.runtime->mutex);
             if (!work.context.empty()) {
@@ -865,6 +875,22 @@ struct ObjectDocumentEditor::Impl {
     for(const auto &member:reading_unit(id))if(shown(member))return member==id;
     return false;
   }
+  std::set<std::string> structural_unit(const std::string &id) const {
+    std::set<std::string> ids{id};
+    bool changed = true;
+    while (changed) {
+      const auto size = ids.size();
+      const auto extend = [&](const auto &members) {
+        if (std::any_of(members.begin(), members.end(),
+                        [&](const V &v) { return ids.contains(v.as_string()); }))
+          for (const auto &v : members) ids.insert(v.as_string());
+      };
+      for (const auto &g : state.at("reading_groups").as_array()) extend(g.as_array());
+      for (const auto &r : state.at("rows").as_array()) extend(r.at("children").as_array());
+      changed = size != ids.size();
+    }
+    return ids;
+  }
   void move_relative(const std::string &id,const std::string &reference,bool after,bool keep_focus=false) {
     if(!owner.can_leave()) {status.set_text("Conclua a edição em andamento antes de mover blocos.");return;}
     const auto &active=state.at("author_order").as_array();
@@ -872,32 +898,17 @@ struct ObjectDocumentEditor::Impl {
        std::none_of(active.begin(),active.end(),[&](const V &v){return v.as_string()==reference;})) {
       error("stale_reading_drag");return;
     }
-    const auto unit=reading_unit(id);
-    auto destination=reading_unit(reference);
+    const auto unit=structural_unit(id);
+    const auto destination=structural_unit(reference);
     // A row is one drop destination: never insert between its two children.
-    for(const auto &row:state.at("rows").as_array()) {
-      const auto &children=row.at("children").as_array();
-      if(std::any_of(children.begin(),children.end(),[&](const V &v){return std::find(destination.begin(),destination.end(),v.as_string())!=destination.end();}))
-        for(const auto &v:children)if(std::find(destination.begin(),destination.end(),v.as_string())==destination.end())destination.push_back(v.as_string());
-    }
     if(std::any_of(destination.begin(),destination.end(),[&](const auto &v){return std::find(unit.begin(),unit.end(),v)!=unit.end();}))return;
-    const auto &order=state.at("author_order").as_array();
-    std::string before;
-    bool passed=false;
-    for(const auto &v:order) {
-      const auto key=v.as_string();
-      const bool member=std::find(destination.begin(),destination.end(),key)!=destination.end();
-      if(!after && member) {before=key;break;}
-      if(member)passed=true;
-      else if(after && passed && std::find(unit.begin(),unit.end(),key)==unit.end()) {before=key;break;}
-    }
     if(keep_focus)restore_handle=id;
-    command("move",{{"id",id},{"before",before},{"intent","authorial"}},"structure");
+    command("move_unit",{{"id",id},{"reference",reference},{"after",after}},"structure");
   }
   void move_step(int direction,bool keep_focus=false) {
     if(selected.empty()) {status.set_text("Escolha um bloco na folha antes de mover.");return;}
-    const auto unit=reading_unit(selected);
-    const auto &order=state.at("author_order").as_array();
+    const auto unit=structural_unit(selected);
+    const auto &order=state.at("visual_order").as_array();
     std::size_t first=order.size(),last=0;
     for(std::size_t i=0;i<order.size();++i)
       if(std::find(unit.begin(),unit.end(),order[i].as_string())!=unit.end()) {first=std::min(first,i);last=i;}
@@ -909,26 +920,102 @@ struct ObjectDocumentEditor::Impl {
     }
     status.set_text("O bloco já está no limite da leitura visível.");
   }
-  void cancel_drag() {
-    dragging.clear();drag_reference.clear();drag_scroll.disconnect();
-    for(auto &[id,w]:cards) {w->remove_css_class("reading-drop-before");w->remove_css_class("reading-drop-after");}
-  }
-  void update_drag(double canvas_y) {
-    const auto unit=reading_unit(dragging);
-    drag_reference.clear();
-    double closest=1e20;
-    for(const auto &v:state.at("visual_order").as_array()) {
-      const auto id=v.as_string();
-      if(!cards.contains(id) || std::find(unit.begin(),unit.end(),id)!=unit.end())continue;
-      auto *w=cards.at(id);
-      w->remove_css_class("reading-drop-before");w->remove_css_class("reading-drop-after");
-      graphene_rect_t b{};
-      if(!gtk_widget_compute_bounds(w->gobj(),GTK_WIDGET(canvas.gobj()),&b))continue;
-      const double middle=b.origin.y+b.size.height/2.;
-      const double distance=std::abs(canvas_y-middle);
-      if(distance<closest) {closest=distance;drag_reference=id;drag_after=canvas_y>middle;}
+  static const char *drop_class(DropPosition position) {
+    switch (position) {
+    case DropPosition::Before: return "reading-drop-before";
+    case DropPosition::After: return "reading-drop-after";
+    case DropPosition::Left: return "reading-drop-left";
+    case DropPosition::Right: return "reading-drop-right";
     }
-    if(!drag_reference.empty())cards.at(drag_reference)->add_css_class(drag_after?"reading-drop-after":"reading-drop-before");
+    return "reading-drop-before";
+  }
+  void clear_drop_indicator() {
+    if (!drag_reference.empty() && cards.contains(drag_reference))
+      cards.at(drag_reference)->remove_css_class(drop_class(drag_position));
+    drag_reference.clear();
+  }
+  void cancel_drag() {
+    clear_drop_indicator();
+    dragging.clear(); drag_scroll.disconnect(); drag_targets.clear(); drag_unit.clear();
+  }
+  bool can_place_beside(const std::string &id, const std::string &other) const {
+    if (id == other || reading_unit(id).size() != 1 || reading_unit(other).size() != 1)
+      return false;
+    for (const auto &row : state.at("rows").as_array()) {
+      const auto &children = row.at("children").as_array();
+      if (std::any_of(children.begin(), children.end(), [&](const V &v) { return v.as_string() == other; }) &&
+          std::none_of(children.begin(), children.end(), [&](const V &v) { return v.as_string() == id; }))
+        return false;
+    }
+    return true;
+  }
+  bool read_drag_pointer(GtkEventController *controller) {
+    auto *event = gtk_event_controller_get_current_event(controller);
+    auto *widget = gtk_event_controller_get_widget(controller);
+    auto *native = widget ? gtk_widget_get_native(widget) : nullptr;
+    double x = 0, y = 0, tx = 0, ty = 0;
+    if (!event || !native || gdk_event_get_surface(event) != gtk_native_get_surface(native) ||
+        !gdk_event_get_position(event,&x,&y)) return false;
+    // GDK positions belong to the native surface, not to the button's padded
+    // content. Transform once into the sheet, then retain viewport coordinates
+    // so autoscrolling does not change the pointer's apparent location.
+    gtk_native_get_surface_transform(native,&tx,&ty);
+    const graphene_point_t point{static_cast<float>(x+tx),static_cast<float>(y+ty)};
+    graphene_point_t sheet{};
+    if (!gtk_widget_compute_point(GTK_WIDGET(native),GTK_WIDGET(canvas.gobj()),&point,&sheet)) return false;
+    drag_pointer_x = sheet.x;
+    drag_pointer_y = sheet.y-content_scroll.get_vadjustment()->get_value();
+    return true;
+  }
+  void cache_drag_targets() {
+    drag_targets.clear();
+    drag_width = canvas.get_width(); drag_height = canvas.get_height();
+    for (const auto &v : state.at("visual_order").as_array()) {
+      const auto id = v.as_string();
+      if (!cards.contains(id)) continue;
+      graphene_rect_t bounds{};
+      if (gtk_widget_compute_bounds(cards.at(id)->gobj(), GTK_WIDGET(canvas.gobj()), &bounds))
+        drag_targets.push_back({id, bounds, can_place_beside(dragging, id)});
+    }
+  }
+  void update_drag(double canvas_x, double canvas_y) {
+    if (dragging.empty()) return;
+    if (canvas.get_width() != drag_width || canvas.get_height() != drag_height) cache_drag_targets();
+    std::string reference;
+    DropPosition position = DropPosition::Before;
+    double closest = 1e20;
+    bool occupied = false;
+    for (const auto &target : drag_targets) {
+      if (target.id == dragging) continue;
+      const auto &b = target.bounds;
+      const double x = b.origin.x, y = b.origin.y, width = b.size.width, height = b.size.height;
+      const double dx = std::max({x-canvas_x, 0., canvas_x-x-width});
+      const double dy = std::max({y-canvas_y, 0., canvas_y-y-height});
+      const double distance = std::hypot(dx,dy);
+      const double band = std::min(22., height*.25);
+      auto placement = canvas_y > y+height/2 ? DropPosition::After : DropPosition::Before;
+      const bool middle = canvas_y > y+band && canvas_y < y+height-band &&
+                          std::abs(canvas_x-drag_start_x) >= 8;
+      if (middle && canvas_x < x+width*.25) placement = DropPosition::Left;
+      else if (middle && canvas_x > x+width*.75) placement = DropPosition::Right;
+      const bool lateral = placement == DropPosition::Left || placement == DropPosition::Right;
+      if (!lateral && drag_unit.contains(target.id)) continue;
+      if (distance >= closest) continue;
+      closest = distance;
+      occupied = lateral && !target.beside;
+      reference = occupied ? "" : target.id;
+      position = placement;
+    }
+    if (reference != drag_reference || position != drag_position) {
+      clear_drop_indicator();
+      drag_reference = reference; drag_position = position;
+      if (!reference.empty()) cards.at(reference)->add_css_class(drop_class(position));
+    }
+    status.set_text(occupied ? "Essa linha já está ocupada ou o bloco é indivisível. Escolha outro destino."
+      : reference.empty() ? "Arraste até a borda de outro bloco. Escape cancela."
+      : position == DropPosition::Left ? "Solte para colocar à esquerda · mesma ordem de leitura."
+      : position == DropPosition::Right ? "Solte para colocar à direita · mesma ordem de leitura."
+      : "Solte para mover o bloco ou a linha inteira na leitura.");
   }
   void render() {
     EditorPhaseTimer measurement("object_sheet_rebuild");
@@ -980,7 +1067,7 @@ struct ObjectDocumentEditor::Impl {
         ".inde-native-item { padding: 8px; border: 1px solid "
         "transparent; border-radius: 8px; } .inde-native-selected "
         "{ border-color: #3b806b; } .inde-native-text { font-family: serif; "
-        "font-size: 18px; } .reading-drop-before { border-top: 3px solid #3b806b; } .reading-drop-after { border-bottom: 3px solid #3b806b; }";
+        "font-size: 18px; } .reading-drop-before { box-shadow: inset 0 3px #3b806b; } .reading-drop-after { box-shadow: inset 0 -3px #3b806b; } .reading-drop-left { box-shadow: inset 3px 0 #3b806b; } .reading-drop-right { box-shadow: inset -3px 0 #3b806b; }";
     std::set<std::string> paired;
     for (const auto &id : state.at("visual_order").as_array()) {
       const auto key = id.as_string();
@@ -1044,27 +1131,32 @@ struct ObjectDocumentEditor::Impl {
         std::any_of(paragraph_views.begin(), paragraph_views.end(),
                     [](const auto &p) { return p.second->pending_input(); }))
       return false;
-    // Only owner text changed. Object payload/presentation edits still rebuild
-    // their derived views; a changed row shape takes the full guarded path.
+    // Compatible payloads retain their native views. A changed row rebuilds
+    // only its affected units; owner offsets and sibling order are refreshed.
     for (const auto *key :
-         {"rows", "presentation", "figures", "tables", "equations", "formulas",
+         {"presentation", "figures", "tables", "equations", "formulas",
           "formula_uses", "formula_text", "formula_cells"}) {
       if (has(before, key) != has(state, key) ||
           (has(before, key) && persistence::json::serialize(before.at(key)) !=
                                    persistence::json::serialize(state.at(key))))
         return false;
     }
-    std::map<std::string, std::string> old_paragraphs, new_paragraphs;
+    std::map<std::string, std::string> old_paragraphs;
     for (const auto &p : before.at("paragraphs").as_array())
       old_paragraphs[text(p, "id")] = text(p, "paragraph");
-    for (const auto &p : state.at("paragraphs").as_array())
-      new_paragraphs[text(p, "id")] = text(p, "paragraph");
     // Construction precedes attachment to Writing. Its temporary labels must
     // be replaced once by real paragraph viewports, never cached as editors.
     for (const auto &[id, paragraph] : old_paragraphs)
       if (cards.contains(id) && !paragraph_views.contains(paragraph))
         return false;
     std::vector<std::string> order;
+    std::map<std::string,std::vector<std::string>> desired_members;
+    std::set<std::string> retained;
+    const auto row_for = [](const V &snapshot, const std::string &id) -> const V * {
+      for (const auto &row : snapshot.at("rows").as_array())
+        if (row.at("children").as_array()[0].as_string() == id) return &row;
+      return nullptr;
+    };
     std::set<std::string> paired;
     for (const auto &v : state.at("visual_order").as_array()) {
       const auto id = v.as_string();
@@ -1079,19 +1171,15 @@ struct ObjectDocumentEditor::Impl {
           break;
         }
       }
-      if (rendered_units.contains(id)) {
-        if (rendered_members.at(id) != members)
-          return false;
-      } else if (members.size() != 1 || !new_paragraphs.contains(id))
-        return false;
+      desired_members[id] = members;
+      if (rendered_units.contains(id) && rendered_members.at(id) == members) {
+        const auto *old_row = row_for(before,id), *new_row = row_for(state,id);
+        if ((!old_row && !new_row) || (old_row && new_row &&
+             persistence::json::serialize(*old_row) == persistence::json::serialize(*new_row)))
+          retained.insert(id);
+      }
       order.push_back(id);
     }
-    const std::set<std::string> retained(order.begin(), order.end());
-    for (const auto &[id, members] : rendered_members)
-      if (!retained.contains(id))
-        for (const auto &member : members)
-          if (!old_paragraphs.contains(member))
-            return false;
     EditorPhaseTimer measurement("object_sheet_reconcile");
     const bool had_text_focus = focused_text() != nullptr;
     const auto scroll = content_scroll.get_vadjustment()->get_value();
@@ -1104,7 +1192,7 @@ struct ObjectDocumentEditor::Impl {
         continue;
       }
       for (const auto &member : rendered_members.at(id)) {
-        paragraph_views.erase(old_paragraphs.at(member));
+        if (old_paragraphs.contains(member)) paragraph_views.erase(old_paragraphs.at(member));
         menus.erase(member);
         menu_updates.erase(member);
         cards.erase(member);
@@ -1118,10 +1206,18 @@ struct ObjectDocumentEditor::Impl {
     Gtk::Widget *previous = nullptr;
     for (const auto &id : order) {
       if (!rendered_units.contains(id)) {
-        auto *view = item(id, unused_styles);
+        Gtk::Widget *view = nullptr;
+        const auto &members = desired_members.at(id);
+        if (members.size() == 2) {
+          const auto *row = row_for(state,id);
+          view = Gtk::make_managed<FractionRow>(
+              std::vector<Gtk::Widget *>{item(members[0],unused_styles),item(members[1],unused_styles)},
+              std::vector<double>{real(row->at("first")),real(row->at("second"))},
+              static_cast<int>(real(row->at("gap"))));
+        } else view = item(id, unused_styles);
         canvas.append(*view);
         rendered_units[id] = view;
-        rendered_members[id] = {id};
+        rendered_members[id] = desired_members.at(id);
       }
       auto *view = rendered_units.at(id);
       if (view->get_prev_sibling() != previous) {
@@ -1136,6 +1232,7 @@ struct ObjectDocumentEditor::Impl {
     selected = text(state, "selection");
     if (!selected.empty() && !shown(selected))
       selected.clear();
+    context.set_active_id(text(state,"context"));
     update_object_choices();
     rendering = false;
     for (const auto &[id, handle] : reading_handles)
@@ -1143,8 +1240,11 @@ struct ObjectDocumentEditor::Impl {
     owner.refresh_text_views();
     select_card(selected);
     content_scroll.get_vadjustment()->set_value(scroll);
-    if (had_text_focus)
-      owner.focus_text(-1);
+    if (!restore_handle.empty()) {
+      const auto id = restore_handle; restore_handle.clear();
+      if (reading_handles.contains(id) && reading_handles.at(id)->get_visible())
+        reading_handles.at(id)->grab_focus();
+    } else if (had_text_focus) owner.focus_text(-1);
     status.remove_css_class("error");
     status.set_text(
         state.at("dirty").as_boolean()
@@ -1247,6 +1347,7 @@ struct ObjectDocumentEditor::Impl {
     box->set_name("native-object-" + id);
     auto *reading_row=Gtk::make_managed<Gtk::Box>(Gtk::Orientation::HORIZONTAL,6);
     reading_row->set_hexpand(true);
+    reading_row->set_name("native-reading-unit-" + id);
     cards[id] = reading_row;
     box->set_focusable(true);
     auto focus = Gtk::EventControllerFocus::create();
@@ -1265,7 +1366,7 @@ struct ObjectDocumentEditor::Impl {
     handle->set_name("native-reading-handle-" + id);
     set_accessible_label(*handle, "Reordenar bloco · " + title(id));
     handle->set_halign(Gtk::Align::START);
-    handle->set_tooltip_text("Arraste para reordenar a leitura. Ctrl+↑/↓ move o bloco; Escape cancela.");
+    handle->set_tooltip_text("Arraste acima/abaixo para mover a leitura ou à esquerda/direita para compor uma linha. Ctrl+↑/↓ move o bloco ou a linha; Escape cancela.");
     handle->set_cursor("grab");
     handle->set_valign(Gtk::Align::START);
     handle->set_margin_top(8);
@@ -1280,47 +1381,55 @@ struct ObjectDocumentEditor::Impl {
     auto drag = Gtk::GestureDrag::create();
     drag->set_button(1);
     drag->set_propagation_phase(Gtk::PropagationPhase::CAPTURE);
-    drag->signal_drag_begin().connect([this, id, handle](double x, double y) {
+    auto *controller = GTK_EVENT_CONTROLLER(drag->gobj());
+    drag->signal_drag_begin().connect([this, id, handle, controller](double, double) {
       if (!owner.can_leave() || specialty != "structure") return;
-      selected = id; dragging = id; drag_reference.clear();
+      cancel_drag();
+      selected = id; dragging = id; drag_unit = structural_unit(id);
       drag_revision = state.at("revision").as_integer();
-      graphene_point_t a{static_cast<float>(x), static_cast<float>(y)}, b{};
-      if (!gtk_widget_compute_point(GTK_WIDGET(handle->gobj()), GTK_WIDGET(canvas.gobj()), &a, &b)) {dragging.clear();return;}
-      drag_y = b.y; drag_delta = 0;
-      drag_initial_scroll = content_scroll.get_vadjustment()->get_value();
+      if (!read_drag_pointer(controller)) { cancel_drag(); return; }
+      drag_start_x = drag_pointer_x;
+      cache_drag_targets();
       handle->grab_focus();
-      drag_scroll.disconnect();
       drag_scroll = Glib::signal_timeout().connect([this] {
-        if(dragging.empty())return false;
-        const auto a=content_scroll.get_vadjustment();
-        const double pointer=drag_y+drag_delta-drag_initial_scroll;
-        const double step=pointer<26?-18:pointer>a->get_page_size()-26?18:0;
-        if(step)a->set_value(std::clamp(a->get_value()+step,a->get_lower(),std::max(a->get_lower(),a->get_upper()-a->get_page_size())));
-        update_drag(drag_y+drag_delta+a->get_value()-drag_initial_scroll);
+        if (dragging.empty()) return false;
+        const auto a = content_scroll.get_vadjustment();
+        const double step = drag_pointer_y < 26 ? -18 : drag_pointer_y > a->get_page_size()-26 ? 18 : 0;
+        if (step) a->set_value(std::clamp(a->get_value()+step,a->get_lower(),
+                                         std::max(a->get_lower(),a->get_upper()-a->get_page_size())));
+        update_drag(drag_pointer_x, drag_pointer_y+a->get_value());
         return true;
       },60);
     });
-    drag->signal_drag_update().connect([this](double, double y) {
-      if(dragging.empty())return;
-      drag_delta=y;
-      update_drag(drag_y + y + content_scroll.get_vadjustment()->get_value()-drag_initial_scroll);
+    drag->signal_drag_update().connect([this, controller](double, double) {
+      if (dragging.empty()) return;
+      if (!read_drag_pointer(controller)) { cancel_drag(); return; }
+      update_drag(drag_pointer_x, drag_pointer_y+content_scroll.get_vadjustment()->get_value());
     });
-    drag->signal_drag_end().connect([this](double x, double y) {
+    drag->signal_drag_end().connect([this, controller](double x, double y) {
+      if (dragging.empty()) return;
+      if (!read_drag_pointer(controller)) { cancel_drag(); return; }
+      update_drag(drag_pointer_x, drag_pointer_y+content_scroll.get_vadjustment()->get_value());
       const auto id = dragging, reference = drag_reference;
       const auto revision = drag_revision;
-      const bool after = drag_after;
+      const auto position = drag_position;
       cancel_drag();
       if(!id.empty() && !reference.empty() && std::hypot(x,y)>=6)
-        defer_action([this,id,reference,after,revision] {
+        defer_action([this,id,reference,position,revision] {
           if(state.at("revision").as_integer()!=revision) {error("stale_reading_drag");return;}
-          move_relative(id,reference,after,true);
+          if (position == DropPosition::Left || position == DropPosition::Right) {
+            if (!can_place_beside(id,reference)) { error("row_target_occupied"); return; }
+            restore_handle = id;
+            command("place_beside", {{"id",id},{"other",reference},
+                    {"side",position == DropPosition::Left ? "left" : "right"}}, "structure");
+          } else move_relative(id,reference,position == DropPosition::After,true);
         });
     });
     drag->signal_cancel().connect([this](Gdk::EventSequence *) {cancel_drag();});
     handle->add_controller(drag);
     auto handle_keys = Gtk::EventControllerKey::create();
     handle_keys->signal_key_pressed().connect([this,id](guint key,guint,Gdk::ModifierType mods) {
-      if(key==GDK_KEY_Escape) {cancel_drag();return true;}
+      if(key==GDK_KEY_Escape) {const bool active=!dragging.empty();cancel_drag();if(active)status.set_text("Movimentação cancelada.");return true;}
       if((mods & Gdk::ModifierType::CONTROL_MASK)!=Gdk::ModifierType{} && (key==GDK_KEY_Up || key==GDK_KEY_Down)) {
         selected=id;move_step(key==GDK_KEY_Up?-1:1,true);return true;
       }
@@ -2748,11 +2857,11 @@ struct ObjectDocumentEditor::Impl {
             {"authorial", "Sequência autoral e leitura"}},
            "visual");
     button(editor, "Mover", "native-move", [this, id] {
-      command("move",
-              {{"id", id},
-               {"before", chosen("before")},
-               {"intent", chosen("intent")}},
-              "structure", [this](const V &) { finish(); });
+      if (chosen("intent") == "authorial")
+        command("move_unit", {{"id",id},{"reference",chosen("before")},{"after",false}},
+                "structure", [this](const V &) { finish(); });
+      else command("move", {{"id",id},{"before",chosen("before")},{"intent","visual"}},
+                   "structure", [this](const V &) { finish(); });
     });
     auto &other = choice("other", "Colocar lado a lado com", {}, "");
     for (const auto &v : state.at("visual_order").as_array())
