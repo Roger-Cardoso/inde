@@ -58,6 +58,20 @@ int main() try {
   drain();
   need(!first.get_buffer()->begin().has_tag(bold),
        "Formatting removal left a stale tag");
+  {
+    auto origin=Gtk::TextBuffer::create();origin->set_text("abc\n\ndef");
+    inde::ui::ObjectTextProjection kept(origin,0,3), tail(origin,5,8);
+    origin->erase(origin->get_iter_at_offset(3),origin->get_iter_at_offset(4));
+    kept.set_interval(0,3);tail.set_interval(4,7);
+    need(kept.get_buffer()->get_text()=="abc" && tail.get_buffer()->get_text()=="def",
+         "Local empty-paragraph deletion lost a surviving viewport");
+    origin->insert(origin->get_iter_at_offset(1),"\n");
+    kept.set_interval(0,1);tail.set_interval(5,8);
+    need(kept.get_buffer()->get_text()=="a" && tail.get_buffer()->get_text()=="def",
+         "Canonical split did not reset the retained viewport boundaries");
+    kept.get_buffer()->insert(kept.get_buffer()->end(),"!");drain();
+    need(origin->get_text()=="a!\nbc\ndef", "Retained viewport edited outside its canonical interval");
+  }
   auto hidden = source->create_tag("hidden");
   hidden->property_invisible() = true;
   source->apply_tag(hidden, source->begin(), source->get_iter_at_offset(3));
@@ -108,6 +122,15 @@ int main() try {
     need(selected->get_text() == "a" && replacements == 1 &&
              !view.pending_input(),
          "Cross-paragraph replacement was not one complete edit");
+    selected->set_text("abc\ndef");
+    view.set_interval(0,3);
+    view.replace_selection=[](const std::string &) {return false;};
+    selected->select_range(selected->end(),selected->begin());view.refresh();
+    view.get_buffer()->erase(view.get_buffer()->begin(),view.get_buffer()->end());
+    view.get_buffer()->insert(view.get_buffer()->begin(),"recusado");drain();
+    need(selected->get_text()=="abc\ndef" && view.get_buffer()->get_text()=="abc" &&
+             !view.pending_input(),
+         "Refused replacement left unaccepted local text in the retained viewport");
   }
   std::cout << "shared text projection: Unicode, guarded edits, stale refusal, "
                "formatting, visibility, busy and neighbor offsets OK\n";

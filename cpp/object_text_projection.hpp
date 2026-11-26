@@ -11,6 +11,8 @@ public:
                        int end);
   ~ObjectTextProjection() override;
   void refresh();
+  // Adopt the owner's new canonical boundaries without replacing the widget.
+  void set_interval(int start, int end);
   bool contains(int offset) const;
   void focus_offset(int offset);
   void prepare_context(double x, double y);
@@ -31,6 +33,7 @@ private:
   Glib::RefPtr<Gtk::TextBuffer> source_;
   Glib::RefPtr<Gtk::TextMark> start_, end_;
   bool reflecting_ = false;
+  bool content_dirty_ = true, tags_dirty_ = true;
   sigc::connection pending_;
   sigc::connection cross_pending_;
   bool cross_edit_ = false;

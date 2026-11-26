@@ -8,6 +8,7 @@
 #include "object_native_probe.hpp"
 #include "object_table_design.hpp"
 #include "object_text_projection.hpp"
+#include "ui/editor_diagnostics.hpp"
 #include <cerrno>
 #include <charconv>
 #include <cmath>
@@ -291,6 +292,7 @@ struct ObjectDocumentEditor::Impl {
   Gtk::Stack stack;
   Gtk::Label status;
   Gtk::ComboBoxText objects, formulas, context;
+  std::vector<std::pair<std::string,std::string>> object_choices;
   std::shared_ptr<Runtime> runtime = std::make_shared<Runtime>();
   std::shared_ptr<Life> life = std::make_shared<Life>();
   V state;
@@ -302,6 +304,9 @@ struct ObjectDocumentEditor::Impl {
   std::string last_error, selected;
   Glib::RefPtr<Gtk::CssProvider> css = Gtk::CssProvider::create();
   std::map<std::string, Glib::RefPtr<Gdk::Texture>> images;
+  // Top-level units retain native widget identity across local paragraph edits.
+  std::map<std::string, Gtk::Widget *> rendered_units;
+  std::map<std::string, std::vector<std::string>> rendered_members;
   std::map<std::string, Gtk::Entry *> fields;
   std::map<std::string, Gtk::ComboBoxText *> choices;
   std::map<std::string, Gtk::TextView *> texts;
@@ -774,13 +779,78 @@ struct ObjectDocumentEditor::Impl {
     c.set_active_id(active);
   }
   void select_card(const std::string &id) {
-    selected=id;
-    rendering=true;objects.set_active_id(id);rendering=false;
-    for(const auto &[key,row]:cards)
-      if(auto *box=dynamic_cast<Gtk::Box *>(row->get_last_child())) {
-        if(key==id)box->add_css_class("inde-native-selected");
-        else box->remove_css_class("inde-native-selected");
+    selected = id;
+    rendering = true;
+    if (objects.get_active_id().raw() != id) {
+      if(id.empty())objects.set_active(-1);
+      else objects.set_active_id(id);
+    }
+    rendering = false;
+    for (const auto &[key, row] : cards)
+      if (auto *box = dynamic_cast<Gtk::Box *>(row->get_last_child())) {
+        if (key == id && !box->has_css_class("inde-native-selected"))
+          box->add_css_class("inde-native-selected");
+        else if (key != id && box->has_css_class("inde-native-selected"))
+          box->remove_css_class("inde-native-selected");
       }
+  }
+  void update_object_choices() {
+    EditorPhaseTimer measurement("object_choice_sync");
+    std::map<std::string, std::string> paragraphs;
+    for (const auto &p : state.at("paragraphs").as_array())
+      paragraphs.emplace(text(p, "id"),
+                         Glib::ustring(text(p, "text")).substr(0, 48).raw());
+    std::vector<std::pair<std::string, std::string>> desired;
+    std::set<std::string> wanted;
+    for (const auto &v : state.at("visual_order").as_array()) {
+      const auto id = v.as_string();
+      if (!shown(id))
+        continue;
+      desired.emplace_back(id, paragraphs.contains(id) ? paragraphs.at(id)
+                                                       : title(id));
+      wanted.insert(id);
+    }
+    const bool was_rendering = rendering;
+    rendering = true;
+    for (std::size_t i = object_choices.size(); i > 0; --i)
+      if (!wanted.contains(object_choices[i - 1].first)) {
+        objects.remove_text(static_cast<int>(i - 1));
+        object_choices.erase(object_choices.begin() +
+                             static_cast<std::ptrdiff_t>(i - 1));
+      }
+    std::size_t index = 0;
+    for (const auto &[id, caption] : desired) {
+      if (index < object_choices.size() && object_choices[index].first == id) {
+        if (object_choices[index].second != caption) {
+          objects.remove_text(static_cast<int>(index));
+          objects.insert(static_cast<int>(index), id, caption);
+          object_choices[index].second = caption;
+        }
+      } else {
+        const auto at = std::find_if(
+            object_choices.begin() + static_cast<std::ptrdiff_t>(index),
+            object_choices.end(), [&](const auto &p) { return p.first == id; });
+        if (at != object_choices.end()) {
+          objects.remove_text(static_cast<int>(at - object_choices.begin()));
+          object_choices.erase(at);
+        }
+        objects.insert(static_cast<int>(index), id, caption);
+        object_choices.insert(object_choices.begin() +
+                                  static_cast<std::ptrdiff_t>(index),
+                              {id, caption});
+      }
+      ++index;
+    }
+    while (object_choices.size() > index) {
+      objects.remove_text(static_cast<int>(index));
+      object_choices.erase(object_choices.begin() +
+                           static_cast<std::ptrdiff_t>(index));
+    }
+    if (objects.get_active_id().raw() != selected) {
+      if(selected.empty())objects.set_active(-1);
+      else objects.set_active_id(selected);
+    }
+    rendering = was_rendering;
   }
   std::vector<std::string> reading_unit(const std::string &id) const {
     for(const auto &g:state.at("reading_groups").as_array()) {
@@ -861,6 +931,7 @@ struct ObjectDocumentEditor::Impl {
     if(!drag_reference.empty())cards.at(drag_reference)->add_css_class(drag_after?"reading-drop-after":"reading-drop-before");
   }
   void render() {
+    EditorPhaseTimer measurement("object_sheet_rebuild");
     render_pending = true;
     if (std::any_of(paragraph_views.begin(), paragraph_views.end(),
                     [](const auto &p) { return p.second->pending_input(); }))
@@ -883,11 +954,7 @@ struct ObjectDocumentEditor::Impl {
     if (!selected.empty() && !shown(selected))
       selected.clear();
     context.set_active_id(text(state, "context"));
-    objects.remove_all();
-    for (const auto &id : state.at("visual_order").as_array())
-      if (shown(id.as_string()))
-        objects.append(id.as_string(), title(id.as_string()));
-    objects.set_active_id(selected);
+    update_object_choices();
     const auto old = formulas.get_active_id();
     formulas.remove_all();
     for (const auto &f : state.at("formulas").as_array())
@@ -905,6 +972,8 @@ struct ObjectDocumentEditor::Impl {
     reading_handles.clear();
     dragging.clear(); drag_scroll.disconnect();
     paragraph_views.clear();
+    rendered_units.clear();
+    rendered_members.clear();
     clear(canvas);
 
     std::string styles =
@@ -927,7 +996,10 @@ struct ObjectDocumentEditor::Impl {
         std::vector<Gtk::Widget *> children;
         const auto &pair = row->at("children").as_array();
         if (!shown(pair[0].as_string()) || !shown(pair[1].as_string())) {
-          canvas.append(*item(key, styles));
+          auto *view = item(key, styles);
+          canvas.append(*view);
+          rendered_units[key] = view;
+          rendered_members[key] = {key};
           continue;
         }
         for (const auto &c : pair) {
@@ -940,8 +1012,14 @@ struct ObjectDocumentEditor::Impl {
                                 real(row->at("second"))},
             static_cast<int>(real(row->at("gap"))));
         canvas.append(*view);
-      } else
-        canvas.append(*item(key, styles));
+        rendered_units[key] = view;
+        rendered_members[key] = {pair[0].as_string(), pair[1].as_string()};
+      } else {
+        auto *view = item(key, styles);
+        canvas.append(*view);
+        rendered_units[key] = view;
+        rendered_members[key] = {key};
+      }
     }
     css->load_from_data(styles);
     status.remove_css_class("error");
@@ -960,6 +1038,119 @@ struct ObjectDocumentEditor::Impl {
     if(!focused_handle.empty() && reading_handles.contains(focused_handle) && reading_handles.at(focused_handle)->get_visible())
       reading_handles.at(focused_handle)->grab_focus();
     render_pending = false;
+  }
+  bool reconcile_paragraphs(const V &before) {
+    if (render_pending || draft || !owner.paragraph_view ||
+        std::any_of(paragraph_views.begin(), paragraph_views.end(),
+                    [](const auto &p) { return p.second->pending_input(); }))
+      return false;
+    // Only owner text changed. Object payload/presentation edits still rebuild
+    // their derived views; a changed row shape takes the full guarded path.
+    for (const auto *key :
+         {"rows", "presentation", "figures", "tables", "equations", "formulas",
+          "formula_uses", "formula_text", "formula_cells"}) {
+      if (has(before, key) != has(state, key) ||
+          (has(before, key) && persistence::json::serialize(before.at(key)) !=
+                                   persistence::json::serialize(state.at(key))))
+        return false;
+    }
+    std::map<std::string, std::string> old_paragraphs, new_paragraphs;
+    for (const auto &p : before.at("paragraphs").as_array())
+      old_paragraphs[text(p, "id")] = text(p, "paragraph");
+    for (const auto &p : state.at("paragraphs").as_array())
+      new_paragraphs[text(p, "id")] = text(p, "paragraph");
+    // Construction precedes attachment to Writing. Its temporary labels must
+    // be replaced once by real paragraph viewports, never cached as editors.
+    for (const auto &[id, paragraph] : old_paragraphs)
+      if (cards.contains(id) && !paragraph_views.contains(paragraph))
+        return false;
+    std::vector<std::string> order;
+    std::set<std::string> paired;
+    for (const auto &v : state.at("visual_order").as_array()) {
+      const auto id = v.as_string();
+      if (!shown(id) || paired.contains(id))
+        continue;
+      std::vector<std::string> members{id};
+      for (const auto &row : state.at("rows").as_array()) {
+        const auto &pair = row.at("children").as_array();
+        if (pair[0].as_string() == id && shown(pair[1].as_string())) {
+          members.push_back(pair[1].as_string());
+          paired.insert(pair[1].as_string());
+          break;
+        }
+      }
+      if (rendered_units.contains(id)) {
+        if (rendered_members.at(id) != members)
+          return false;
+      } else if (members.size() != 1 || !new_paragraphs.contains(id))
+        return false;
+      order.push_back(id);
+    }
+    const std::set<std::string> retained(order.begin(), order.end());
+    for (const auto &[id, members] : rendered_members)
+      if (!retained.contains(id))
+        for (const auto &member : members)
+          if (!old_paragraphs.contains(member))
+            return false;
+    EditorPhaseTimer measurement("object_sheet_reconcile");
+    const bool had_text_focus = focused_text() != nullptr;
+    const auto scroll = content_scroll.get_vadjustment()->get_value();
+    close_object_menu();
+    cancel_drag();
+    for (auto at = rendered_units.begin(); at != rendered_units.end();) {
+      const auto id = at->first;
+      if (retained.contains(id)) {
+        ++at;
+        continue;
+      }
+      for (const auto &member : rendered_members.at(id)) {
+        paragraph_views.erase(old_paragraphs.at(member));
+        menus.erase(member);
+        menu_updates.erase(member);
+        cards.erase(member);
+        reading_handles.erase(member);
+      }
+      canvas.remove(*at->second);
+      rendered_members.erase(id);
+      at = rendered_units.erase(at);
+    }
+    std::string unused_styles;
+    Gtk::Widget *previous = nullptr;
+    for (const auto &id : order) {
+      if (!rendered_units.contains(id)) {
+        auto *view = item(id, unused_styles);
+        canvas.append(*view);
+        rendered_units[id] = view;
+        rendered_members[id] = {id};
+      }
+      auto *view = rendered_units.at(id);
+      if (view->get_prev_sibling() != previous) {
+        if (previous)
+          canvas.reorder_child_after(*view, *previous);
+        else
+          canvas.reorder_child_at_start(*view);
+      }
+      previous = view;
+    }
+    rendering = true;
+    selected = text(state, "selection");
+    if (!selected.empty() && !shown(selected))
+      selected.clear();
+    update_object_choices();
+    rendering = false;
+    for (const auto &[id, handle] : reading_handles)
+      handle->set_visible(specialty == "structure" && leading_handle(id));
+    owner.refresh_text_views();
+    select_card(selected);
+    content_scroll.get_vadjustment()->set_value(scroll);
+    if (had_text_focus)
+      owner.focus_text(-1);
+    status.remove_css_class("error");
+    status.set_text(
+        state.at("dirty").as_boolean()
+            ? "Trabalho protegido para recuperação · ainda não salvo"
+            : "Salvo e conferido");
+    return true;
   }
   void format_paragraph(Gtk::Label &l, const std::string &paragraph) {
     if (visible_text)
@@ -2927,6 +3118,7 @@ ObjectDocumentEditor::ObjectDocumentEditor(application::ProjectService &s,
     : impl_(std::make_unique<Impl>(s, *this, parent, document)) {}
 ObjectDocumentEditor::~ObjectDocumentEditor() = default;
 void ObjectDocumentEditor::synchronize_document(const project::Document &d) {
+  EditorPhaseTimer measurement("object_document_sync");
   if (!can_leave())
     throw std::runtime_error(
         "Aplique ou cancele a edição aberta antes de mudar de especialidade.");
@@ -2935,6 +3127,7 @@ void ObjectDocumentEditor::synchronize_document(const project::Document &d) {
       visible_paragraphs ? visible_paragraphs(d) : impl_->visible_text;
   {
     std::lock_guard lock(impl_->runtime->mutex);
+    EditorPhaseTimer engine_measurement("object_owner_adopt");
     impl_->runtime->session->synchronize_document(d);
     impl_->source_document = d;
     impl_->state =
@@ -2955,11 +3148,17 @@ void ObjectDocumentEditor::synchronize_document(const project::Document &d) {
       displayed_paragraphs == shown_paragraphs)
     refresh_text_views();
   else
-    impl_->render();
+    if(!impl_->reconcile_paragraphs(before))impl_->render();
 }
 void ObjectDocumentEditor::refresh_text_views() {
-  for (const auto &[id, view] : impl_->paragraph_views)
-    view->refresh();
+  EditorPhaseTimer measurement("object_view_refresh");
+  std::map<std::string,std::pair<int,int>> intervals;
+  for(const auto &p:impl_->source_document.paragraphs.rows)
+    intervals.emplace(p.id,std::pair{static_cast<int>(p.start),static_cast<int>(p.end)});
+  for (const auto &[id, view] : impl_->paragraph_views) {
+    const auto at=intervals.find(id);
+    if(at!=intervals.end())view->set_interval(at->second.first,at->second.second);
+  }
   impl_->follow_cursor();
 }
 void ObjectDocumentEditor::focus_text(int offset, bool reveal) {

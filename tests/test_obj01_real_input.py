@@ -18,7 +18,13 @@ BASE = Path(__file__).resolve().parents[1]
 
 class RealWritingInput(unittest.TestCase):
     def test_blank_document_specialties_validation_recovery_and_quit(self):
-        binary = BASE / 'build-nativo/inde-especial'
+        self._run_editor()
+
+    def test_empty_paragraph_fluency_and_save(self):
+        self._run_editor(fluency=True)
+
+    def _run_editor(self, fluency=False):
+        binary = Path(os.environ.get('INDE_TEST_BINARY', BASE / 'build-nativo/inde-especial'))
         if (not binary.exists() or not os.environ.get('DISPLAY') or not shutil.which('xdotool')
                 or os.environ.get('INDE_REAL_INPUT_OWN_DISPLAY') != '1'):
             self.skipTest('Use python3 tests/run_obj01_real_input.py para um display isolado')
@@ -28,6 +34,8 @@ class RealWritingInput(unittest.TestCase):
             env = native_environment(root / 'profile', BASE)
             env.update(XDG_DATA_HOME=str(root / 'data'), XDG_CACHE_HOME=str(root / 'cache'),
                        GSK_RENDERER='cairo', GTK_A11Y='none', GTK_IM_MODULE='simple', G_DEBUG='fatal-criticals', GTK_USE_PORTAL='0')
+            if fluency:
+                env['INDE_EDITOR_PROFILE'] = '1'
             log = (root / 'application.log').open('w+')
             command = [str(binary), '--escrita-usabilidade', str(root / 'Teste.inde'), str(state_file)]
             if os.environ.get('INDE_TEST_GDB'):
@@ -143,12 +151,14 @@ class RealWritingInput(unittest.TestCase):
                     if candidates(state(), name=name):
                         return
                     regions = candidates(state(), name=area)
-                    self.assertTrue(regions, 'Área de rolagem indisponível: ' + area)
+                    if not regions:
+                        wait(lambda s: bool(candidates(s, name=area)), 'Área de rolagem disponível: ' + area)
+                        regions = candidates(state(), name=area)
                     c = regions[0]
-                    input_('mousemove', '--window', str(c.get('window', window)), str(c['x'] + c['width'] // 2),
+                    input_('mousemove', '--window', str(c.get('window', window)), str(c['x'] + min(6, c['width'] // 2)),
                            str(c['y'] + c['height'] // 2), 'click', '5')
                     time.sleep(.15)
-                self.fail('Controle não alcançado pela rolagem: ' + name)
+                wait(lambda s: False, 'Controle não alcançado pela rolagem: ' + name, timeout=.1)
 
             def write_field(name, value, area='native-edit-scroll'):
                 scroll_to(name, area)
@@ -213,6 +223,10 @@ class RealWritingInput(unittest.TestCase):
                                   if c['name'].startswith('writing-paragraph-')), None)
                 self.assertIsNotNone(paragraph, 'Documento vazio não oferece área para escrever')
                 click(name=paragraph)
+                if fluency:
+                    from obj01_fluency_cases import exercise_blank_paragraphs
+                    exercise_blank_paragraphs(self, root, env, process, window, input_, click, wait, state, scroll_to)
+                    return
                 input_('type', '--clearmodifiers', '--delay', '60', 'Primeira linha ')
                 input_('key', '--delay', '150', 'dead_acute')
                 wait(lambda s: s.get('composing'), 'Acento provisório recebido pelo GTK')

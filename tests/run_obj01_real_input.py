@@ -29,6 +29,8 @@ if sys.argv[1:] == ['--owned-session']:
                 command = [sys.executable, '-m', 'unittest', 'discover', '-s', 'tests', '-v']
                 if env.get('INDE_REAL_INPUT_FULL_SUITE') != '1':
                     command += ['-p', 'test_obj01_real_input.py']
+                if env.get('INDE_REAL_INPUT_CASE'):
+                    command += ['-k', env['INDE_REAL_INPUT_CASE']]
                 result = subprocess.run(command, env=env)
             finally:
                 if manager.poll() is None:

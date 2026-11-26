@@ -1,5 +1,6 @@
 #include "object_text_projection.hpp"
 #include <algorithm>
+#include <stdexcept>
 #include <utility>
 
 namespace inde::ui {
@@ -62,7 +63,7 @@ ObjectTextProjection::ObjectTextProjection(
           select_source();
       }));
   connections_.push_back(
-      source_->signal_changed().connect([this] { schedule(); }));
+      source_->signal_changed().connect([this] { content_dirty_ = true; schedule(); }));
   connections_.push_back(source_->signal_mark_set().connect(
       [this](const Gtk::TextIter &, const Glib::RefPtr<Gtk::TextMark> &mark) {
         if (mark == source_->get_insert() ||
@@ -71,10 +72,10 @@ ObjectTextProjection::ObjectTextProjection(
       }));
   connections_.push_back(source_->signal_apply_tag().connect(
       [this](const Glib::RefPtr<Gtk::TextTag> &, const Gtk::TextIter &,
-             const Gtk::TextIter &) { schedule(); }));
+             const Gtk::TextIter &) { tags_dirty_ = true; schedule(); }));
   connections_.push_back(source_->signal_remove_tag().connect(
       [this](const Glib::RefPtr<Gtk::TextTag> &, const Gtk::TextIter &,
-             const Gtk::TextIter &) { schedule(); }));
+             const Gtk::TextIter &) { tags_dirty_ = true; schedule(); }));
   auto focus = Gtk::EventControllerFocus::create();
   focus->signal_enter().connect([this] {
     if (!reflecting_ && !cross_edit_)
@@ -225,24 +226,32 @@ void ObjectTextProjection::refresh() {
   reflecting_ = true;
   const auto local = get_buffer();
   const int a = start(), b = end();
-  const auto text = source_->get_text(source_->get_iter_at_offset(a),
-                                      source_->get_iter_at_offset(b));
-  if (text != local->get_text())
-    local->set_text(text);
-  local->remove_all_tags(local->begin(), local->end());
+  if (content_dirty_) {
+    const auto text = source_->get_text(source_->get_iter_at_offset(a),
+                                        source_->get_iter_at_offset(b));
+    if (text != local->get_text()) {
+      local->set_text(text);
+      tags_dirty_ = true;
+    }
+    content_dirty_ = false;
+  }
   // Reuse the actual formatting, semantic, search and visibility tags. Unicode
   // character offsets stay identical to Writing's source within this viewport.
-  for (int i = a; i < b;) {
-    auto at = source_->get_iter_at_offset(i);
-    const auto tags = at.get_tags();
-    auto next = at;
-    if (!next.forward_to_tag_toggle({}))
-      next = source_->end();
-    const int stop = std::min(b, std::max(i + 1, next.get_offset()));
-    for (const auto &tag : tags)
-      local->apply_tag(tag, local->get_iter_at_offset(i - a),
-                       local->get_iter_at_offset(stop - a));
-    i = stop;
+  if (tags_dirty_) {
+    local->remove_all_tags(local->begin(), local->end());
+    for (int i = a; i < b;) {
+      auto at = source_->get_iter_at_offset(i);
+      const auto tags = at.get_tags();
+      auto next = at;
+      if (!next.forward_to_tag_toggle({}))
+        next = source_->end();
+      const int stop = std::min(b, std::max(i + 1, next.get_offset()));
+      for (const auto &tag : tags)
+        local->apply_tag(tag, local->get_iter_at_offset(i - a),
+                         local->get_iter_at_offset(stop - a));
+      i = stop;
+    }
+    tags_dirty_ = false;
   }
   const int cursor =
       source_->get_iter_at_mark(source_->get_insert()).get_offset();
@@ -255,6 +264,16 @@ void ObjectTextProjection::refresh() {
     local->select_range(local->get_iter_at_offset(local_cursor),
                         local->get_iter_at_offset(local_bound));
   reflecting_ = false;
+}
+void ObjectTextProjection::set_interval(int a, int b) {
+  if (a < 0 || b < a || b > source_->get_char_count())
+    throw std::out_of_range("Invalid paragraph viewport interval");
+  if (start() != a || end() != b) {
+    source_->move_mark(start_, source_->get_iter_at_offset(a));
+    source_->move_mark(end_, source_->get_iter_at_offset(b));
+    content_dirty_ = tags_dirty_ = true;
+  }
+  refresh();
 }
 bool ObjectTextProjection::begin_cross_edit() {
   Gtk::TextIter a, b;
@@ -303,6 +322,10 @@ void ObjectTextProjection::finish_cross_edit() {
                                   static_cast<std::size_t>(size - cross_first_ -
                                                            cross_suffix_))
                           .raw());
+  // A refused cross-paragraph replacement leaves the owner unchanged but GTK
+  // has already changed the local buffer. Restore it even without a source
+  // changed signal; the local draft never becomes an independent authority.
+  content_dirty_ = true;
   refresh();
 }
 void ObjectTextProjection::prepare_context(double x, double y) {

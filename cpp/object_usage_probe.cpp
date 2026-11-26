@@ -4,6 +4,7 @@
 #include "object_native_probe.hpp"
 #include "object_native_ui.hpp"
 #include <cmath>
+#include <cstdint>
 #include <fstream>
 #include <gdk/x11/gdkx.h>
 #include <unistd.h>
@@ -65,10 +66,14 @@ int run_object_usage_probe(const Glib::RefPtr<Gtk::Application> &app,
           O c{{"name",name},{"label",label},{"mapped",w.get_mapped()},
               {"sensitive",bool(gtk_widget_is_sensitive(w.gobj()))},
               {"focus",w.is_focus()},{"selected",w.has_css_class("inde-native-selected")}};
+          if(name.starts_with("writing-paragraph-"))
+            c["instance"]=std::to_string(reinterpret_cast<std::uintptr_t>(&w));
           if(auto *b=dynamic_cast<Gtk::ToggleButton *>(&w))c["active"]=b->get_active();
           if(auto *entry=dynamic_cast<Gtk::Entry *>(&w)) {
             c["role"]="entry";c["value"]=entry->get_text().raw();
           }
+          if(auto *choice=dynamic_cast<Gtk::ComboBoxText *>(&w))
+            c["value"]=choice->get_active_id().raw();
           if(placed) {
             if(popup_surface && GDK_IS_X11_SURFACE(popup_surface))
               c["window"]=static_cast<std::int64_t>(gdk_x11_surface_get_xid(popup_surface));
