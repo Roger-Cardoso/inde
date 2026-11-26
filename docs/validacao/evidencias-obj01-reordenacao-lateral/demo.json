@@ -1,0 +1,11 @@
+{
+  "pid": 58187,
+  "project": "/home/roger/Documents/Projects/GitHub/INDE/obj01-audit/dados/obj01-reordenacao-lateral/Demo-final.inde",
+  "binary": "/home/roger/Documents/Projects/GitHub/INDE/obj01-audit/build-nativo/inde-especial",
+  "source_commit": "49b9313a4a81a8a5147b954f11683bf3cee4e105",
+  "title": "Demonstração final — reordenação lateral",
+  "document": "Documento de uso real",
+  "source_test_copy": "/home/roger/Documents/Projects/GitHub/INDE/obj01-audit/dados/obj01-reordenacao-lateral/integral-superficies/Editor-reordenacao.inde",
+  "GTK_THEME": "Adwaita",
+  "note": "Final synthetic copy after native surface correction; prior windows and closed test copies preserved."
+}

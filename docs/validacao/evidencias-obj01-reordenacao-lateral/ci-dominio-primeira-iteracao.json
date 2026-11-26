@@ -1,0 +1,54 @@
+{
+  "run_id": 45851260025,
+  "headSha": "ef5fc7eec9987f0e5e12d00ba0028b93e62aa083",
+  "jobs": [
+    {
+      "id": 140017919236,
+      "name": "composite-p2a (g++, OFF)",
+      "conclusion": "success",
+      "test_lines": [
+        "2026-11-26T15:40:07.9754437Z [33/38] Building CXX object CMakeFiles/inde_object_structural_move_tests.dir/home/runner/work/inde/inde/cpp/object_structural_move_tests.cpp.o",
+        "2026-11-26T15:40:08.8388936Z [35/38] Linking CXX executable inde_object_structural_move_tests",
+        "2026-11-26T15:40:10.4108310Z       Start  1: inde_object_structural_move_tests",
+        "2026-11-26T15:40:10.7915243Z  1/23 Test  #1: inde_object_structural_move_tests .........   Passed    0.38 sec",
+        "2026-11-26T15:41:01.3826639Z 100% tests passed, 0 tests failed out of 23"
+      ]
+    },
+    {
+      "id": 140017919573,
+      "name": "composite-p2a (clang++, OFF)",
+      "conclusion": "success",
+      "test_lines": [
+        "2026-11-26T15:40:33.9412498Z [33/38] Building CXX object CMakeFiles/inde_object_structural_move_tests.dir/home/runner/work/inde/inde/cpp/object_structural_move_tests.cpp.o",
+        "2026-11-26T15:40:34.5493253Z [35/38] Linking CXX executable inde_object_structural_move_tests",
+        "2026-11-26T15:40:35.8016400Z       Start  1: inde_object_structural_move_tests",
+        "2026-11-26T15:40:36.0626780Z  1/23 Test  #1: inde_object_structural_move_tests .........   Passed    0.22 sec",
+        "2026-11-26T15:41:10.2981882Z 100% tests passed, 0 tests failed out of 23"
+      ]
+    },
+    {
+      "id": 140017919593,
+      "name": "composite-p2a (clang++, ON)",
+      "conclusion": "success",
+      "test_lines": [
+        "2026-11-26T15:41:17.6782463Z [32/38] Building CXX object CMakeFiles/inde_object_structural_move_tests.dir/home/runner/work/inde/inde/cpp/object_structural_move_tests.cpp.o",
+        "2026-11-26T15:41:18.9345902Z [35/38] Linking CXX executable inde_object_structural_move_tests",
+        "2026-11-26T15:41:20.8689639Z       Start  1: inde_object_structural_move_tests",
+        "2026-11-26T15:41:21.7304222Z  1/23 Test  #1: inde_object_structural_move_tests .........   Passed    0.82 sec",
+        "2026-11-26T15:43:05.0182087Z 100% tests passed, 0 tests failed out of 23"
+      ]
+    },
+    {
+      "id": 140017919471,
+      "name": "composite-p2a (g++, ON)",
+      "conclusion": "success",
+      "test_lines": [
+        "2026-11-26T15:40:34.1515608Z [33/38] Building CXX object CMakeFiles/inde_object_structural_move_tests.dir/home/runner/work/inde/inde/cpp/object_structural_move_tests.cpp.o",
+        "2026-11-26T15:40:35.8956879Z [35/38] Linking CXX executable inde_object_structural_move_tests",
+        "2026-11-26T15:40:40.6144362Z       Start  1: inde_object_structural_move_tests",
+        "2026-11-26T15:40:42.3372919Z  1/23 Test  #1: inde_object_structural_move_tests .........   Passed    1.72 sec",
+        "2026-11-26T15:44:14.3252147Z 100% tests passed, 0 tests failed out of 23"
+      ]
+    }
+  ]
+}

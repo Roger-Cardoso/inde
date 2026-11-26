@@ -1,0 +1,46 @@
+{
+  "commit": "49b9313a4a81a8a5147b954f11683bf3cee4e105",
+  "tests": 100,
+  "seconds": 210.169,
+  "result": "pass",
+  "real_input_cases": 3,
+  "profiles": [
+    20,
+    200
+  ],
+  "timing_scope": "X11 event to low-priority observer; not pure paint latency",
+  "measurements": [
+    {
+      "version": "reference",
+      "prose_lines": 20,
+      "min_ms": 369.473,
+      "median_ms": 373.504,
+      "max_ms": 452.921
+    },
+    {
+      "version": "reference",
+      "prose_lines": 200,
+      "min_ms": 3389.055,
+      "median_ms": 3459.16,
+      "max_ms": 4797.822
+    },
+    {
+      "version": "final",
+      "prose_lines": 20,
+      "min_ms": 204.865,
+      "median_ms": 287.466,
+      "max_ms": 290.491
+    },
+    {
+      "version": "final",
+      "prose_lines": 200,
+      "min_ms": 787.88,
+      "median_ms": 883.455,
+      "max_ms": 892.146
+    }
+  ],
+  "target_100_ms_certified": false,
+  "human_acceptance": false,
+  "ci_status": "success",
+  "ci_run": 45854500399
+}

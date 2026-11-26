@@ -1,0 +1,139 @@
+{
+  "run_id": 45851260025,
+  "headSha": "ef5fc7eec9987f0e5e12d00ba0028b93e62aa083",
+  "conclusion": "failure",
+  "url": "https://github.com/Roger-Cardoso/inde/actions/runs/45851260025",
+  "jobs": [
+    {
+      "id": 140017918868,
+      "name": "pinned-sources",
+      "conclusion": "success"
+    },
+    {
+      "id": 140017919209,
+      "name": "composition-read-adapter (g++, ON)",
+      "conclusion": "success"
+    },
+    {
+      "id": 140017919228,
+      "name": "standalone-model (clang++, ON)",
+      "conclusion": "success"
+    },
+    {
+      "id": 140017919229,
+      "name": "immutable-change-plans (g++, OFF)",
+      "conclusion": "success"
+    },
+    {
+      "id": 140017919236,
+      "name": "composite-p2a (g++, OFF)",
+      "conclusion": "success"
+    },
+    {
+      "id": 140017919347,
+      "name": "native-objects",
+      "conclusion": "failure"
+    },
+    {
+      "id": 140017919374,
+      "name": "document-read-adapter (clang++, ON)",
+      "conclusion": "success"
+    },
+    {
+      "id": 140017919387,
+      "name": "document-read-adapter (clang++, OFF)",
+      "conclusion": "success"
+    },
+    {
+      "id": 140017919409,
+      "name": "standalone-model (g++, ON)",
+      "conclusion": "success"
+    },
+    {
+      "id": 140017919430,
+      "name": "standalone-model (clang++, OFF)",
+      "conclusion": "success"
+    },
+    {
+      "id": 140017919461,
+      "name": "immutable-change-plans (g++, ON)",
+      "conclusion": "success"
+    },
+    {
+      "id": 140017919471,
+      "name": "composite-p2a (g++, ON)",
+      "conclusion": "success"
+    },
+    {
+      "id": 140017919505,
+      "name": "standalone-model (g++, OFF)",
+      "conclusion": "success"
+    },
+    {
+      "id": 140017919510,
+      "name": "document-read-adapter (g++, ON)",
+      "conclusion": "success"
+    },
+    {
+      "id": 140017919521,
+      "name": "reviewed-working-sessions (clang++, OFF)",
+      "conclusion": "success"
+    },
+    {
+      "id": 140017919533,
+      "name": "document-read-adapter (g++, OFF)",
+      "conclusion": "success"
+    },
+    {
+      "id": 140017919565,
+      "name": "immutable-change-plans (clang++, OFF)",
+      "conclusion": "success"
+    },
+    {
+      "id": 140017919573,
+      "name": "composite-p2a (clang++, OFF)",
+      "conclusion": "success"
+    },
+    {
+      "id": 140017919585,
+      "name": "reviewed-working-sessions (g++, ON)",
+      "conclusion": "success"
+    },
+    {
+      "id": 140017919593,
+      "name": "composite-p2a (clang++, ON)",
+      "conclusion": "success"
+    },
+    {
+      "id": 140017919598,
+      "name": "immutable-change-plans (clang++, ON)",
+      "conclusion": "success"
+    },
+    {
+      "id": 140017919602,
+      "name": "reviewed-working-sessions (clang++, ON)",
+      "conclusion": "success"
+    },
+    {
+      "id": 140017919605,
+      "name": "reviewed-working-sessions (g++, OFF)",
+      "conclusion": "success"
+    },
+    {
+      "id": 140017919634,
+      "name": "composition-read-adapter (g++, OFF)",
+      "conclusion": "success"
+    },
+    {
+      "id": 140017919697,
+      "name": "composition-read-adapter (clang++, OFF)",
+      "conclusion": "success"
+    },
+    {
+      "id": 140017920652,
+      "name": "composition-read-adapter (clang++, ON)",
+      "conclusion": "success"
+    }
+  ],
+  "reason": "Two real-input focus failures exposed mixed widget/surface coordinates and reliance on a window-manager search. Subsequent correction applies inverse native surface offsets, reports the actual native XID, confirms focus and avoids clipped click targets. This CI run is not accepted."
+}

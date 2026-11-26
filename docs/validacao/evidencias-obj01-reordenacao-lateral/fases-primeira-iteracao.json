@@ -1,0 +1,179 @@
+{
+  "scope": "Whole final reorder workflow; nested/overlapping phases must not be summed or treated as per-key paint latency.",
+  "phases": {
+    "autosave_callback": {
+      "samples": 3,
+      "min_ms": 0.631664,
+      "median_ms": 0.929019,
+      "max_ms": 1.81916
+    },
+    "autosave_snapshot_submit": {
+      "samples": 19,
+      "min_ms": 0.467809,
+      "median_ms": 0.751761,
+      "max_ms": 2.15767
+    },
+    "buffer_restore_changed": {
+      "samples": 36,
+      "min_ms": 1.06143,
+      "median_ms": 1.42233,
+      "max_ms": 5.97531
+    },
+    "clipboard_paste_gtk": {
+      "samples": 3,
+      "min_ms": 13.8683,
+      "median_ms": 17.6172,
+      "max_ms": 28.527
+    },
+    "compound_edit_gtk": {
+      "samples": 19,
+      "min_ms": 13.5344,
+      "median_ms": 18.9572,
+      "max_ms": 51.5573
+    },
+    "journal_discovery_gtk": {
+      "samples": 3,
+      "min_ms": 0.022905,
+      "median_ms": 0.032915,
+      "max_ms": 0.05767
+    },
+    "journal_snapshot_submit": {
+      "samples": 19,
+      "min_ms": 0.25683,
+      "median_ms": 0.645346,
+      "max_ms": 1.80285
+    },
+    "journal_worker": {
+      "samples": 19,
+      "min_ms": 7.76894,
+      "median_ms": 17.4649,
+      "max_ms": 806.742
+    },
+    "metrics_apply_gtk": {
+      "samples": 24,
+      "min_ms": 0.022304,
+      "median_ms": 0.0418245,
+      "max_ms": 0.246283
+    },
+    "metrics_snapshot_submit": {
+      "samples": 24,
+      "min_ms": 0.027341,
+      "median_ms": 0.051172999999999996,
+      "max_ms": 0.516005
+    },
+    "metrics_worker": {
+      "samples": 24,
+      "min_ms": 0.01987,
+      "median_ms": 0.028520499999999997,
+      "max_ms": 0.121374
+    },
+    "object_choice_sync": {
+      "samples": 35,
+      "min_ms": 0.005707,
+      "median_ms": 0.900753,
+      "max_ms": 50.309
+    },
+    "object_command_apply": {
+      "samples": 28,
+      "min_ms": 3.59897,
+      "median_ms": 94.64215,
+      "max_ms": 1921.43
+    },
+    "object_command_worker": {
+      "samples": 28,
+      "min_ms": 15.853,
+      "median_ms": 42.01165,
+      "max_ms": 149.54
+    },
+    "object_document_sync": {
+      "samples": 64,
+      "min_ms": 0.759098,
+      "median_ms": 5.19185,
+      "max_ms": 1126.67
+    },
+    "object_owner_adopt": {
+      "samples": 64,
+      "min_ms": 0.580246,
+      "median_ms": 4.7426449999999996,
+      "max_ms": 112.924
+    },
+    "object_owner_commit": {
+      "samples": 16,
+      "min_ms": 68.9961,
+      "median_ms": 100.18520000000001,
+      "max_ms": 1720.07
+    },
+    "object_sheet_rebuild": {
+      "samples": 6,
+      "min_ms": 2.51295,
+      "median_ms": 36.61995,
+      "max_ms": 41.2313
+    },
+    "object_sheet_reconcile": {
+      "samples": 29,
+      "min_ms": 0.409916,
+      "median_ms": 11.8764,
+      "max_ms": 1044.73
+    },
+    "object_view_refresh": {
+      "samples": 89,
+      "min_ms": 0.011438,
+      "median_ms": 0.071928,
+      "max_ms": 29.1398
+    },
+    "open_document_gtk": {
+      "samples": 1,
+      "min_ms": 67.4162,
+      "median_ms": 67.4162,
+      "max_ms": 67.4162
+    },
+    "proofreading_apply_gtk": {
+      "samples": 14,
+      "min_ms": 0.000947,
+      "median_ms": 0.008140000000000001,
+      "max_ms": 0.014662
+    },
+    "proofreading_snapshot_submit": {
+      "samples": 14,
+      "min_ms": 0.034533,
+      "median_ms": 0.4695015,
+      "max_ms": 1.37818
+    },
+    "proofreading_worker": {
+      "samples": 14,
+      "min_ms": 0.001021,
+      "median_ms": 0.195867,
+      "max_ms": 0.309367
+    },
+    "restore_document_gtk": {
+      "samples": 20,
+      "min_ms": 8.43787,
+      "median_ms": 13.09715,
+      "max_ms": 39.1785
+    },
+    "restore_incremental_gtk": {
+      "samples": 19,
+      "min_ms": 1.43485,
+      "median_ms": 3.24099,
+      "max_ms": 12.4865
+    },
+    "save_barrier_gtk": {
+      "samples": 50,
+      "min_ms": 0.149369,
+      "median_ms": 0.5269035,
+      "max_ms": 1645.73
+    },
+    "save_worker": {
+      "samples": 19,
+      "min_ms": 26.894,
+      "median_ms": 42.1946,
+      "max_ms": 832.759
+    },
+    "undo_group": {
+      "samples": 52,
+      "min_ms": 0.000293,
+      "median_ms": 0.0007214999999999999,
+      "max_ms": 0.001281
+    }
+  }
+}

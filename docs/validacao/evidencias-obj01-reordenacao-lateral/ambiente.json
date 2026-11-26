@@ -1,0 +1,13 @@
+{
+  "kernel": "6.8.0-149-generic",
+  "python": "3.12.3",
+  "gtk_versions": [
+    "4.14.5",
+    "4.10.0"
+  ],
+  "suite_display": "private Xvfb/X11 with xfwm4 and D-Bus",
+  "renderer": "cairo",
+  "observer_interval_ms": 100,
+  "final_GTK_THEME": "Adwaita",
+  "input_coordinate_system": "GDK native surface coordinates and actual native XID"
+}

@@ -1,0 +1,10 @@
+{
+  "pid": 52927,
+  "project": "/home/roger/Documents/Projects/GitHub/INDE/obj01-audit/dados/obj01-reordenacao-lateral/Demo-reordenacao-lateral.inde",
+  "binary": "/home/roger/Documents/Projects/GitHub/INDE/obj01-audit/build-nativo/inde-especial",
+  "source_commit": "ef5fc7eec9987f0e5e12d00ba0028b93e62aa083",
+  "title": "Demonstração — reordenação e arrasto lateral",
+  "document": "Documento de uso real",
+  "source_test_copy": "/home/roger/Documents/Projects/GitHub/INDE/obj01-audit/dados/obj01-reordenacao-lateral/integral-final/Editor-reordenacao.inde",
+  "note": "Independent synthetic copy; original closed test project and earlier windows preserved."
+}

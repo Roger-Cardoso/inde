@@ -1,0 +1,26 @@
+{
+  "context": "Closed final synthetic test project after surface-coordinate correction; read-only checks before creating a distinct final demo.",
+  "databases": [
+    {
+      "path": "data/project.sqlite3",
+      "sha256": "6caf4b87b6f60c18fcf965fb1001471e7c3092d5c20cb3abb0d40cf323863edd",
+      "integrity": "ok",
+      "foreign_key_violations": 0,
+      "user_version": 0
+    },
+    {
+      "path": "documents/composed/b78dbb01-4a4a-4c44-ab12-9bafdce02588/obj01-piloto.sqlite3",
+      "sha256": "a889645baa5731b12a6d0570530e52b6ceec23e6a42e847a87e577a829f8650c",
+      "integrity": "ok",
+      "foreign_key_violations": 0,
+      "user_version": 5
+    },
+    {
+      "path": "recovery/editor-v1/d4079467-f1c2-4883-b6e8-991ef9279905.sqlite3",
+      "sha256": "7d2aa7fc0986dc0b34c3d9223f3a004179b479f079e6d8c70bc592a5e6a995df",
+      "integrity": "ok",
+      "foreign_key_violations": 0,
+      "user_version": 1
+    }
+  ]
+}

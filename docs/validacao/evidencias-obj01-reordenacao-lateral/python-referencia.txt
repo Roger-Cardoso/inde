@@ -1,0 +1,81 @@
+dbus-daemon[49696]: [session uid=1000 pid=49696] Activating service name='org.gtk.vfs.Daemon' requested by ':1.0' (uid=1000 pid=49698 comm="xfwm4 --compositor=off" label="chatgpt (unconfined)")
+dbus-daemon[49696]: [session uid=1000 pid=49696] Successfully activated service 'org.gtk.vfs.Daemon'
+fusermount3: failed to access mountpoint /run/user/1000/gvfs: Permission denied
+dbus-daemon[49696]: [session uid=1000 pid=49696] Activating service name='org.a11y.Bus' requested by ':1.2' (uid=1000 pid=49698 comm="xfwm4 --compositor=off" label="chatgpt (unconfined)")
+dbus-daemon[49696]: [session uid=1000 pid=49696] Successfully activated service 'org.a11y.Bus'
+dbus-daemon[49720]: Activating service name='org.a11y.atspi.Registry' requested by ':1.0' (uid=1000 pid=49698 comm="xfwm4 --compositor=off" label="chatgpt (unconfined)")
+dbus-daemon[49696]: [session uid=1000 pid=49696] Activating service name='org.xfce.Xfconf' requested by ':1.0' (uid=1000 pid=49698 comm="xfwm4 --compositor=off" label="chatgpt (unconfined)")
+dbus-daemon[49720]: Successfully activated service 'org.a11y.atspi.Registry'
+SpiRegistry daemon is running with well-known name - org.a11y.atspi.Registry
+dbus-daemon[49696]: [session uid=1000 pid=49696] Successfully activated service 'org.xfce.Xfconf'
+test_structural_reorder_and_lateral_drag (test_obj01_real_input.RealWritingInput.test_structural_reorder_and_lateral_drag) ... dbus-daemon[49696]: [session uid=1000 pid=49696] Activating service name='org.freedesktop.portal.Desktop' requested by ':1.7' (uid=1000 pid=49740 comm="/home/roger/Documents/Projects/GitHub/INDE/obj01-a" label="chatgpt (unconfined)")
+dbus-daemon[49696]: [session uid=1000 pid=49696] Activating service name='org.freedesktop.portal.Documents' requested by ':1.8' (uid=1000 pid=49746 comm="/usr/libexec/xdg-desktop-portal" label="chatgpt (unconfined)")
+dbus-daemon[49696]: [session uid=1000 pid=49696] Activating service name='org.freedesktop.impl.portal.PermissionStore' requested by ':1.9' (uid=1000 pid=49752 comm="/usr/libexec/xdg-document-portal" label="chatgpt (unconfined)")
+dbus-daemon[49696]: [session uid=1000 pid=49696] Successfully activated service 'org.freedesktop.impl.portal.PermissionStore'
+dbus-daemon[49696]: [session uid=1000 pid=49696] Successfully activated service 'org.freedesktop.portal.Documents'
+fusermount3: failed to access mountpoint /run/user/1000/doc: Permission denied
+error: fuse init failed: Can't mount path /run/user/1000/doc
+
+(/usr/libexec/xdg-desktop-portal:49746): xdg-desktop-portal-WARNING **: 12:33:12.222: Choosing gtk.portal for org.freedesktop.impl.portal.Lockdown as a last-resort fallback
+
+(/usr/libexec/xdg-desktop-portal:49746): xdg-desktop-portal-WARNING **: 12:33:12.222: The preferred method to match portal implementations to desktop environments is to use the portals.conf(5) configuration file
+dbus-daemon[49696]: [session uid=1000 pid=49696] Activating service name='org.freedesktop.impl.portal.desktop.gtk' requested by ':1.8' (uid=1000 pid=49746 comm="/usr/libexec/xdg-desktop-portal" label="chatgpt (unconfined)")
+dbus-daemon[49696]: [session uid=1000 pid=49696] Successfully activated service 'org.freedesktop.impl.portal.desktop.gtk'
+dbus-daemon[49696]: [session uid=1000 pid=49696] Activating service name='org.freedesktop.impl.portal.desktop.kde' requested by ':1.8' (uid=1000 pid=49746 comm="/usr/libexec/xdg-desktop-portal" label="chatgpt (unconfined)")
+dbus-daemon[49696]: [session uid=1000 pid=49696] Successfully activated service 'org.freedesktop.impl.portal.desktop.kde'
+[W][08616.072245] pw.conf      | [          conf.c: 1031 try_load_conf()] can't load config client.conf: No such file or directory
+[E][08616.072413] pw.conf      | [          conf.c: 1060 pw_conf_load_conf_for_context()] can't load config client.conf: No such file or directory
+
+(/usr/libexec/xdg-desktop-portal:49746): xdg-desktop-portal-WARNING **: 12:33:12.528: Failed connect to PipeWire: Couldn't create PipeWire context
+dbus-daemon[49696]: [session uid=1000 pid=49696] Successfully activated service 'org.freedesktop.portal.Desktop'
+dbus-daemon[49696]: [session uid=1000 pid=49696] Activating service name='org.gtk.vfs.UDisks2VolumeMonitor' requested by ':1.7' (uid=1000 pid=49740 comm="/home/roger/Documents/Projects/GitHub/INDE/obj01-a" label="chatgpt (unconfined)")
+dbus-daemon[49696]: [session uid=1000 pid=49696] Successfully activated service 'org.gtk.vfs.UDisks2VolumeMonitor'
+dbus-daemon[49696]: [session uid=1000 pid=49696] Activating service name='org.gtk.vfs.AfcVolumeMonitor' requested by ':1.7' (uid=1000 pid=49740 comm="/home/roger/Documents/Projects/GitHub/INDE/obj01-a" label="chatgpt (unconfined)")
+dbus-daemon[49696]: [session uid=1000 pid=49696] Successfully activated service 'org.gtk.vfs.AfcVolumeMonitor'
+dbus-daemon[49696]: [session uid=1000 pid=49696] Activating service name='org.gtk.vfs.GPhoto2VolumeMonitor' requested by ':1.7' (uid=1000 pid=49740 comm="/home/roger/Documents/Projects/GitHub/INDE/obj01-a" label="chatgpt (unconfined)")
+dbus-daemon[49696]: [session uid=1000 pid=49696] Successfully activated service 'org.gtk.vfs.GPhoto2VolumeMonitor'
+dbus-daemon[49696]: [session uid=1000 pid=49696] Activating service name='org.gtk.vfs.GoaVolumeMonitor' requested by ':1.7' (uid=1000 pid=49740 comm="/home/roger/Documents/Projects/GitHub/INDE/obj01-a" label="chatgpt (unconfined)")
+dbus-daemon[49696]: [session uid=1000 pid=49696] Successfully activated service 'org.gtk.vfs.GoaVolumeMonitor'
+dbus-daemon[49696]: [session uid=1000 pid=49696] Activating service name='org.gtk.vfs.MTPVolumeMonitor' requested by ':1.7' (uid=1000 pid=49740 comm="/home/roger/Documents/Projects/GitHub/INDE/obj01-a" label="chatgpt (unconfined)")
+dbus-daemon[49696]: [session uid=1000 pid=49696] Successfully activated service 'org.gtk.vfs.MTPVolumeMonitor'
+
+** (process:49876): WARNING **: 12:33:14.665: Failed to spawn the wsdd daemon: Failed to execute child process “wsdd” (No such file or directory)
+
+** (process:49858): WARNING **: 12:33:14.665: Couldn't create directory monitor on wsdd:///. Error: Automount failed: Failed to spawn the underlying wsdd daemon.
+dbus-daemon[49696]: [session uid=1000 pid=49696] Activating service name='ca.desrt.dconf' requested by ':1.7' (uid=1000 pid=49740 comm="/home/roger/Documents/Projects/GitHub/INDE/obj01-a" label="chatgpt (unconfined)")
+dbus-daemon[49696]: [session uid=1000 pid=49696] Successfully activated service 'ca.desrt.dconf'
+
+** (process:49858): WARNING **: 12:33:14.868: Couldn't create directory monitor on wsdd:///. Error: Automount failed: mountpoint for org.gtk.vfs.mountpoint_wsdd already running
+OBJ01_REORDER_SAMPLE {"stage": "move_down", "prose_lines": 20, "step": 1, "observed_ms": 452.921, "retained_views": 1, "total_views": 20}
+OBJ01_REORDER_SAMPLE {"stage": "move_down", "prose_lines": 20, "step": 2, "observed_ms": 373.504, "retained_views": 0, "total_views": 20}
+OBJ01_REORDER_SAMPLE {"stage": "move_down", "prose_lines": 20, "step": 3, "observed_ms": 369.473, "retained_views": 0, "total_views": 20}
+OBJ01_REORDER_SAMPLE {"stage": "move_down", "prose_lines": 200, "step": 1, "observed_ms": 3389.055, "retained_views": 0, "total_views": 200}
+OBJ01_REORDER_SAMPLE {"stage": "move_down", "prose_lines": 200, "step": 2, "observed_ms": 4797.822, "retained_views": 0, "total_views": 200}
+OBJ01_REORDER_SAMPLE {"stage": "move_down", "prose_lines": 200, "step": 3, "observed_ms": 3459.16, "retained_views": 1, "total_views": 200}
+ok
+
+----------------------------------------------------------------------
+Ran 1 test in 48.516s
+
+OK
+
+(xfconfd:49725): xfconfd-WARNING **: 12:34:00.608: Name org.xfce.Xfconf lost on the message dbus, exiting.
+A connection to the bus can't be made
+A connection to the bus can't be made
+X connection to :100 broken (explicit kill or server shutdown).
+A connection to the bus can't be made
+A connection to the bus can't be made
+The X11 connection broke (error 1). Did the X11 server die?
+X connection to :100 broken (explicit kill or server shutdown).
+
+(process:49857): GVFS-RemoteVolumeMonitor-WARNING **: 12:34:00.617: Owner of volume monitor org.gtk.vfs.UDisks2VolumeMonitor disconnected from the bus; removing drives/volumes/mounts
+
+(process:49857): GVFS-RemoteVolumeMonitor-WARNING **: 12:34:00.617: Owner of volume monitor org.gtk.vfs.AfcVolumeMonitor disconnected from the bus; removing drives/volumes/mounts
+
+(process:49857): GVFS-RemoteVolumeMonitor-WARNING **: 12:34:00.617: Owner of volume monitor org.gtk.vfs.GPhoto2VolumeMonitor disconnected from the bus; removing drives/volumes/mounts
+
+(process:49857): GVFS-RemoteVolumeMonitor-WARNING **: 12:34:00.617: Owner of volume monitor org.gtk.vfs.GoaVolumeMonitor disconnected from the bus; removing drives/volumes/mounts
+
+(process:49857): GVFS-RemoteVolumeMonitor-WARNING **: 12:34:00.617: Owner of volume monitor org.gtk.vfs.MTPVolumeMonitor disconnected from the bus; removing drives/volumes/mounts
+A connection to the bus can't be made
+X connection to :100 broken (explicit kill or server shutdown).

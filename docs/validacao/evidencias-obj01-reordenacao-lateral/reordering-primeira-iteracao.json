@@ -1,0 +1,76 @@
+{
+  "baseline": false,
+  "samples": [
+    {
+      "stage": "move_down",
+      "prose_lines": 20,
+      "step": 1,
+      "observed_ms": 290.066,
+      "retained_views": 20,
+      "total_views": 20
+    },
+    {
+      "stage": "move_down",
+      "prose_lines": 20,
+      "step": 2,
+      "observed_ms": 286.694,
+      "retained_views": 20,
+      "total_views": 20
+    },
+    {
+      "stage": "move_down",
+      "prose_lines": 20,
+      "step": 3,
+      "observed_ms": 287.055,
+      "retained_views": 20,
+      "total_views": 20
+    },
+    {
+      "stage": "move_down",
+      "prose_lines": 200,
+      "step": 1,
+      "observed_ms": 990.424,
+      "retained_views": 200,
+      "total_views": 200
+    },
+    {
+      "stage": "move_down",
+      "prose_lines": 200,
+      "step": 2,
+      "observed_ms": 789.082,
+      "retained_views": 200,
+      "total_views": 200
+    },
+    {
+      "stage": "move_down",
+      "prose_lines": 200,
+      "step": 3,
+      "observed_ms": 2397.394,
+      "retained_views": 200,
+      "total_views": 200
+    },
+    {
+      "stage": "drop_after",
+      "observed_ms": 420.224
+    },
+    {
+      "stage": "drop_right",
+      "observed_ms": 257.346
+    },
+    {
+      "stage": "drop_left",
+      "observed_ms": 254.809
+    },
+    {
+      "stage": "drop_left",
+      "observed_ms": 256.144
+    },
+    {
+      "stage": "drop_before",
+      "observed_ms": 256.808
+    }
+  ],
+  "timing_scope": "Real X11 input through low-priority state observer; not pure paint latency",
+  "normal_exit": true,
+  "saved_text_exact": true
+}

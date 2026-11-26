@@ -1,0 +1,105 @@
+2026-11-26T16:09:19.5413489Z ##[group]Run python3 tests/run_obj01_real_input.py
+2026-11-26T16:09:19.5413769Z [36;1mpython3 tests/run_obj01_real_input.py[0m
+2026-11-26T16:09:19.5436727Z shell: /usr/bin/bash -e {0}
+2026-11-26T16:09:19.5436931Z env:
+2026-11-26T16:09:19.5437141Z   INDE_TEST_ARTIFACTS: /home/runner/work/_temp/obj01-real-input
+2026-11-26T16:09:19.5437384Z ##[endgroup]
+2026-11-26T16:09:20.3003622Z dbus-daemon[7586]: [session uid=1001 pid=7586] Activating service name='org.xfce.Xfconf' requested by ':1.1' (uid=1001 pid=7588 comm="xfwm4 --compositor=off" label="unconfined")
+2026-11-26T16:09:20.3034772Z dbus-daemon[7586]: [session uid=1001 pid=7586] Successfully activated service 'org.xfce.Xfconf'
+2026-11-26T16:09:21.4540474Z test_blank_document_specialties_validation_recovery_and_quit (test_obj01_real_input.RealWritingInput.test_blank_document_specialties_validation_recovery_and_quit) ... dbus-daemon[7586]: [session uid=1001 pid=7586] Activating service name='ca.desrt.dconf' requested by ':1.4' (uid=1001 pid=7603 comm="/home/runner/work/inde/inde/build-nativo/inde-espe" label="unconfined")
+2026-11-26T16:09:21.4569524Z dbus-daemon[7586]: [session uid=1001 pid=7586] Successfully activated service 'ca.desrt.dconf'
+2026-11-26T16:10:02.8146261Z ok
+2026-11-26T16:10:06.5414927Z test_empty_paragraph_fluency_and_save (test_obj01_real_input.RealWritingInput.test_empty_paragraph_fluency_and_save) ... OBJ01_FLUENCY_SAMPLE {"stage": "paste", "paragraphs": 20, "mixed": false, "observed_ms": 190.536}
+2026-11-26T16:10:07.9557760Z OBJ01_FLUENCY_SAMPLE {"stage": "delete", "paragraphs": 20, "mixed": false, "observed_ms": 97.128}
+2026-11-26T16:10:08.0567316Z OBJ01_FLUENCY_SAMPLE {"stage": "delete", "paragraphs": 20, "mixed": false, "observed_ms": 97.298}
+2026-11-26T16:10:08.1576771Z OBJ01_FLUENCY_SAMPLE {"stage": "delete", "paragraphs": 20, "mixed": false, "observed_ms": 97.449}
+2026-11-26T16:10:08.3552821Z OBJ01_FLUENCY_SAMPLE {"stage": "backspace", "paragraphs": 20, "mixed": false, "observed_ms": 96.927}
+2026-11-26T16:10:08.5607146Z OBJ01_FLUENCY_SAMPLE {"stage": "delete_burst", "paragraphs": 20, "mixed": false, "observed_ms": 205.407}
+2026-11-26T16:10:10.9847343Z OBJ01_FLUENCY_SAMPLE {"stage": "paste", "paragraphs": 200, "mixed": false, "observed_ms": 1255.745}
+2026-11-26T16:10:12.6780629Z OBJ01_FLUENCY_SAMPLE {"stage": "delete", "paragraphs": 200, "mixed": false, "observed_ms": 191.228}
+2026-11-26T16:10:12.8822663Z OBJ01_FLUENCY_SAMPLE {"stage": "delete", "paragraphs": 200, "mixed": false, "observed_ms": 189.923}
+2026-11-26T16:10:13.0861153Z OBJ01_FLUENCY_SAMPLE {"stage": "delete", "paragraphs": 200, "mixed": false, "observed_ms": 189.419}
+2026-11-26T16:10:13.4845162Z OBJ01_FLUENCY_SAMPLE {"stage": "backspace", "paragraphs": 200, "mixed": false, "observed_ms": 192.06}
+2026-11-26T16:10:13.7919735Z OBJ01_FLUENCY_SAMPLE {"stage": "delete_burst", "paragraphs": 200, "mixed": false, "observed_ms": 307.338}
+2026-11-26T16:10:25.5962703Z OBJ01_FLUENCY_SAMPLE {"stage": "paste", "paragraphs": 200, "mixed": true, "observed_ms": 1408.167}
+2026-11-26T16:10:27.2893629Z OBJ01_FLUENCY_SAMPLE {"stage": "delete", "paragraphs": 200, "mixed": true, "observed_ms": 191.242}
+2026-11-26T16:10:27.4949469Z OBJ01_FLUENCY_SAMPLE {"stage": "delete", "paragraphs": 200, "mixed": true, "observed_ms": 190.654}
+2026-11-26T16:10:27.7845810Z OBJ01_FLUENCY_SAMPLE {"stage": "delete", "paragraphs": 200, "mixed": true, "observed_ms": 275.197}
+2026-11-26T16:10:28.1865058Z OBJ01_FLUENCY_SAMPLE {"stage": "backspace", "paragraphs": 200, "mixed": true, "observed_ms": 193.929}
+2026-11-26T16:10:28.4891996Z OBJ01_FLUENCY_SAMPLE {"stage": "delete_burst", "paragraphs": 200, "mixed": true, "observed_ms": 302.667}
+2026-11-26T16:10:32.0560221Z OBJ01_FLUENCY {"timing_scope": "X11 input through low-priority observer; includes polling, not pure paint latency", "samples": [{"stage": "paste", "paragraphs": 20, "mixed": false, "observed_ms": 190.536}, {"stage": "delete", "paragraphs": 20, "mixed": false, "observed_ms": 97.128}, {"stage": "delete", "paragraphs": 20, "mixed": false, "observed_ms": 97.298}, {"stage": "delete", "paragraphs": 20, "mixed": false, "observed_ms": 97.449}, {"stage": "backspace", "paragraphs": 20, "mixed": false, "observed_ms": 96.927}, {"stage": "delete_burst", "paragraphs": 20, "mixed": false, "observed_ms": 205.407}, {"stage": "paste", "paragraphs": 200, "mixed": false, "observed_ms": 1255.745}, {"stage": "delete", "paragraphs": 200, "mixed": false, "observed_ms": 191.228}, {"stage": "delete", "paragraphs": 200, "mixed": false, "observed_ms": 189.923}, {"stage": "delete", "paragraphs": 200, "mixed": false, "observed_ms": 189.419}, {"stage": "backspace", "paragraphs": 200, "mixed": false, "observed_ms": 192.06}, {"stage": "delete_burst", "paragraphs": 200, "mixed": false, "observed_ms": 307.338}, {"stage": "paste", "paragraphs": 200, "mixed": true, "observed_ms": 1408.167}, {"stage": "delete", "paragraphs": 200, "mixed": true, "observed_ms": 191.242}, {"stage": "delete", "paragraphs": 200, "mixed": true, "observed_ms": 190.654}, {"stage": "delete", "paragraphs": 200, "mixed": true, "observed_ms": 275.197}, {"stage": "backspace", "paragraphs": 200, "mixed": true, "observed_ms": 193.929}, {"stage": "delete_burst", "paragraphs": 200, "mixed": true, "observed_ms": 302.667}], "normal_exit": true, "saved_text_exact": true}
+2026-11-26T16:10:32.0588887Z ok
+2026-11-26T16:10:37.9361142Z test_structural_reorder_and_lateral_drag (test_obj01_real_input.RealWritingInput.test_structural_reorder_and_lateral_drag) ... OBJ01_REORDER_SAMPLE {"stage": "move_down", "prose_lines": 20, "step": 1, "observed_ms": 110.752, "retained_views": 20, "total_views": 20}
+2026-11-26T16:10:38.0477289Z OBJ01_REORDER_SAMPLE {"stage": "move_down", "prose_lines": 20, "step": 2, "observed_ms": 111.438, "retained_views": 20, "total_views": 20}
+2026-11-26T16:10:38.1590554Z OBJ01_REORDER_SAMPLE {"stage": "move_down", "prose_lines": 20, "step": 3, "observed_ms": 111.379, "retained_views": 20, "total_views": 20}
+2026-11-26T16:10:50.1017307Z OBJ01_REORDER_SAMPLE {"stage": "move_down", "prose_lines": 200, "step": 1, "observed_ms": 297.456, "retained_views": 200, "total_views": 200}
+2026-11-26T16:10:50.3942591Z OBJ01_REORDER_SAMPLE {"stage": "move_down", "prose_lines": 200, "step": 2, "observed_ms": 292.23, "retained_views": 200, "total_views": 200}
+2026-11-26T16:10:50.6890448Z OBJ01_REORDER_SAMPLE {"stage": "move_down", "prose_lines": 200, "step": 3, "observed_ms": 295.069, "retained_views": 200, "total_views": 200}
+2026-11-26T16:11:07.5437683Z ok
+2026-11-26T16:11:07.5437984Z 
+2026-11-26T16:11:07.5438281Z ----------------------------------------------------------------------
+2026-11-26T16:11:07.5438889Z Ran 3 tests in 107.049s
+2026-11-26T16:11:07.5439129Z 
+2026-11-26T16:11:07.5439255Z OK
+2026-11-26T16:11:07.5672008Z 
+2026-11-26T16:11:07.5672900Z (xfconfd:7594): xfconfd-WARNING **: 16:11:07.566: Name org.xfce.Xfconf lost on the message dbus, exiting.
+2026-11-26T16:11:07.5692333Z X connection to :99 broken (explicit kill or server shutdown).
+2026-11-26T16:11:07.5794164Z ##[group]Run actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+2026-11-26T16:11:07.5794460Z with:
+2026-11-26T16:11:07.5794629Z   name: obj01-real-input-45854500399
+2026-11-26T16:11:07.5794858Z   path: /home/runner/work/_temp/obj01-real-input
+2026-11-26T16:11:07.5795095Z   if-no-files-found: warn
+2026-11-26T16:11:07.5795265Z   retention-days: 7
+2026-11-26T16:11:07.5795425Z   compression-level: 6
+2026-11-26T16:11:07.5795584Z   overwrite: false
+2026-11-26T16:11:07.5795745Z   include-hidden-files: false
+2026-11-26T16:11:07.5795921Z ##[endgroup]
+2026-11-26T16:11:07.7015864Z (node:8167) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+2026-11-26T16:11:07.7016509Z (Use `node --trace-deprecation ...` to show where the warning was created)
+2026-11-26T16:11:07.7099079Z With the provided path, there will be 16 files uploaded
+2026-11-26T16:11:07.7101963Z Artifact name is valid!
+2026-11-26T16:11:07.7102313Z Root directory input is valid!
+2026-11-26T16:11:08.2089438Z Beginning upload of artifact content to blob storage
+2026-11-26T16:11:08.3777160Z (node:8167) [DEP0169] DeprecationWarning: `url.parse()` behavior is not standardized and prone to errors that have security implications. Use the WHATWG URL API instead. CVEs are not issued for `url.parse()` vulnerabilities.
+2026-11-26T16:11:08.9504273Z Uploaded bytes 196726
+2026-11-26T16:11:09.0403451Z Finished uploading artifact content to blob storage!
+2026-11-26T16:11:09.0403910Z SHA256 digest of uploaded artifact zip is 54aaaf09c1bed998fc0bff07b0acb1568f430610454a057926d50725a34ad664
+2026-11-26T16:11:09.0404320Z Finalizing artifact upload
+2026-11-26T16:11:09.4392430Z Artifact obj01-real-input-45854500399.zip successfully finalized. Artifact ID 15134504213
+2026-11-26T16:11:09.4393191Z Artifact obj01-real-input-45854500399 has been successfully uploaded! Final size is 196726 bytes. Artifact ID is 15134504213
+2026-11-26T16:11:09.4398464Z Artifact download URL: https://github.com/Roger-Cardoso/inde/actions/runs/45854500399/artifacts/15134504213
+2026-11-26T16:11:09.4572438Z Post job cleanup.
+2026-11-26T16:11:09.5187680Z [command]/usr/bin/git version
+2026-11-26T16:11:09.5225753Z git version 2.56.1
+2026-11-26T16:11:09.5249226Z Temporarily overriding HOME='/home/runner/work/_temp/e69d0af9-33b4-4251-ba0b-3648f8b88f2b' before making global git config changes
+2026-11-26T16:11:09.5250082Z Adding repository directory to the temporary git global config as a safe directory
+2026-11-26T16:11:09.5252577Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/inde/inde
+2026-11-26T16:11:09.5277312Z Removing SSH command configuration
+2026-11-26T16:11:09.5281659Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-11-26T16:11:09.5305950Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-11-26T16:11:09.5500161Z Removing HTTP extra header
+2026-11-26T16:11:09.5504002Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-11-26T16:11:09.5528530Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-11-26T16:11:09.5692656Z Removing includeIf entries pointing to credentials config files
+2026-11-26T16:11:09.5696216Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-11-26T16:11:09.5718125Z includeif.gitdir:/home/runner/work/inde/inde/.git.path
+2026-11-26T16:11:09.5718713Z includeif.gitdir:/home/runner/work/inde/inde/.git/worktrees/*.path
+2026-11-26T16:11:09.5719257Z includeif.gitdir:/github/workspace/.git.path
+2026-11-26T16:11:09.5719787Z includeif.gitdir:/github/workspace/.git/worktrees/*.path
+2026-11-26T16:11:09.5723136Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/home/runner/work/inde/inde/.git.path
+2026-11-26T16:11:09.5742861Z /home/runner/work/_temp/git-credentials-8b701248-dbac-4678-9fc4-38dca0ebf5b1.config
+2026-11-26T16:11:09.5748974Z [command]/usr/bin/git config --local --unset includeif.gitdir:/home/runner/work/inde/inde/.git.path \/home\/runner\/work\/_temp\/git\-credentials\-8b701248\-dbac\-4678\-9fc4\-38dca0ebf5b1\.config
+2026-11-26T16:11:09.5778432Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/home/runner/work/inde/inde/.git/worktrees/*.path
+2026-11-26T16:11:09.5803304Z /home/runner/work/_temp/git-credentials-8b701248-dbac-4678-9fc4-38dca0ebf5b1.config
+2026-11-26T16:11:09.5814457Z [command]/usr/bin/git config --local --unset includeif.gitdir:/home/runner/work/inde/inde/.git/worktrees/*.path \/home\/runner\/work\/_temp\/git\-credentials\-8b701248\-dbac\-4678\-9fc4\-38dca0ebf5b1\.config
+2026-11-26T16:11:09.5839144Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/github/workspace/.git.path
+2026-11-26T16:11:09.5854272Z /github/runner_temp/git-credentials-8b701248-dbac-4678-9fc4-38dca0ebf5b1.config
+2026-11-26T16:11:09.5860902Z [command]/usr/bin/git config --local --unset includeif.gitdir:/github/workspace/.git.path \/github\/runner_temp\/git\-credentials\-8b701248\-dbac\-4678\-9fc4\-38dca0ebf5b1\.config
+2026-11-26T16:11:09.5886503Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/github/workspace/.git/worktrees/*.path
+2026-11-26T16:11:09.5904558Z /github/runner_temp/git-credentials-8b701248-dbac-4678-9fc4-38dca0ebf5b1.config
+2026-11-26T16:11:09.5909872Z [command]/usr/bin/git config --local --unset includeif.gitdir:/github/workspace/.git/worktrees/*.path \/github\/runner_temp\/git\-credentials\-8b701248\-dbac\-4678\-9fc4\-38dca0ebf5b1\.config
+2026-11-26T16:11:09.5935639Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-11-26T16:11:09.6089648Z Removing credentials config '/home/runner/work/_temp/git-credentials-8b701248-dbac-4678-9fc4-38dca0ebf5b1.config'
+2026-11-26T16:11:09.6198796Z Cleaning up orphan processes
+2026-11-26T16:11:09.6453801Z ##[warning]Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+

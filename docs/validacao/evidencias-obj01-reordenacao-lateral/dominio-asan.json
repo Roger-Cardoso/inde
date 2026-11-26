@@ -1,0 +1,16 @@
+{
+  "source_commit": "49b9313a4a81a8a5147b954f11683bf3cee4e105",
+  "exit_code": 0,
+  "ASAN_OPTIONS": "detect_leaks=1:halt_on_error=1",
+  "UBSAN_OPTIONS": "halt_on_error=1:print_stacktrace=1",
+  "binary_sha256": "95eca2b46da8fdd55ac5f82f4f91fa24de43732b4b586afd1c568f8e9a637604",
+  "source_sha256": "022917e7c0c95a2c7287eefec87fa95f97a3c44fb9b34ef63bc28266860110bf",
+  "scope": "Standalone structural unit domain tests and all linked owner/domain dependencies instrumented; not entire GTK application.",
+  "tested_implementation_before_gui_only_correction": "ef5fc7eec9987f0e5e12d00ba0028b93e62aa083",
+  "domain_unchanged": true,
+  "domain_files": {
+    "cpp/object_composite_pilot.cpp": "c4aca064480d5a6beaa5b5050a35181e958bff0375d8b2ae217ea2664a37a863",
+    "cpp/object_structural_move_tests.cpp": "022917e7c0c95a2c7287eefec87fa95f97a3c44fb9b34ef63bc28266860110bf",
+    "tests/object_composite_pilot/CMakeLists.txt": "117b72163cc99ddf030340946e4e5363363f5f79500d134a52bade2a5bc6451d"
+  }
+}

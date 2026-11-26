@@ -1,0 +1,56 @@
+{
+  "baseline": true,
+  "samples": [
+    {
+      "stage": "move_down",
+      "prose_lines": 20,
+      "step": 1,
+      "observed_ms": 452.921,
+      "retained_views": 1,
+      "total_views": 20
+    },
+    {
+      "stage": "move_down",
+      "prose_lines": 20,
+      "step": 2,
+      "observed_ms": 373.504,
+      "retained_views": 0,
+      "total_views": 20
+    },
+    {
+      "stage": "move_down",
+      "prose_lines": 20,
+      "step": 3,
+      "observed_ms": 369.473,
+      "retained_views": 0,
+      "total_views": 20
+    },
+    {
+      "stage": "move_down",
+      "prose_lines": 200,
+      "step": 1,
+      "observed_ms": 3389.055,
+      "retained_views": 0,
+      "total_views": 200
+    },
+    {
+      "stage": "move_down",
+      "prose_lines": 200,
+      "step": 2,
+      "observed_ms": 4797.822,
+      "retained_views": 0,
+      "total_views": 200
+    },
+    {
+      "stage": "move_down",
+      "prose_lines": 200,
+      "step": 3,
+      "observed_ms": 3459.16,
+      "retained_views": 1,
+      "total_views": 200
+    }
+  ],
+  "timing_scope": "Real X11 input through low-priority state observer; not pure paint latency",
+  "normal_exit": true,
+  "saved_text_exact": true
+}
