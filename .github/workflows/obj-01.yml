@@ -49,6 +49,7 @@ on:
       - scripts/demos/Abrir-demo-objetos-nativos.sh
       - scripts/demos/Abrir-demo-folha-comum.sh
       - scripts/demos/Abrir-demo-especialidades.sh
+      - scripts/demos/Abrir-demo-planejamento-exclusao.sh
       - tests/audit_obj01_sources.py
       - tests/test_obj01_source_audit.py
       - fontes/*.tar.gz
@@ -104,6 +105,7 @@ on:
       - scripts/demos/Abrir-demo-objetos-nativos.sh
       - scripts/demos/Abrir-demo-folha-comum.sh
       - scripts/demos/Abrir-demo-especialidades.sh
+      - scripts/demos/Abrir-demo-planejamento-exclusao.sh
       - tests/audit_obj01_sources.py
       - tests/test_obj01_source_audit.py
       - fontes/*.tar.gz

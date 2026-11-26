@@ -158,7 +158,18 @@ class RealWritingInput(unittest.TestCase):
                         if (target['height'] > viewport['height']-16 or
                             (target['y'] >= viewport['y']+8 and
                              target['y']+target['height'] <= viewport['y']+viewport['height']-8)):
-                            return
+                            # GTK's wheel animation can still move a target
+                            # after its first visible frame. Check the settled
+                            # viewport before handing control to the clicker.
+                            time.sleep(.35)
+                            stable_values=candidates(state(), name=name)
+                            stable_regions=candidates(state(), name=area)
+                            if stable_values and stable_regions:
+                                t,v=stable_values[0],stable_regions[0]
+                                if (t['height']>v['height']-16 or
+                                    (t['y']>=v['y']+8 and t['y']+t['height']<=v['y']+v['height']-8)):
+                                    return
+                            continue
                     if not regions:
                         wait(lambda s: bool(candidates(s, name=area)), 'Área de rolagem disponível: ' + area)
                         regions = candidates(state(), name=area)

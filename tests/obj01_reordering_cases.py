@@ -294,7 +294,10 @@ def exercise_lateral(test, root, env, window, input_, click, wait, state, scroll
     wait(lambda s:s.get('draft'),'Formulário de imagem após arranjo')
     click(name='native-field-decorative')
     scroll_to('native-field-before','native-edit-scroll')
-    click(name='native-field-before');input_('key','Down','Return')
+    second_members={r['children'][1] for r in state()['objects']['rows']}
+    options=[i for i in state()['objects']['visual_order'] if i not in second_members]
+    click(name='native-field-before')
+    input_('key',*(['Down']*(options.index(ids[0])+1)),'Return')
     wait(lambda s:any(c['name']=='native-field-before' and c.get('value')==ids[0] for c in s['controls']),
          'Destino visual escolhido pelo teclado')
     # Reading destination stays explicitly at the end; visual destination is first.
@@ -305,7 +308,8 @@ def exercise_lateral(test, root, env, window, input_, click, wait, state, scroll
     for key in ['author_order','visual_order']:
         test.assertEqual([i for i in state()['objects'][key] if i!=image],original[key])
     test.assertEqual(state()['objects']['author_order'][-1],image)
-    test.assertEqual(state()['objects']['visual_order'][0],image)
+    test.assertEqual(state()['objects']['visual_order'].index(image)+1,
+                     state()['objects']['visual_order'].index(ids[0]))
     test.assertEqual(state()['objects']['rows'],[table_row])
     click(name='specialty-text')
     last_paragraph=next(p['paragraph'] for p in state()['objects']['paragraphs'] if p['id']==ids[-1])

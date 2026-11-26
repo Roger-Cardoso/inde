@@ -84,8 +84,15 @@ def exercise_blank_paragraphs(test, root, env, process, window, input_, click, w
         # Separate the paste from the following typing undo group.
         time.sleep(.8)
         first = state()['objects']['paragraphs'][0]['paragraph']
-        # Scroll on the sheet edge with feedback, instead of flooding a nested
-        # paragraph's scroller before the post-paste allocation has settled.
+        # Paste leaves the canonical caret at the end. Drag the sheet's actual
+        # scrollbar to the beginning, avoiding wheel events on nested paragraph
+        # scrollers and their overlay scroll animation.
+        area=next(c for c in state()['controls'] if c['name']=='native-sheet-scroll' and c['hittable'])
+        input_('mousemove','--window',window,str(area['x']+area['width']-4),str(area['y']+area['height']-8))
+        time.sleep(.4)
+        input_('mousedown','1')
+        input_('mousemove','--window',window,str(area['x']+area['width']-4),str(area['y']+4))
+        input_('mouseup','1')
         scroll_to('writing-paragraph-' + first, 'native-sheet-scroll')
         click(name='writing-paragraph-' + first)
         wait(lambda s: any(c['name'] == 'writing-paragraph-' + first and c.get('focus')
