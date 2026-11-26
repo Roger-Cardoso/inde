@@ -37,7 +37,7 @@ Não é permitido retirar o destino de uma referência deixando um dependente no
 
 Exemplo: estado 1 contém a abertura; estado 2 contém a continuação. Restaurar 1 cria estado 3 cujo conteúdo corresponde a 1, com `parent=2` e `restored_from=1`. O estado 2 continua consultável e pode ser retomado em outro estado. Restaurar conteúdo que já é atual não cria uma cópia redundante.
 
-O hash confere o conteúdo lógico, incluindo os UUIDs, descrições, recursos e referências ordenadas. Sequência, data, descrição e IDs internos das versões não fazem parte desse hash. Por isso uma restauração pode ter o mesmo hash de conteúdo e outra sequência. Os vínculos do histórico são verificados separadamente.
+O hash confere o conteúdo lógico, incluindo os UUIDs, descrições, recursos e referências ordenadas. Sequência, data, descrição e IDs internos das versões não fazem parte desse hash. Por isso uma restauração pode ter o mesmo hash de conteúdo e outra sequência. Os vínculos do histórico são verificados separadamente, inclusive a igualdade entre o conteúdo restaurado e o estado indicado como sua origem.
 
 Na abertura são conferidos o formato, o desenho exato das tabelas/índices/triggers, `integrity_check`, chaves estrangeiras, **todos os estados históricos**, hashes e bytes dos recursos. Não há retorno silencioso a uma versão antiga quando alguma parte do histórico está corrompida. Não há descarte automático de histórico para caber em um limite.
 

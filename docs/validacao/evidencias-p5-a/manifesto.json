@@ -10,7 +10,7 @@
   "sources": {
     ".github/workflows/inde-p5.yml": "c4de5a50487cccdb008ebe8812d2f25fa716ee2888db596295c1c707e675a482",
     "cpp/CMakeLists.txt": "2e7d3223c10de6e208c6e30b6d3127ea16293b946c6d2d7d5333feda4883eab3",
-    "cpp/project_file.cpp": "32bfe985564d46b328719e667a585bba4e2f146671fbaa8607836acf6158a887",
+    "cpp/project_file.cpp": "d59785955fb2148631388eb98d9df151f3334e5b135330adb8c1531a651e72d3",
     "cpp/project_file.hpp": "393833a2325f8b18288202d6ece517baa647056233f8a96d3edd75cb22f46a72",
     "cpp/project_file_main.cpp": "f3fbb20d74269da5241e390cb1bc4d2989ed06d521e9e34a990ec126101558e6",
     "cpp/project_file_native_tests.cpp": "a7a2f4125efd878f8988cebdfb5d597918a7576474b4397571794552aabd38d6",
@@ -20,22 +20,22 @@
     "scripts/demos/Abrir-demo-arquivo-unico.sh": "52ce05f4356010b5e5c3abd3e425e12b4ea61259815fbd02034d34acf2436b3f",
     "tests/project_file/CMakeLists.txt": "de98543c9dbc567305759adb9c2aaada280aa643c9f2b0625e4e9d20388f14fd",
     "tests/project_file/test_native_demo.py": "270aab578f02e641b402eb5d5ecf0abbaddce36a49a3ce994fd1f82ef53b5369",
-    "tests/project_file/test_transport.py": "dae857583afd9132c35416fd0722f755432fd9a7d284b26cbc240cd98a288182",
+    "tests/project_file/test_transport.py": "e64ee3ba921befdadec5fc640f169aa4b114b4736bccdb25c0bb8138d5861276",
     "tests/project_file/verify_evidence.py": "f5541b3743c2ce5c093f4d8a5751e08f5994c2f24af43281580cfbe21bb3b757"
   },
   "evidence": {
     "docs/validacao/evidencias-p5-a/arquivos-fontes.json": "7100204250fd02e59bc176f9cc2b168682bd695f8f85d0ef739ee1b852077002",
-    "docs/validacao/evidencias-p5-a/clang-asan-ctest.txt": "92b3b9479b3ffcb61bf898a96344c1f167132b099261840e7482134c51eebbe6",
+    "docs/validacao/evidencias-p5-a/clang-asan-ctest.txt": "319574f07f303a8d717b437375230a95dd3448806fe19022a1d90103efbfffcc",
     "docs/validacao/evidencias-p5-a/editor-regressoes.txt": "e480072ac7e713a98ec7ca44cbb76c31adcc01a3eb723058115be5379909f480",
     "docs/validacao/evidencias-p5-a/fontes-fixadas.json": "7824d5412db6a5a48cdde16f533a8c21bf972cf94651c62c1294a4b2758766b2",
-    "docs/validacao/evidencias-p5-a/gcc-release-ctest.txt": "db610780601bf0bd81cbf35d708bf4ef49a1600512677113edc3f081a6f9bff0",
+    "docs/validacao/evidencias-p5-a/gcc-release-ctest.txt": "01be4d980aa417933c6e854415ac936643b134e8182e8fe5b02c8a8ac347b683",
     "docs/validacao/evidencias-p5-a/gtk-demonstracao.json": "bac03076ce03793011e58f31587c1f396f3e6faff81172ed064c42bf35c1f474",
     "docs/validacao/evidencias-p5-a/gtk-launcher.txt": "4b522be410b157296f097bffcbbce8cd50ed3391945151f5bafb9b472244eefc",
     "docs/validacao/evidencias-p5-a/historico-final.json": "144d9142e43108fd4277af966265f1d5bb1d7df0766bdc1fc589094f29f4cfca",
     "docs/validacao/evidencias-p5-a/integridade-final.json": "d56755bbec41d44509c57f2033ce076cab12c56313843c3aa10f8d625cd01d9f",
     "docs/validacao/evidencias-p5-a/native-ctest.txt": "0bf4d91fe70b0aec56b3c2c7797baf370ce970aa56fa5e51421ae92def8c7f49",
     "docs/validacao/evidencias-p5-a/verificacao.json": "ff8ddeb25f39c5d09f14c840e083becdc38c7374fa2b9502a059f3fe0bdf569c",
-    "docs/validacao/evidencias-p5-a/p5-native-ctest.txt": "a9effa3d9586ff2a995d3c4fe25a44b46c99666b0408233141f2dec25a670cc6"
+    "docs/validacao/evidencias-p5-a/p5-native-ctest.txt": "925fecc3242e05346513201cd451d5600a1c788e92fa39000fb73f07c7c8be8e"
   },
   "demo_file": {
     "path": "/home/roger/Documents/Projects/GitHub/INDE/obj01-audit/dados/p5-demo-20261126-160033-7506/Projeto-portatil.inde",

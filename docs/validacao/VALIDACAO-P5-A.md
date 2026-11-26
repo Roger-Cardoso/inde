@@ -7,7 +7,7 @@ Data: 2026-11-26. Branch: `feature/inde-p5-single-file`, derivada de `1b77951e7b
 | Camada | Resultado | Evidência |
 | --- | --- | --- |
 | Núcleo nativo existente e P5 | 68/68 CTest passaram | [log](evidencias-p5-a/native-ctest.txt) |
-| Biblioteca independente e transporte, GCC 15 Release | 2/2 alvos, incluindo 12 casos Python | [log](evidencias-p5-a/gcc-release-ctest.txt) |
+| Biblioteca independente e transporte, GCC 15 Release | 2/2 alvos, incluindo 13 casos Python | [log](evidencias-p5-a/gcc-release-ctest.txt) |
 | Mesmos alvos, Clang 18 Debug, ASan/UBSan e vazamentos | 2/2 alvos; sem diagnóstico de memória no passe concluído | [log completo](evidencias-p5-a/clang-asan-ctest.txt) |
 | Serviços reais, projeto schema 37 novo | Comparações e restauração passaram | [relatório](evidencias-p5-a/verificacao.json) |
 | Demonstrador real, editor GTK e teclado | Salvar, sair, capturar e conferir passaram em display privado | [resultado](evidencias-p5-a/gtk-demonstracao.json) |
@@ -37,7 +37,7 @@ Na revisão final foi reproduzida outra borda do parser herdado: `std::stod` int
 | Formato incompatível | Arquivo alheio, SQLite alheio, WAL e truncamento recusados; arquivos alheios não são regravados |
 | Transporte | Origem preservada, outro local, acentos, pastas vazias, recursos binários, destino existente recusado, links/escape de caminho recusados, banco com FK inválida recusado |
 
-Os testes C++ estão em [project_file_tests.cpp](../../cpp/project_file_tests.cpp); os 12 casos de transporte usam fixtures mínimas construídas para cada teste e **não se apresentam como projetos completos do INDE**. O teste [project_file_native_tests.cpp](../../cpp/project_file_native_tests.cpp) usa `ProjectService`, os repositórios nativos e o motor de objetos reais.
+Os testes C++ estão em [project_file_tests.cpp](../../cpp/project_file_tests.cpp); os 13 casos de transporte usam fixtures mínimas construídas para cada teste e **não se apresentam como projetos completos do INDE**. O teste [project_file_native_tests.cpp](../../cpp/project_file_native_tests.cpp) usa `ProjectService`, os repositórios nativos e o motor de objetos reais.
 
 A fixture nativa inclui parágrafos identificados, estilo, âncora, perspectiva, comando literal, alternativa privada, lente de visibilidade e anotação semântica. A comparação usa o snapshot completo do Documento. Inclui ainda Composição textual com usos live/pinned/reference-only e rascunho privado, planejamento associado ao texto, PNG, tabela, equação e linha com ordens autoral/visual divergentes. O teste edita a cópia, registra outro estado, restaura o original, reabre o estado posterior e compara todos os arquivos originais por hash.
 

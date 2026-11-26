@@ -413,6 +413,8 @@ struct Store::Impl {
     need(!poisoned, "reopen_required",
          "A confirmação foi incerta; reabra e confira o estado antes de "
          "continuar.");
+    need(sqlite3_get_autocommit(db) != 0, "reopen_required",
+         "Há uma transação não encerrada; reabra e confira antes de continuar.");
     same_file();
     need(integer(db, "PRAGMA data_version") == data_version, "external_change",
          "O banco foi alterado fora desta sessão; reabra e confira.");
@@ -681,6 +683,9 @@ void Store::verify() const {
              (!r.restored_from ||
               (*r.restored_from >= 0 && *r.restored_from < r.sequence)),
          "history_invalid", "Encadeamento de versões inválido.");
+    if (r.restored_from)
+      need(r.hash == list[static_cast<std::size_t>(*r.restored_from)].hash,
+           "history_invalid", "Restauração diverge do estado indicado.");
     impl_->load(r.sequence);
   }
   need(integer(impl_->db, "SELECT seq FROM head WHERE id=1") ==

@@ -99,6 +99,17 @@ class ProjectFile(unittest.TestCase):
         self.run_cli('aplicar',self.package,self.request([dict(key='file/../fora',expected_version=0,value=data)],s))
         target=self.root/'Perigoso.inde';r=self.run_cli('reabrir',self.package,target,ok=False)
         self.assertIn('unsafe_path',r.stderr);self.assertFalse((self.root/'fora').exists());self.assertFalse(target.exists())
+    def test_restore_origin_must_match_its_content(self):
+        first=self.pack()
+        empty=self.run_cli('restaurar',self.package,0,first['sequence'],first['hash'])
+        self.run_cli('restaurar',self.package,1,empty['sequence'],empty['hash'])
+        with sqlite3.connect(self.package) as db:
+            trigger=db.execute("select sql from sqlite_schema where name='immutable_states_UPDATE'").fetchone()[0]
+            db.execute('DROP TRIGGER immutable_states_UPDATE')
+            db.execute('UPDATE states SET restored_from=0 WHERE seq=3')
+            db.execute(trigger)
+        r=self.run_cli('verificar',self.package,ok=False)
+        self.assertIn('history_invalid',r.stderr)
     def test_other_project_and_noop_capture(self):
         first=self.pack()
         again=self.run_cli('registrar',self.package,self.source,first['sequence'],first['hash'],'Sem alterações')
