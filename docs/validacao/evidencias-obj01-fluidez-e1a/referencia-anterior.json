@@ -1,0 +1,58 @@
+{
+  "status": "incomplete",
+  "source_at_start": "ad9189c6ca7a256175adf8d87d2984eecf21d8c6",
+  "binary_checksum_verified_during_baseline": false,
+  "reason": "Later navigation/Backspace step did not await confirmed viewport focus. Only individual Delete samples are compared. Concurrent compilation limits timing inference.",
+  "samples": [
+    {
+      "stage": "paste",
+      "paragraphs": 20,
+      "observed_ms": 365.695
+    },
+    {
+      "stage": "delete",
+      "paragraphs": 20,
+      "observed_ms": 442.838
+    },
+    {
+      "stage": "delete",
+      "paragraphs": 20,
+      "observed_ms": 358.802
+    },
+    {
+      "stage": "delete",
+      "paragraphs": 20,
+      "observed_ms": 356.332
+    },
+    {
+      "stage": "backspace",
+      "paragraphs": 20,
+      "observed_ms": 353.539
+    },
+    {
+      "stage": "delete_burst",
+      "paragraphs": 20,
+      "observed_ms": 549.092
+    },
+    {
+      "stage": "paste",
+      "paragraphs": 200,
+      "observed_ms": 2727.855
+    },
+    {
+      "stage": "delete",
+      "paragraphs": 200,
+      "observed_ms": 3057.502
+    },
+    {
+      "stage": "delete",
+      "paragraphs": 200,
+      "observed_ms": 3159.41
+    },
+    {
+      "stage": "delete",
+      "paragraphs": 200,
+      "observed_ms": 3067.105
+    }
+  ]
+}

@@ -1,0 +1,191 @@
+dbus-daemon[22255]: [session uid=1000 pid=22255] Activating service name='org.gtk.vfs.Daemon' requested by ':1.0' (uid=1000 pid=22257 comm="xfwm4 --compositor=off" label="chatgpt (unconfined)")
+dbus-daemon[22255]: [session uid=1000 pid=22255] Successfully activated service 'org.gtk.vfs.Daemon'
+fusermount3: failed to access mountpoint /run/user/1000/gvfs: Permission denied
+dbus-daemon[22255]: [session uid=1000 pid=22255] Activating service name='org.a11y.Bus' requested by ':1.2' (uid=1000 pid=22257 comm="xfwm4 --compositor=off" label="chatgpt (unconfined)")
+dbus-daemon[22255]: [session uid=1000 pid=22255] Successfully activated service 'org.a11y.Bus'
+dbus-daemon[22281]: Activating service name='org.a11y.atspi.Registry' requested by ':1.0' (uid=1000 pid=22257 comm="xfwm4 --compositor=off" label="chatgpt (unconfined)")
+dbus-daemon[22255]: [session uid=1000 pid=22255] Activating service name='org.xfce.Xfconf' requested by ':1.0' (uid=1000 pid=22257 comm="xfwm4 --compositor=off" label="chatgpt (unconfined)")
+dbus-daemon[22281]: Successfully activated service 'org.a11y.atspi.Registry'
+SpiRegistry daemon is running with well-known name - org.a11y.atspi.Registry
+dbus-daemon[22255]: [session uid=1000 pid=22255] Successfully activated service 'org.xfce.Xfconf'
+test_failed_opener_preserves_diagnostics_and_address (test_ambiente_importacao.DesktopEnvironmentTests.test_failed_opener_preserves_diagnostics_and_address) ... ok
+test_ibus_detection_uses_real_module_files (test_ambiente_importacao.DesktopEnvironmentTests.test_ibus_detection_uses_real_module_files) ... ok
+test_installed_input_method_is_preserved (test_ambiente_importacao.DesktopEnvironmentTests.test_installed_input_method_is_preserved) ... ok
+test_native_profile_does_not_leak_to_browser (test_ambiente_importacao.DesktopEnvironmentTests.test_native_profile_does_not_leak_to_browser) ... ok
+test_unset_desktop_profile_remains_unset (test_ambiente_importacao.DesktopEnvironmentTests.test_unset_desktop_profile_remains_unset) ... ok
+test_changed_review_is_refused (test_ambiente_importacao.ImportReviewTests.test_changed_review_is_refused) ... ok
+test_changed_source_is_refused_before_plan (test_ambiente_importacao.ImportReviewTests.test_changed_source_is_refused_before_plan) ... ok
+test_conflict_requires_a_choice_and_originals_are_preserved (test_ambiente_importacao.ImportReviewTests.test_conflict_requires_a_choice_and_originals_are_preserved) ... ok
+test_duplicate_scene_id_is_refused (test_ambiente_importacao.ImportReviewTests.test_duplicate_scene_id_is_refused) ... ok
+test_multiple_html_chapters_and_scripts_are_blocked (test_ambiente_importacao.ImportReviewTests.test_multiple_html_chapters_and_scripts_are_blocked) ... ok
+test_native_import_keeps_text_and_maps_identities (test_ambiente_importacao.ImportReviewTests.test_native_import_keeps_text_and_maps_identities) ... ok
+test_native_styles_scenes_perspective_and_distinct_same_name_entities (test_ambiente_importacao.ImportReviewTests.test_native_styles_scenes_perspective_and_distinct_same_name_entities) ... ok
+test_plan_staleness_is_checked_again_by_native_import (test_ambiente_importacao.ImportReviewTests.test_plan_staleness_is_checked_again_by_native_import) ... ok
+test_unicode_offsets_and_formatting (test_ambiente_importacao.ImportReviewTests.test_unicode_offsets_and_formatting) ... ok
+test_unsupported_metadata_blocks_without_silently_dropping_it (test_ambiente_importacao.ImportReviewTests.test_unsupported_metadata_blocks_without_silently_dropping_it) ... ok
+test_reopen_preserves_port_and_restores_desktop_environment (test_ambiente_importacao.PreviewReuseTests.test_reopen_preserves_port_and_restores_desktop_environment) ... ok
+test_combining_unrelated_project_sources_is_refused (test_catalogo_nativo.NativeCatalogTests.test_combining_unrelated_project_sources_is_refused) ... ok
+test_empty_catalog_really_exports_no_work (test_catalogo_nativo.NativeCatalogTests.test_empty_catalog_really_exports_no_work) ... ok
+test_later_work_failure_keeps_previous_output (test_catalogo_nativo.NativeCatalogTests.test_later_work_failure_keeps_previous_output) ... ok
+test_native_selection_recovery_revision_and_legacy_migration (test_catalogo_nativo.NativeCatalogTests.test_native_selection_recovery_revision_and_legacy_migration) ... ok
+test_public_zip_excludes_unselected_work_and_private_data (test_catalogo_nativo.NativeCatalogTests.test_public_zip_excludes_unselected_work_and_private_data) ... ok
+test_reordering_and_removal_keep_public_addresses_and_numbers (test_catalogo_nativo.NativeCatalogTests.test_reordering_and_removal_keep_public_addresses_and_numbers) ... ok
+test_shared_id_with_different_definition_is_refused (test_catalogo_nativo.NativeCatalogTests.test_shared_id_with_different_definition_is_refused) ... ok
+test_two_works_share_the_same_canonical_character (test_catalogo_nativo.NativeCatalogTests.test_two_works_share_the_same_canonical_character) ... ok
+test_all_local_html_links_resolve_under_subdirectory (test_comic_nativo.NativeComic.test_all_local_html_links_resolve_under_subdirectory) ... ok
+test_continuous_text_is_script_free (test_comic_nativo.NativeComic.test_continuous_text_is_script_free) ... ok
+test_domain_and_pages_path_follow_existing_configuration (test_comic_nativo.NativeComic.test_domain_and_pages_path_follow_existing_configuration) ... ok
+test_generation_does_not_overwrite_previous_site (test_comic_nativo.NativeComic.test_generation_does_not_overwrite_previous_site) ... ok
+test_native_model_persistence_conflicts_recovery_and_copy (test_comic_nativo.NativeComic.test_native_model_persistence_conflicts_recovery_and_copy) ... ok
+test_paths_cannot_escape_public_site (test_comic_nativo.NativeComic.test_paths_cannot_escape_public_site) ... ok
+test_public_zip_manifest_and_private_sources (test_comic_nativo.NativeComic.test_public_zip_manifest_and_private_sources) ... ok
+test_removed_site_and_invalid_base64_are_rejected (test_comic_nativo.NativeComic.test_removed_site_and_invalid_base64_are_rejected) ... ok
+test_same_publication_entry_point_dispatches_native_comic (test_comic_nativo.NativeComic.test_same_publication_entry_point_dispatches_native_comic) ... ok
+test_version_and_media_cannot_silently_downgrade (test_comic_nativo.NativeComic.test_version_and_media_cannot_silently_downgrade) ... ok
+test_glossary_resource_is_protected_by_text_reference (test_gestao_e_ponte.ManagementContracts.test_glossary_resource_is_protected_by_text_reference) ... ok
+test_resource_crud_and_reference_protection (test_gestao_e_ponte.ManagementContracts.test_resource_crud_and_reference_protection) ... ok
+test_site_removal_and_restore_preserve_identity_and_content (test_gestao_e_ponte.ManagementContracts.test_site_removal_and_restore_preserve_identity_and_content) ... ok
+test_stale_delete_and_management_do_not_modify_current_data (test_gestao_e_ponte.ManagementContracts.test_stale_delete_and_management_do_not_modify_current_data) ... ok
+test_tampered_recovery_refuses_restore (test_gestao_e_ponte.ManagementContracts.test_tampered_recovery_refuses_restore) ... ok
+test_work_and_chapter_crud_preserve_recovery_and_reserved_urls (test_gestao_e_ponte.ManagementContracts.test_work_and_chapter_crud_preserve_recovery_and_reserved_urls) ... ok
+test_direct_refresh_of_origin_is_refused_before_open (test_gestao_e_ponte.NativeBridgeContracts.test_direct_refresh_of_origin_is_refused_before_open) ... ok
+test_native_authorship_cannot_be_changed_in_projection (test_gestao_e_ponte.NativeBridgeContracts.test_native_authorship_cannot_be_changed_in_projection) ... ok
+test_refresh_uses_native_services_without_changing_original_project (test_gestao_e_ponte.NativeBridgeContracts.test_refresh_uses_native_services_without_changing_original_project) ... ok
+test_saved_native_project_projects_exact_text_ids_and_semantics (test_gestao_e_ponte.NativeBridgeContracts.test_saved_native_project_projects_exact_text_ids_and_semantics) ... ok
+test_text_hash_mismatch_refuses_projection (test_gestao_e_ponte.NativeBridgeContracts.test_text_hash_mismatch_refuses_projection) ... ok
+test_unmapped_semantics_and_unresolved_anchors_refuse_projection (test_gestao_e_ponte.NativeBridgeContracts.test_unmapped_semantics_and_unresolved_anchors_refuse_projection) ... ok
+test_actual_comment_identifiers_keep_work_and_chapter_ids (test_importacao_obra.WorkImportTests.test_actual_comment_identifiers_keep_work_and_chapter_ids) ... ok
+test_actual_progress_script_accepts_existing_public_ids (test_importacao_obra.WorkImportTests.test_actual_progress_script_accepts_existing_public_ids) ... ok
+test_bad_formatting_and_semantic_overlap_block_before_creation (test_importacao_obra.WorkImportTests.test_bad_formatting_and_semantic_overlap_block_before_creation) ... ok
+test_bound_payload_cannot_be_downgraded_to_old_protocol (test_importacao_obra.WorkImportTests.test_bound_payload_cannot_be_downgraded_to_old_protocol) ... ok
+test_crossing_styles_and_scene_in_paragraph_gap_preserve_text (test_importacao_obra.WorkImportTests.test_crossing_styles_and_scene_in_paragraph_gap_preserve_text) ... ok
+test_duplicate_numbers_and_counter_regression_refused (test_importacao_obra.WorkImportTests.test_duplicate_numbers_and_counter_regression_refused) ... ok
+test_each_chapter_requires_a_choice (test_importacao_obra.WorkImportTests.test_each_chapter_requires_a_choice) ... ok
+test_existing_destination_is_preserved (test_importacao_obra.WorkImportTests.test_existing_destination_is_preserved) ... ok
+test_manifest_staleness_is_refused (test_importacao_obra.WorkImportTests.test_manifest_staleness_is_refused) ... ok
+test_missing_and_extra_chapters_are_refused (test_importacao_obra.WorkImportTests.test_missing_and_extra_chapters_are_refused) ... ok
+test_native_ids_are_distinct_but_public_identity_is_original (test_importacao_obra.WorkImportTests.test_native_ids_are_distinct_but_public_identity_is_original) ... ok
+test_native_revalidates_late_change_and_does_not_leave_destination (test_importacao_obra.WorkImportTests.test_native_revalidates_late_change_and_does_not_leave_destination) ... ok
+test_order_is_explicit_and_not_derived_from_url_numbers (test_importacao_obra.WorkImportTests.test_order_is_explicit_and_not_derived_from_url_numbers) ... ok
+test_publication_operations_and_future_chapter_keep_reservations (test_importacao_obra.WorkImportTests.test_publication_operations_and_future_chapter_keep_reservations) ... ok
+test_routes_aliases_old_folder_and_numbers_are_preserved (test_importacao_obra.WorkImportTests.test_routes_aliases_old_folder_and_numbers_are_preserved) ... ok
+test_same_name_different_ids_remain_distinct (test_importacao_obra.WorkImportTests.test_same_name_different_ids_remain_distinct) ... ok
+test_shared_id_with_conflicting_names_is_refused (test_importacao_obra.WorkImportTests.test_shared_id_with_conflicting_names_is_refused) ... ok
+test_tampered_plan_refused (test_importacao_obra.WorkImportTests.test_tampered_plan_refused) ... ok
+test_three_styles_and_scene_anchors_reach_reader (test_importacao_obra.WorkImportTests.test_three_styles_and_scene_anchors_reach_reader) ... ok
+test_unselected_source_staleness_also_refused (test_importacao_obra.WorkImportTests.test_unselected_source_staleness_also_refused) ... ok
+test_zip_excludes_import_receipt_and_sources (test_importacao_obra.WorkImportTests.test_zip_excludes_import_receipt_and_sources) ... ok
+test_structured_authorship_remains_private_and_publication_uses_full_current_text (test_integracao_nativa.IntegratedAuthorshipTests.test_structured_authorship_remains_private_and_publication_uses_full_current_text) ... ok
+test_native_binary_has_no_browser_runtime_dependency (test_obj01_native.NativeObjects.test_native_binary_has_no_browser_runtime_dependency) ... ok
+test_project_binding_copy_recovery_and_source_conflict (test_obj01_native.NativeObjects.test_project_binding_copy_recovery_and_source_conflict) ... ok
+test_real_gtk_entry_math_objects_save_reopen_and_draft_guard (test_obj01_native.NativeObjects.test_real_gtk_entry_math_objects_save_reopen_and_draft_guard) ... dbus-daemon[22255]: [session uid=1000 pid=22255] Activating service name='org.freedesktop.portal.Desktop' requested by ':1.7' (uid=1000 pid=22466 comm="/home/roger/Documents/Projects/GitHub/INDE/obj01-a" label="chatgpt (unconfined)")
+dbus-daemon[22255]: [session uid=1000 pid=22255] Activating service name='org.freedesktop.portal.Documents' requested by ':1.8' (uid=1000 pid=22472 comm="/usr/libexec/xdg-desktop-portal" label="chatgpt (unconfined)")
+dbus-daemon[22255]: [session uid=1000 pid=22255] Activating service name='org.freedesktop.impl.portal.PermissionStore' requested by ':1.9' (uid=1000 pid=22478 comm="/usr/libexec/xdg-document-portal" label="chatgpt (unconfined)")
+dbus-daemon[22255]: [session uid=1000 pid=22255] Successfully activated service 'org.freedesktop.impl.portal.PermissionStore'
+dbus-daemon[22255]: [session uid=1000 pid=22255] Successfully activated service 'org.freedesktop.portal.Documents'
+fusermount3: failed to access mountpoint /run/user/1000/doc: Permission denied
+error: fuse init failed: Can't mount path /run/user/1000/doc
+
+(/usr/libexec/xdg-desktop-portal:22472): xdg-desktop-portal-WARNING **: 10:50:32.228: Choosing gtk.portal for org.freedesktop.impl.portal.Lockdown as a last-resort fallback
+
+(/usr/libexec/xdg-desktop-portal:22472): xdg-desktop-portal-WARNING **: 10:50:32.228: The preferred method to match portal implementations to desktop environments is to use the portals.conf(5) configuration file
+dbus-daemon[22255]: [session uid=1000 pid=22255] Activating service name='org.freedesktop.impl.portal.desktop.gtk' requested by ':1.8' (uid=1000 pid=22472 comm="/usr/libexec/xdg-desktop-portal" label="chatgpt (unconfined)")
+dbus-daemon[22255]: [session uid=1000 pid=22255] Successfully activated service 'org.freedesktop.impl.portal.desktop.gtk'
+dbus-daemon[22255]: [session uid=1000 pid=22255] Activating service name='org.freedesktop.impl.portal.desktop.kde' requested by ':1.8' (uid=1000 pid=22472 comm="/usr/libexec/xdg-desktop-portal" label="chatgpt (unconfined)")
+dbus-daemon[22255]: [session uid=1000 pid=22255] Successfully activated service 'org.freedesktop.impl.portal.desktop.kde'
+[W][02456.109229] pw.conf      | [          conf.c: 1031 try_load_conf()] can't load config client.conf: No such file or directory
+[E][02456.109337] pw.conf      | [          conf.c: 1060 pw_conf_load_conf_for_context()] can't load config client.conf: No such file or directory
+
+(/usr/libexec/xdg-desktop-portal:22472): xdg-desktop-portal-WARNING **: 10:50:32.540: Failed connect to PipeWire: Couldn't create PipeWire context
+dbus-daemon[22255]: [session uid=1000 pid=22255] Successfully activated service 'org.freedesktop.portal.Desktop'
+dbus-daemon[22255]: [session uid=1000 pid=22255] Activating service name='org.gtk.vfs.UDisks2VolumeMonitor' requested by ':1.7' (uid=1000 pid=22466 comm="/home/roger/Documents/Projects/GitHub/INDE/obj01-a" label="chatgpt (unconfined)")
+dbus-daemon[22255]: [session uid=1000 pid=22255] Successfully activated service 'org.gtk.vfs.UDisks2VolumeMonitor'
+dbus-daemon[22255]: [session uid=1000 pid=22255] Activating service name='org.gtk.vfs.AfcVolumeMonitor' requested by ':1.7' (uid=1000 pid=22466 comm="/home/roger/Documents/Projects/GitHub/INDE/obj01-a" label="chatgpt (unconfined)")
+dbus-daemon[22255]: [session uid=1000 pid=22255] Successfully activated service 'org.gtk.vfs.AfcVolumeMonitor'
+dbus-daemon[22255]: [session uid=1000 pid=22255] Activating service name='org.gtk.vfs.GPhoto2VolumeMonitor' requested by ':1.7' (uid=1000 pid=22466 comm="/home/roger/Documents/Projects/GitHub/INDE/obj01-a" label="chatgpt (unconfined)")
+dbus-daemon[22255]: [session uid=1000 pid=22255] Successfully activated service 'org.gtk.vfs.GPhoto2VolumeMonitor'
+dbus-daemon[22255]: [session uid=1000 pid=22255] Activating service name='org.gtk.vfs.GoaVolumeMonitor' requested by ':1.7' (uid=1000 pid=22466 comm="/home/roger/Documents/Projects/GitHub/INDE/obj01-a" label="chatgpt (unconfined)")
+dbus-daemon[22255]: [session uid=1000 pid=22255] Successfully activated service 'org.gtk.vfs.GoaVolumeMonitor'
+dbus-daemon[22255]: [session uid=1000 pid=22255] Activating service name='org.gtk.vfs.MTPVolumeMonitor' requested by ':1.7' (uid=1000 pid=22466 comm="/home/roger/Documents/Projects/GitHub/INDE/obj01-a" label="chatgpt (unconfined)")
+dbus-daemon[22255]: [session uid=1000 pid=22255] Successfully activated service 'org.gtk.vfs.MTPVolumeMonitor'
+dbus-daemon[22255]: [session uid=1000 pid=22255] Activating service name='ca.desrt.dconf' requested by ':1.7' (uid=1000 pid=22466 comm="/home/roger/Documents/Projects/GitHub/INDE/obj01-a" label="chatgpt (unconfined)")
+dbus-daemon[22255]: [session uid=1000 pid=22255] Successfully activated service 'ca.desrt.dconf'
+
+** (process:22620): WARNING **: 10:50:37.282: Failed to spawn the wsdd daemon: Failed to execute child process “wsdd” (No such file or directory)
+
+** (process:22594): WARNING **: 10:50:37.282: Couldn't create directory monitor on wsdd:///. Error: Automount failed: Failed to spawn the underlying wsdd daemon.
+
+** (process:22594): WARNING **: 10:50:37.311: Couldn't create directory monitor on wsdd:///. Error: Automount failed: mountpoint for org.gtk.vfs.mountpoint_wsdd already running
+ok
+test_shared_text_projection_guards_unicode_styles_and_visibility (test_obj01_native.NativeObjects.test_shared_text_projection_guards_unicode_styles_and_visibility) ... ok
+test_imported_bytes_and_explicit_patch (test_obj01_native_sources.NativeSources.test_imported_bytes_and_explicit_patch) ... ok
+test_blank_document_specialties_validation_recovery_and_quit (test_obj01_real_input.RealWritingInput.test_blank_document_specialties_validation_recovery_and_quit) ... ok
+test_empty_paragraph_fluency_and_save (test_obj01_real_input.RealWritingInput.test_empty_paragraph_fluency_and_save) ... Pinned native math files verified: 245
+OBJ01_FLUENCY_SAMPLE {"stage": "paste", "paragraphs": 20, "mixed": false, "observed_ms": 363.033}
+OBJ01_FLUENCY_SAMPLE {"stage": "delete", "paragraphs": 20, "mixed": false, "observed_ms": 186.999}
+OBJ01_FLUENCY_SAMPLE {"stage": "delete", "paragraphs": 20, "mixed": false, "observed_ms": 187.129}
+OBJ01_FLUENCY_SAMPLE {"stage": "delete", "paragraphs": 20, "mixed": false, "observed_ms": 187.585}
+OBJ01_FLUENCY_SAMPLE {"stage": "backspace", "paragraphs": 20, "mixed": false, "observed_ms": 190.421}
+OBJ01_FLUENCY_SAMPLE {"stage": "delete_burst", "paragraphs": 20, "mixed": false, "observed_ms": 214.024}
+OBJ01_FLUENCY_SAMPLE {"stage": "paste", "paragraphs": 200, "mixed": false, "observed_ms": 2631.252}
+OBJ01_FLUENCY_SAMPLE {"stage": "delete", "paragraphs": 200, "mixed": false, "observed_ms": 479.452}
+OBJ01_FLUENCY_SAMPLE {"stage": "delete", "paragraphs": 200, "mixed": false, "observed_ms": 389.163}
+OBJ01_FLUENCY_SAMPLE {"stage": "delete", "paragraphs": 200, "mixed": false, "observed_ms": 482.148}
+OBJ01_FLUENCY_SAMPLE {"stage": "backspace", "paragraphs": 200, "mixed": false, "observed_ms": 483.26}
+OBJ01_FLUENCY_SAMPLE {"stage": "delete_burst", "paragraphs": 200, "mixed": false, "observed_ms": 593.27}
+OBJ01_FLUENCY_SAMPLE {"stage": "paste", "paragraphs": 200, "mixed": true, "observed_ms": 3310.849}
+OBJ01_FLUENCY_SAMPLE {"stage": "delete", "paragraphs": 200, "mixed": true, "observed_ms": 754.664}
+OBJ01_FLUENCY_SAMPLE {"stage": "delete", "paragraphs": 200, "mixed": true, "observed_ms": 696.73}
+OBJ01_FLUENCY_SAMPLE {"stage": "delete", "paragraphs": 200, "mixed": true, "observed_ms": 664.526}
+OBJ01_FLUENCY_SAMPLE {"stage": "backspace", "paragraphs": 200, "mixed": true, "observed_ms": 672.273}
+OBJ01_FLUENCY_SAMPLE {"stage": "delete_burst", "paragraphs": 200, "mixed": true, "observed_ms": 960.832}
+OBJ01_FLUENCY {"timing_scope": "X11 input through low-priority observer; includes polling, not pure paint latency", "samples": [{"stage": "paste", "paragraphs": 20, "mixed": false, "observed_ms": 363.033}, {"stage": "delete", "paragraphs": 20, "mixed": false, "observed_ms": 186.999}, {"stage": "delete", "paragraphs": 20, "mixed": false, "observed_ms": 187.129}, {"stage": "delete", "paragraphs": 20, "mixed": false, "observed_ms": 187.585}, {"stage": "backspace", "paragraphs": 20, "mixed": false, "observed_ms": 190.421}, {"stage": "delete_burst", "paragraphs": 20, "mixed": false, "observed_ms": 214.024}, {"stage": "paste", "paragraphs": 200, "mixed": false, "observed_ms": 2631.252}, {"stage": "delete", "paragraphs": 200, "mixed": false, "observed_ms": 479.452}, {"stage": "delete", "paragraphs": 200, "mixed": false, "observed_ms": 389.163}, {"stage": "delete", "paragraphs": 200, "mixed": false, "observed_ms": 482.148}, {"stage": "backspace", "paragraphs": 200, "mixed": false, "observed_ms": 483.26}, {"stage": "delete_burst", "paragraphs": 200, "mixed": false, "observed_ms": 593.27}, {"stage": "paste", "paragraphs": 200, "mixed": true, "observed_ms": 3310.849}, {"stage": "delete", "paragraphs": 200, "mixed": true, "observed_ms": 754.664}, {"stage": "delete", "paragraphs": 200, "mixed": true, "observed_ms": 696.73}, {"stage": "delete", "paragraphs": 200, "mixed": true, "observed_ms": 664.526}, {"stage": "backspace", "paragraphs": 200, "mixed": true, "observed_ms": 672.273}, {"stage": "delete_burst", "paragraphs": 200, "mixed": true, "observed_ms": 960.832}], "normal_exit": true, "saved_text_exact": true}
+ok
+test_archive_hash_mismatch_precedes_extraction (test_obj01_source_audit.ArchiveAuditTests.test_archive_hash_mismatch_precedes_extraction) ... ok
+test_existing_destination_is_preserved (test_obj01_source_audit.ArchiveAuditTests.test_existing_destination_is_preserved) ... ok
+test_extract_and_compare_bytes (test_obj01_source_audit.ArchiveAuditTests.test_extract_and_compare_bytes) ... ok
+test_manifest_inventory_mismatch (test_obj01_source_audit.ArchiveAuditTests.test_manifest_inventory_mismatch) ... ok
+test_unsafe_and_duplicate_members (test_obj01_source_audit.ArchiveAuditTests.test_unsafe_and_duplicate_members) ... ok
+test_content_identity_survives_title_and_site_changes (test_publicacao.PublicationContracts.test_content_identity_survives_title_and_site_changes) ... ok
+test_custom_domain_generates_cname (test_publicacao.PublicationContracts.test_custom_domain_generates_cname) ... ok
+test_drafts_and_destination_stay_out_of_public_zip (test_publicacao.PublicationContracts.test_drafts_and_destination_stay_out_of_public_zip) ... ok
+test_empty_site_needs_no_account_domain_or_work (test_publicacao.PublicationContracts.test_empty_site_needs_no_account_domain_or_work) ... ok
+test_existing_chapter_number_cannot_be_transferred (test_publicacao.PublicationContracts.test_existing_chapter_number_cannot_be_transferred) ... ok
+test_independent_projects_get_distinct_content_identities (test_publicacao.PublicationContracts.test_independent_projects_get_distinct_content_identities) ... ok
+test_invalid_base_and_repository_are_rejected (test_publicacao.PublicationContracts.test_invalid_base_and_repository_are_rejected) ... ok
+test_optimistic_save_preserves_external_changes (test_publicacao.PublicationContracts.test_optimistic_save_preserves_external_changes) ... ok
+test_portable_copy_runs_without_original_workspace (test_publicacao.PublicationContracts.test_portable_copy_runs_without_original_workspace) ... ok
+test_presentation_text_cannot_close_script_or_inject_markup (test_publicacao.PublicationContracts.test_presentation_text_cannot_close_script_or_inject_markup) ... ok
+test_public_manifest_verifies_every_file (test_publicacao.PublicationContracts.test_public_manifest_verifies_every_file) ... ok
+test_real_reader_gets_explicit_semantics_and_scene_anchors (test_publicacao.PublicationContracts.test_real_reader_gets_explicit_semantics_and_scene_anchors) ... ok
+test_root_routes_and_resources_resolve (test_publicacao.PublicationContracts.test_root_routes_and_resources_resolve) ... ok
+test_subdirectory_routes_and_resources_resolve (test_publicacao.PublicationContracts.test_subdirectory_routes_and_resources_resolve) ... ok
+test_unicode_text_is_preserved_and_stale_annotations_refuse_generation (test_publicacao.PublicationContracts.test_unicode_text_is_preserved_and_stale_annotations_refuse_generation) ... ok
+test_bundled_reader_and_public_package_exclude_private_source (test_sessao_nativa.NativeSessionTests.test_bundled_reader_and_public_package_exclude_private_source) ... ok
+test_public_numbers_come_from_persistent_reservations (test_sessao_nativa.NativeSessionTests.test_public_numbers_come_from_persistent_reservations) ... ok
+test_removed_or_incompatible_edition_is_refused (test_sessao_nativa.NativeSessionTests.test_removed_or_incompatible_edition_is_refused) ... ok
+test_service_crud_persistence_conflicts_restore_and_copy (test_sessao_nativa.NativeSessionTests.test_service_crud_persistence_conflicts_restore_and_copy) ... ok
+
+----------------------------------------------------------------------
+Ran 99 tests in 179.242s
+
+OK
+A connection to the bus can't be made
+
+(process:22593): GVFS-RemoteVolumeMonitor-WARNING **: 10:53:09.006: Owner of volume monitor org.gtk.vfs.UDisks2VolumeMonitor disconnected from the bus; removing drives/volumes/mounts
+A connection to the bus can't be made
+
+(process:22593): GVFS-RemoteVolumeMonitor-WARNING **: 10:53:09.010: Owner of volume monitor org.gtk.vfs.AfcVolumeMonitor disconnected from the bus; removing drives/volumes/mounts
+
+(process:22593): GVFS-RemoteVolumeMonitor-WARNING **: 10:53:09.010: Owner of volume monitor org.gtk.vfs.GPhoto2VolumeMonitor disconnected from the bus; removing drives/volumes/mounts
+
+(process:22593): GVFS-RemoteVolumeMonitor-WARNING **: 10:53:09.010: Owner of volume monitor org.gtk.vfs.GoaVolumeMonitor disconnected from the bus; removing drives/volumes/mounts
+
+(process:22593): GVFS-RemoteVolumeMonitor-WARNING **: 10:53:09.010: Owner of volume monitor org.gtk.vfs.MTPVolumeMonitor disconnected from the bus; removing drives/volumes/mounts
+The X11 connection broke (error 1). Did the X11 server die?
+
+(xfconfd:22286): xfconfd-WARNING **: 10:53:09.011: Name org.xfce.Xfconf lost on the message dbus, exiting.
+A connection to the bus can't be made
+A connection to the bus can't be made
+A connection to the bus can't be made
+A connection to the bus can't be made

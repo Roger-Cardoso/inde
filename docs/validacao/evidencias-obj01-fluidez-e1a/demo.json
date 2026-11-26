@@ -1,0 +1,10 @@
+{
+  "pid": 31928,
+  "project": "/home/roger/Documents/Projects/GitHub/INDE/obj01-audit/dados/obj01-retomada-e1a/Demo-fluidez-final.inde",
+  "binary": "/home/roger/Documents/Projects/GitHub/INDE/obj01-audit/build-nativo/inde-especial",
+  "source_commit": "a3d8159cb21076c0b39ad8279acd17d1d4ba810a",
+  "title": "Demonstração — fluidez de parágrafos",
+  "document": "Documento de uso real",
+  "source_test_copy": "/home/roger/Documents/Projects/GitHub/INDE/obj01-audit/dados/obj01-retomada-e1a/integral-historico-final/Editor-fluidez.inde",
+  "note": "Independent synthetic demo copy; only this copy has a distinct manifest name. Earlier demo window is preserved."
+}

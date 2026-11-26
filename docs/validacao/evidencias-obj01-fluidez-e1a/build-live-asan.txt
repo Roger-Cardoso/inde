@@ -1,0 +1,7 @@
+[1/7] Building CXX object CMakeFiles/inde_object_composite_pilot_domain.dir/home/roger/Documents/Projects/GitHub/INDE/obj01-audit/cpp/object_formula_cards.cpp.o
+[2/7] Building CXX object CMakeFiles/inde_object_composite_pilot_domain.dir/home/roger/Documents/Projects/GitHub/INDE/obj01-audit/cpp/object_formula_hub.cpp.o
+[3/7] Building CXX object CMakeFiles/inde_object_composite_pilot_domain.dir/home/roger/Documents/Projects/GitHub/INDE/obj01-audit/cpp/object_table_design.cpp.o
+[4/7] Building CXX object CMakeFiles/inde_object_composite_pilot.dir/home/roger/Documents/Projects/GitHub/INDE/obj01-audit/cpp/object_composite_pilot_main.cpp.o
+[5/7] Building CXX object CMakeFiles/inde_object_composite_pilot_domain.dir/home/roger/Documents/Projects/GitHub/INDE/obj01-audit/cpp/object_composite_pilot.cpp.o
+[6/7] Linking CXX static library libinde_object_composite_pilot_domain.a
+[7/7] Linking CXX executable inde_object_composite_pilot

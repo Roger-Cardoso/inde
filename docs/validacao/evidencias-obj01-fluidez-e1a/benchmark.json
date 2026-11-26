@@ -1,0 +1,43 @@
+{
+  "scope": "Headless owner edit/adoption/view, 200 prose lines and initial empty paragraphs. Three sequential samples per history size; not GTK or paint latency.",
+  "runs": [
+    {
+      "label": "before",
+      "source_commit": "e21b1955ec38ab5fbdfa1c421b0798d35a02cb3f",
+      "binary_sha256": "81edcd6a73033595f871d102f7a2abc103a9f62e4a86abda08f998b78d79dbf3",
+      "groups": [
+        {
+          "setup_style_edits": 0,
+          "median_adopt_ms": 125.317
+        },
+        {
+          "setup_style_edits": 8,
+          "median_adopt_ms": 411.382
+        },
+        {
+          "setup_style_edits": 32,
+          "median_adopt_ms": 1382.59
+        }
+      ]
+    },
+    {
+      "label": "final",
+      "source_commit": "a3d8159cb21076c0b39ad8279acd17d1d4ba810a",
+      "binary_sha256": "02828c7bc61df453e6b76c5fd393b706b9ec57aca920fdc8bbb2be916bef3df4",
+      "groups": [
+        {
+          "setup_style_edits": 0,
+          "median_adopt_ms": 84.4137
+        },
+        {
+          "setup_style_edits": 8,
+          "median_adopt_ms": 139.779
+        },
+        {
+          "setup_style_edits": 32,
+          "median_adopt_ms": 260.757
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,5 @@
+[0/2] Re-checking globbed directories...
+[1/4] Building CXX object CMakeFiles/inde_object_document_engine.dir/object_composite_pilot.cpp.o
+[2/4] Linking CXX static library libinde_object_document_engine.a
+[3/4] Linking CXX executable inde_object_native_tests
+[4/4] Linking CXX executable inde-especial

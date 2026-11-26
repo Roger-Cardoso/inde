@@ -1,0 +1,41 @@
+{
+  "scope": "Whole final fluency workflow, including paste, deletes, navigation, undo, redo, creation, arrangement and save. Not correlated to individual keys.",
+  "phases": {
+    "object_choice_sync": {
+      "samples": 36,
+      "min_ms": 0.007194,
+      "median_ms": 2.95173,
+      "max_ms": 65.0035
+    },
+    "object_document_sync": {
+      "samples": 68,
+      "min_ms": 0.771047,
+      "median_ms": 30.25305,
+      "max_ms": 2645.19
+    },
+    "object_owner_adopt": {
+      "samples": 68,
+      "min_ms": 0.619004,
+      "median_ms": 23.1792,
+      "max_ms": 283.939
+    },
+    "object_sheet_rebuild": {
+      "samples": 7,
+      "min_ms": 1.8531,
+      "median_ms": 1171.5,
+      "max_ms": 2265.16
+    },
+    "object_sheet_reconcile": {
+      "samples": 29,
+      "min_ms": 2.40538,
+      "median_ms": 15.0317,
+      "max_ms": 2489.51
+    },
+    "object_view_refresh": {
+      "samples": 67,
+      "min_ms": 0.018477,
+      "median_ms": 1.18598,
+      "max_ms": 66.3329
+    }
+  }
+}

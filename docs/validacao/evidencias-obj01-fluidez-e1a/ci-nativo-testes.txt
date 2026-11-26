@@ -1,0 +1,70 @@
+2026-11-26T14:35:17.3687308Z ##[group]Run python3 tests/run_obj01_real_input.py
+2026-11-26T14:35:17.3687684Z [36;1mpython3 tests/run_obj01_real_input.py[0m
+2026-11-26T14:35:17.3701534Z shell: /usr/bin/bash -e {0}
+2026-11-26T14:35:17.3701796Z ##[endgroup]
+2026-11-26T14:35:17.9995957Z dbus-daemon[7854]: [session uid=1001 pid=7854] Activating service name='org.xfce.Xfconf' requested by ':1.1' (uid=1001 pid=7856 comm="xfwm4 --compositor=off" label="unconfined")
+2026-11-26T14:35:18.0032781Z dbus-daemon[7854]: [session uid=1001 pid=7854] Successfully activated service 'org.xfce.Xfconf'
+2026-11-26T14:35:19.7089987Z test_blank_document_specialties_validation_recovery_and_quit (test_obj01_real_input.RealWritingInput.test_blank_document_specialties_validation_recovery_and_quit) ... dbus-daemon[7854]: [session uid=1001 pid=7854] Activating service name='ca.desrt.dconf' requested by ':1.4' (uid=1001 pid=7871 comm="/home/runner/work/inde/inde/build-nativo/inde-espe" label="unconfined")
+2026-11-26T14:35:19.7130614Z dbus-daemon[7854]: [session uid=1001 pid=7854] Successfully activated service 'ca.desrt.dconf'
+2026-11-26T14:36:01.7817895Z ok
+2026-11-26T14:36:05.7776719Z test_empty_paragraph_fluency_and_save (test_obj01_real_input.RealWritingInput.test_empty_paragraph_fluency_and_save) ... OBJ01_FLUENCY_SAMPLE {"stage": "paste", "paragraphs": 20, "mixed": false, "observed_ms": 193.231}
+2026-11-26T14:36:07.1963142Z OBJ01_FLUENCY_SAMPLE {"stage": "delete", "paragraphs": 20, "mixed": false, "observed_ms": 97.96}
+2026-11-26T14:36:07.2986220Z OBJ01_FLUENCY_SAMPLE {"stage": "delete", "paragraphs": 20, "mixed": false, "observed_ms": 97.923}
+2026-11-26T14:36:07.4008598Z OBJ01_FLUENCY_SAMPLE {"stage": "delete", "paragraphs": 20, "mixed": false, "observed_ms": 97.87}
+2026-11-26T14:36:07.6009268Z OBJ01_FLUENCY_SAMPLE {"stage": "backspace", "paragraphs": 20, "mixed": false, "observed_ms": 97.984}
+2026-11-26T14:36:07.8078580Z OBJ01_FLUENCY_SAMPLE {"stage": "delete_burst", "paragraphs": 20, "mixed": false, "observed_ms": 206.901}
+2026-11-26T14:36:10.5806678Z OBJ01_FLUENCY_SAMPLE {"stage": "paste", "paragraphs": 200, "mixed": false, "observed_ms": 1512.228}
+2026-11-26T14:36:12.3127707Z OBJ01_FLUENCY_SAMPLE {"stage": "delete", "paragraphs": 200, "mixed": false, "observed_ms": 193.165}
+2026-11-26T14:36:12.6104338Z OBJ01_FLUENCY_SAMPLE {"stage": "delete", "paragraphs": 200, "mixed": false, "observed_ms": 280.361}
+2026-11-26T14:36:12.8298494Z OBJ01_FLUENCY_SAMPLE {"stage": "delete", "paragraphs": 200, "mixed": false, "observed_ms": 202.116}
+2026-11-26T14:36:13.2684648Z OBJ01_FLUENCY_SAMPLE {"stage": "backspace", "paragraphs": 200, "mixed": false, "observed_ms": 198.35}
+2026-11-26T14:36:13.5852277Z OBJ01_FLUENCY_SAMPLE {"stage": "delete_burst", "paragraphs": 200, "mixed": false, "observed_ms": 316.729}
+2026-11-26T14:36:29.6792788Z OBJ01_FLUENCY_SAMPLE {"stage": "paste", "paragraphs": 200, "mixed": true, "observed_ms": 1706.854}
+2026-11-26T14:36:31.4904899Z OBJ01_FLUENCY_SAMPLE {"stage": "delete", "paragraphs": 200, "mixed": true, "observed_ms": 282.023}
+2026-11-26T14:36:31.7875968Z OBJ01_FLUENCY_SAMPLE {"stage": "delete", "paragraphs": 200, "mixed": true, "observed_ms": 279.835}
+2026-11-26T14:36:32.0839491Z OBJ01_FLUENCY_SAMPLE {"stage": "delete", "paragraphs": 200, "mixed": true, "observed_ms": 278.858}
+2026-11-26T14:36:32.4872471Z OBJ01_FLUENCY_SAMPLE {"stage": "backspace", "paragraphs": 200, "mixed": true, "observed_ms": 193.135}
+2026-11-26T14:36:32.8818495Z OBJ01_FLUENCY_SAMPLE {"stage": "delete_burst", "paragraphs": 200, "mixed": true, "observed_ms": 394.355}
+2026-11-26T14:36:37.4525748Z OBJ01_FLUENCY {"timing_scope": "X11 input through low-priority observer; includes polling, not pure paint latency", "samples": [{"stage": "paste", "paragraphs": 20, "mixed": false, "observed_ms": 193.231}, {"stage": "delete", "paragraphs": 20, "mixed": false, "observed_ms": 97.96}, {"stage": "delete", "paragraphs": 20, "mixed": false, "observed_ms": 97.923}, {"stage": "delete", "paragraphs": 20, "mixed": false, "observed_ms": 97.87}, {"stage": "backspace", "paragraphs": 20, "mixed": false, "observed_ms": 97.984}, {"stage": "delete_burst", "paragraphs": 20, "mixed": false, "observed_ms": 206.901}, {"stage": "paste", "paragraphs": 200, "mixed": false, "observed_ms": 1512.228}, {"stage": "delete", "paragraphs": 200, "mixed": false, "observed_ms": 193.165}, {"stage": "delete", "paragraphs": 200, "mixed": false, "observed_ms": 280.361}, {"stage": "delete", "paragraphs": 200, "mixed": false, "observed_ms": 202.116}, {"stage": "backspace", "paragraphs": 200, "mixed": false, "observed_ms": 198.35}, {"stage": "delete_burst", "paragraphs": 200, "mixed": false, "observed_ms": 316.729}, {"stage": "paste", "paragraphs": 200, "mixed": true, "observed_ms": 1706.854}, {"stage": "delete", "paragraphs": 200, "mixed": true, "observed_ms": 282.023}, {"stage": "delete", "paragraphs": 200, "mixed": true, "observed_ms": 279.835}, {"stage": "delete", "paragraphs": 200, "mixed": true, "observed_ms": 278.858}, {"stage": "backspace", "paragraphs": 200, "mixed": true, "observed_ms": 193.135}, {"stage": "delete_burst", "paragraphs": 200, "mixed": true, "observed_ms": 394.355}], "normal_exit": true, "saved_text_exact": true}
+2026-11-26T14:36:37.4572730Z ok
+2026-11-26T14:36:37.4572901Z 
+2026-11-26T14:36:37.4573438Z ----------------------------------------------------------------------
+2026-11-26T14:36:37.4573922Z Ran 2 tests in 79.035s
+2026-11-26T14:36:37.4574099Z 
+2026-11-26T14:36:37.4574197Z OK
+2026-11-26T14:36:37.4813394Z 
+2026-11-26T14:36:37.4814995Z (xfconfd:7862): xfconfd-WARNING **: 14:36:37.481: Name org.xfce.Xfconf lost on the message dbus, exiting.
+2026-11-26T14:36:37.5012693Z Post job cleanup.
+2026-11-26T14:36:37.5843620Z [command]/usr/bin/git version
+2026-11-26T14:36:37.5882418Z git version 2.56.1
+2026-11-26T14:36:37.5916461Z Temporarily overriding HOME='/home/runner/work/_temp/1ae2150b-9662-4cb8-8377-22191626d867' before making global git config changes
+2026-11-26T14:36:37.5917812Z Adding repository directory to the temporary git global config as a safe directory
+2026-11-26T14:36:37.5919571Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/inde/inde
+2026-11-26T14:36:37.5950330Z Removing SSH command configuration
+2026-11-26T14:36:37.5957468Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-11-26T14:36:37.5992563Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-11-26T14:36:37.6192483Z Removing HTTP extra header
+2026-11-26T14:36:37.6197884Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-11-26T14:36:37.6228309Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-11-26T14:36:37.6438585Z Removing includeIf entries pointing to credentials config files
+2026-11-26T14:36:37.6444909Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-11-26T14:36:37.6510363Z includeif.gitdir:/home/runner/work/inde/inde/.git.path
+2026-11-26T14:36:37.6511008Z includeif.gitdir:/home/runner/work/inde/inde/.git/worktrees/*.path
+2026-11-26T14:36:37.6511823Z includeif.gitdir:/github/workspace/.git.path
+2026-11-26T14:36:37.6512334Z includeif.gitdir:/github/workspace/.git/worktrees/*.path
+2026-11-26T14:36:37.6533746Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/home/runner/work/inde/inde/.git.path
+2026-11-26T14:36:37.6540479Z /home/runner/work/_temp/git-credentials-6cf1f3f2-d8c1-41c2-b0b6-75cc522bedf2.config
+2026-11-26T14:36:37.6561965Z [command]/usr/bin/git config --local --unset includeif.gitdir:/home/runner/work/inde/inde/.git.path \/home\/runner\/work\/_temp\/git\-credentials\-6cf1f3f2\-d8c1\-41c2\-b0b6\-75cc522bedf2\.config
+2026-11-26T14:36:37.6592677Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/home/runner/work/inde/inde/.git/worktrees/*.path
+2026-11-26T14:36:37.6620766Z /home/runner/work/_temp/git-credentials-6cf1f3f2-d8c1-41c2-b0b6-75cc522bedf2.config
+2026-11-26T14:36:37.6628250Z [command]/usr/bin/git config --local --unset includeif.gitdir:/home/runner/work/inde/inde/.git/worktrees/*.path \/home\/runner\/work\/_temp\/git\-credentials\-6cf1f3f2\-d8c1\-41c2\-b0b6\-75cc522bedf2\.config
+2026-11-26T14:36:37.6674240Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/github/workspace/.git.path
+2026-11-26T14:36:37.6700663Z /github/runner_temp/git-credentials-6cf1f3f2-d8c1-41c2-b0b6-75cc522bedf2.config
+2026-11-26T14:36:37.6708883Z [command]/usr/bin/git config --local --unset includeif.gitdir:/github/workspace/.git.path \/github\/runner_temp\/git\-credentials\-6cf1f3f2\-d8c1\-41c2\-b0b6\-75cc522bedf2\.config
+2026-11-26T14:36:37.6745061Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/github/workspace/.git/worktrees/*.path
+2026-11-26T14:36:37.6769435Z /github/runner_temp/git-credentials-6cf1f3f2-d8c1-41c2-b0b6-75cc522bedf2.config
+2026-11-26T14:36:37.6777312Z [command]/usr/bin/git config --local --unset includeif.gitdir:/github/workspace/.git/worktrees/*.path \/github\/runner_temp\/git\-credentials\-6cf1f3f2\-d8c1\-41c2\-b0b6\-75cc522bedf2\.config
+2026-11-26T14:36:37.6813447Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-11-26T14:36:37.7004775Z Removing credentials config '/home/runner/work/_temp/git-credentials-6cf1f3f2-d8c1-41c2-b0b6-75cc522bedf2.config'
+2026-11-26T14:36:37.7164622Z Cleaning up orphan processes
+

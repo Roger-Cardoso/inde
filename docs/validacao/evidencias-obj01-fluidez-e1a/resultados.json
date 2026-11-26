@@ -1,0 +1,39 @@
+{
+  "commit": "a3d8159cb21076c0b39ad8279acd17d1d4ba810a",
+  "tests": 99,
+  "seconds": 163.356,
+  "result": "pass",
+  "real_input_cases": 2,
+  "counts": [
+    20,
+    200
+  ],
+  "mixed_count": 200,
+  "human_acceptance": false,
+  "target_100_ms_certified": false,
+  "ci_status": "success",
+  "deletes": [
+    {
+      "paragraphs": 20,
+      "mixed": false,
+      "min_ms": 108.227,
+      "median_ms": 189.209,
+      "max_ms": 189.258
+    },
+    {
+      "paragraphs": 200,
+      "mixed": false,
+      "min_ms": 391.279,
+      "median_ms": 391.325,
+      "max_ms": 669.533
+    },
+    {
+      "paragraphs": 200,
+      "mixed": true,
+      "min_ms": 485.761,
+      "median_ms": 486.368,
+      "max_ms": 496.464
+    }
+  ],
+  "ci_run": 45838699855
+}

@@ -1,0 +1,2331 @@
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.638: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.638: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.638: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.638: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.638: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.638: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.638: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.638: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.638: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.638: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.638: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.638: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.638: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.638: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.638: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.638: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.638: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.638: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.638: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.638: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.638: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.638: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.638: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.638: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.638: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.638: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.639: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.639: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.639: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.639: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.639: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.639: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.639: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.639: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.639: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.639: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.639: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.639: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.639: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.639: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.639: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.639: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.639: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.639: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.639: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.639: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.639: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.639: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.639: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.639: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.639: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.639: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.639: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.639: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.639: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.639: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.639: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.639: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.639: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.639: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.639: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.639: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.639: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.639: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.639: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.639: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.639: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.639: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.639: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.639: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.639: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.639: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.639: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.639: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.639: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.639: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.639: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.639: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.639: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.639: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.639: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.639: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.639: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.639: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.639: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.639: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.639: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.639: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.639: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.639: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.639: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.639: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.639: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.639: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.639: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.639: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.639: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.639: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.639: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.639: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.639: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.639: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.639: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.639: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.639: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.639: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.639: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.639: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.639: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.639: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.639: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.639: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.639: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.639: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.639: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.639: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.639: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.639: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.639: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.639: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.639: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.639: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.639: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.639: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.639: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.640: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.640: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.640: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.640: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.640: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.640: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.640: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.640: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.640: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.640: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.640: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.640: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.640: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.640: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.640: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.640: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.640: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.640: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.640: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.640: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.640: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.640: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.640: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.640: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.640: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.640: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.640: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.640: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.640: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.640: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.640: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.640: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.640: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.640: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.640: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.640: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.640: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.640: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.640: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.640: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.640: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.640: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.640: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.640: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.640: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.640: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.640: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.640: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.640: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.640: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.640: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.640: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.640: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.640: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.640: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.640: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.640: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.640: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.640: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.640: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.640: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.640: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.640: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.640: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.640: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.640: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.640: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.640: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.640: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.640: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.640: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.640: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.640: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.640: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.640: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.640: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.640: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.640: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.640: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.640: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.640: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.640: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.640: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.640: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.640: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.640: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.640: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.640: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.640: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.640: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.640: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.640: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.640: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.640: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.640: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.640: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.640: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.640: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.640: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.640: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.640: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.640: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.640: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.640: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.640: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.640: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.640: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.640: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.640: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.640: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.640: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.640: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.640: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.640: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.640: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.640: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.640: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.640: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.640: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.640: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.640: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.640: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.640: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.640: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.640: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.640: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.640: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.640: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.640: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.640: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.640: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.640: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.640: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.640: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.640: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.640: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.640: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.640: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.640: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.640: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.640: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.640: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.640: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.640: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.640: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.640: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.640: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.640: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.640: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.640: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.640: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.640: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.640: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.640: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.640: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.640: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.640: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.640: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.640: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.640: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.640: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.640: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.640: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.640: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.640: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.640: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.641: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.641: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.641: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.641: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.641: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.641: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.641: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.641: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.641: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.641: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.641: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.641: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.641: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.641: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.641: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.641: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.641: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.641: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.641: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.641: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.641: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.641: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.641: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.641: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.641: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.641: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.641: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.641: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.641: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.641: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.641: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.641: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.641: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.641: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.641: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.641: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.641: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.641: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.641: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.641: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.641: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.641: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.641: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.641: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.641: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.641: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.641: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.641: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.641: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.641: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.641: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.641: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.641: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.641: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.641: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.641: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.641: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.641: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.641: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.641: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.641: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.641: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.641: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.641: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.641: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.641: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.641: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.641: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.641: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.641: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.641: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.641: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.641: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.641: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.641: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.641: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.641: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.641: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.641: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.641: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.641: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.641: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.641: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.641: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.641: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.641: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.641: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.641: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.641: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.641: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.641: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.641: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.641: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.641: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.641: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.641: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.641: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.641: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.641: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.641: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.641: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.641: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.641: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.641: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.641: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.641: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.641: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.641: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.641: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.641: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.641: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.641: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.641: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.641: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.641: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.641: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.641: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.641: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.641: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.641: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.641: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.641: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.641: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.641: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.641: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.641: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.641: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.641: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.641: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.641: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.641: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.641: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.641: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.641: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.641: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.641: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.641: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.641: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.641: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.641: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.641: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.641: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.641: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.641: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.641: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.641: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.641: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.641: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.641: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.641: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.641: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.642: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.642: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.642: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.642: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.642: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.642: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.642: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.642: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.642: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.642: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.642: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.642: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.642: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.642: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.642: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.642: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.642: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.642: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.642: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.642: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.643: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.643: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.643: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.643: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.643: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.643: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.643: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.643: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.643: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.643: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.644: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.644: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.644: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.644: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.644: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.644: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.644: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.644: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.644: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.644: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.644: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.644: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.644: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.644: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.644: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.644: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.644: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.644: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.644: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.644: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.644: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.644: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.644: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.644: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.644: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.644: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.644: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.644: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.644: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.644: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.644: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.644: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.644: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.644: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.644: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.644: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.644: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.644: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.644: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.644: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.644: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.644: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.644: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.644: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.644: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.644: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.644: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.644: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.647: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.647: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.647: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.648: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.648: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.648: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.648: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.648: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.648: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.648: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.648: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.648: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.648: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.648: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.648: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.648: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.648: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.648: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.648: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.648: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.648: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.648: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.648: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.648: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.648: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.648: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.648: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.648: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.648: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.648: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.648: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.648: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.648: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.648: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.648: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.648: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.648: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.648: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.648: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.648: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.648: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.648: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.648: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.648: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.648: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.648: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.648: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.648: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.648: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.648: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.648: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.648: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.648: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.648: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.648: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.648: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.648: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.648: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.648: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.648: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.648: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.648: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.648: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.648: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.648: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.648: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.648: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.648: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.648: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.648: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.648: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.648: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.648: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.648: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.648: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.648: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.648: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.648: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.648: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.648: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.648: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.648: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.648: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.648: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.648: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.648: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.648: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.648: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.648: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.648: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.649: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.649: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.649: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.649: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.649: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.649: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.649: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.649: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.649: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.649: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.649: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.649: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.649: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.649: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.649: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.649: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.649: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.649: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.649: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.649: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.649: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.649: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.649: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.649: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.649: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.649: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.649: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.649: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.649: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.649: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.649: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.649: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.649: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.649: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.649: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.649: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.649: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.649: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.649: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.649: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.649: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.649: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.649: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.649: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.649: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.649: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.649: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.649: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.649: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.649: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.649: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.649: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.649: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.649: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.649: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.649: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.649: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.649: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.649: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.649: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.649: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.649: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.649: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.649: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.649: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.649: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.649: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.649: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.649: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.650: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.650: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.650: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.650: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.650: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.650: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.650: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.650: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.650: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.650: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.650: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.650: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.650: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.650: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.650: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.650: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.650: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.650: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.650: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.650: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.650: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.650: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.650: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.650: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.650: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.650: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.650: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.650: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.650: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.650: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.650: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.650: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.650: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.650: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.650: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.650: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.650: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.650: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.650: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.650: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.650: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.650: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.650: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.650: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.650: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.650: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.650: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.650: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.650: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.650: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.650: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.650: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.650: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.650: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.650: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.650: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.650: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.650: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.650: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.650: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.650: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.650: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.650: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.650: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.650: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.650: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.650: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.650: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.650: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.650: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.650: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.650: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.650: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.650: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.650: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.650: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.650: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.650: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.650: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.650: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.650: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.650: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.650: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.650: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.650: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.650: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.650: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.650: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.650: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.650: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.650: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.650: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.650: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.650: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.650: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.650: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.650: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.650: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.650: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.650: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.651: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.651: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.651: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.651: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.651: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.651: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.651: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.651: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.652: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.652: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.652: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.652: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.652: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.652: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.652: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.652: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.652: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.652: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.652: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.652: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.652: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.652: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.652: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.652: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.652: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.652: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.652: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.652: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.652: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.652: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.652: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.652: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.652: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.652: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.652: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.652: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.652: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.652: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.652: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.652: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.652: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.652: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.652: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.652: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.652: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.652: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.652: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.652: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.652: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.652: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.652: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.652: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.652: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.652: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.652: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.652: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.652: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.652: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.652: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.652: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.652: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.652: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.652: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.652: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.652: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.652: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.652: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.652: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.652: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.652: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.652: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.652: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.652: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.652: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.652: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.652: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.652: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.652: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.652: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.652: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.652: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.652: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.652: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.652: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.652: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.652: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.652: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.653: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.653: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.653: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.653: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.653: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.653: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.653: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.653: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.653: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.653: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.653: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.653: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.653: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.653: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.653: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.653: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.653: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.653: Can't handle >16bit keyvals
+
+(inde-especial:30944): Gtk-WARNING **: 11:25:44.653: Can't handle >16bit keyvals
+INDE_EDITOR_PROFILE phase=proofreading_snapshot_submit elapsed_ms=0.054934
+INDE_EDITOR_PROFILE phase=proofreading_snapshot_submit elapsed_ms=0.030536
+INDE_EDITOR_PROFILE phase=proofreading_worker elapsed_ms=0.001141
+INDE_EDITOR_PROFILE phase=proofreading_apply_gtk elapsed_ms=0.004083
+INDE_EDITOR_PROFILE phase=proofreading_worker elapsed_ms=0.001125
+INDE_EDITOR_PROFILE phase=proofreading_apply_gtk elapsed_ms=0.001161
+INDE_EDITOR_PROFILE phase=journal_discovery_gtk elapsed_ms=0.039792
+INDE_EDITOR_PROFILE phase=journal_discovery_gtk elapsed_ms=0.033064
+INDE_EDITOR_PROFILE phase=metrics_snapshot_submit elapsed_ms=0.024478
+INDE_EDITOR_PROFILE phase=restore_document_gtk elapsed_ms=8.65149
+INDE_EDITOR_PROFILE phase=undo_group elapsed_ms=0.000298
+INDE_EDITOR_PROFILE phase=object_choice_sync elapsed_ms=0.112252
+INDE_EDITOR_PROFILE phase=object_sheet_rebuild elapsed_ms=1.8531
+INDE_EDITOR_PROFILE phase=object_owner_adopt elapsed_ms=0.655954
+INDE_EDITOR_PROFILE phase=object_choice_sync elapsed_ms=0.007194
+INDE_EDITOR_PROFILE phase=object_sheet_rebuild elapsed_ms=6.86833
+INDE_EDITOR_PROFILE phase=object_document_sync elapsed_ms=7.70248
+INDE_EDITOR_PROFILE phase=journal_discovery_gtk elapsed_ms=0.026133
+INDE_EDITOR_PROFILE phase=open_document_gtk elapsed_ms=70.1233
+INDE_EDITOR_PROFILE phase=metrics_worker elapsed_ms=0.040512
+INDE_EDITOR_PROFILE phase=metrics_apply_gtk elapsed_ms=0.063208
+INDE_EDITOR_PROFILE phase=object_owner_adopt elapsed_ms=0.619004
+INDE_EDITOR_PROFILE phase=object_view_refresh elapsed_ms=0.018477
+INDE_EDITOR_PROFILE phase=object_document_sync elapsed_ms=0.771047
+INDE_EDITOR_PROFILE phase=object_owner_adopt elapsed_ms=0.674363
+INDE_EDITOR_PROFILE phase=object_view_refresh elapsed_ms=0.238051
+INDE_EDITOR_PROFILE phase=object_document_sync elapsed_ms=1.21793
+INDE_EDITOR_PROFILE phase=undo_group elapsed_ms=0.000503
+INDE_EDITOR_PROFILE phase=buffer_restore_changed elapsed_ms=1.24896
+INDE_EDITOR_PROFILE phase=restore_incremental_gtk elapsed_ms=1.39966
+INDE_EDITOR_PROFILE phase=metrics_snapshot_submit elapsed_ms=0.074507
+INDE_EDITOR_PROFILE phase=restore_document_gtk elapsed_ms=10.1734
+INDE_EDITOR_PROFILE phase=compound_edit_gtk elapsed_ms=13.9392
+INDE_EDITOR_PROFILE phase=clipboard_paste_gtk elapsed_ms=14.3688
+INDE_EDITOR_PROFILE phase=object_owner_adopt elapsed_ms=19.0553
+INDE_EDITOR_PROFILE phase=object_choice_sync elapsed_ms=2.23987
+INDE_EDITOR_PROFILE phase=object_view_refresh elapsed_ms=3.02581
+INDE_EDITOR_PROFILE phase=object_sheet_reconcile elapsed_ms=132.242
+INDE_EDITOR_PROFILE phase=object_document_sync elapsed_ms=151.756
+INDE_EDITOR_PROFILE phase=metrics_worker elapsed_ms=0.031788
+INDE_EDITOR_PROFILE phase=metrics_apply_gtk elapsed_ms=0.035831
+INDE_EDITOR_PROFILE phase=object_owner_adopt elapsed_ms=2.18888
+INDE_EDITOR_PROFILE phase=object_view_refresh elapsed_ms=0.181275
+INDE_EDITOR_PROFILE phase=object_document_sync elapsed_ms=2.73133
+INDE_EDITOR_PROFILE phase=journal_snapshot_submit elapsed_ms=0.903577
+INDE_EDITOR_PROFILE phase=journal_worker elapsed_ms=17.758
+INDE_EDITOR_PROFILE phase=proofreading_snapshot_submit elapsed_ms=0.175772
+INDE_EDITOR_PROFILE phase=proofreading_worker elapsed_ms=0.283773
+INDE_EDITOR_PROFILE phase=proofreading_apply_gtk elapsed_ms=0.005081
+INDE_EDITOR_PROFILE phase=undo_group elapsed_ms=0.000773
+INDE_EDITOR_PROFILE phase=autosave_snapshot_submit elapsed_ms=1.1555
+INDE_EDITOR_PROFILE phase=autosave_callback elapsed_ms=1.19597
+INDE_EDITOR_PROFILE phase=save_worker elapsed_ms=32.8324
+INDE_EDITOR_PROFILE phase=object_owner_adopt elapsed_ms=21.8137
+INDE_EDITOR_PROFILE phase=object_view_refresh elapsed_ms=1.73891
+INDE_EDITOR_PROFILE phase=object_document_sync elapsed_ms=24.0771
+INDE_EDITOR_PROFILE phase=object_owner_adopt elapsed_ms=2.62182
+INDE_EDITOR_PROFILE phase=object_view_refresh elapsed_ms=0.168033
+INDE_EDITOR_PROFILE phase=object_document_sync elapsed_ms=3.30904
+INDE_EDITOR_PROFILE phase=object_owner_adopt elapsed_ms=2.67503
+INDE_EDITOR_PROFILE phase=object_view_refresh elapsed_ms=0.157356
+INDE_EDITOR_PROFILE phase=object_document_sync elapsed_ms=3.30763
+INDE_EDITOR_PROFILE phase=signal_changed elapsed_ms=3.04018
+INDE_EDITOR_PROFILE phase=object_owner_adopt elapsed_ms=88.7166
+INDE_EDITOR_PROFILE phase=object_choice_sync elapsed_ms=1.64213
+INDE_EDITOR_PROFILE phase=object_view_refresh elapsed_ms=0.365919
+INDE_EDITOR_PROFILE phase=object_sheet_reconcile elapsed_ms=3.13883
+INDE_EDITOR_PROFILE phase=object_document_sync elapsed_ms=92.6023
+INDE_EDITOR_PROFILE phase=signal_changed elapsed_ms=3.12715
+INDE_EDITOR_PROFILE phase=object_owner_adopt elapsed_ms=36.7462
+INDE_EDITOR_PROFILE phase=object_choice_sync elapsed_ms=1.64492
+INDE_EDITOR_PROFILE phase=object_view_refresh elapsed_ms=0.34246
+INDE_EDITOR_PROFILE phase=object_sheet_reconcile elapsed_ms=3.02909
+INDE_EDITOR_PROFILE phase=object_document_sync elapsed_ms=40.6101
+INDE_EDITOR_PROFILE phase=signal_changed elapsed_ms=3.33269
+INDE_EDITOR_PROFILE phase=object_owner_adopt elapsed_ms=28.4071
+INDE_EDITOR_PROFILE phase=object_choice_sync elapsed_ms=1.30402
+INDE_EDITOR_PROFILE phase=object_view_refresh elapsed_ms=0.267007
+INDE_EDITOR_PROFILE phase=object_sheet_reconcile elapsed_ms=2.40538
+INDE_EDITOR_PROFILE phase=object_document_sync elapsed_ms=31.4828
+INDE_EDITOR_PROFILE phase=object_owner_adopt elapsed_ms=2.47956
+INDE_EDITOR_PROFILE phase=object_view_refresh elapsed_ms=0.171068
+INDE_EDITOR_PROFILE phase=object_document_sync elapsed_ms=3.08608
+INDE_EDITOR_PROFILE phase=signal_changed elapsed_ms=3.0961
+INDE_EDITOR_PROFILE phase=object_owner_adopt elapsed_ms=26.5753
+INDE_EDITOR_PROFILE phase=object_choice_sync elapsed_ms=1.74945
+INDE_EDITOR_PROFILE phase=object_view_refresh elapsed_ms=0.31456
+INDE_EDITOR_PROFILE phase=object_sheet_reconcile elapsed_ms=3.70955
+INDE_EDITOR_PROFILE phase=object_document_sync elapsed_ms=31.0386
+INDE_EDITOR_PROFILE phase=signal_changed elapsed_ms=3.29276
+INDE_EDITOR_PROFILE phase=object_owner_adopt elapsed_ms=26.5684
+INDE_EDITOR_PROFILE phase=object_choice_sync elapsed_ms=1.75378
+INDE_EDITOR_PROFILE phase=object_view_refresh elapsed_ms=0.326858
+INDE_EDITOR_PROFILE phase=object_sheet_reconcile elapsed_ms=3.07735
+INDE_EDITOR_PROFILE phase=object_document_sync elapsed_ms=30.319
+INDE_EDITOR_PROFILE phase=signal_changed elapsed_ms=2.88605
+INDE_EDITOR_PROFILE phase=object_owner_adopt elapsed_ms=29.3904
+INDE_EDITOR_PROFILE phase=object_choice_sync elapsed_ms=1.42352
+INDE_EDITOR_PROFILE phase=object_view_refresh elapsed_ms=0.282391
+INDE_EDITOR_PROFILE phase=object_sheet_reconcile elapsed_ms=2.67815
+INDE_EDITOR_PROFILE phase=object_document_sync elapsed_ms=32.6701
+INDE_EDITOR_PROFILE phase=signal_changed elapsed_ms=2.87756
+INDE_EDITOR_PROFILE phase=object_owner_adopt elapsed_ms=26.106
+INDE_EDITOR_PROFILE phase=object_choice_sync elapsed_ms=1.22842
+INDE_EDITOR_PROFILE phase=object_view_refresh elapsed_ms=0.292138
+INDE_EDITOR_PROFILE phase=object_sheet_reconcile elapsed_ms=2.52401
+INDE_EDITOR_PROFILE phase=object_document_sync elapsed_ms=29.2662
+INDE_EDITOR_PROFILE phase=signal_changed elapsed_ms=4.21971
+INDE_EDITOR_PROFILE phase=object_owner_adopt elapsed_ms=29.4064
+INDE_EDITOR_PROFILE phase=object_view_refresh elapsed_ms=0.309211
+INDE_EDITOR_PROFILE phase=object_document_sync elapsed_ms=30.1871
+INDE_EDITOR_PROFILE phase=journal_snapshot_submit elapsed_ms=1.68668
+INDE_EDITOR_PROFILE phase=journal_worker elapsed_ms=27.3445
+INDE_EDITOR_PROFILE phase=metrics_snapshot_submit elapsed_ms=0.071818
+INDE_EDITOR_PROFILE phase=metrics_worker elapsed_ms=0.033794
+INDE_EDITOR_PROFILE phase=metrics_apply_gtk elapsed_ms=0.059467
+INDE_EDITOR_PROFILE phase=proofreading_snapshot_submit elapsed_ms=0.213887
+INDE_EDITOR_PROFILE phase=proofreading_worker elapsed_ms=0.029502
+INDE_EDITOR_PROFILE phase=proofreading_apply_gtk elapsed_ms=0.004083
+INDE_EDITOR_PROFILE phase=undo_group elapsed_ms=1.57783
+INDE_EDITOR_PROFILE phase=undo_group elapsed_ms=0.000774
+INDE_EDITOR_PROFILE phase=autosave_snapshot_submit elapsed_ms=0.872602
+INDE_EDITOR_PROFILE phase=autosave_callback elapsed_ms=0.925047
+INDE_EDITOR_PROFILE phase=undo_group elapsed_ms=0.000465
+INDE_EDITOR_PROFILE phase=buffer_restore_changed elapsed_ms=2.21675
+INDE_EDITOR_PROFILE phase=buffer_restore_changed elapsed_ms=2.0909
+INDE_EDITOR_PROFILE phase=restore_incremental_gtk elapsed_ms=5.4453
+INDE_EDITOR_PROFILE phase=metrics_snapshot_submit elapsed_ms=0.04398
+INDE_EDITOR_PROFILE phase=restore_document_gtk elapsed_ms=18.9295
+INDE_EDITOR_PROFILE phase=object_owner_adopt elapsed_ms=18.6242
+INDE_EDITOR_PROFILE phase=object_choice_sync elapsed_ms=0.626957
+INDE_EDITOR_PROFILE phase=object_view_refresh elapsed_ms=6.06992
+INDE_EDITOR_PROFILE phase=object_sheet_reconcile elapsed_ms=50.8851
+INDE_EDITOR_PROFILE phase=object_document_sync elapsed_ms=70.3406
+INDE_EDITOR_PROFILE phase=save_worker elapsed_ms=39.7887
+INDE_EDITOR_PROFILE phase=metrics_worker elapsed_ms=0.028168
+INDE_EDITOR_PROFILE phase=metrics_apply_gtk elapsed_ms=0.018008
+INDE_EDITOR_PROFILE phase=object_owner_adopt elapsed_ms=14.3127
+INDE_EDITOR_PROFILE phase=object_view_refresh elapsed_ms=0.146232
+INDE_EDITOR_PROFILE phase=object_document_sync elapsed_ms=14.9179
+INDE_EDITOR_PROFILE phase=journal_snapshot_submit elapsed_ms=1.13175
+INDE_EDITOR_PROFILE phase=journal_worker elapsed_ms=8.60621
+INDE_EDITOR_PROFILE phase=buffer_restore_changed elapsed_ms=1.3677
+INDE_EDITOR_PROFILE phase=buffer_restore_changed elapsed_ms=1.32966
+INDE_EDITOR_PROFILE phase=restore_incremental_gtk elapsed_ms=3.04951
+INDE_EDITOR_PROFILE phase=metrics_snapshot_submit elapsed_ms=0.061523
+INDE_EDITOR_PROFILE phase=restore_document_gtk elapsed_ms=12.376
+INDE_EDITOR_PROFILE phase=object_owner_adopt elapsed_ms=17.2339
+INDE_EDITOR_PROFILE phase=object_choice_sync elapsed_ms=5.24442
+INDE_EDITOR_PROFILE phase=object_view_refresh elapsed_ms=0.356061
+INDE_EDITOR_PROFILE phase=object_sheet_reconcile elapsed_ms=9.71558
+INDE_EDITOR_PROFILE phase=object_document_sync elapsed_ms=27.6488
+INDE_EDITOR_PROFILE phase=metrics_worker elapsed_ms=0.040163
+INDE_EDITOR_PROFILE phase=metrics_apply_gtk elapsed_ms=0.025418
+INDE_EDITOR_PROFILE phase=object_owner_adopt elapsed_ms=2.47074
+INDE_EDITOR_PROFILE phase=object_view_refresh elapsed_ms=2.02041
+INDE_EDITOR_PROFILE phase=object_document_sync elapsed_ms=4.98447
+INDE_EDITOR_PROFILE phase=undo_group elapsed_ms=0.000506
+INDE_EDITOR_PROFILE phase=buffer_restore_changed elapsed_ms=1.19995
+INDE_EDITOR_PROFILE phase=buffer_restore_changed elapsed_ms=1.28438
+INDE_EDITOR_PROFILE phase=restore_incremental_gtk elapsed_ms=2.86554
+INDE_EDITOR_PROFILE phase=metrics_snapshot_submit elapsed_ms=0.099407
+INDE_EDITOR_PROFILE phase=restore_document_gtk elapsed_ms=10.5474
+INDE_EDITOR_PROFILE phase=compound_edit_gtk elapsed_ms=16.506
+INDE_EDITOR_PROFILE phase=clipboard_paste_gtk elapsed_ms=19.1794
+INDE_EDITOR_PROFILE phase=object_owner_adopt elapsed_ms=65.3979
+INDE_EDITOR_PROFILE phase=object_choice_sync elapsed_ms=65.0035
+INDE_EDITOR_PROFILE phase=object_view_refresh elapsed_ms=1.17489
+INDE_EDITOR_PROFILE phase=object_sheet_reconcile elapsed_ms=2035.82
+INDE_EDITOR_PROFILE phase=object_document_sync elapsed_ms=2105.28
+INDE_EDITOR_PROFILE phase=journal_snapshot_submit elapsed_ms=2.57823
+INDE_EDITOR_PROFILE phase=proofreading_snapshot_submit elapsed_ms=0.832654
+INDE_EDITOR_PROFILE phase=metrics_worker elapsed_ms=0.092825
+INDE_EDITOR_PROFILE phase=metrics_apply_gtk elapsed_ms=0.033486
+INDE_EDITOR_PROFILE phase=undo_group elapsed_ms=0.000319
+INDE_EDITOR_PROFILE phase=autosave_snapshot_submit elapsed_ms=2.63809
+INDE_EDITOR_PROFILE phase=autosave_callback elapsed_ms=2.68599
+INDE_EDITOR_PROFILE phase=object_owner_adopt elapsed_ms=14.6348
+INDE_EDITOR_PROFILE phase=object_view_refresh elapsed_ms=3.3067
+INDE_EDITOR_PROFILE phase=object_document_sync elapsed_ms=21.269
+INDE_EDITOR_PROFILE phase=journal_worker elapsed_ms=14.462
+INDE_EDITOR_PROFILE phase=proofreading_worker elapsed_ms=0.299079
+INDE_EDITOR_PROFILE phase=proofreading_apply_gtk elapsed_ms=0.006132
+INDE_EDITOR_PROFILE phase=save_worker elapsed_ms=75.8903
+INDE_EDITOR_PROFILE phase=object_owner_adopt elapsed_ms=69.43
+INDE_EDITOR_PROFILE phase=object_view_refresh elapsed_ms=14.9592
+INDE_EDITOR_PROFILE phase=object_document_sync elapsed_ms=87.868
+INDE_EDITOR_PROFILE phase=object_owner_adopt elapsed_ms=15.4483
+INDE_EDITOR_PROFILE phase=object_view_refresh elapsed_ms=0.976495
+INDE_EDITOR_PROFILE phase=object_document_sync elapsed_ms=19.8981
+INDE_EDITOR_PROFILE phase=signal_changed elapsed_ms=5.01912
+INDE_EDITOR_PROFILE phase=object_owner_adopt elapsed_ms=283.939
+INDE_EDITOR_PROFILE phase=object_choice_sync elapsed_ms=9.58683
+INDE_EDITOR_PROFILE phase=object_view_refresh elapsed_ms=4.65459
+INDE_EDITOR_PROFILE phase=object_sheet_reconcile elapsed_ms=16.6788
+INDE_EDITOR_PROFILE phase=object_document_sync elapsed_ms=306.708
+INDE_EDITOR_PROFILE phase=metrics_snapshot_submit elapsed_ms=1.09289
+INDE_EDITOR_PROFILE phase=journal_snapshot_submit elapsed_ms=1.77858
+INDE_EDITOR_PROFILE phase=metrics_worker elapsed_ms=0.105486
+INDE_EDITOR_PROFILE phase=metrics_apply_gtk elapsed_ms=0.073436
+INDE_EDITOR_PROFILE phase=proofreading_snapshot_submit elapsed_ms=1.67347
+INDE_EDITOR_PROFILE phase=journal_worker elapsed_ms=199.186
+INDE_EDITOR_PROFILE phase=signal_changed elapsed_ms=4.68744
+INDE_EDITOR_PROFILE phase=object_owner_adopt elapsed_ms=90.9522
+INDE_EDITOR_PROFILE phase=object_choice_sync elapsed_ms=8.56141
+INDE_EDITOR_PROFILE phase=object_view_refresh elapsed_ms=4.29172
+INDE_EDITOR_PROFILE phase=object_sheet_reconcile elapsed_ms=15.0667
+INDE_EDITOR_PROFILE phase=object_document_sync elapsed_ms=112.473
+INDE_EDITOR_PROFILE phase=metrics_snapshot_submit elapsed_ms=0.845574
+INDE_EDITOR_PROFILE phase=journal_snapshot_submit elapsed_ms=1.92556
+INDE_EDITOR_PROFILE phase=metrics_worker elapsed_ms=0.094779
+INDE_EDITOR_PROFILE phase=metrics_apply_gtk elapsed_ms=0.043674
+INDE_EDITOR_PROFILE phase=signal_changed elapsed_ms=8.15246
+INDE_EDITOR_PROFILE phase=journal_worker elapsed_ms=18.9029
+INDE_EDITOR_PROFILE phase=object_owner_adopt elapsed_ms=90.2979
+INDE_EDITOR_PROFILE phase=object_choice_sync elapsed_ms=8.74531
+INDE_EDITOR_PROFILE phase=object_view_refresh elapsed_ms=4.1465
+INDE_EDITOR_PROFILE phase=object_sheet_reconcile elapsed_ms=15.0317
+INDE_EDITOR_PROFILE phase=object_document_sync elapsed_ms=111.48
+INDE_EDITOR_PROFILE phase=metrics_snapshot_submit elapsed_ms=0.497546
+INDE_EDITOR_PROFILE phase=journal_snapshot_submit elapsed_ms=1.25989
+INDE_EDITOR_PROFILE phase=metrics_worker elapsed_ms=0.094615
+INDE_EDITOR_PROFILE phase=metrics_apply_gtk elapsed_ms=0.045315
+INDE_EDITOR_PROFILE phase=object_owner_adopt elapsed_ms=17.582
+INDE_EDITOR_PROFILE phase=object_view_refresh elapsed_ms=1.10803
+INDE_EDITOR_PROFILE phase=object_document_sync elapsed_ms=22.7735
+INDE_EDITOR_PROFILE phase=proofreading_snapshot_submit elapsed_ms=0.935267
+INDE_EDITOR_PROFILE phase=journal_worker elapsed_ms=175.259
+INDE_EDITOR_PROFILE phase=signal_changed elapsed_ms=6.18888
+INDE_EDITOR_PROFILE phase=object_owner_adopt elapsed_ms=94.2955
+INDE_EDITOR_PROFILE phase=object_choice_sync elapsed_ms=8.20589
+INDE_EDITOR_PROFILE phase=object_view_refresh elapsed_ms=4.36114
+INDE_EDITOR_PROFILE phase=object_sheet_reconcile elapsed_ms=16.0314
+INDE_EDITOR_PROFILE phase=object_document_sync elapsed_ms=117.428
+INDE_EDITOR_PROFILE phase=journal_snapshot_submit elapsed_ms=2.47106
+INDE_EDITOR_PROFILE phase=metrics_snapshot_submit elapsed_ms=0.202023
+INDE_EDITOR_PROFILE phase=signal_changed elapsed_ms=4.82012
+INDE_EDITOR_PROFILE phase=journal_worker elapsed_ms=19.351
+INDE_EDITOR_PROFILE phase=signal_changed elapsed_ms=6.10323
+INDE_EDITOR_PROFILE phase=object_owner_adopt elapsed_ms=101.569
+INDE_EDITOR_PROFILE phase=object_choice_sync elapsed_ms=10.0777
+INDE_EDITOR_PROFILE phase=object_view_refresh elapsed_ms=4.21517
+INDE_EDITOR_PROFILE phase=object_sheet_reconcile elapsed_ms=17.2666
+INDE_EDITOR_PROFILE phase=object_document_sync elapsed_ms=125.397
+INDE_EDITOR_PROFILE phase=signal_changed elapsed_ms=8.58478
+INDE_EDITOR_PROFILE phase=object_owner_adopt elapsed_ms=95.1185
+INDE_EDITOR_PROFILE phase=object_choice_sync elapsed_ms=7.63962
+INDE_EDITOR_PROFILE phase=object_view_refresh elapsed_ms=4.36827
+INDE_EDITOR_PROFILE phase=object_sheet_reconcile elapsed_ms=14.2231
+INDE_EDITOR_PROFILE phase=object_document_sync elapsed_ms=115.861
+INDE_EDITOR_PROFILE phase=metrics_snapshot_submit elapsed_ms=0.487303
+INDE_EDITOR_PROFILE phase=journal_snapshot_submit elapsed_ms=1.6164
+INDE_EDITOR_PROFILE phase=metrics_worker elapsed_ms=0.102231
+INDE_EDITOR_PROFILE phase=metrics_apply_gtk elapsed_ms=0.045988
+INDE_EDITOR_PROFILE phase=signal_changed elapsed_ms=7.10342
+INDE_EDITOR_PROFILE phase=journal_worker elapsed_ms=19.247
+INDE_EDITOR_PROFILE phase=object_owner_adopt elapsed_ms=95.499
+INDE_EDITOR_PROFILE phase=object_view_refresh elapsed_ms=4.16948
+INDE_EDITOR_PROFILE phase=object_document_sync elapsed_ms=103.398
+INDE_EDITOR_PROFILE phase=metrics_snapshot_submit elapsed_ms=0.411623
+INDE_EDITOR_PROFILE phase=journal_snapshot_submit elapsed_ms=2.28322
+INDE_EDITOR_PROFILE phase=metrics_worker elapsed_ms=0.100222
+INDE_EDITOR_PROFILE phase=metrics_apply_gtk elapsed_ms=0.055525
+INDE_EDITOR_PROFILE phase=journal_worker elapsed_ms=20.7547
+INDE_EDITOR_PROFILE phase=proofreading_snapshot_submit elapsed_ms=0.980772
+INDE_EDITOR_PROFILE phase=proofreading_worker elapsed_ms=0.187543
+INDE_EDITOR_PROFILE phase=proofreading_apply_gtk elapsed_ms=0.00766
+INDE_EDITOR_PROFILE phase=undo_group elapsed_ms=1.95256
+INDE_EDITOR_PROFILE phase=undo_group elapsed_ms=0.00066
+INDE_EDITOR_PROFILE phase=autosave_snapshot_submit elapsed_ms=1.87465
+INDE_EDITOR_PROFILE phase=autosave_callback elapsed_ms=1.93793
+INDE_EDITOR_PROFILE phase=save_worker elapsed_ms=58.9141
+INDE_EDITOR_PROFILE phase=undo_group elapsed_ms=0.000672
+INDE_EDITOR_PROFILE phase=buffer_restore_changed elapsed_ms=2.4514
+INDE_EDITOR_PROFILE phase=buffer_restore_changed elapsed_ms=2.40229
+INDE_EDITOR_PROFILE phase=restore_incremental_gtk elapsed_ms=6.05078
+INDE_EDITOR_PROFILE phase=metrics_snapshot_submit elapsed_ms=0.313734
+INDE_EDITOR_PROFILE phase=restore_document_gtk elapsed_ms=18.0969
+INDE_EDITOR_PROFILE phase=object_owner_adopt elapsed_ms=90.9207
+INDE_EDITOR_PROFILE phase=object_choice_sync elapsed_ms=2.86023
+INDE_EDITOR_PROFILE phase=object_view_refresh elapsed_ms=31.3164
+INDE_EDITOR_PROFILE phase=object_sheet_reconcile elapsed_ms=202.241
+INDE_EDITOR_PROFILE phase=object_document_sync elapsed_ms=299.98
+INDE_EDITOR_PROFILE phase=journal_snapshot_submit elapsed_ms=1.55469
+INDE_EDITOR_PROFILE phase=metrics_worker elapsed_ms=0.096117
+INDE_EDITOR_PROFILE phase=metrics_apply_gtk elapsed_ms=0.029285
+INDE_EDITOR_PROFILE phase=object_owner_adopt elapsed_ms=16.7885
+INDE_EDITOR_PROFILE phase=object_view_refresh elapsed_ms=0.937106
+INDE_EDITOR_PROFILE phase=object_document_sync elapsed_ms=21.2043
+INDE_EDITOR_PROFILE phase=journal_worker elapsed_ms=18.4217
+INDE_EDITOR_PROFILE phase=proofreading_snapshot_submit elapsed_ms=0.762412
+INDE_EDITOR_PROFILE phase=proofreading_worker elapsed_ms=0.191752
+INDE_EDITOR_PROFILE phase=proofreading_apply_gtk elapsed_ms=0.00364
+INDE_EDITOR_PROFILE phase=buffer_restore_changed elapsed_ms=2.02746
+INDE_EDITOR_PROFILE phase=buffer_restore_changed elapsed_ms=2.02251
+INDE_EDITOR_PROFILE phase=restore_incremental_gtk elapsed_ms=5.19235
+INDE_EDITOR_PROFILE phase=metrics_snapshot_submit elapsed_ms=0.222392
+INDE_EDITOR_PROFILE phase=restore_document_gtk elapsed_ms=16.5763
+INDE_EDITOR_PROFILE phase=object_owner_adopt elapsed_ms=84.4683
+INDE_EDITOR_PROFILE phase=object_choice_sync elapsed_ms=18.3432
+INDE_EDITOR_PROFILE phase=object_view_refresh elapsed_ms=4.46657
+INDE_EDITOR_PROFILE phase=object_sheet_reconcile elapsed_ms=28.2168
+INDE_EDITOR_PROFILE phase=object_document_sync elapsed_ms=118.885
+INDE_EDITOR_PROFILE phase=metrics_worker elapsed_ms=0.101953
+INDE_EDITOR_PROFILE phase=metrics_apply_gtk elapsed_ms=0.040755
+INDE_EDITOR_PROFILE phase=proofreading_snapshot_submit elapsed_ms=1.09855
+INDE_EDITOR_PROFILE phase=undo_group elapsed_ms=0.000376
+INDE_EDITOR_PROFILE phase=object_owner_adopt elapsed_ms=16.4129
+INDE_EDITOR_PROFILE phase=object_view_refresh elapsed_ms=3.41467
+INDE_EDITOR_PROFILE phase=object_document_sync elapsed_ms=23.4155
+INDE_EDITOR_PROFILE phase=metrics_snapshot_submit elapsed_ms=0.093588
+INDE_EDITOR_PROFILE phase=proofreading_worker elapsed_ms=0.188123
+INDE_EDITOR_PROFILE phase=proofreading_apply_gtk elapsed_ms=0.002586
+INDE_EDITOR_PROFILE phase=object_owner_adopt elapsed_ms=17.6904
+INDE_EDITOR_PROFILE phase=object_view_refresh elapsed_ms=1.18598
+INDE_EDITOR_PROFILE phase=object_document_sync elapsed_ms=23.3457
+INDE_EDITOR_PROFILE phase=metrics_worker elapsed_ms=0.148862
+INDE_EDITOR_PROFILE phase=metrics_apply_gtk elapsed_ms=0.26301
+INDE_EDITOR_PROFILE phase=autosave_callback elapsed_ms=0.148335
+INDE_EDITOR_PROFILE phase=object_choice_sync elapsed_ms=3.40663
+INDE_EDITOR_PROFILE phase=object_sheet_rebuild elapsed_ms=1138.38
+INDE_EDITOR_PROFILE phase=object_owner_adopt elapsed_ms=13.4717
+INDE_EDITOR_PROFILE phase=object_view_refresh elapsed_ms=0.823455
+INDE_EDITOR_PROFILE phase=object_document_sync elapsed_ms=17.4714
+INDE_EDITOR_PROFILE phase=undo_group elapsed_ms=0.000819
+INDE_EDITOR_PROFILE phase=object_owner_adopt elapsed_ms=17.4634
+INDE_EDITOR_PROFILE phase=object_view_refresh elapsed_ms=0.813211
+INDE_EDITOR_PROFILE phase=object_document_sync elapsed_ms=22.0023
+INDE_EDITOR_PROFILE phase=metrics_snapshot_submit elapsed_ms=0.097882
+INDE_EDITOR_PROFILE phase=object_owner_adopt elapsed_ms=17.5967
+INDE_EDITOR_PROFILE phase=object_view_refresh elapsed_ms=0.895042
+INDE_EDITOR_PROFILE phase=object_document_sync elapsed_ms=22.3949
+INDE_EDITOR_PROFILE phase=metrics_worker elapsed_ms=0.162048
+INDE_EDITOR_PROFILE phase=metrics_apply_gtk elapsed_ms=0.21259
+INDE_EDITOR_PROFILE phase=object_choice_sync elapsed_ms=4.01543
+INDE_EDITOR_PROFILE phase=object_sheet_rebuild elapsed_ms=1171.5
+INDE_EDITOR_PROFILE phase=object_owner_adopt elapsed_ms=13.9509
+INDE_EDITOR_PROFILE phase=object_view_refresh elapsed_ms=1.2019
+INDE_EDITOR_PROFILE phase=object_document_sync elapsed_ms=18.4068
+INDE_EDITOR_PROFILE phase=undo_group elapsed_ms=0.000675
+INDE_EDITOR_PROFILE phase=object_owner_adopt elapsed_ms=18.566
+INDE_EDITOR_PROFILE phase=object_view_refresh elapsed_ms=0.845936
+INDE_EDITOR_PROFILE phase=object_document_sync elapsed_ms=23.3996
+INDE_EDITOR_PROFILE phase=metrics_snapshot_submit elapsed_ms=0.117416
+INDE_EDITOR_PROFILE phase=metrics_worker elapsed_ms=0.147284
+INDE_EDITOR_PROFILE phase=metrics_apply_gtk elapsed_ms=0.22729
+INDE_EDITOR_PROFILE phase=object_owner_adopt elapsed_ms=19.5833
+INDE_EDITOR_PROFILE phase=object_view_refresh elapsed_ms=0.859497
+INDE_EDITOR_PROFILE phase=object_document_sync elapsed_ms=24.3499
+INDE_EDITOR_PROFILE phase=object_choice_sync elapsed_ms=2.43287
+INDE_EDITOR_PROFILE phase=object_sheet_rebuild elapsed_ms=2265.16
+INDE_EDITOR_PROFILE phase=object_owner_adopt elapsed_ms=15.7203
+INDE_EDITOR_PROFILE phase=object_view_refresh elapsed_ms=1.25307
+INDE_EDITOR_PROFILE phase=object_document_sync elapsed_ms=20.6704
+INDE_EDITOR_PROFILE phase=undo_group elapsed_ms=0.000745
+INDE_EDITOR_PROFILE phase=object_owner_adopt elapsed_ms=18.5753
+INDE_EDITOR_PROFILE phase=object_view_refresh elapsed_ms=1.28788
+INDE_EDITOR_PROFILE phase=object_document_sync elapsed_ms=24.8034
+INDE_EDITOR_PROFILE phase=object_owner_adopt elapsed_ms=18.937
+INDE_EDITOR_PROFILE phase=object_view_refresh elapsed_ms=0.949172
+INDE_EDITOR_PROFILE phase=object_document_sync elapsed_ms=24.0536
+INDE_EDITOR_PROFILE phase=undo_group elapsed_ms=0.000668
+INDE_EDITOR_PROFILE phase=buffer_restore_changed elapsed_ms=2.6715
+INDE_EDITOR_PROFILE phase=buffer_restore_changed elapsed_ms=2.42661
+INDE_EDITOR_PROFILE phase=restore_incremental_gtk elapsed_ms=6.34783
+INDE_EDITOR_PROFILE phase=metrics_snapshot_submit elapsed_ms=0.498498
+INDE_EDITOR_PROFILE phase=restore_document_gtk elapsed_ms=26.009
+INDE_EDITOR_PROFILE phase=compound_edit_gtk elapsed_ms=35.2323
+INDE_EDITOR_PROFILE phase=clipboard_paste_gtk elapsed_ms=40.6012
+INDE_EDITOR_PROFILE phase=object_owner_adopt elapsed_ms=148.411
+INDE_EDITOR_PROFILE phase=object_choice_sync elapsed_ms=37.9843
+INDE_EDITOR_PROFILE phase=object_view_refresh elapsed_ms=1.12991
+INDE_EDITOR_PROFILE phase=object_sheet_reconcile elapsed_ms=2489.51
+INDE_EDITOR_PROFILE phase=object_document_sync elapsed_ms=2645.19
+INDE_EDITOR_PROFILE phase=proofreading_snapshot_submit elapsed_ms=0.718101
+INDE_EDITOR_PROFILE phase=metrics_worker elapsed_ms=0.096474
+INDE_EDITOR_PROFILE phase=metrics_apply_gtk elapsed_ms=0.056871
+INDE_EDITOR_PROFILE phase=undo_group elapsed_ms=0.000303
+INDE_EDITOR_PROFILE phase=autosave_snapshot_submit elapsed_ms=4.19959
+INDE_EDITOR_PROFILE phase=autosave_callback elapsed_ms=4.28318
+INDE_EDITOR_PROFILE phase=journal_snapshot_submit elapsed_ms=2.92027
+INDE_EDITOR_PROFILE phase=object_owner_adopt elapsed_ms=20.009
+INDE_EDITOR_PROFILE phase=object_view_refresh elapsed_ms=4.06215
+INDE_EDITOR_PROFILE phase=object_document_sync elapsed_ms=28.9699
+INDE_EDITOR_PROFILE phase=proofreading_worker elapsed_ms=0.207837
+INDE_EDITOR_PROFILE phase=proofreading_apply_gtk elapsed_ms=0.002104
+INDE_EDITOR_PROFILE phase=journal_worker elapsed_ms=24.4642
+INDE_EDITOR_PROFILE phase=save_worker elapsed_ms=70.4233
+INDE_EDITOR_PROFILE phase=object_owner_adopt elapsed_ms=92.5025
+INDE_EDITOR_PROFILE phase=object_view_refresh elapsed_ms=16.4497
+INDE_EDITOR_PROFILE phase=object_document_sync elapsed_ms=113.533
+INDE_EDITOR_PROFILE phase=signal_changed elapsed_ms=4.93798
+INDE_EDITOR_PROFILE phase=object_owner_adopt elapsed_ms=144.572
+INDE_EDITOR_PROFILE phase=object_choice_sync elapsed_ms=10.046
+INDE_EDITOR_PROFILE phase=object_view_refresh elapsed_ms=4.14614
+INDE_EDITOR_PROFILE phase=object_sheet_reconcile elapsed_ms=17.0172
+INDE_EDITOR_PROFILE phase=object_document_sync elapsed_ms=169.64
+INDE_EDITOR_PROFILE phase=metrics_snapshot_submit elapsed_ms=0.673564
+INDE_EDITOR_PROFILE phase=journal_snapshot_submit elapsed_ms=1.37538
+INDE_EDITOR_PROFILE phase=metrics_worker elapsed_ms=0.109124
+INDE_EDITOR_PROFILE phase=metrics_apply_gtk elapsed_ms=0.070048
+INDE_EDITOR_PROFILE phase=journal_worker elapsed_ms=26.1679
+INDE_EDITOR_PROFILE phase=signal_changed elapsed_ms=6.87764
+INDE_EDITOR_PROFILE phase=object_owner_adopt elapsed_ms=147.576
+INDE_EDITOR_PROFILE phase=object_choice_sync elapsed_ms=2.58434
+INDE_EDITOR_PROFILE phase=object_view_refresh elapsed_ms=4.26767
+INDE_EDITOR_PROFILE phase=object_sheet_reconcile elapsed_ms=9.18475
+INDE_EDITOR_PROFILE phase=object_document_sync elapsed_ms=165.182
+INDE_EDITOR_PROFILE phase=metrics_snapshot_submit elapsed_ms=1.66931
+INDE_EDITOR_PROFILE phase=journal_snapshot_submit elapsed_ms=3.07906
+INDE_EDITOR_PROFILE phase=metrics_worker elapsed_ms=0.113168
+INDE_EDITOR_PROFILE phase=metrics_apply_gtk elapsed_ms=0.056631
+INDE_EDITOR_PROFILE phase=signal_changed elapsed_ms=8.25426
+INDE_EDITOR_PROFILE phase=journal_worker elapsed_ms=26.1023
+INDE_EDITOR_PROFILE phase=object_owner_adopt elapsed_ms=151.275
+INDE_EDITOR_PROFILE phase=object_choice_sync elapsed_ms=4.02398
+INDE_EDITOR_PROFILE phase=object_view_refresh elapsed_ms=4.61099
+INDE_EDITOR_PROFILE phase=object_sheet_reconcile elapsed_ms=11.6506
+INDE_EDITOR_PROFILE phase=object_document_sync elapsed_ms=171.678
+INDE_EDITOR_PROFILE phase=metrics_snapshot_submit elapsed_ms=1.02136
+INDE_EDITOR_PROFILE phase=journal_snapshot_submit elapsed_ms=2.46771
+INDE_EDITOR_PROFILE phase=metrics_worker elapsed_ms=0.102266
+INDE_EDITOR_PROFILE phase=metrics_apply_gtk elapsed_ms=0.090531
+INDE_EDITOR_PROFILE phase=journal_worker elapsed_ms=38.5107
+INDE_EDITOR_PROFILE phase=object_owner_adopt elapsed_ms=25.834
+INDE_EDITOR_PROFILE phase=object_view_refresh elapsed_ms=1.151
+INDE_EDITOR_PROFILE phase=object_document_sync elapsed_ms=31.7188
+INDE_EDITOR_PROFILE phase=proofreading_snapshot_submit elapsed_ms=1.52142
+INDE_EDITOR_PROFILE phase=proofreading_worker elapsed_ms=0.226962
+INDE_EDITOR_PROFILE phase=proofreading_apply_gtk elapsed_ms=0.012338
+INDE_EDITOR_PROFILE phase=undo_group elapsed_ms=3.74465
+INDE_EDITOR_PROFILE phase=signal_changed elapsed_ms=7.19792
+INDE_EDITOR_PROFILE phase=object_owner_adopt elapsed_ms=136.177
+INDE_EDITOR_PROFILE phase=object_choice_sync elapsed_ms=2.48056
+INDE_EDITOR_PROFILE phase=object_view_refresh elapsed_ms=4.61752
+INDE_EDITOR_PROFILE phase=object_sheet_reconcile elapsed_ms=10.5964
+INDE_EDITOR_PROFILE phase=object_document_sync elapsed_ms=154.157
+INDE_EDITOR_PROFILE phase=journal_snapshot_submit elapsed_ms=8.1354
+INDE_EDITOR_PROFILE phase=journal_worker elapsed_ms=22.8276
+INDE_EDITOR_PROFILE phase=metrics_snapshot_submit elapsed_ms=1.18905
+INDE_EDITOR_PROFILE phase=signal_changed elapsed_ms=7.80738
+INDE_EDITOR_PROFILE phase=signal_changed elapsed_ms=5.77261
+INDE_EDITOR_PROFILE phase=signal_changed elapsed_ms=5.77027
+INDE_EDITOR_PROFILE phase=object_owner_adopt elapsed_ms=144.794
+INDE_EDITOR_PROFILE phase=object_choice_sync elapsed_ms=3.67818
+INDE_EDITOR_PROFILE phase=object_view_refresh elapsed_ms=4.37729
+INDE_EDITOR_PROFILE phase=object_sheet_reconcile elapsed_ms=12.5045
+INDE_EDITOR_PROFILE phase=object_document_sync elapsed_ms=165.955
+INDE_EDITOR_PROFILE phase=metrics_snapshot_submit elapsed_ms=1.74821
+INDE_EDITOR_PROFILE phase=journal_snapshot_submit elapsed_ms=2.43024
+INDE_EDITOR_PROFILE phase=metrics_worker elapsed_ms=0.104374
+INDE_EDITOR_PROFILE phase=metrics_apply_gtk elapsed_ms=0.044619
+INDE_EDITOR_PROFILE phase=signal_changed elapsed_ms=4.62198
+INDE_EDITOR_PROFILE phase=journal_worker elapsed_ms=22.1646
+INDE_EDITOR_PROFILE phase=object_owner_adopt elapsed_ms=140.571
+INDE_EDITOR_PROFILE phase=object_view_refresh elapsed_ms=4.37946
+INDE_EDITOR_PROFILE phase=object_document_sync elapsed_ms=149.425
+INDE_EDITOR_PROFILE phase=journal_snapshot_submit elapsed_ms=2.65977
+INDE_EDITOR_PROFILE phase=metrics_snapshot_submit elapsed_ms=0.150188
+INDE_EDITOR_PROFILE phase=journal_worker elapsed_ms=23.7919
+INDE_EDITOR_PROFILE phase=metrics_worker elapsed_ms=0.106962
+INDE_EDITOR_PROFILE phase=metrics_apply_gtk elapsed_ms=0.019933
+INDE_EDITOR_PROFILE phase=proofreading_snapshot_submit elapsed_ms=1.82534
+INDE_EDITOR_PROFILE phase=undo_group elapsed_ms=3.7107
+INDE_EDITOR_PROFILE phase=proofreading_worker elapsed_ms=0.200754
+INDE_EDITOR_PROFILE phase=proofreading_apply_gtk elapsed_ms=0.002249
+INDE_EDITOR_PROFILE phase=undo_group elapsed_ms=0.000882
+INDE_EDITOR_PROFILE phase=autosave_snapshot_submit elapsed_ms=2.79491
+INDE_EDITOR_PROFILE phase=autosave_callback elapsed_ms=2.84954
+INDE_EDITOR_PROFILE phase=save_worker elapsed_ms=52.8307
+INDE_EDITOR_PROFILE phase=undo_group elapsed_ms=0.000662
+INDE_EDITOR_PROFILE phase=buffer_restore_changed elapsed_ms=2.75807
+INDE_EDITOR_PROFILE phase=buffer_restore_changed elapsed_ms=3.4472
+INDE_EDITOR_PROFILE phase=restore_incremental_gtk elapsed_ms=7.79571
+INDE_EDITOR_PROFILE phase=metrics_snapshot_submit elapsed_ms=0.412203
+INDE_EDITOR_PROFILE phase=restore_document_gtk elapsed_ms=20.1153
+INDE_EDITOR_PROFILE phase=object_owner_adopt elapsed_ms=143.23
+INDE_EDITOR_PROFILE phase=object_choice_sync elapsed_ms=3.07145
+INDE_EDITOR_PROFILE phase=object_view_refresh elapsed_ms=32.236
+INDE_EDITOR_PROFILE phase=object_sheet_reconcile elapsed_ms=132.137
+INDE_EDITOR_PROFILE phase=object_document_sync elapsed_ms=282.417
+INDE_EDITOR_PROFILE phase=journal_snapshot_submit elapsed_ms=9.03147
+INDE_EDITOR_PROFILE phase=metrics_worker elapsed_ms=0.106
+INDE_EDITOR_PROFILE phase=metrics_apply_gtk elapsed_ms=0.032547
+INDE_EDITOR_PROFILE phase=object_owner_adopt elapsed_ms=21.5097
+INDE_EDITOR_PROFILE phase=object_view_refresh elapsed_ms=1.20417
+INDE_EDITOR_PROFILE phase=object_document_sync elapsed_ms=27.1392
+INDE_EDITOR_PROFILE phase=journal_worker elapsed_ms=37.3249
+INDE_EDITOR_PROFILE phase=proofreading_snapshot_submit elapsed_ms=0.838389
+INDE_EDITOR_PROFILE phase=proofreading_worker elapsed_ms=0.185423
+INDE_EDITOR_PROFILE phase=proofreading_apply_gtk elapsed_ms=0.004681
+INDE_EDITOR_PROFILE phase=undo_group elapsed_ms=0.00078
+INDE_EDITOR_PROFILE phase=buffer_restore_changed elapsed_ms=2.65862
+INDE_EDITOR_PROFILE phase=restore_incremental_gtk elapsed_ms=3.76503
+INDE_EDITOR_PROFILE phase=metrics_snapshot_submit elapsed_ms=0.27166
+INDE_EDITOR_PROFILE phase=restore_document_gtk elapsed_ms=15.6501
+INDE_EDITOR_PROFILE phase=object_owner_adopt elapsed_ms=132.149
+INDE_EDITOR_PROFILE phase=object_choice_sync elapsed_ms=4.1586
+INDE_EDITOR_PROFILE phase=object_view_refresh elapsed_ms=66.3329
+INDE_EDITOR_PROFILE phase=object_sheet_reconcile elapsed_ms=140.854
+INDE_EDITOR_PROFILE phase=object_document_sync elapsed_ms=280.135
+INDE_EDITOR_PROFILE phase=metrics_worker elapsed_ms=0.119824
+INDE_EDITOR_PROFILE phase=metrics_apply_gtk elapsed_ms=0.027637
+INDE_EDITOR_PROFILE phase=object_owner_adopt elapsed_ms=20.1324
+INDE_EDITOR_PROFILE phase=object_view_refresh elapsed_ms=1.59766
+INDE_EDITOR_PROFILE phase=object_document_sync elapsed_ms=26.3429
+INDE_EDITOR_PROFILE phase=journal_snapshot_submit elapsed_ms=1.88139
+INDE_EDITOR_PROFILE phase=journal_worker elapsed_ms=32.8465
+INDE_EDITOR_PROFILE phase=proofreading_snapshot_submit elapsed_ms=0.660145
+INDE_EDITOR_PROFILE phase=proofreading_worker elapsed_ms=0.186759
+INDE_EDITOR_PROFILE phase=proofreading_apply_gtk elapsed_ms=0.007009
+INDE_EDITOR_PROFILE phase=buffer_restore_changed elapsed_ms=3.20169
+INDE_EDITOR_PROFILE phase=restore_incremental_gtk elapsed_ms=4.38894
+INDE_EDITOR_PROFILE phase=metrics_snapshot_submit elapsed_ms=0.186747
+INDE_EDITOR_PROFILE phase=restore_document_gtk elapsed_ms=16.6189
+INDE_EDITOR_PROFILE phase=object_owner_adopt elapsed_ms=134.551
+INDE_EDITOR_PROFILE phase=object_choice_sync elapsed_ms=2.88557
+INDE_EDITOR_PROFILE phase=object_view_refresh elapsed_ms=51.5208
+INDE_EDITOR_PROFILE phase=object_sheet_reconcile elapsed_ms=59.6074
+INDE_EDITOR_PROFILE phase=object_document_sync elapsed_ms=201.078
+INDE_EDITOR_PROFILE phase=metrics_worker elapsed_ms=0.093521
+INDE_EDITOR_PROFILE phase=metrics_apply_gtk elapsed_ms=0.032546
+INDE_EDITOR_PROFILE phase=object_owner_adopt elapsed_ms=22.4214
+INDE_EDITOR_PROFILE phase=object_view_refresh elapsed_ms=0.959203
+INDE_EDITOR_PROFILE phase=object_document_sync elapsed_ms=27.2408
+INDE_EDITOR_PROFILE phase=journal_snapshot_submit elapsed_ms=2.96901
+INDE_EDITOR_PROFILE phase=journal_worker elapsed_ms=32.6411
+INDE_EDITOR_PROFILE phase=proofreading_snapshot_submit elapsed_ms=1.36904
+INDE_EDITOR_PROFILE phase=buffer_restore_changed elapsed_ms=4.79138
+INDE_EDITOR_PROFILE phase=buffer_restore_changed elapsed_ms=2.83642
+INDE_EDITOR_PROFILE phase=restore_incremental_gtk elapsed_ms=8.9904
+INDE_EDITOR_PROFILE phase=metrics_snapshot_submit elapsed_ms=0.560488
+INDE_EDITOR_PROFILE phase=restore_document_gtk elapsed_ms=21.931
+INDE_EDITOR_PROFILE phase=object_owner_adopt elapsed_ms=149.908
+INDE_EDITOR_PROFILE phase=object_choice_sync elapsed_ms=3.01789
+INDE_EDITOR_PROFILE phase=object_view_refresh elapsed_ms=1.14775
+INDE_EDITOR_PROFILE phase=object_sheet_reconcile elapsed_ms=9.57772
+INDE_EDITOR_PROFILE phase=object_document_sync elapsed_ms=168.503
+INDE_EDITOR_PROFILE phase=metrics_worker elapsed_ms=0.114119
+INDE_EDITOR_PROFILE phase=metrics_apply_gtk elapsed_ms=0.037259
+INDE_EDITOR_PROFILE phase=proofreading_snapshot_submit elapsed_ms=1.58475
+INDE_EDITOR_PROFILE phase=proofreading_worker elapsed_ms=0.187456
+INDE_EDITOR_PROFILE phase=proofreading_apply_gtk elapsed_ms=0.008395
+INDE_EDITOR_PROFILE phase=object_owner_adopt elapsed_ms=24.6026
+INDE_EDITOR_PROFILE phase=object_view_refresh elapsed_ms=1.08576
+INDE_EDITOR_PROFILE phase=object_document_sync elapsed_ms=30.7605
+INDE_EDITOR_PROFILE phase=object_choice_sync elapsed_ms=2.56755
+INDE_EDITOR_PROFILE phase=object_sheet_rebuild elapsed_ms=1209.99
+INDE_EDITOR_PROFILE phase=save_barrier_gtk elapsed_ms=1409.46
+INDE_EDITOR_PROFILE phase=object_owner_adopt elapsed_ms=18.068
+INDE_EDITOR_PROFILE phase=object_view_refresh elapsed_ms=1.06698
+INDE_EDITOR_PROFILE phase=object_document_sync elapsed_ms=22.8232
+INDE_EDITOR_PROFILE phase=object_owner_adopt elapsed_ms=21.7296
+INDE_EDITOR_PROFILE phase=object_view_refresh elapsed_ms=0.918752
+INDE_EDITOR_PROFILE phase=object_document_sync elapsed_ms=26.5936
+INDE_EDITOR_PROFILE phase=object_choice_sync elapsed_ms=2.71302
+INDE_EDITOR_PROFILE phase=object_sheet_rebuild elapsed_ms=1292.71
+INDE_EDITOR_PROFILE phase=save_barrier_gtk elapsed_ms=1469.58
+INDE_EDITOR_PROFILE phase=object_owner_adopt elapsed_ms=23.937
+INDE_EDITOR_PROFILE phase=object_view_refresh elapsed_ms=1.93341
+INDE_EDITOR_PROFILE phase=object_document_sync elapsed_ms=30.3579

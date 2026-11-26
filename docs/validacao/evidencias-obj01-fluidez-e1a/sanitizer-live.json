@@ -1,0 +1,10 @@
+{
+  "source_commit": "a3d8159cb21076c0b39ad8279acd17d1d4ba810a",
+  "exit_code": 0,
+  "driver_sha256": "3caa1a6c01ee3e859feec0e016d3e427223f2e85275039deb18d70cf11e4080b",
+  "binary_sha256": "4c0a3629337d659c1f8a09ba64b33eaddea41b3e305a5f8c96d2840aa7368676",
+  "ASAN_OPTIONS": "detect_leaks=1:halt_on_error=1",
+  "UBSAN_OPTIONS": "halt_on_error=1:print_stacktrace=1",
+  "scope": "Live Session owner adoption: 32 presentation steps, canonical paragraph edit, undo/redo, foreign owner refusal and reopen. Standalone domain and owner dependencies instrumented; no GTK or ProjectService in this driver.",
+  "restricted_environment_attempt": "LeakSanitizer fatal environment error under restricted process tracing. Preserved, not counted as pass. Same binary passed outside that restriction."
+}

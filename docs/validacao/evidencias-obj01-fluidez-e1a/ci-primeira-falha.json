@@ -1,0 +1,139 @@
+{
+  "run_id": 45833636174,
+  "headSha": "e21b1955ec38ab5fbdfa1c421b0798d35a02cb3f",
+  "conclusion": "failure",
+  "url": "https://github.com/Roger-Cardoso/inde/actions/runs/45833636174",
+  "jobs": [
+    {
+      "id": 139956616988,
+      "name": "pinned-sources",
+      "conclusion": "success"
+    },
+    {
+      "id": 139956617288,
+      "name": "document-read-adapter (clang++, ON)",
+      "conclusion": "success"
+    },
+    {
+      "id": 139956617342,
+      "name": "document-read-adapter (g++, OFF)",
+      "conclusion": "success"
+    },
+    {
+      "id": 139956617386,
+      "name": "standalone-model (clang++, OFF)",
+      "conclusion": "success"
+    },
+    {
+      "id": 139956617481,
+      "name": "composition-read-adapter (g++, OFF)",
+      "conclusion": "success"
+    },
+    {
+      "id": 139956617504,
+      "name": "document-read-adapter (g++, ON)",
+      "conclusion": "success"
+    },
+    {
+      "id": 139956617548,
+      "name": "native-objects",
+      "conclusion": "failure"
+    },
+    {
+      "id": 139956617553,
+      "name": "composition-read-adapter (g++, ON)",
+      "conclusion": "success"
+    },
+    {
+      "id": 139956617554,
+      "name": "document-read-adapter (clang++, OFF)",
+      "conclusion": "success"
+    },
+    {
+      "id": 139956617560,
+      "name": "immutable-change-plans (g++, ON)",
+      "conclusion": "success"
+    },
+    {
+      "id": 139956617566,
+      "name": "reviewed-working-sessions (g++, OFF)",
+      "conclusion": "success"
+    },
+    {
+      "id": 139956617585,
+      "name": "immutable-change-plans (g++, OFF)",
+      "conclusion": "success"
+    },
+    {
+      "id": 139956617591,
+      "name": "composition-read-adapter (clang++, ON)",
+      "conclusion": "success"
+    },
+    {
+      "id": 139956617603,
+      "name": "composition-read-adapter (clang++, OFF)",
+      "conclusion": "success"
+    },
+    {
+      "id": 139956617620,
+      "name": "composite-p2a (clang++, OFF)",
+      "conclusion": "success"
+    },
+    {
+      "id": 139956617646,
+      "name": "composite-p2a (clang++, ON)",
+      "conclusion": "success"
+    },
+    {
+      "id": 139956617655,
+      "name": "immutable-change-plans (clang++, ON)",
+      "conclusion": "success"
+    },
+    {
+      "id": 139956617712,
+      "name": "composite-p2a (g++, OFF)",
+      "conclusion": "success"
+    },
+    {
+      "id": 139956617802,
+      "name": "immutable-change-plans (clang++, OFF)",
+      "conclusion": "success"
+    },
+    {
+      "id": 139956617834,
+      "name": "composite-p2a (g++, ON)",
+      "conclusion": "success"
+    },
+    {
+      "id": 139956617867,
+      "name": "reviewed-working-sessions (clang++, ON)",
+      "conclusion": "success"
+    },
+    {
+      "id": 139956617919,
+      "name": "standalone-model (g++, OFF)",
+      "conclusion": "success"
+    },
+    {
+      "id": 139956617923,
+      "name": "reviewed-working-sessions (g++, ON)",
+      "conclusion": "success"
+    },
+    {
+      "id": 139956617939,
+      "name": "standalone-model (clang++, ON)",
+      "conclusion": "success"
+    },
+    {
+      "id": 139956617940,
+      "name": "reviewed-working-sessions (clang++, OFF)",
+      "conclusion": "success"
+    },
+    {
+      "id": 139956617952,
+      "name": "standalone-model (g++, ON)",
+      "conclusion": "success"
+    }
+  ],
+  "reason": "First fluency Delete was sent while canonical cursor/bound were still at end of pasted text (438). Subsequent source commit adds actual projection focus and exact cursor/bound preconditions. This run is not accepted."
+}

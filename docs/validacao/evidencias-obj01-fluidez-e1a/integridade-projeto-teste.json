@@ -1,0 +1,26 @@
+{
+  "context": "Read-only checks on the closed final synthetic test copy, before opening a distinct demo copy. This original test copy remains closed.",
+  "databases": [
+    {
+      "path": "data/project.sqlite3",
+      "integrity": "ok",
+      "foreign_key_violations": 0,
+      "user_version": 0,
+      "sha256": "da9231035e94cca0dca5d44e60bcdea1c621925404c8109c47b55e3016ac143a"
+    },
+    {
+      "path": "documents/composed/fb15296f-8430-410d-a494-b064fa5f9775/obj01-piloto.sqlite3",
+      "integrity": "ok",
+      "foreign_key_violations": 0,
+      "user_version": 5,
+      "sha256": "338f9077d5396e8bc5f65490d616e1499a224c0bb9795f694afd9537e4291a50"
+    },
+    {
+      "path": "recovery/editor-v1/782550c6-534d-4b6f-a13a-918bf77e3225.sqlite3",
+      "integrity": "ok",
+      "foreign_key_violations": 0,
+      "user_version": 1,
+      "sha256": "bac92b436674de377dccb34d5b931041a84117eefd782c5185b81efde7e7a2d8"
+    }
+  ]
+}
