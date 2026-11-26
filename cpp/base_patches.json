@@ -230,6 +230,39 @@
         "spans.push_back(Value::Object{",
         "spans.emplace_back(Value::Object{"
       ]
+    ],
+    "include/inde/application/project_service.hpp": [
+      [
+        "  void save();",
+        "  void save();\n  void set_recent_location(std::optional<std::filesystem::path> path) { recent_location_ = std::move(path); }"
+      ],
+      [
+        "  persistence::RecentProjectsStore recents_;",
+        "  persistence::RecentProjectsStore recents_;\n  std::optional<std::filesystem::path> recent_location_;"
+      ]
+    ],
+    "src/application/project_service.cpp": [
+      [
+        "recents_.touch(session_.current()->path());",
+        "recents_.touch(recent_location_.value_or(session_.current()->path()));",
+        4
+      ]
+    ],
+    "src/persistence/recent_projects_store.cpp": [
+      [
+        "constexpr std::size_t maximum_recents = 10;",
+        "constexpr std::size_t maximum_recents = 10;\nbool native_project_file(const std::filesystem::path &path) {\n    std::error_code error;\n    if (!std::filesystem::is_regular_file(std::filesystem::symlink_status(path,error)) || error) return false;\n    char header[100]{};\n    std::ifstream input(path,std::ios::binary);input.read(header,100);\n    return input.gcount()==100 && std::string(header,16)==std::string(\"SQLite format 3\\0\",16) &&\n      std::string(header+68,4)==\"IND1\" && header[60]==0 && header[61]==0 && header[62]==0 && header[63]==1;\n}"
+      ],
+      [
+        "std::filesystem::is_directory(line, error) &&",
+        "(std::filesystem::is_directory(line, error) || native_project_file(line)) &&"
+      ]
+    ],
+    "src/persistence/json.cpp": [
+      [
+        "const double value=std::stod(std::string(token));if(!std::isfinite(value))fail(\"Número JSON fora do limite\");return value;",
+        "double value{};const auto converted=std::from_chars(token.data(),token.data()+token.size(),value,std::chars_format::general);if(converted.ec!=std::errc{} || converted.ptr!=token.data()+token.size() || !std::isfinite(value))fail(\"Número JSON fora do limite\");return value;"
+      ]
     ]
   },
   "performance": {

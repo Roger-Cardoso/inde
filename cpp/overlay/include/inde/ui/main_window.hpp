@@ -18,6 +18,7 @@
 
 #include <gtkmm.h>
 #include "publication_service.hpp"
+namespace inde::project_file { class FileSession; enum class RecoveryChoice; }
 #include "comic_ui.hpp"
 #include <optional>
 
@@ -43,6 +44,14 @@ private:
   void update_project_view();
   void create_project();
   void open_project();
+  void choose_project_file(bool create);
+  void open_project_file_at(const std::filesystem::path &, project_file::RecoveryChoice);
+  void flush_project_file();
+  void create_legacy_project(const std::filesystem::path &, const std::string &);
+  void open_legacy_project(const std::filesystem::path &);
+  bool finish_project_file_close();
+  void copy_project_file();
+  void show_file_history();
   void open_project_at(const std::filesystem::path &path);
   void save_project();
   void save_project_as();
@@ -83,6 +92,8 @@ private:
 
   sigc::connection maximize_idle_;
   application::ProjectService service_;
+  std::unique_ptr<project_file::FileSession> project_file_;
+  bool preserve_file_work_{};
   publication::Service publication_service_{service_};
   ComicWorkspace comic_workspace_{publication_service_};
   std::unique_ptr<PublicationPage> publication_page_;

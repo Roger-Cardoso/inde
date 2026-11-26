@@ -6,15 +6,29 @@ on:
     paths:
       - cpp/project_file*
       - cpp/CMakeLists.txt
+      - cpp/base_patches.json
+      - cpp/integrar_project_file.py
+      - cpp/integrar_gtk.py
+      - cpp/main_window_project_file.cpp
+      - cpp/main_window_smoke.hpp
+      - cpp/object_usage_probe.cpp
+      - cpp/overlay/**
       - tests/project_file/**
-      - scripts/demos/Abrir-demo-arquivo-unico.sh
+      - scripts/demos/Abrir-demo-arquivo-unico*.sh
       - .github/workflows/inde-p5.yml
   pull_request:
     paths:
       - cpp/project_file*
       - cpp/CMakeLists.txt
+      - cpp/base_patches.json
+      - cpp/integrar_project_file.py
+      - cpp/integrar_gtk.py
+      - cpp/main_window_project_file.cpp
+      - cpp/main_window_smoke.hpp
+      - cpp/object_usage_probe.cpp
+      - cpp/overlay/**
       - tests/project_file/**
-      - scripts/demos/Abrir-demo-arquivo-unico.sh
+      - scripts/demos/Abrir-demo-arquivo-unico*.sh
       - .github/workflows/inde-p5.yml
   workflow_dispatch:
 
@@ -61,7 +75,7 @@ jobs:
       - name: Install native INDE dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install --yes build-essential cmake ninja-build pkg-config libgtkmm-4.0-dev libsqlite3-dev uuid-dev libicu-dev libhunspell-dev libenchant-2-2 hunspell-pt-br libfontconfig-dev xvfb xauth xdotool xfwm4 dbus-x11 locales
+          sudo apt-get install --yes build-essential cmake ninja-build pkg-config libgtkmm-4.0-dev libsqlite3-dev uuid-dev libicu-dev libhunspell-dev libenchant-2-2 hunspell-pt-br libfontconfig-dev xvfb xauth xdotool xclip xfwm4 dbus-x11 locales
           sudo localedef -i pt_BR -f UTF-8 pt_BR.UTF-8
       - name: Verify archive provenance and extract source
         run: |
@@ -70,13 +84,15 @@ jobs:
       - name: Build native core tests and editor
         run: |
           cmake -S cpp -B build-nativo -G Ninja -DCMAKE_BUILD_TYPE=Release -DINDE_BUILD_CORE_TESTS=ON
-          cmake --build build-nativo --parallel 2 --target inde inde_project_file_cli inde_project_file_tests inde_project_file_native_tests
+          cmake --build build-nativo --parallel 2 --target inde inde_project_file_cli inde_project_file_tests inde_project_file_native_tests inde_project_file_session_tests
       - name: Run native P5 integration and refusal cases
         run: ctest --test-dir build-nativo -R '^inde_project_file' --output-on-failure
       - name: Produce a real synthetic native project and versioned file
         run: build-nativo/inde_project_file_native_tests "$RUNNER_TEMP/p5-native-demo"
       - name: Open actual demo and save and quit by keyboard
         run: xvfb-run -a dbus-run-session -- python3 tests/project_file/test_native_demo.py "$RUNNER_TEMP/p5-gtk-demo"
+      - name: Verify native file Save, restore, both copies, crash recovery and safe exit
+        run: xvfb-run -a dbus-run-session -- python3 tests/project_file/test_native_session.py "$RUNNER_TEMP/p5b-native-session"
       - name: Preserve synthetic project evidence
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
@@ -85,6 +101,7 @@ jobs:
           path: |
             ${{ runner.temp }}/p5-native-demo
             ${{ runner.temp }}/p5-gtk-demo
+            ${{ runner.temp }}/p5b-native-session
             dados/p5-demo-*
           if-no-files-found: warn
           retention-days: 7

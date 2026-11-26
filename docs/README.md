@@ -7,11 +7,16 @@
 
 ## Fase 5 antecipada — arquivo de projeto
 
+- [P5-B: abertura, confirmação e recuperação no editor nativo](arquitetura/ARQUIVO-UNICO-P5-B.md).
+- [Experimentar a integração nativa](roteiros/ARQUIVO-UNICO-P5-B.md) e [validação P5-B](validacao/VALIDACAO-P5-B.md).
+
+O corte B acrescenta o uso opt-in do arquivo único no aplicativo, conservando os projetos em pasta. P5-A abaixo descreve a fundação anterior; seu manifesto de fontes corresponde àquela revisão, não aos arquivos modificados por P5-B.
+
 - [Arquivo único P5-A: estados, alterações e restauração](arquitetura/ARQUIVO-UNICO-P5-A.md).
 - [Demonstração no INDE nativo e comandos de conferência](roteiros/ARQUIVO-UNICO-P5-A.md).
 - [Validação e limites do primeiro corte](validacao/VALIDACAO-P5-A.md).
 
-Antecipado por autorização do usuário em 2026-11-26. A integração transparente com Abrir/Salvar e o histórico da interface ainda não é entregue neste corte; as pendências de maturidade do editor continuam registradas.
+Antecipado por autorização do usuário em 2026-11-26. A fundação A foi seguida pelo corte nativo B acima; as pendências de maturidade e granularidade do armazenamento continuam registradas.
 
 ## Núcleo experimental de objetos
 

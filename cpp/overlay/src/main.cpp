@@ -24,6 +24,7 @@ int main(int argc, char* argv[]) {
     if(argc==4 && std::string(argv[1])=="--escrita-usabilidade")return run_object_usage_probe(application,argv[2],argv[3]);
     // Routing belongs to the owning window and its focused context. Global
     // win.writing-* accelerators used to edit a hidden document behind forms.
+    if(argc==4 && std::string(argv[1])=="--arquivo-usabilidade")return run_object_usage_probe(application,argv[2],argv[3],true);
     std::optional<std::filesystem::path> initial_project;
     if (argc > 1) initial_project = std::filesystem::path(argv[1]);
     const int application_argc = initial_project ? 1 : argc;

@@ -1,5 +1,6 @@
 #include "inde/ui/author_diagnostics.hpp"
 #include "inde/ui/main_window.hpp"
+#include "project_file_session.hpp"
 #include "publication_ui.hpp"
 #include "comic_service.hpp"
 #include "inde/application/contextual_planning.hpp"
@@ -197,7 +198,7 @@ void MainWindow::build_ui() {
       });
   workspace_shell_.show(WorkspaceId::Catalog);
   catalog_workspace_.signal_status_message().connect(
-      [this](const Glib::ustring &message) { status_bar_.set_text(message); });
+      [this](const Glib::ustring &message) { status_bar_.set_text(project_file_ ? Glib::ustring("Na área de trabalho: ")+message : message); });
   catalog_workspace_.signal_vocabulary_changed().connect([this] {
     workspace_shell_.refresh_vocabulary();
     setup_menus();
@@ -210,7 +211,7 @@ void MainWindow::build_ui() {
         show_workspace(WorkspaceId::Editorial);
       });
   editorial_workspace_.signal_status_message().connect(
-      [this](const Glib::ustring &message) { status_bar_.set_text(message); });
+      [this](const Glib::ustring &message) { status_bar_.set_text(project_file_ ? Glib::ustring("Na área de trabalho: ")+message : message); });
   editorial_workspace_.signal_open_document_requested().connect(
       [this](const std::string &id) {
         show_workspace(WorkspaceId::Writing);
@@ -227,7 +228,7 @@ void MainWindow::build_ui() {
         writing_workspace_.show_library_for_editorial_node(node_id);
       });
   planning_workspace_.signal_status_message().connect(
-      [this](const Glib::ustring &message) { status_bar_.set_text(message); });
+      [this](const Glib::ustring &message) { status_bar_.set_text(project_file_ ? Glib::ustring("Na área de trabalho: ")+message : message); });
   planning_workspace_.signal_open_document_requested().connect(
       [this](const std::string &id) {
         show_workspace(WorkspaceId::Writing);
@@ -270,7 +271,7 @@ void MainWindow::build_ui() {
         writing_workspace_.show_library_for_entity(entity_id);
       });
   writing_workspace_.signal_status_message().connect(
-      [this](const Glib::ustring &message) { status_bar_.set_text(message); });
+      [this](const Glib::ustring &message) { status_bar_.set_text(project_file_ ? Glib::ustring("Na área de trabalho: ")+message : message); });
   writing_workspace_.signal_narrative_source_requested().connect([this](const project::RemovalUse &use,const ViewState &origin){
     writing_workspace_.flush_changes();auto state=capture_context().as_object();state["writing"]=origin;const ViewState context=state;
     try{show_workspace(WorkspaceId::Planning);planning_workspace_.reveal_removal_use(use);
@@ -288,7 +289,7 @@ void MainWindow::build_ui() {
         editorial_workspace_.reveal_node(node_id);
       });
   graphs_workspace_.signal_status_message().connect(
-      [this](const Glib::ustring &message) { status_bar_.set_text(message); });
+      [this](const Glib::ustring &message) { status_bar_.set_text(project_file_ ? Glib::ustring("Na área de trabalho: ")+message : message); });
   graphs_workspace_.signal_entity_source_requested().connect(
       [this](const std::string &id) {
         show_workspace(WorkspaceId::Planning);
@@ -335,8 +336,10 @@ void MainWindow::update_project_view() {
   }
   set_title(current->manifest().name + " — INDE");
   header_title_.set_text(current->manifest().name + " — INDE");
-  header_subtitle_.set_visible(false);
-  status_bar_.set_text("Todas as alterações foram salvas");
+  header_subtitle_.set_name("native-project-file");
+  header_subtitle_.set_visible(bool(project_file_));
+  if(project_file_){header_subtitle_.set_text(project_file_->file().filename().string());header_subtitle_.set_tooltip_text(project_file_->file().string());}
+  status_bar_.set_text(project_file_ ? "Arquivo único aberto — use Salvar para confirmar o trabalho" : "Todas as alterações foram salvas");
   save_button_.set_sensitive(true);
   save_as_button_.set_sensitive(true);
   close_button_.set_sensitive(true);
@@ -478,6 +481,10 @@ void MainWindow::show_workspace(WorkspaceId workspace) {
 }
 
 void MainWindow::setup_actions() {
+  add_action("new-project-file", [this]{choose_project_file(true);});
+  add_action("open-project-file", [this]{choose_project_file(false);});
+  add_action("copy-project-file", sigc::mem_fun(*this,&MainWindow::copy_project_file));
+  add_action("project-file-history", sigc::mem_fun(*this,&MainWindow::show_file_history));
   add_action("document-objects", sigc::mem_fun(*this, &MainWindow::show_objects));
   add_action("web-publication", sigc::mem_fun(*this, &MainWindow::show_publication));
   add_action("toggle-focus", [this] {
@@ -543,6 +550,10 @@ void MainWindow::setup_actions() {
 void MainWindow::setup_menus() {
   const auto file = Gio::Menu::create();
   file->append("Novo projeto", "win.new-project");
+  file->append("Novo arquivo único .inde…", "win.new-project-file");
+  file->append("Abrir arquivo único .inde…", "win.open-project-file");
+  file->append("Salvar cópia em arquivo único…", "win.copy-project-file");
+  file->append("Estados do arquivo único…", "win.project-file-history");
   file->append("Abrir projeto…", "win.open-project");
   file->append("Salvar", "win.save-project");
   file->append("Salvar uma cópia…", "win.save-project-as");
@@ -665,7 +676,7 @@ void MainWindow::create_project() {
         return;
       auto path = std::filesystem::path(file->get_path());
       auto name = path.stem().string();
-      service_.create(path, name.empty() ? "Novo projeto" : name);
+      create_legacy_project(path, name.empty() ? "Novo projeto" : name);
       comic_workspace_.reset();
       review_workspace_.reset();
       planning_workspace_.reset();
@@ -700,12 +711,16 @@ void MainWindow::open_project() {
 }
 
 void MainWindow::open_project_at(const std::filesystem::path &path) {
+  std::error_code file_error;
+  if(std::filesystem::is_regular_file(path,file_error)) {
+    open_project_file_at(path,project_file::RecoveryChoice::Ask);return;
+  }
   if(!guard_comic_project_change())return;
   try {
     writing_workspace_.flush_changes();
     remember_context();
     review_workspace_.reset();
-    service_.open(path);
+    open_legacy_project(path);
     comic_workspace_.reset();
     planning_workspace_.reset();
     writing_workspace_.reset();
@@ -723,13 +738,16 @@ void MainWindow::save_project() {
     writing_workspace_.flush_changes();
     remember_context();
     service_.save();
+    if(project_file_){project_file_->save("Salvar no editor");preserve_file_work_=false;}
     update_project_view();
+    if(project_file_)status_bar_.set_text("Arquivo único confirmado — estado "+std::to_string(project_file_->baseline().sequence));
   } catch (const std::exception &error) {
     show_error("Não foi possível salvar o projeto", error);
   }
 }
 
 void MainWindow::save_project_as() {
+  if(project_file_){copy_project_file();return;}
   if(!guard_comic_project_change())return;
   if(modal_host_.has_dialog())return;
   const auto *current = service_.current();
@@ -777,7 +795,10 @@ void MainWindow::close_project() {
     focus_button_.set_active(false);
     focus_button_.set_sensitive(false);
     comic_workspace_.reset();
+    flush_project_file();
+    if(project_file_)project_file_->finish();
     service_.close();
+    project_file_.reset();service_.set_recent_location(std::nullopt);
   } catch (const std::exception &error) {
     show_error("Não foi possível fechar o projeto", error);
     return;
@@ -823,6 +844,7 @@ bool MainWindow::on_close_request() {
     show_error("Não foi possível salvar o Documento", error);
     return true;
   }
+  if(!finish_project_file_close())return true;
   context_save_.disconnect(); // Do not persist GTK's post-close focus teardown.
   maximize_idle_.disconnect();
   if (operations_dialog_)

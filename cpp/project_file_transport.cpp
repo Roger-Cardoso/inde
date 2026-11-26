@@ -85,9 +85,9 @@ struct ReadDb {
   explicit ReadDb(const fs::path &path) {
     try {
       need(sqlite3_open_v2(path.c_str(), &db,
-                         SQLITE_OPEN_READONLY | SQLITE_OPEN_FULLMUTEX,
-                         nullptr) == SQLITE_OK,
-         "source_sqlite", "Banco de origem não pôde ser lido.");
+                           SQLITE_OPEN_READONLY | SQLITE_OPEN_FULLMUTEX,
+                           nullptr) == SQLITE_OK,
+           "source_sqlite", "Banco de origem não pôde ser lido.");
       sqlite3_db_config(db, SQLITE_DBCONFIG_DEFENSIVE, 1, nullptr);
       need(sqlite3_exec(
                db, "PRAGMA trusted_schema=OFF; PRAGMA query_only=ON; BEGIN",
@@ -216,8 +216,7 @@ Captured capture(const fs::path &given, const fs::path &store) {
       c.witness[path] = r.blob;
       body["bytes"] = static_cast<std::int64_t>(raw.size());
       if (path == "manifest.json") {
-        const auto manifest =
-            parse_json(string_bytes(raw));
+        const auto manifest = parse_json(string_bytes(raw));
         need(manifest.at("format").as_string() == "INDE" &&
                  manifest.at("format_version").as_integer() == 2,
              "source_format", "Formato de pasta não reconhecido.");
@@ -300,6 +299,24 @@ void write_new(const fs::path &p, const Bytes &b) {
   }
 }
 } // namespace
+bool directory_matches(Store &store, const State &state, const fs::path &source,
+                       const fs::path &file) {
+  need(store.head().store_id == state.store_id, "stale_state",
+       "Outro armazenamento.");
+  const auto captured = capture(source, file);
+  unchanged(captured);
+  if (captured.owner != state.project_id ||
+      captured.records.size() != state.records.size())
+    return false;
+  for (const auto &[key, r] : captured.records) {
+    const auto at = state.records.find(key);
+    if (at == state.records.end() || at->second.kind != r.kind ||
+        at->second.payload != r.payload || at->second.blob != r.blob ||
+        at->second.references != r.references)
+      return false;
+  }
+  return true;
+}
 State pack_directory(const fs::path &source, const fs::path &new_file) {
   need(!fs::exists(fs::symlink_status(new_file)), "destination_exists",
        "O destino precisa ser um arquivo novo.");
@@ -350,8 +367,7 @@ void unpack_directory(Store &store, std::int64_t sequence,
   need(state.records.contains("project") &&
            state.records.at("project").kind == "legacy-project",
        "transport_profile", "Este estado não é uma captura de pasta INDE.");
-  const auto root =
-      parse_json(state.records.at("project").payload);
+  const auto root = parse_json(state.records.at("project").payload);
   need(root.at("format").as_string() == "INDE-DIRECTORY-37" &&
            root.at("project_id").as_string() == state.project_id,
        "transport_profile", "Identidade de transporte inválida.");

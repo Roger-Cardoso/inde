@@ -245,7 +245,8 @@ struct NumericLocale {
   locale_t numeric{}, previous{};
   NumericLocale() {
     numeric = newlocale(LC_NUMERIC_MASK, "C", nullptr);
-    need(numeric != nullptr, "numeric_locale", "Não foi possível ler números JSON.");
+    need(numeric != nullptr, "numeric_locale",
+         "Não foi possível ler números JSON.");
     previous = uselocale(numeric);
     if (!previous) {
       freelocale(numeric);
@@ -413,8 +414,9 @@ struct Store::Impl {
     need(!poisoned, "reopen_required",
          "A confirmação foi incerta; reabra e confira o estado antes de "
          "continuar.");
-    need(sqlite3_get_autocommit(db) != 0, "reopen_required",
-         "Há uma transação não encerrada; reabra e confira antes de continuar.");
+    need(
+        sqlite3_get_autocommit(db) != 0, "reopen_required",
+        "Há uma transação não encerrada; reabra e confira antes de continuar.");
     same_file();
     need(integer(db, "PRAGMA data_version") == data_version, "external_change",
          "O banco foi alterado fora desta sessão; reabra e confira.");
@@ -708,6 +710,53 @@ void Store::verify() const {
                "SELECT count(*) FROM blobs b WHERE NOT EXISTS(SELECT 1 FROM "
                "record_versions v WHERE v.blob_hash=b.hash)") == 0,
        "orphan_blob", "Recurso sem versão identificada.");
+}
+void Store::copy_to(const std::filesystem::path &given) const {
+  impl_->ready();
+  verify();
+  const auto original = head();
+  const auto target = std::filesystem::absolute(given);
+  need(!std::filesystem::exists(std::filesystem::symlink_status(target)),
+       "destination_exists", "A cópia exige um arquivo novo.");
+  auto *id = g_uuid_string_random();
+  const auto pending =
+      target.parent_path() / (".inde-copy-pending-" + std::string(id));
+  g_free(id);
+  {
+    Options options;
+    options.limits = impl_->options.limits;
+    auto destination = Store::create(pending, original.project_id, options);
+    auto *backup =
+        sqlite3_backup_init(destination.impl_->db, "main", impl_->db, "main");
+    need(backup != nullptr, "copy_failed",
+         "Não foi possível iniciar a cópia verificável.");
+    const int result = sqlite3_backup_step(backup, -1);
+    const int finished = sqlite3_backup_finish(backup);
+    need(result == SQLITE_DONE && finished == SQLITE_OK, "copy_failed",
+         "A cópia não foi confirmada; o destino pendente foi preservado.");
+    need(fsync(destination.impl_->fd) == 0, "copy_sync",
+         "A cópia não pôde ser confirmada.");
+  }
+  {
+    auto check = Store::open(pending);
+    need(check.head().hash == original.hash &&
+             check.head().sequence == original.sequence,
+         "copy_failed", "A cópia não corresponde ao estado observado.");
+  }
+  impl_->ready();
+  need(::renameat2(AT_FDCWD, pending.c_str(), AT_FDCWD, target.c_str(),
+                   RENAME_NOREPLACE) == 0,
+       "destination_publish",
+       "O destino já existe ou não pôde ser publicado; a cópia pendente foi "
+       "preservada.");
+  const int parent =
+      ::open(target.parent_path().c_str(), O_RDONLY | O_DIRECTORY | O_CLOEXEC);
+  need(parent >= 0, "copy_sync",
+       "A cópia foi gravada, mas o diretório não pôde ser confirmado.");
+  const int result = fsync(parent);
+  ::close(parent);
+  need(result == 0, "copy_sync",
+       "A cópia foi gravada, mas sua confirmação final foi incerta.");
 }
 State Store::apply(const State &expected, const std::vector<Edit> &edits,
                    const std::vector<Blob> &blobs, const std::string &label) {

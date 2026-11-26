@@ -15,7 +15,7 @@ set(INDE_FROZEN_SOURCE ${CMAKE_CURRENT_SOURCE_DIR}/../fontes/inde-integrado-sche
 set(INDE_ACTIVE_SOURCE ${CMAKE_BINARY_DIR}/inde-source)
 set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS
   ${CMAKE_CURRENT_SOURCE_DIR}/base_patches.json ${CMAKE_CURRENT_SOURCE_DIR}/otimizar_base.py
-  ${CMAKE_CURRENT_SOURCE_DIR}/integrar_objetos.py ${CMAKE_CURRENT_SOURCE_DIR}/integrar_gtk.py)
+  ${CMAKE_CURRENT_SOURCE_DIR}/integrar_objetos.py ${CMAKE_CURRENT_SOURCE_DIR}/integrar_gtk.py ${CMAKE_CURRENT_SOURCE_DIR}/integrar_project_file.py)
 file(GLOB_RECURSE INDE_PLANNING_ADDITIONS CONFIGURE_DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/base_additions/*)
 set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS
   ${CMAKE_CURRENT_SOURCE_DIR}/planning_patches.json ${INDE_PLANNING_ADDITIONS})
@@ -255,7 +255,7 @@ endif()
 
 # P5-A: an independent versioned SQLite file, with an explicit compatibility bridge.
 pkg_check_modules(P5_SQLITE REQUIRED IMPORTED_TARGET sqlite3>=3.37)
-add_library(inde_project_file STATIC project_file.cpp project_file_transport.cpp)
+add_library(inde_project_file STATIC project_file.cpp project_file_transport.cpp project_file_session.cpp)
 target_include_directories(inde_project_file PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 target_link_libraries(inde_project_file PUBLIC inde_core PkgConfig::GLIB PkgConfig::P5_SQLITE)
 target_compile_options(inde_project_file PRIVATE -Wall -Wextra -Wpedantic -Wconversion -Werror)
@@ -276,4 +276,15 @@ if(INDE_BUILD_CORE_TESTS)
     ${CMAKE_CURRENT_SOURCE_DIR}/../tests/project_file/test_transport.py $<TARGET_FILE:inde_project_file_cli>)
   set_tests_properties(inde_project_file_tests inde_project_file_native_tests
     inde_project_file_transport_tests PROPERTIES TIMEOUT 180)
+endif()
+
+target_sources(inde PRIVATE main_window_project_file.cpp)
+target_link_libraries(inde PRIVATE inde_project_file)
+
+add_executable(inde_project_file_session_tests project_file_session_tests.cpp)
+target_link_libraries(inde_project_file_session_tests PRIVATE inde_project_file)
+target_compile_options(inde_project_file_session_tests PRIVATE -Wall -Wextra -Wpedantic -Wconversion -Werror)
+if(INDE_BUILD_CORE_TESTS)
+add_test(NAME inde_project_file_session_tests COMMAND inde_project_file_session_tests)
+set_tests_properties(inde_project_file_session_tests PROPERTIES TIMEOUT 180)
 endif()

@@ -1,0 +1,72 @@
+P5 native schema37 roundtrip: full Document, PNG, table, equation, divergent row, planning/text link, edition, restoration and original preservation OK
+Synthetic demonstration: "/home/roger/Documents/Projects/GitHub/INDE/obj01-audit/dados/p5b-gtk-20261126-rebind/fixture"
+dbus-daemon[140317]: [session uid=1000 pid=140317] Activating service name='org.gtk.vfs.Daemon' requested by ':1.0' (uid=1000 pid=140339 comm="xfwm4 --compositor=off" label="chatgpt (unconfined)")
+dbus-daemon[140317]: [session uid=1000 pid=140317] Successfully activated service 'org.gtk.vfs.Daemon'
+fusermount3: failed to access mountpoint /run/user/1000/gvfs: Permission denied
+dbus-daemon[140317]: [session uid=1000 pid=140317] Activating service name='org.a11y.Bus' requested by ':1.2' (uid=1000 pid=140339 comm="xfwm4 --compositor=off" label="chatgpt (unconfined)")
+dbus-daemon[140317]: [session uid=1000 pid=140317] Successfully activated service 'org.a11y.Bus'
+dbus-daemon[140361]: Activating service name='org.a11y.atspi.Registry' requested by ':1.0' (uid=1000 pid=140339 comm="xfwm4 --compositor=off" label="chatgpt (unconfined)")
+dbus-daemon[140317]: [session uid=1000 pid=140317] Activating service name='org.xfce.Xfconf' requested by ':1.0' (uid=1000 pid=140339 comm="xfwm4 --compositor=off" label="chatgpt (unconfined)")
+dbus-daemon[140361]: Successfully activated service 'org.a11y.atspi.Registry'
+SpiRegistry daemon is running with well-known name - org.a11y.atspi.Registry
+dbus-daemon[140317]: [session uid=1000 pid=140317] Successfully activated service 'org.xfce.Xfconf'
+dbus-daemon[140317]: [session uid=1000 pid=140317] Activating service name='org.freedesktop.portal.Desktop' requested by ':1.7' (uid=1000 pid=140375 comm="/home/roger/Documents/Projects/GitHub/INDE/obj01-a" label="chatgpt (unconfined)")
+dbus-daemon[140317]: [session uid=1000 pid=140317] Activating service name='org.freedesktop.portal.Documents' requested by ':1.8' (uid=1000 pid=140381 comm="/usr/libexec/xdg-desktop-portal" label="chatgpt (unconfined)")
+dbus-daemon[140317]: [session uid=1000 pid=140317] Activating service name='org.freedesktop.impl.portal.PermissionStore' requested by ':1.9' (uid=1000 pid=140387 comm="/usr/libexec/xdg-document-portal" label="chatgpt (unconfined)")
+dbus-daemon[140317]: [session uid=1000 pid=140317] Successfully activated service 'org.freedesktop.impl.portal.PermissionStore'
+dbus-daemon[140317]: [session uid=1000 pid=140317] Successfully activated service 'org.freedesktop.portal.Documents'
+fusermount3: failed to access mountpoint /run/user/1000/doc: Permission denied
+error: fuse init failed: Can't mount path /run/user/1000/doc
+
+(/usr/libexec/xdg-desktop-portal:140381): xdg-desktop-portal-WARNING **: 17:33:35.235: Choosing gtk.portal for org.freedesktop.impl.portal.Lockdown as a last-resort fallback
+
+(/usr/libexec/xdg-desktop-portal:140381): xdg-desktop-portal-WARNING **: 17:33:35.235: The preferred method to match portal implementations to desktop environments is to use the portals.conf(5) configuration file
+dbus-daemon[140317]: [session uid=1000 pid=140317] Activating service name='org.freedesktop.impl.portal.desktop.gtk' requested by ':1.8' (uid=1000 pid=140381 comm="/usr/libexec/xdg-desktop-portal" label="chatgpt (unconfined)")
+dbus-daemon[140317]: [session uid=1000 pid=140317] Successfully activated service 'org.freedesktop.impl.portal.desktop.gtk'
+dbus-daemon[140317]: [session uid=1000 pid=140317] Activating service name='org.freedesktop.impl.portal.desktop.kde' requested by ':1.8' (uid=1000 pid=140381 comm="/usr/libexec/xdg-desktop-portal" label="chatgpt (unconfined)")
+dbus-daemon[140317]: [session uid=1000 pid=140317] Successfully activated service 'org.freedesktop.impl.portal.desktop.kde'
+[W][26639.104165] pw.conf      | [          conf.c: 1031 try_load_conf()] can't load config client.conf: No such file or directory
+[E][26639.104255] pw.conf      | [          conf.c: 1060 pw_conf_load_conf_for_context()] can't load config client.conf: No such file or directory
+
+(/usr/libexec/xdg-desktop-portal:140381): xdg-desktop-portal-WARNING **: 17:33:35.626: Failed connect to PipeWire: Couldn't create PipeWire context
+dbus-daemon[140317]: [session uid=1000 pid=140317] Successfully activated service 'org.freedesktop.portal.Desktop'
+dbus-daemon[140317]: [session uid=1000 pid=140317] Activating service name='org.gtk.vfs.UDisks2VolumeMonitor' requested by ':1.7' (uid=1000 pid=140375 comm="/home/roger/Documents/Projects/GitHub/INDE/obj01-a" label="chatgpt (unconfined)")
+dbus-daemon[140317]: [session uid=1000 pid=140317] Successfully activated service 'org.gtk.vfs.UDisks2VolumeMonitor'
+dbus-daemon[140317]: [session uid=1000 pid=140317] Activating service name='org.gtk.vfs.AfcVolumeMonitor' requested by ':1.7' (uid=1000 pid=140375 comm="/home/roger/Documents/Projects/GitHub/INDE/obj01-a" label="chatgpt (unconfined)")
+dbus-daemon[140317]: [session uid=1000 pid=140317] Successfully activated service 'org.gtk.vfs.AfcVolumeMonitor'
+dbus-daemon[140317]: [session uid=1000 pid=140317] Activating service name='org.gtk.vfs.GPhoto2VolumeMonitor' requested by ':1.7' (uid=1000 pid=140375 comm="/home/roger/Documents/Projects/GitHub/INDE/obj01-a" label="chatgpt (unconfined)")
+dbus-daemon[140317]: [session uid=1000 pid=140317] Successfully activated service 'org.gtk.vfs.GPhoto2VolumeMonitor'
+dbus-daemon[140317]: [session uid=1000 pid=140317] Activating service name='org.gtk.vfs.GoaVolumeMonitor' requested by ':1.7' (uid=1000 pid=140375 comm="/home/roger/Documents/Projects/GitHub/INDE/obj01-a" label="chatgpt (unconfined)")
+dbus-daemon[140317]: [session uid=1000 pid=140317] Successfully activated service 'org.gtk.vfs.GoaVolumeMonitor'
+dbus-daemon[140317]: [session uid=1000 pid=140317] Activating service name='org.gtk.vfs.MTPVolumeMonitor' requested by ':1.7' (uid=1000 pid=140375 comm="/home/roger/Documents/Projects/GitHub/INDE/obj01-a" label="chatgpt (unconfined)")
+dbus-daemon[140317]: [session uid=1000 pid=140317] Successfully activated service 'org.gtk.vfs.MTPVolumeMonitor'
+
+** (process:140536): WARNING **: 17:33:41.883: Failed to spawn the wsdd daemon: Failed to execute child process “wsdd” (No such file or directory)
+
+** (process:140517): WARNING **: 17:33:41.884: Couldn't create directory monitor on wsdd:///. Error: Automount failed: Failed to spawn the underlying wsdd daemon.
+
+** (process:140517): WARNING **: 17:33:42.096: Couldn't create directory monitor on wsdd:///. Error: Automount failed: mountpoint for org.gtk.vfs.mountpoint_wsdd already running
+dbus-daemon[140317]: [session uid=1000 pid=140317] Activating service name='ca.desrt.dconf' requested by ':1.7' (uid=1000 pid=140375 comm="/home/roger/Documents/Projects/GitHub/INDE/obj01-a" label="chatgpt (unconfined)")
+dbus-daemon[140317]: [session uid=1000 pid=140317] Successfully activated service 'ca.desrt.dconf'
+P5-B GTK: real Save, history restore, recents, crash recovery and failure-safe normal exit OK
+A connection to the bus can't be made
+
+(xfconfd:140366): xfconfd-WARNING **: 17:34:22.480: Name org.xfce.Xfconf lost on the message dbus, exiting.
+
+(process:140516): GVFS-RemoteVolumeMonitor-WARNING **: 17:34:22.482: Owner of volume monitor org.gtk.vfs.UDisks2VolumeMonitor disconnected from the bus; removing drives/volumes/mounts
+
+(process:140516): GVFS-RemoteVolumeMonitor-WARNING **: 17:34:22.482: Owner of volume monitor org.gtk.vfs.AfcVolumeMonitor disconnected from the bus; removing drives/volumes/mounts
+
+(process:140516): GVFS-RemoteVolumeMonitor-WARNING **: 17:34:22.482: Owner of volume monitor org.gtk.vfs.GPhoto2VolumeMonitor disconnected from the bus; removing drives/volumes/mounts
+
+(process:140516): GVFS-RemoteVolumeMonitor-WARNING **: 17:34:22.484: Owner of volume monitor org.gtk.vfs.GoaVolumeMonitor disconnected from the bus; removing drives/volumes/mounts
+
+(process:140516): GVFS-RemoteVolumeMonitor-WARNING **: 17:34:22.484: Owner of volume monitor org.gtk.vfs.MTPVolumeMonitor disconnected from the bus; removing drives/volumes/mounts
+A connection to the bus can't be made
+A connection to the bus can't be made
+A connection to the bus can't be made
+A connection to the bus can't be made
+XIO:  fatal IO error 11 (Resource temporarily unavailable) on X server ":100"
+      after 0 requests (0 known processed) with 0 events remaining.
+A connection to the bus can't be made
+The X11 connection broke (error 1). Did the X11 server die?

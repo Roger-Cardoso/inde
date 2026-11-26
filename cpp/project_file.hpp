@@ -86,6 +86,7 @@ public:
   State restore(const State &expected, std::int64_t sequence,
                 const std::string &label);
   void verify() const;
+  void copy_to(const std::filesystem::path &new_file) const;
 
 private:
   struct Impl;

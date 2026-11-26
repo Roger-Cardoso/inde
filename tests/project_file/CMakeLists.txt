@@ -21,7 +21,7 @@ target_include_directories(inde_p5_owner_json PUBLIC ${P5_BASE}/include)
 # The pinned owner's warnings match its native build. Strict conversion
 # diagnostics apply to every new P5 unit without modifying frozen source.
 target_compile_options(inde_p5_owner_json PRIVATE -Wall -Wextra -Wpedantic -Werror)
-add_library(inde_project_file STATIC ${P5_ROOT}/cpp/project_file.cpp ${P5_ROOT}/cpp/project_file_transport.cpp)
+add_library(inde_project_file STATIC ${P5_ROOT}/cpp/project_file.cpp ${P5_ROOT}/cpp/project_file_transport.cpp ${P5_ROOT}/cpp/project_file_session.cpp)
 target_include_directories(inde_project_file PUBLIC ${P5_ROOT}/cpp ${P5_BASE}/include)
 target_link_libraries(inde_project_file PUBLIC inde_p5_owner_json PkgConfig::GLIB PkgConfig::SQLITE)
 add_executable(inde_project_file_tests ${P5_ROOT}/cpp/project_file_tests.cpp)
@@ -37,3 +37,9 @@ foreach(p5_target inde_project_file inde_project_file_tests inde_project_file_cl
 endforeach()
 add_test(NAME inde_project_file_transport_tests COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_LIST_DIR}/test_transport.py $<TARGET_FILE:inde_project_file_cli>)
 set_tests_properties(inde_project_file_transport_tests PROPERTIES TIMEOUT 180)
+
+add_executable(inde_project_file_session_tests ${P5_ROOT}/cpp/project_file_session_tests.cpp)
+target_link_libraries(inde_project_file_session_tests PRIVATE inde_project_file)
+target_compile_options(inde_project_file_session_tests PRIVATE -Wall -Wextra -Wpedantic -Wconversion -Werror)
+add_test(NAME inde_project_file_session_tests COMMAND inde_project_file_session_tests)
+set_tests_properties(inde_project_file_session_tests PROPERTIES TIMEOUT 180)

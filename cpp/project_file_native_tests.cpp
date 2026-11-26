@@ -11,6 +11,7 @@
 #include <fstream>
 #include <glib.h>
 #include <iostream>
+#include <locale.h>
 using namespace inde;
 using namespace project_file;
 using V = persistence::json::Value;
@@ -50,6 +51,18 @@ int main(int argc, char **argv) {
   try {
     check(!fs::exists(root), "Synthetic root must be new");
     fs::create_directories(root);
+    const auto numeric=newlocale(LC_NUMERIC_MASK,"pt_BR.UTF-8",nullptr);
+    if(numeric) {
+      const auto previous=uselocale(numeric);
+      bool correct=false;
+      try {
+        const auto decoded=persistence::json::parse("{\"x\":0.6120081954998241}");
+        correct=std::get<double>(decoded.at("x").storage())==0.6120081954998241;
+      } catch(...) {uselocale(previous);freelocale(numeric);throw;}
+      uselocale(previous);freelocale(numeric);
+      check(correct,"Native owner JSON lost a decimal under pt_BR");
+    }
+
     g_setenv("XDG_CONFIG_HOME", (root / "perfil").c_str(), true);
     application::ProjectService service;
     const auto source = root / "Original-sintetico.inde";

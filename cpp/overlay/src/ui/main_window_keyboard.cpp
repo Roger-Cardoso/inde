@@ -24,6 +24,10 @@ void MainWindow::setup_keyboard() {
   keyboard_->add({"context-help", "Ajuda deste contexto", "Geral", "F1", {}, any, {}, [this] { keyboard_->show(true); }});
   action("new-project", "Novo projeto", "Projeto", "<Control>n");
   action("open-project", "Abrir projeto…", "Projeto", "<Control>o");
+  action("open-project-file", "Abrir arquivo único .inde…", "Projeto", "<Control><Alt>o");
+  action("new-project-file", "Novo arquivo único .inde…", "Projeto", "<Control><Alt>n");
+  action("project-file-history", "Estados do arquivo único…", "Projeto", "<Control><Alt>h", [this]{return project_file_ ? std::string{} : std::string("Abra um arquivo único primeiro.");});
+  action("copy-project-file", "Salvar cópia em arquivo único…", "Projeto", "<Control><Alt>s", project);
   action("save-project", "Salvar rascunho e projeto", "Projeto", "<Control>s", project);
   action("save-project-as", "Salvar uma cópia…", "Projeto", "<Control><Shift>s", project);
   action("close-project", "Fechar projeto", "Projeto", "<Control><Shift>w", project);

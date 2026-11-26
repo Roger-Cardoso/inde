@@ -24,13 +24,13 @@ template<class T> T *locate(Gtk::Widget &w) {
 // driver come through X11 pointer/keyboard events, including focus and dialogs.
 int run_object_usage_probe(const Glib::RefPtr<Gtk::Application> &app,
                           const std::filesystem::path &project,
-                          const std::filesystem::path &state_file) {
-  if(std::filesystem::exists(project))
+                          const std::filesystem::path &state_file, bool open_existing) {
+  if(!open_existing && std::filesystem::exists(project))
     throw std::runtime_error("O teste de uso exige um destino novo e descartável.");
   std::unique_ptr<inde::ui::MainWindow> main;
   sigc::connection poll;
   app->signal_activate().connect([&] {
-    main=std::make_unique<inde::ui::MainWindow>(std::nullopt);
+    main=std::make_unique<inde::ui::MainWindow>(open_existing?std::optional<std::filesystem::path>(project):std::nullopt);
     app->add_window(*main);main->unmaximize();main->set_default_size(1190,750);
     main->present();
     poll=Glib::signal_timeout().connect([&] {
@@ -59,7 +59,7 @@ int run_object_usage_probe(const Glib::RefPtr<Gtk::Application> &app,
         if(auto *b=dynamic_cast<Gtk::CheckButton *>(&w))label=b->get_label();
         const auto name=w.get_name().raw();
         if(name.starts_with("native-"))if(auto *l=dynamic_cast<Gtk::Label *>(&w))label=l->get_text();
-        if(!label.empty() || dynamic_cast<Gtk::Entry *>(&w) || name.starts_with("native-") ||
+        if(!label.empty() || dynamic_cast<Gtk::Entry *>(&w) || name.starts_with("native-") || name=="project-file-state" ||
            name.starts_with("specialty-") || name.starts_with("writing-paragraph-")) {
           graphene_rect_t bounds{};
           auto *coordinate_root=GTK_WIDGET(main->gobj());
