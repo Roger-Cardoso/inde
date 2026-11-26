@@ -151,15 +151,20 @@ class RealWritingInput(unittest.TestCase):
 
             def scroll_to(name, area):
                 for _ in range(80):
-                    if candidates(state(), name=name):
-                        return
+                    values = candidates(state(), name=name)
                     regions = candidates(state(), name=area)
+                    if values and regions:
+                        target, viewport = values[0], regions[0]
+                        if (target['height'] > viewport['height']-16 or
+                            (target['y'] >= viewport['y']+8 and
+                             target['y']+target['height'] <= viewport['y']+viewport['height']-8)):
+                            return
                     if not regions:
                         wait(lambda s: bool(candidates(s, name=area)), 'Área de rolagem disponível: ' + area)
                         regions = candidates(state(), name=area)
                     c = regions[0]
                     targets = [v for v in state()['controls'] if v['name'] == name]
-                    above = targets and targets[0].get('y', c['y']) < c['y']
+                    above = targets and targets[0].get('y', c['y']) < c['y']+8
                     far = targets and abs(targets[0].get('y', c['y'])-c['y']) > c['height']
                     input_('mousemove', '--window', str(c.get('window', window)), str(c['x'] + min(6, c['width'] // 2)),
                            str(c['y'] + c['height'] // 2), 'click', '--repeat', '8' if far else '1',
@@ -208,9 +213,12 @@ class RealWritingInput(unittest.TestCase):
 
             try:
                 wait(lambda s: bool(s.get('controls')), 'Aplicativo sem projeto aberto')
-                window = subprocess.check_output(
-                    ['xdotool', 'search', '--all', '--onlyvisible', '--pid', str(state()['pid']),
-                     '--name', 'INDE'], env=env, text=True).splitlines()[0]
+                if state().get('window'):
+                    window = str(state()['window'])
+                else:  # Preserved binaries used only for performance references.
+                    window = subprocess.check_output(
+                        ['xdotool', 'search', '--all', '--onlyvisible', '--pid', str(state()['pid']),
+                         '--name', 'INDE'], env=env, text=True).splitlines()[0]
                 input_('windowactivate', '--sync', window)
                 input_('key', 'ctrl+n')
                 choose_path('Criar projeto INDE', str(root / 'Teste.inde'))

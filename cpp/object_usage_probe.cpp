@@ -36,6 +36,13 @@ int run_object_usage_probe(const Glib::RefPtr<Gtk::Application> &app,
     poll=Glib::signal_timeout().connect([&] {
       if(!main->gobj() || !GTK_IS_WINDOW(main->gobj()) || !main->get_visible())return false;
       O state{{"pid",static_cast<std::int64_t>(::getpid())}};
+      if (auto *native=gtk_widget_get_native(GTK_WIDGET(main->gobj()))) {
+        auto *surface=gtk_native_get_surface(native);
+        if(surface && GDK_IS_X11_SURFACE(surface))
+          state["window"]=static_cast<std::int64_t>(gdk_x11_surface_get_xid(surface));
+        double tx=0,ty=0;gtk_native_get_surface_transform(native,&tx,&ty);
+        state["surface_offset_x"]=tx;state["surface_offset_y"]=ty;
+      }
       V::Array controls;
       std::function<void(Gtk::Widget &)> visit=[&](Gtk::Widget &w) {
         std::string label;
@@ -77,6 +84,8 @@ int run_object_usage_probe(const Glib::RefPtr<Gtk::Application> &app,
           if(auto *choice=dynamic_cast<Gtk::ComboBoxText *>(&w))
             c["value"]=choice->get_active_id().raw();
           if(placed) {
+            double surface_x=0,surface_y=0;
+            gtk_native_get_surface_transform(GTK_NATIVE(coordinate_root),&surface_x,&surface_y);
             if(popup_surface && GDK_IS_X11_SURFACE(popup_surface))
               c["window"]=static_cast<std::int64_t>(gdk_x11_surface_get_xid(popup_surface));
             auto *picked=gtk_widget_pick(coordinate_root,
@@ -84,8 +93,8 @@ int run_object_usage_probe(const Glib::RefPtr<Gtk::Application> &app,
                 bounds.origin.y+bounds.size.height/2,GTK_PICK_DEFAULT);
             c["hittable"]=bool(picked &&
                 (picked==w.gobj() || gtk_widget_is_ancestor(picked,w.gobj())));
-            c["x"]=static_cast<std::int64_t>(std::lround(bounds.origin.x));
-            c["y"]=static_cast<std::int64_t>(std::lround(bounds.origin.y));
+            c["x"]=static_cast<std::int64_t>(std::lround(bounds.origin.x+surface_x));
+            c["y"]=static_cast<std::int64_t>(std::lround(bounds.origin.y+surface_y));
             c["width"]=static_cast<std::int64_t>(std::lround(bounds.size.width));
             c["height"]=static_cast<std::int64_t>(std::lround(bounds.size.height));
           }
@@ -116,14 +125,15 @@ int run_object_usage_probe(const Glib::RefPtr<Gtk::Application> &app,
             if(gtk_widget_get_mapped(widget) && ((caption && *caption) || GTK_IS_EDITABLE(widget))) {
               graphene_rect_t b{};
               if(gtk_widget_compute_bounds(widget,GTK_WIDGET(top),&b)) {
+                double surface_x=0,surface_y=0;gtk_native_get_surface_transform(GTK_NATIVE(top),&surface_x,&surface_y);
                 auto *hit=gtk_widget_pick(GTK_WIDGET(top),b.origin.x+b.size.width/2,b.origin.y+b.size.height/2,GTK_PICK_DEFAULT);
                 O c{{"name",gtk_widget_get_name(widget)},{"label",caption?caption:""},
                     {"mapped",true},{"sensitive",bool(gtk_widget_is_sensitive(widget))},
                     {"focus",gtk_root_get_focus(GTK_ROOT(top)) == widget},
                     {"hittable",bool(hit && (hit==widget || gtk_widget_is_ancestor(hit,widget)))},
                     {"window",static_cast<std::int64_t>(xid)},
-                    {"x",static_cast<std::int64_t>(std::lround(b.origin.x))},
-                    {"y",static_cast<std::int64_t>(std::lround(b.origin.y))},
+                    {"x",static_cast<std::int64_t>(std::lround(b.origin.x+surface_x))},
+                    {"y",static_cast<std::int64_t>(std::lround(b.origin.y+surface_y))},
                     {"width",static_cast<std::int64_t>(std::lround(b.size.width))},
                     {"height",static_cast<std::int64_t>(std::lround(b.size.height))}};
                 if(GTK_IS_EDITABLE(widget))c["value"]=gtk_editable_get_text(GTK_EDITABLE(widget));

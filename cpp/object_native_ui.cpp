@@ -960,7 +960,7 @@ struct ObjectDocumentEditor::Impl {
     // content. Transform once into the sheet, then retain viewport coordinates
     // so autoscrolling does not change the pointer's apparent location.
     gtk_native_get_surface_transform(native,&tx,&ty);
-    const graphene_point_t point{static_cast<float>(x+tx),static_cast<float>(y+ty)};
+    const graphene_point_t point{static_cast<float>(x-tx),static_cast<float>(y-ty)};
     graphene_point_t sheet{};
     if (!gtk_widget_compute_point(GTK_WIDGET(native),GTK_WIDGET(canvas.gobj()),&point,&sheet)) return false;
     drag_pointer_x = sheet.x;

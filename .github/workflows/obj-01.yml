@@ -307,4 +307,14 @@ jobs:
       - name: Verify existing publication and refusal of unsupported composition
         run: python3 -m unittest discover -s tests -p test_sessao_nativa.py -v
       - name: Verify real keyboard and mouse from project creation through normal exit
+        env:
+          INDE_TEST_ARTIFACTS: ${{ runner.temp }}/obj01-real-input
         run: python3 tests/run_obj01_real_input.py
+      - name: Preserve synthetic real-input evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: obj01-real-input-${{ github.run_id }}
+          path: ${{ runner.temp }}/obj01-real-input
+          if-no-files-found: warn
+          retention-days: 7

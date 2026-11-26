@@ -39,6 +39,8 @@ def exercise_reordering(test, root, env, process, window, input_, click, wait, s
                           if c['name'].startswith('writing-paragraph-')}
         scroll_to('native-reading-handle-' + first, 'native-sheet-scroll')
         click(name='native-reading-handle-' + first)
+        wait(lambda s: any(c['name'] == 'native-reading-handle-'+first and c.get('focus')
+                           for c in s['controls']), 'Círculo inicial com foco real antes de mover')
         for step in [1, 2, 3]:
             expected = '\n'.join(lines[1:step+1] + [lines[0]] + lines[step+1:])
             start = time.monotonic()
