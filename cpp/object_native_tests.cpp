@@ -190,6 +190,38 @@ int main() {
           (std::istreambuf_iterator<char>(original_file)), {});
       check(captured == original, "live changed immutable provenance");
     }
+    // Many object-history entries may share the same owner snapshot. Adopting
+    // an edit must preserve every style step without resurrecting stale text.
+    {
+      const auto history = root / "history-adoption";
+      auto after = inde::application::replace_selection(
+          {d, {}}, d.content.find('\n'), d.content.find('\n') + 1, "").document;
+      {
+        Session s(history, owner, d, inde::objects::pilot::DocumentBinding::Live);
+        op(s, "set_context", {{"context", "composition"}});
+        const auto paragraph = view(s).at("paragraphs").as_array()[0].at("id").as_string();
+        for(int i=0;i<32;++i)
+          op(s,"set_presentation",{{"id",paragraph},{"width",20+i},
+             {"horizontal","start"},{"text_align","left"},{"vertical","start"}});
+        s.synchronize_document(after);
+        for(int i=0;i<32;++i) {
+          auto state=op(s,"undo");
+          check(s.current_document().content==after.content,"History adoption undo resurrected old text");
+          if(i<31)check(std::get<double>(state.at("presentation").at(paragraph).at("width").storage())==50-i,
+                         "History adoption lost a style step");
+          else check(!state.at("presentation").as_object().contains(paragraph),"History adoption lost initial presentation");
+        }
+        for(int i=0;i<32;++i) {
+          auto state=op(s,"redo");
+          check(s.current_document().content==after.content,"History adoption redo resurrected old text");
+          check(std::get<double>(state.at("presentation").at(paragraph).at("width").storage())==20+i,
+                "History adoption redo lost a style step");
+        }
+        op(s,"save");
+      }
+      Session reopened(history,owner,after,inde::objects::pilot::DocumentBinding::Live);
+      check(reopened.current_document().content==after.content,"History adoption reopen lost accepted text");
+    }
     bool pilot_refused = false;
     try {
       Session s(folder, inde::objects::pilot::Profile::P2D2);

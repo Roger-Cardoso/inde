@@ -24,6 +24,7 @@
 #include <span>
 #include <sqlite3.h>
 #include <stdexcept>
+#include <string_view>
 #include <sys/file.h>
 #include <sys/stat.h>
 #include <unistd.h>
@@ -613,25 +614,43 @@ Composition graph(const State &s,
   }
   return g;
 }
-void validate_owner_reorder(const State &s) {
+struct OwnerReadValidation {
+  const compat::DocumentReadProjection &current;
+  std::string_view original_snapshot, original_document_id;
+};
+std::unique_ptr<compat::DocumentReadProjection>
+validate_owner_reorder(const State &s,
+                       const OwnerReadValidation *validated_owner = nullptr) {
   if (!s.p2c)
-    return;
+    return {};
   text(s.working_text, 16 * mib);
   if (s.context != "text" && s.context != "structure" &&
       s.context != "composition")
     fail("invalid_editing_context");
   if (s.working_text == s.source)
-    return;
+    return {};
+  if (s.live_document_v1 && validated_owner) {
+    if (!s.p2d2)
+      fail("live_document_profile_required");
+    if (validated_owner->current.source().document_id !=
+        validated_owner->original_document_id)
+      fail("working_document_identity_changed");
+    return {};
+  }
   application::DocumentEditState expected{
       persistence::decode_document_snapshot(s.source), {}};
   const auto actual = persistence::decode_document_snapshot(s.working_text);
   if (actual.id != expected.document.id)
     fail("working_document_identity_changed");
   if (s.live_document_v1) {
-    if (!s.p2d2) fail("live_document_profile_required");
-    const auto checked = compat::read_document(s.project, actual);
-    if (!checked.projection) fail("invalid_live_document");
-    return;
+    if (!s.p2d2)
+      fail("live_document_profile_required");
+    auto checked = compat::read_document(s.project, actual);
+    if (!checked.projection)
+      fail("invalid_live_document");
+    if (checked.projection->source().snapshot_sha256 != sha(s.working_text))
+      fail("invalid_source_capture");
+    return std::move(checked.projection);
   }
   const auto target = application::reading_blocks(actual);
   auto blocks = application::reading_blocks(expected.document);
@@ -646,21 +665,34 @@ void validate_owner_reorder(const State &s) {
   if (persistence::encode_document_snapshot(expected.document) !=
       s.working_text)
     fail("working_text_not_owner_reorder");
+  return {};
 }
 V encode(const State &s);
-void validate(const State &s, bool decode_media = true) {
+void validate(const State &s, bool decode_media = true,
+              const OwnerReadValidation *validated_owner = nullptr) {
   if (s.figures.size() + s.archived_figures.size() > 256 ||
       s.tables.size() + s.archived_tables.size() > 64 || s.rows.size() > 128 ||
       s.blobs.size() > 64)
     fail("entity_limit");
   text(s.source, 16 * mib);
-  validate_owner_reorder(s);
+  // Only in-memory owner adoption supplies this immutable, already checked
+  // capture. Disk readers and all other callers retain the full decoding path.
+  if (validated_owner &&
+      (!s.live_document_v1 || !s.p2c ||
+       validated_owner->original_snapshot != s.source ||
+       validated_owner->current.source().project_id != s.project ||
+       validated_owner->current.source().snapshot_sha256 != sha(s.working_text)))
+    fail("owner_projection_mismatch");
+  auto owned_projection = validate_owner_reorder(s, validated_owner);
   text(s.selection, 256);
   if (s.source.size() + s.selection.size() > 8 * mib)
     fail("document_string_limit");
   if (sha(s.source) != s.source_hash)
     fail("source_hash_mismatch");
-  const auto p = projection(s);
+  // A normal live-source validation just built this exact checked projection.
+  // Reuse it rather than decoding/validating the owner a second time.
+  if (!validated_owner && !owned_projection)owned_projection = projection(s);
+  const auto *p = validated_owner ? &validated_owner->current : owned_projection.get();
   if ((!s.p2d2 && s.table_design_v1) ||
       (s.table_design_v1 && !s.composition_v2) ||
       (!s.table_design_v1 && !s.table_styles.empty()))
@@ -3548,25 +3580,41 @@ void Session::synchronize_document(const project::Document &document) {
     impl_->increment();
     return;
   }
+  const auto checked_owner = compat::read_document(impl_->working.project, document);
+  if (!checked_owner.projection ||
+      checked_owner.projection->source().snapshot_sha256 != sha(bytes))
+    fail("invalid_live_document");
+  const auto &after = checked_owner.projection;
+  const OwnerReadValidation owner_validation{*after,impl_->working.source,original.id};
+  std::set<std::string> new_ids, group_ids;
+  std::map<std::string, std::string> group_for;
+  for (const auto &b : after->paragraphs())
+    new_ids.insert(b.occurrence_id);
+  for (const auto &g : after->reading_groups()) {
+    group_ids.insert(g.source_block_id);
+    for (const auto &id : g.occurrence_ids)
+      group_for[id] = g.source_block_id;
+  }
+  // Styles usually retain many states with the exact same owner. Reuse one
+  // prior capture inside this operation only; a different snapshot/project
+  // immediately invalidates it, including histories of authorial moves.
+  std::string prior_bytes, prior_project;
+  std::unique_ptr<compat::DocumentReadProjection> prior_projection;
   const auto rebase = [&](State &s) {
-    const auto before = projection(s);
+    if (!prior_projection || prior_bytes != s.working_text || prior_project != s.project) {
+      prior_projection = projection(s);
+      prior_bytes = s.working_text;
+      prior_project = s.project;
+    }
+    const auto &before = prior_projection;
     const bool aligned = s.author == s.visual;
     s.live_document_v1 = true;
     s.composition_v2 = s.table_design_v1 = s.table_structure_v1 =
         s.equations_v1 = true;
     s.working_text = bytes;
-    const auto after = projection(s);
-    std::set<std::string> old_ids, new_ids, group_ids;
-    std::map<std::string, std::string> group_for;
+    std::set<std::string> old_ids;
     for (const auto &b : before->paragraphs())
       old_ids.insert(b.occurrence_id);
-    for (const auto &b : after->paragraphs())
-      new_ids.insert(b.occurrence_id);
-    for (const auto &g : after->reading_groups()) {
-      group_ids.insert(g.source_block_id);
-      for (const auto &id : g.occurrence_ids)
-        group_for[id] = g.source_block_id;
-    }
     std::erase_if(s.removed_text,
                   [&](const auto &id) { return !group_ids.contains(id); });
     const auto hidden = removed_paragraphs(s, *after);
@@ -3627,7 +3675,7 @@ void Session::synchronize_document(const project::Document &document) {
       s.selection.clear();
       s.selected_cell.clear();
     }
-    validate(s, false);
+    validate(s, false, &owner_validation);
   };
   auto candidate = impl_->working;
   auto past = impl_->undo, future = impl_->redo;

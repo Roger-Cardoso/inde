@@ -94,7 +94,11 @@ def exercise_blank_paragraphs(test, root, env, process, window, input_, click, w
             input_('click', '4')
             time.sleep(.1)
         click(name='writing-paragraph-' + first)
+        wait(lambda s: any(c['name'] == 'writing-paragraph-' + first and c.get('focus')
+                           for c in s['controls']), 'Parágrafo de abertura com foco real antes da edição')
         input_('key', 'Home', 'End')
+        wait(lambda s: s.get('cursor') == len(prefix) and s.get('bound') == len(prefix),
+             'Cursor canônico no fim da abertura antes de excluir vazios')
         retained_name = 'writing-paragraph-' + state()['objects']['paragraphs'][-1]['paragraph']
         retained = next(c for c in state()['controls'] if c['name'] == retained_name).get('instance')
         test.assertIsNotNone(retained, 'O observador deve identificar a vista cuja conservação é testada')
