@@ -1,0 +1,90 @@
+name: INDE P5 versioned project file
+
+on:
+  push:
+    branches: [feature/inde-p5-single-file]
+    paths:
+      - cpp/project_file*
+      - cpp/CMakeLists.txt
+      - tests/project_file/**
+      - scripts/demos/Abrir-demo-arquivo-unico.sh
+      - .github/workflows/inde-p5.yml
+  pull_request:
+    paths:
+      - cpp/project_file*
+      - cpp/CMakeLists.txt
+      - tests/project_file/**
+      - scripts/demos/Abrir-demo-arquivo-unico.sh
+      - .github/workflows/inde-p5.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  versioned-store:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    strategy:
+      matrix:
+        compiler: [g++, clang++]
+        sanitize: ["OFF", "ON"]
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+      - name: Install store dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install --yes ninja-build libglib2.0-dev libsqlite3-dev
+      - name: Extract and verify unchanged source
+        run: python3 verificar_base.py --integrado --extrair
+      - name: Configure strict native C++ store
+        run: >-
+          cmake -S tests/project_file -B build-p5 -G Ninja
+          -DCMAKE_CXX_COMPILER=${{ matrix.compiler }}
+          -DP5_SANITIZE=${{ matrix.sanitize }} -DCMAKE_BUILD_TYPE=Debug
+      - name: Compile
+        run: cmake --build build-p5 --parallel 2
+      - name: Test transactions, interruption, corruption, limits and transport
+        env:
+          ASAN_OPTIONS: detect_leaks=1:halt_on_error=1
+          UBSAN_OPTIONS: halt_on_error=1:print_stacktrace=1
+        run: ctest --test-dir build-p5 --output-on-failure
+  native-project:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+      - name: Install native INDE dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install --yes build-essential cmake ninja-build pkg-config libgtkmm-4.0-dev libsqlite3-dev uuid-dev libicu-dev libhunspell-dev libenchant-2-2 hunspell-pt-br libfontconfig-dev xvfb xauth xdotool xfwm4 dbus-x11
+      - name: Verify archive provenance and extract source
+        run: |
+          python3 tests/audit_obj01_sources.py --extract-to "$RUNNER_TEMP/p5-sources"
+          python3 verificar_base.py --integrado --extrair
+      - name: Build native core tests and editor
+        run: |
+          cmake -S cpp -B build-nativo -G Ninja -DCMAKE_BUILD_TYPE=Release -DINDE_BUILD_CORE_TESTS=ON
+          python3 - <<'PY'
+          import json, subprocess
+          listing = subprocess.check_output(['ctest', '--test-dir', 'build-nativo', '--show-only=json-v1'], text=True)
+          targets = [t['name'] for t in json.loads(listing)['tests'] if t['name'] != 'inde_project_file_transport_tests']
+          subprocess.run(['cmake', '--build', 'build-nativo', '--parallel', '2', '--target', 'inde', *targets], check=True)
+          PY
+      - name: Run native regression suite
+        run: ctest --test-dir build-nativo --output-on-failure
+      - name: Produce a real synthetic native project and versioned file
+        run: build-nativo/inde_project_file_native_tests "$RUNNER_TEMP/p5-native-demo"
+      - name: Open actual demo and save and quit by keyboard
+        run: xvfb-run -a dbus-run-session -- python3 tests/project_file/test_native_demo.py "$RUNNER_TEMP/p5-gtk-demo"
+      - name: Preserve synthetic project evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: p5-native-project-${{ github.run_id }}
+          path: |
+            ${{ runner.temp }}/p5-native-demo
+            ${{ runner.temp }}/p5-gtk-demo
+            dados/p5-demo-*
+          if-no-files-found: warn
+          retention-days: 7

@@ -5,6 +5,14 @@
 - [Arquitetura](arquitetura/) com contratos, decisões de integração e otimização.
 - [Validação](validacao/) com os resultados registrados e o escopo de cada entrega.
 
+## Fase 5 antecipada — arquivo de projeto
+
+- [Arquivo único P5-A: estados, alterações e restauração](arquitetura/ARQUIVO-UNICO-P5-A.md).
+- [Demonstração no INDE nativo e comandos de conferência](roteiros/ARQUIVO-UNICO-P5-A.md).
+- [Validação e limites do primeiro corte](validacao/VALIDACAO-P5-A.md).
+
+Antecipado por autorização do usuário em 2026-11-26. A integração transparente com Abrir/Salvar e o histórico da interface ainda não é entregue neste corte; as pendências de maturidade do editor continuam registradas.
+
 ## Núcleo experimental de objetos
 
 - [Objetos e equações no INDE nativo](../tools/obj01-pilot/NATIVO.md), [integração na Escrita](arquitetura/OBJ-01-ESCRITA-INTEGRADA.md) e [validação da integração](validacao/VALIDACAO-OBJ-01-ESCRITA-INTEGRADA.md): entrada pelo documento real, motor compartilhado e limites de integração.

@@ -12,6 +12,8 @@ Data: 24/11/2026. Análise da branch `feature/inde-obj-01-foundation`, documenta
 
 O editor tem uma base nativa aproveitável e recursos reais, mas ainda não oferece confiança suficiente para o trabalho diário com conteúdo misto. O próximo investimento deve completar os percursos de uso e suas combinações, preservando o Documento, as especialidades e o trabalho já realizado. A quantidade de controles, testes ou trabalhos de CI não substitui essa comprovação.
 
+**Fase 5 antecipada em 26/11/2026:** por escolha e autorização expressa do usuário, o trabalho de arquivo único foi iniciado antes dos cortes restantes da série E. O [contrato P5-A](ARQUIVO-UNICO-P5-A.md) entrega estados imutáveis e transporte reversível, com limites e demonstração próprios. Isso não encerra E3–E7; a próxima continuidade do editor deve considerar a integração de abertura/salvamento/recuperação do arquivo único, mantendo as prioridades e pendências aqui registradas.
+
 ## 1. O resultado a alcançar
 
 Um escritor deve conseguir abrir seu projeto, escrever, inserir uma imagem, criar duas tabelas, colocá-las lado a lado, continuar escrevendo, reorganizar o conjunto, consultar suas marcações, desfazer um engano, salvar, encerrar e retomar sem desmontar o documento nem precisar compreender as divisões internas do programa.
