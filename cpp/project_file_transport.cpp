@@ -408,11 +408,12 @@ TransportProfile directory_profile(const State &state) {
                                        : TransportProfile::Blocks;
 }
 bool directory_matches(Store &store, const State &state, const fs::path &source,
-                       const fs::path &file) {
+                       const fs::path &file, OperationControl *control) {
   need(store.head().store_id == state.store_id, "stale_state",
        "Outro armazenamento.");
-  const auto captured = capture(source, file, directory_profile(state));
-  unchanged(captured);
+  const auto captured =
+      capture(source, file, directory_profile(state), control);
+  unchanged(captured, control);
   if (captured.owner != state.project_id ||
       captured.records.size() != state.records.size())
     return false;
@@ -426,24 +427,35 @@ bool directory_matches(Store &store, const State &state, const fs::path &source,
   return true;
 }
 State pack_directory(const fs::path &source, const fs::path &new_file,
-                     TransportProfile profile) {
+                     TransportProfile profile, OperationControl *control) {
   need(!fs::exists(fs::symlink_status(new_file)), "destination_exists",
        "O destino precisa ser um arquivo novo.");
-  auto captured = capture(source, new_file, profile);
-  unchanged(captured);
+  auto captured = capture(source, new_file, profile, control);
+  unchanged(captured, control);
   auto *uuid = g_uuid_string_random();
   const auto pending = fs::absolute(new_file).parent_path() /
                        (".inde-p5-file-pending-" + std::string(uuid));
   g_free(uuid);
+  // A temporary SQLite commit is preparation, not publication of the target.
+  OperationControl preparation(
+      [control](OperationPhase phase, OperationControl &) {
+        if (control)
+          control->checkpoint(phase == OperationPhase::Committing
+                                  ? OperationPhase::Writing
+                                  : phase);
+      });
   State result;
   {
     auto store = Store::create(pending, captured.owner);
     const auto old = store.head();
-    unchanged(captured);
-    result = publish_capture(store, old, captured,
-                             "Importar cópia da pasta de projeto");
-    store.verify();
+    unchanged(captured, control);
+    result =
+        publish_capture(store, old, captured,
+                        "Importar cópia da pasta de projeto", &preparation);
+    store.verify(control);
   }
+  if (control)
+    control->seal();
   need(::renameat2(AT_FDCWD, pending.c_str(), AT_FDCWD, new_file.c_str(),
                    RENAME_NOREPLACE) == 0,
        "destination_publish",
@@ -463,8 +475,9 @@ State update_directory(Store &store, const State &expected,
   return publish_capture(store, expected, captured, label, control);
 }
 void unpack_directory(Store &store, std::int64_t sequence,
-                      const fs::path &given) {
-  store.verify();
+                      const fs::path &given, OperationControl *control,
+                      bool seal_publication) {
+  store.verify(control);
   const auto state = store.state(sequence);
   const auto target = fs::absolute(given);
   need(!fs::exists(fs::symlink_status(target)), "destination_exists",
@@ -474,6 +487,8 @@ void unpack_directory(Store &store, std::int64_t sequence,
   std::set<std::string> used_chunks;
   std::uint64_t total = 0;
   for (const auto &[key, r] : state.records) {
+    if (control)
+      control->check();
     if (key == "project")
       continue;
     if (r.kind == "transport-chunk" && profile == TransportProfile::Blocks) {
@@ -520,6 +535,8 @@ void unpack_directory(Store &store, std::int64_t sequence,
     need(r->references == std::vector<std::string>{parent_key(path)},
          "transport_profile", "Vínculos de diretório inválidos.");
   for (const auto &[path, r] : files) {
+    if (control)
+      control->check();
     std::set<std::string> refs{parent_key(path)};
     if (profile == TransportProfile::Blocks) {
       const auto body = parse_json(r->payload);
@@ -557,6 +574,8 @@ void unpack_directory(Store &store, std::int64_t sequence,
   g_free(uuid);
   need(::mkdir(stage.c_str(), 0700) == 0, "destination_create",
        "Não foi possível reservar a pasta nova.");
+  if (control)
+    control->checkpoint(OperationPhase::Writing);
   // Incomplete materializations stay named as pending evidence on any failure.
   for (const auto &[path, r] : dirs) {
     static_cast<void>(r);
@@ -567,6 +586,8 @@ void unpack_directory(Store &store, std::int64_t sequence,
          "Falha ao criar uma pasta do projeto.");
   }
   for (const auto &[path, r] : files) {
+    if (control)
+      control->check();
     const auto body = parse_json(r->payload);
     Bytes bytes;
     if (profile == TransportProfile::WholeFile)
@@ -574,6 +595,8 @@ void unpack_directory(Store &store, std::int64_t sequence,
     else {
       bytes.reserve(static_cast<std::size_t>(body.at("bytes").as_integer()));
       for (const auto &part : body.at("chunks").as_array()) {
+        if (control)
+          control->check();
         const auto &chunk = *chunks.at("chunk/" + part.as_string());
         const auto data = store.blob(chunk.blob);
         need(static_cast<std::int64_t>(data.size()) ==
@@ -589,7 +612,7 @@ void unpack_directory(Store &store, std::int64_t sequence,
          "transport_profile", "Tamanho do recurso diverge do descritor.");
     write_new(stage / path, bytes);
   }
-  auto candidate = capture(stage, target, profile);
+  auto candidate = capture(stage, target, profile, control);
   need(candidate.owner == state.project_id &&
            candidate.records.size() == state.records.size(),
        "transport_compare",
@@ -600,12 +623,18 @@ void unpack_directory(Store &store, std::int64_t sequence,
              r.blob == saved.blob && r.references == saved.references,
          "transport_compare", "Componente reaberto divergente.");
   }
-  unchanged(candidate);
+  unchanged(candidate, control);
   for (auto it = dirs.rbegin(); it != dirs.rend(); ++it)
     sync_dir(stage / it->first);
   sync_dir(stage);
   // Linux no-replace publication; never replace even a concurrently created
   // target.
+  if (control) {
+    if (seal_publication)
+      control->seal();
+    else
+      control->check();
+  }
   need(::renameat2(AT_FDCWD, stage.c_str(), AT_FDCWD, target.c_str(),
                    RENAME_NOREPLACE) == 0,
        "destination_publish",

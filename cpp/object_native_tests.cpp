@@ -59,6 +59,18 @@ int main() {
                   {"label", "Fração"}});
       id = state.at("selection").as_string();
       op(s, "save");
+      const auto confirmed=view(s);
+      const auto database=folder/"obj01-piloto.sqlite3";
+      const auto read_bytes=[](const fs::path &path) {
+        std::ifstream input(path,std::ios::binary);
+        return std::string(std::istreambuf_iterator<char>(input),{});
+      };
+      const auto bytes=read_bytes(database);
+      const auto again=op(s,"save");
+      check(again.at("saved_revision").as_integer()==confirmed.at("saved_revision").as_integer() &&
+            again.at("recovery_generation").as_integer()==confirmed.at("recovery_generation").as_integer() &&
+            read_bytes(database)==bytes,"No-op confirmation rewrote composition receipts");
+
       op(s, "set_context", {{"context", "text"}});
       op(s, "edit_equation",
          {{"id", id},
@@ -221,6 +233,23 @@ int main() {
       }
       Session reopened(history,owner,after,inde::objects::pilot::DocumentBinding::Live);
       check(reopened.current_document().content==after.content,"History adoption reopen lost accepted text");
+    }
+    {
+      const auto path=root/"clean-confirmation-conflict";
+      Session stale(path,owner,d,inde::objects::pilot::DocumentBinding::Live);
+      // A second cooperating session is excluded by the workspace lease.
+      // Inject coherent external revision drift directly to exercise the
+      // confirmation check even when the local snapshot is clean.
+      {
+        inde::persistence::SqliteDatabase external(path/"obj01-piloto.sqlite3");
+        external.execute("BEGIN IMMEDIATE");
+        external.execute("UPDATE saved SET revision=revision+1 WHERE id=1");
+        external.execute("UPDATE working SET base_revision=base_revision+1 WHERE id=1");
+        external.execute("COMMIT");
+      }
+      const auto result=stale.request(V::Object{{"op","save"},{"expected",view(stale).at("revision")}});
+      check(!result.at("accepted").as_boolean() && result.at("error").as_string()=="persisted_revision_conflict",
+            "Clean confirmation bypassed an external revision conflict");
     }
     bool pilot_refused = false;
     try {

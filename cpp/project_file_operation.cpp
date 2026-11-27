@@ -19,7 +19,7 @@ OperationPhase OperationControl::phase() const noexcept {
 void OperationControl::check() const {
   if (cancelled())
     throw Error("operation_cancelled",
-                "Salvamento cancelado antes da confirmação. O trabalho foi "
+                "Operação cancelada antes da confirmação. O trabalho foi "
                 "preservado.");
 }
 void OperationControl::checkpoint(OperationPhase phase) {
@@ -31,6 +31,12 @@ void OperationControl::report(OperationPhase phase) {
   phase_.store(phase);
   if (observer_)
     observer_(phase, *this);
+}
+void OperationControl::complete() {
+  auto expected = State::Open;
+  if (!state_.compare_exchange_strong(expected, State::Sealed))
+    check();
+  report(OperationPhase::Done);
 }
 void OperationControl::seal() {
   auto expected = State::Open;

@@ -49,7 +49,7 @@ auto display = Gdk::Display::get_default();
   if (initial_project)
     open_project_at(*initial_project);
   context_save_=Glib::signal_timeout().connect([this] {
-    if(service_.current() && !modal_host_.has_dialog())remember_context();
+    if(service_.current() && !file_task_ && !modal_host_.has_dialog())remember_context();
     return true;
   },2000);
 }
@@ -678,11 +678,6 @@ void MainWindow::create_project() {
       auto path = std::filesystem::path(file->get_path());
       auto name = path.stem().string();
       create_legacy_project(path, name.empty() ? "Novo projeto" : name);
-      comic_workspace_.reset();
-      review_workspace_.reset();
-      planning_workspace_.reset();
-      writing_workspace_.reset();
-      update_project_view();
     } catch (const std::exception &error) {
       show_error("Não foi possível criar o projeto", error);
     }
@@ -716,6 +711,7 @@ void MainWindow::open_project_at(const std::filesystem::path &path) {
   if(std::filesystem::is_regular_file(path,file_error)) {
     open_project_file_at(path,project_file::RecoveryChoice::Ask);return;
   }
+  if(project_file_ && !file_barrier_ready_){start_file_confirmation([this,path]{open_project_at(path);});return;}
   if(!guard_comic_project_change())return;
   try {
     writing_workspace_.flush_changes();

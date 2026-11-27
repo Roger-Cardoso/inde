@@ -2,7 +2,9 @@
 #include "inde/ui/author_diagnostics.hpp"
 #include "inde/ui/main_window.hpp"
 #include "project_file_session.hpp"
+#include "project_file_task.hpp"
 #include "project_file_transport.hpp"
+#include <algorithm>
 namespace inde::ui {
 namespace fs = std::filesystem;
 using Choice = project_file::RecoveryChoice;
@@ -13,22 +15,17 @@ void retire_file_dialog(OverlayDialog *d) {
 }
 } // namespace
 void MainWindow::flush_project_file() {
-  if (file_task_)
+  if (file_task_ || (project_file_ && !file_barrier_ready_))
     throw std::runtime_error(
-        "Aguarde a confirmação em andamento antes de iniciar outra operação.");
-  if (!project_file_ || file_barrier_ready_)
-    return;
-  comic_workspace_.save_changes();
-  writing_workspace_.flush_changes();
-  remember_context();
-  project_file_->save("Confirmar trabalho no editor");
-  preserve_file_work_ = false;
+        "A confirmação do arquivo precisa terminar antes desta operação.");
 }
 void MainWindow::create_legacy_project(const fs::path &p,
                                        const std::string &name) {
-  flush_project_file();
-  if (project_file_ && !file_barrier_ready_)
-    project_file_->finish();
+  if (project_file_ && !file_barrier_ready_) {
+    start_file_confirmation(
+        [this, p, name] { create_legacy_project(p, name); });
+    return;
+  }
   service_.set_recent_location(std::nullopt);
   try {
     service_.create(p, name);
@@ -39,11 +36,15 @@ void MainWindow::create_legacy_project(const fs::path &p,
   }
   project_file_.reset();
   preserve_file_work_ = false;
+  comic_workspace_.reset();
+  review_workspace_.reset();
+  planning_workspace_.reset();
+  writing_workspace_.reset();
+  update_project_view();
 }
 void MainWindow::open_legacy_project(const fs::path &p) {
-  flush_project_file();
   if (project_file_ && !file_barrier_ready_)
-    project_file_->finish();
+    throw std::runtime_error("Confirme o projeto atual antes da troca.");
   service_.set_recent_location(std::nullopt);
   try {
     service_.open(p);
@@ -75,80 +76,175 @@ void MainWindow::choose_project_file(bool create) {
     try {
       if (create && path.extension() != ".inde")
         path += ".inde";
-      if (create) {
-        writing_workspace_.flush_changes();
-        flush_project_file();
-        const auto root = project_file::FileSession::default_root() /
-                          ("new-" + project::new_uuid());
-        fs::create_directories(root);
-        fs::permissions(root, fs::perms::owner_all, fs::perm_options::replace);
-        application::ProjectService builder;
-        builder.set_recent_location(path);
-        builder.create(root / "source.inde", path.stem().string());
-        builder.save();
-        builder.close();
-        project_file::pack_directory(root / "source.inde", path,
-                                     project_file::TransportProfile::Blocks);
-      }
-      open_project_at(path);
+      if (create)
+        create_project_file_at(path);
+      else
+        open_project_file_at(path, Choice::Ask);
     } catch (const std::exception &e) {
       show_error("Arquivo único", e);
     }
   });
   d->show();
 }
+void MainWindow::rebind_project_file() {
+  review_workspace_.reset();
+  cartography_workspace_.reset();
+  comic_workspace_.reset();
+  writing_workspace_.reset();
+  service_.close();
+  service_.set_recent_location(project_file_->file());
+  service_.open(project_file_->working());
+  planning_workspace_.reset();
+  catalog_workspace_.reset();
+  editorial_workspace_.reset();
+  graphs_workspace_.reset();
+  pending_views_.clear();
+  restored_project_id_.clear();
+  builder_return_context_.reset();
+  builder_return_.set_visible(false);
+  removal_returns_.clear();
+  removal_return_.set_visible(false);
+  update_project_view();
+}
+void MainWindow::adopt_project_file(
+    std::unique_ptr<project_file::FileSession> next) {
+  // Opening the native domain is GTK-owned. Validate it before releasing the
+  // former file lease; a failed transport operation never changes the binding.
+  review_workspace_.reset();
+  cartography_workspace_.reset();
+  service_.set_recent_location(next->file());
+  try {
+    service_.open(next->working());
+  } catch (...) {
+    service_.set_recent_location(
+        project_file_ ? std::optional<fs::path>(project_file_->file())
+                      : std::nullopt);
+    throw;
+  }
+  project_file_ = std::move(next);
+  preserve_file_work_ = false;
+  review_workspace_.reset();
+  comic_workspace_.reset();
+  planning_workspace_.reset();
+  writing_workspace_.reset();
+  catalog_workspace_.reset();
+  editorial_workspace_.reset();
+  graphs_workspace_.reset();
+  pending_views_.clear();
+  restored_project_id_.clear();
+  builder_return_context_.reset();
+  builder_return_.set_visible(false);
+  removal_returns_.clear();
+  removal_return_.set_visible(false);
+  update_project_view();
+}
+void MainWindow::create_project_file_at(const fs::path &path) {
+  if (!guard_comic_project_change() || modal_host_.has_dialog())
+    return;
+  if (project_file_ && !file_barrier_ready_) {
+    start_file_confirmation([this, path] { create_project_file_at(path); });
+    return;
+  }
+  if (!project_file_) {
+    comic_workspace_.save_changes();
+    writing_workspace_.flush_changes();
+    remember_context();
+  }
+  auto candidate =
+      std::make_shared<std::unique_ptr<project_file::FileSession>>();
+  const auto root = project_file::FileSession::default_root();
+  start_file_operation(
+      "Criando arquivo único",
+      [path, root, candidate](auto &control) {
+        control.checkpoint(project_file::OperationPhase::Reading);
+        if (fs::exists(fs::symlink_status(path)))
+          throw project_file::Error(
+              "destination_exists",
+              "O destino já existe. Escolha um arquivo novo.");
+        const auto seed = root / ("new-" + project::new_uuid());
+        fs::create_directories(seed);
+        fs::permissions(seed, fs::perms::owner_all, fs::perm_options::replace);
+        {
+          application::ProjectService builder;
+          builder.set_recent_location(path);
+          builder.create(seed / "source.inde", path.stem().string());
+          builder.save();
+          builder.close();
+        }
+        control.check();
+        project_file::pack_directory(seed / "source.inde", path,
+                                     project_file::TransportProfile::Blocks,
+                                     &control);
+        *candidate =
+            project_file::FileSession::open(path, root, Choice::Ask, &control);
+        return (*candidate)->baseline().sequence;
+      },
+      [this, path, candidate](const auto &result) {
+        if (result.error) {
+          project_file_open_failed(path, result.error);
+          return;
+        }
+        if (!result.cancelled)
+          adopt_project_file(std::move(*candidate));
+      });
+}
 void MainWindow::open_project_file_at(const fs::path &path, Choice choice) {
-  if (!guard_comic_project_change())
+  if (!guard_comic_project_change() || modal_host_.has_dialog())
     return;
   try {
-    if (project_file_ && fs::equivalent(path, project_file_->file())) {
+    const bool same =
+        project_file_ && fs::equivalent(path, project_file_->file());
+    if (same) {
       if (!project_file_->needs_reopen())
         return;
-      // Flush native writers, retain their durable workspace, and release the
-      // old lease before observing the authoritative file again.
       comic_workspace_.save_changes();
       writing_workspace_.flush_changes();
       remember_context();
+      // An uncertain lease must be released to inspect that same file. Preserve
+      // its work, and close its native view instead of leaving an unbound
+      // editor.
       project_file_.reset();
       close_project();
+      if (service_.current())
+        throw std::runtime_error(
+            "Feche o projeto antes de conferir novamente o arquivo.");
     }
-    if (choice == Choice::Ask) {
+    if (project_file_ && !file_barrier_ready_) {
+      start_file_confirmation(
+          [this, path, choice] { open_project_file_at(path, choice); });
+      return;
+    }
+    if (!project_file_) {
+      comic_workspace_.save_changes();
       writing_workspace_.flush_changes();
       remember_context();
-      flush_project_file();
     }
-    auto next = project_file::FileSession::open(
-        path, project_file::FileSession::default_root(), choice);
-    if (project_file_)
-      project_file_->finish();
-    // Stop readers that retain the previous materialization before rebinding.
-    review_workspace_.reset();
-    cartography_workspace_.reset();
-    service_.set_recent_location(next->file());
-    try {
-      service_.open(next->working());
-    } catch (...) {
-      service_.set_recent_location(
-          project_file_ ? std::optional<fs::path>(project_file_->file())
-                        : std::nullopt);
-      throw;
-    }
-    project_file_ = std::move(next);
-    preserve_file_work_ = false;
-    review_workspace_.reset();
-    comic_workspace_.reset();
-    planning_workspace_.reset();
-    writing_workspace_.reset();
-    catalog_workspace_.reset();
-    editorial_workspace_.reset();
-    graphs_workspace_.reset();
-    pending_views_.clear();
-    restored_project_id_.clear();
-    builder_return_context_.reset();
-    builder_return_.set_visible(false);
-    removal_returns_.clear();
-    removal_return_.set_visible(false);
-    update_project_view();
+    auto candidate =
+        std::make_shared<std::unique_ptr<project_file::FileSession>>();
+    const auto root = project_file::FileSession::default_root();
+    start_file_operation(
+        "Abrindo arquivo único",
+        [path, choice, root, candidate](auto &control) {
+          *candidate =
+              project_file::FileSession::open(path, root, choice, &control);
+          return (*candidate)->baseline().sequence;
+        },
+        [this, path, candidate](const auto &result) {
+          if (result.error) {
+            project_file_open_failed(path, result.error);
+            return;
+          }
+          if (!result.cancelled)
+            adopt_project_file(std::move(*candidate));
+        });
+  } catch (const std::exception &e) {
+    show_error("Não foi possível abrir o arquivo único", e);
+  }
+}
+void MainWindow::project_file_open_failed(const fs::path &path,
+                                          std::exception_ptr error) {
+  try {
+    std::rethrow_exception(error);
   } catch (const project_file::RecoveryRequired &e) {
     auto *d = new OverlayDialog("Retomar projeto", *this, true);
     d->set_secondary_text(
@@ -206,43 +302,7 @@ void MainWindow::copy_project_file() {
         fs::path path = d->get_file()->get_path();
         if (path.extension() != ".inde")
           path += ".inde";
-        if (project_file_ && !current_only) {
-          flush_project_file();
-          project_file_->copy_to(path);
-        } else {
-          comic_workspace_.save_changes();
-          writing_workspace_.flush_changes();
-          remember_context();
-          if (!project_file_)
-            service_.save();
-          project_file::pack_directory(service_.current()->path(), path,
-                                       project_file::TransportProfile::Blocks);
-          if (current_only) {
-            // The new file has been verified and published. Release the old
-            // lease without trying another write to a full/unavailable file.
-            // Its history and durable working area both remain preserved.
-            auto previous = std::move(project_file_);
-            close_project();
-            if (service_.current()) {
-              project_file_ = std::move(previous);
-              service_.set_recent_location(project_file_->file());
-              return;
-            }
-            previous.reset();
-            open_project_at(path);
-            if (!project_file_) {
-              status_bar_.set_text("A cópia foi criada, mas não foi ativada. "
-                                   "Abra o novo arquivo para continuar.");
-              return;
-            }
-            status_bar_.set_text(
-                "Continuando na cópia do estado atual; o arquivo original e "
-                "seu histórico foram mantidos.");
-            return;
-          }
-        }
-        status_bar_.set_text("Cópia transportável criada; o projeto original "
-                             "continua ativo. A cópia mantém sua identidade.");
+        copy_project_file_to(path, current_only);
       } catch (const std::exception &e) {
         show_error("Não foi possível criar a cópia", e);
       }
@@ -271,62 +331,203 @@ void MainWindow::copy_project_file() {
   });
   mode->present();
 }
+void MainWindow::copy_project_file_to(const fs::path &path, bool current_only) {
+  if (!service_.current() || !guard_comic_project_change() ||
+      modal_host_.has_dialog())
+    return;
+  if (project_file_ && !current_only && !file_barrier_ready_) {
+    start_file_confirmation([this, path, current_only] {
+      copy_project_file_to(path, current_only);
+    });
+    return;
+  }
+  const auto source = service_.current()->path();
+  auto *session = project_file_.get();
+  const auto root = project_file::FileSession::default_root();
+  auto candidate =
+      std::make_shared<std::unique_ptr<project_file::FileSession>>();
+  if (!session || current_only) {
+    comic_workspace_.save_changes();
+    writing_workspace_.flush_changes();
+    remember_context();
+    if (!session)
+      service_.save();
+  }
+  start_file_operation(
+      "Criando cópia do projeto",
+      [path, source, root, session, current_only, candidate](auto &control) {
+        if (session && !current_only)
+          session->copy_to(path, &control);
+        else
+          project_file::pack_directory(
+              source, path, project_file::TransportProfile::Blocks, &control);
+        // Publication is already sealed: a subsequent failure must report that
+        // the destination exists, and leave the original project active.
+        if (current_only)
+          *candidate = project_file::FileSession::open(path, root, Choice::Ask,
+                                                       &control);
+        return current_only ? (*candidate)->baseline().sequence : 0;
+      },
+      [this, path, current_only, candidate](const auto &result) {
+        if (result.error) {
+          try {
+            std::rethrow_exception(result.error);
+          } catch (const std::exception &e) {
+            show_error(
+                "Não foi possível concluir a cópia. Confira o destino: " +
+                    path.string(),
+                e);
+          }
+          return;
+        }
+        if (result.cancelled)
+          return;
+        if (current_only) {
+          adopt_project_file(std::move(*candidate));
+          status_bar_.set_text("Continuando na cópia do estado atual; o "
+                               "original e seu histórico foram preservados.");
+        } else
+          status_bar_.set_text(
+              "Cópia transportável criada; o projeto original continua ativo.");
+      });
+}
 void MainWindow::show_file_history() {
   if (!project_file_ || file_task_ || modal_host_.has_dialog())
     return;
-  try {
-    flush_project_file();
-    auto *d = new OverlayDialog("Estados do arquivo único", *this, true);
-    d->set_secondary_text(
-        "Retomar cria uma nova versão e conserva o trabalho posterior. O "
-        "trabalho atual foi confirmado antes de abrir esta lista.");
-    auto *selector = Gtk::make_managed<Gtk::ComboBoxText>();
-    selector->set_name("project-file-state");
-    for (const auto &r : project_file_->history())
-      if (r.sequence > 0)
-        selector->append(std::to_string(r.sequence),
-                         std::to_string(r.sequence) + " — " + r.label + " — " +
-                             r.created_at);
-    selector->set_active_id(std::to_string(project_file_->baseline().sequence));
-    d->get_content_area()->append(*selector);
-    d->add_button("Voltar", Gtk::ResponseType::CANCEL);
-    d->add_button("Retomar este estado", Gtk::ResponseType::ACCEPT);
-    d->signal_response().connect([this, d, selector](int r) {
-      const auto selected = selector->get_active_id().raw();
-      retire_file_dialog(d);
-      if (r != Gtk::ResponseType::ACCEPT || selected.empty())
-        return;
-      try {
-        const auto old_work = project_file_->working();
-        project_file_->restore(std::stoll(selected));
-        if (project_file_->working() != old_work) {
-          review_workspace_.reset();
-          cartography_workspace_.reset();
-          comic_workspace_.reset();
-          writing_workspace_.reset();
-          service_.close();
-          service_.open(project_file_->working());
-          planning_workspace_.reset();
-          catalog_workspace_.reset();
-          editorial_workspace_.reset();
-          graphs_workspace_.reset();
-          builder_return_context_.reset();
-          builder_return_.set_visible(false);
-          removal_returns_.clear();
-          removal_return_.set_visible(false);
-          restored_project_id_.clear();
-          pending_views_.clear();
-          update_project_view();
-        }
-        status_bar_.set_text(
-            "Estado retomado; versões posteriores preservadas no arquivo.");
-      } catch (const std::exception &e) {
-        show_error("Não foi possível retomar o estado", e);
-      }
-    });
-    d->present();
-  } catch (const std::exception &e) {
-    show_error("Estados do arquivo", e);
+  if (!file_barrier_ready_) {
+    start_file_confirmation([this] { show_file_history(); });
+    return;
   }
+  auto rows = std::make_shared<std::vector<project_file::Revision>>();
+  auto *session = project_file_.get();
+  start_file_operation(
+      "Consultando estados do arquivo",
+      [rows, session](auto &control) {
+        control.checkpoint(project_file::OperationPhase::Reading);
+        *rows = session->history(&control);
+        control.check();
+        return session->baseline().sequence;
+      },
+      [this, rows](const auto &result) {
+        if (result.error) {
+          try {
+            std::rethrow_exception(result.error);
+          } catch (const std::exception &e) {
+            show_error("Estados do arquivo", e);
+          }
+          return;
+        }
+        if (!result.cancelled && !file_task_exit_)
+          present_file_history(std::move(*rows));
+      });
+}
+void MainWindow::present_file_history(
+    std::vector<project_file::Revision> rows) {
+  rows.erase(std::remove_if(rows.begin(), rows.end(),
+                            [](const auto &r) { return r.sequence == 0; }),
+             rows.end());
+  auto entries =
+      std::make_shared<std::vector<project_file::Revision>>(std::move(rows));
+  auto page = std::make_shared<std::size_t>(
+      entries->empty() ? 0 : (entries->size() - 1) / 100);
+  auto *d = new OverlayDialog("Estados do arquivo único", *this, true);
+  d->set_secondary_text(
+      "Retomar cria uma nova versão e conserva o trabalho posterior. O "
+      "trabalho atual foi confirmado antes de abrir esta lista.");
+  auto *selector = Gtk::make_managed<Gtk::ComboBoxText>();
+  selector->set_name("project-file-state");
+  auto *navigation =
+      Gtk::make_managed<Gtk::Box>(Gtk::Orientation::HORIZONTAL, 8);
+  auto *older = Gtk::make_managed<Gtk::Button>("Estados anteriores");
+  older->set_name("project-file-history-older");
+  auto *newer = Gtk::make_managed<Gtk::Button>("Estados seguintes");
+  newer->set_name("project-file-history-newer");
+  auto *range = Gtk::make_managed<Gtk::Label>();
+  range->set_name("project-file-history-range");
+  navigation->append(*older);
+  navigation->append(*range);
+  navigation->append(*newer);
+  d->get_content_area()->append(*selector);
+  d->get_content_area()->append(*navigation);
+  const auto fill = [entries, page, selector, older, newer, range] {
+    selector->remove_all();
+    const auto start = *page * 100,
+               end = std::min(start + 100, entries->size());
+    for (auto i = start; i < end; ++i) {
+      const auto &r = entries->at(i);
+      selector->append(std::to_string(r.sequence), std::to_string(r.sequence) +
+                                                       " — " + r.label + " — " +
+                                                       r.created_at);
+    }
+    if (end > start)
+      selector->set_active(static_cast<int>(end - start - 1));
+    older->set_sensitive(start > 0);
+    newer->set_sensitive(end < entries->size());
+    range->set_text(entries->empty() ? "Nenhum estado"
+                                     : std::to_string(start + 1) + "–" +
+                                           std::to_string(end) + " de " +
+                                           std::to_string(entries->size()));
+  };
+  older->signal_clicked().connect([page, fill] {
+    if (*page)
+      --*page;
+    fill();
+  });
+  newer->signal_clicked().connect([page, entries, fill] {
+    if ((*page + 1) * 100 < entries->size())
+      ++*page;
+    fill();
+  });
+  fill();
+  d->add_button("Voltar", Gtk::ResponseType::CANCEL);
+  d->add_button("Retomar este estado", Gtk::ResponseType::ACCEPT);
+  d->signal_response().connect([this, d, selector](int response) {
+    const auto selected = selector->get_active_id().raw();
+    retire_file_dialog(d);
+    if (response != Gtk::ResponseType::ACCEPT || selected.empty() ||
+        !project_file_)
+      return;
+    const auto old_work = project_file_->working();
+    auto *session = project_file_.get();
+    start_file_operation(
+        "Retomando estado do arquivo",
+        [session, sequence = std::stoll(selected)](auto &control) {
+          return session->restore(sequence, &control).sequence;
+        },
+        [this, old_work](const auto &result) {
+          if (result.error) {
+            // A post-COMMIT error can require a new native binding. Never keep
+            // writing through the old repositories after the file has advanced.
+            if (project_file_->working() != old_work ||
+                project_file_->needs_reopen()) {
+              auto retained = std::move(project_file_);
+              close_project();
+            }
+            try {
+              std::rethrow_exception(result.error);
+            } catch (const std::exception &e) {
+              show_error("Não foi possível retomar o estado; as áreas foram "
+                         "preservadas",
+                         e);
+            }
+            return;
+          }
+          if (result.cancelled)
+            return;
+          if (project_file_->working() != old_work) {
+            try {
+              rebind_project_file();
+            } catch (...) {
+              auto error = std::current_exception();
+              auto retained = std::move(project_file_);
+              close_project();
+              std::rethrow_exception(error);
+            }
+          }
+          status_bar_.set_text(
+              "Estado retomado; versões posteriores preservadas no arquivo.");
+        });
+  });
+  d->present();
 }
 } // namespace inde::ui

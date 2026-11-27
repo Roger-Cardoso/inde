@@ -18,7 +18,7 @@
 
 #include <gtkmm.h>
 #include "publication_service.hpp"
-namespace inde::project_file { class FileSession; class ConfirmationTask; class OperationControl; enum class RecoveryChoice; }
+namespace inde::project_file { class FileSession; class ConfirmationTask; class OperationControl; enum class RecoveryChoice; struct ConfirmationResult; struct Revision; }
 #include "comic_ui.hpp"
 #include <optional>
 
@@ -48,6 +48,15 @@ private:
   void choose_project_file(bool create);
   void open_project_file_at(const std::filesystem::path &, project_file::RecoveryChoice);
   void flush_project_file();
+  void create_project_file_at(const std::filesystem::path &);
+  void copy_project_file_to(const std::filesystem::path &, bool);
+  void adopt_project_file(std::unique_ptr<project_file::FileSession>);
+  void rebind_project_file();
+  void project_file_open_failed(const std::filesystem::path &, std::exception_ptr);
+  void present_file_history(std::vector<project_file::Revision>);
+  void start_file_operation(const std::string &,
+      std::function<std::int64_t(project_file::OperationControl &)>,
+      std::function<void(const project_file::ConfirmationResult &)>);
   void create_legacy_project(const std::filesystem::path &, const std::string &);
   void open_legacy_project(const std::filesystem::path &);
   bool finish_project_file_close();
@@ -104,8 +113,10 @@ private:
   std::unique_ptr<project_file::FileSession> project_file_;
   bool preserve_file_work_{};
   std::shared_ptr<project_file::ConfirmationTask> file_task_;
-  std::function<void(project_file::OperationControl &)> file_task_observe_;
+  std::function<void(const std::string &, project_file::OperationControl &)> file_task_observe_;
   std::function<void()> file_task_next_;
+  std::function<void(const project_file::ConfirmationResult &)> file_task_done_;
+  std::string file_task_title_{"Salvando projeto"};
   sigc::connection file_task_poll_, file_task_retry_;
   std::uint64_t file_task_token_{};
   bool file_task_exit_{}, file_task_cancelled_{}, file_barrier_ready_{}, file_exit_ready_{};

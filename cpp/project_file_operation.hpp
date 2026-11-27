@@ -23,6 +23,8 @@ public:
   void check() const;
   void checkpoint(OperationPhase);
   void seal();
+  // Close a read-only result atomically, without claiming a file COMMIT.
+  void complete();
   void report(OperationPhase);
 
 private:

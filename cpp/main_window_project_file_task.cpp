@@ -31,7 +31,7 @@ void MainWindow::setup_file_confirmation() {
   file_task_exit_button_.signal_clicked().connect([this] {
     file_task_exit_ = !file_task_exit_;
     file_task_exit_button_.set_label(file_task_exit_ ? "Continuar no editor"
-                                                     : "Sair após salvar");
+                                                     : "Sair ao terminar");
   });
   auto keys = Gtk::EventControllerKey::create();
   keys->set_propagation_phase(Gtk::PropagationPhase::CAPTURE);
@@ -60,16 +60,16 @@ void MainWindow::cancel_file_confirmation() {
     file_task_exit_ = false;
     file_task_cancel_.set_sensitive(false);
     file_task_status_.grab_focus();
-    file_task_exit_button_.set_label("Sair após salvar");
+    file_task_exit_button_.set_label("Sair ao terminar");
     file_task_status_.set_text(
-        "Cancelando o salvamento; o trabalho será preservado.");
+        "Cancelando a operação; o trabalho será preservado.");
   }
 }
 void MainWindow::present_file_confirmation() {
   if (!file_task_)
     return;
   file_task_token_ = modal_host_.present_dialog(
-      "Salvando projeto",
+      file_task_title_,
       "A edição está pausada durante a conferência. O trabalho permanece na "
       "área de recuperação.",
       file_task_panel_, {}, [this](int) {
@@ -120,18 +120,20 @@ void MainWindow::start_file_confirmation(std::function<void()> next,
       if (file_barrier_ready_ && !file_task_exit_ && next)
         next();
     };
+    file_task_title_ = "Salvando projeto";
+    file_task_cancel_.set_label("Cancelar salvamento");
     file_task_exit_ = exiting;
     file_task_cancelled_ = false;
     file_task_cancel_.set_sensitive(true);
     file_task_exit_button_.set_label(exiting ? "Continuar no editor"
-                                             : "Sair após salvar");
+                                             : "Sair ao terminar");
     file_task_status_.set_text("Conferindo o conteúdo do projeto…");
     auto observer = file_task_observe_;
     file_task_ = std::make_shared<project_file::ConfirmationTask>(
-        *project_file_,
-        [observer](Phase, project_file::OperationControl &control) {
+        *project_file_, [observer, title = file_task_title_](
+                            Phase, project_file::OperationControl &control) {
           if (observer)
-            observer(control);
+            observer(title, control);
         });
     file_task_spinner_.start();
     present_file_confirmation();
@@ -142,6 +144,50 @@ void MainWindow::start_file_confirmation(std::function<void()> next,
   } catch (...) {
     stop_file_confirmation();
     file_confirmation_failed(std::current_exception(), exiting);
+  }
+}
+void MainWindow::start_file_operation(
+    const std::string &title, project_file::ConfirmationTask::Work work,
+    std::function<void(const project_file::ConfirmationResult &)> done) {
+  if (file_task_ || modal_host_.has_dialog())
+    return;
+  file_task_done_ = std::move(done);
+  try {
+    // The caller has drained the writers, either through source confirmation
+    // or before capture. Draining again can publish a fresh composition receipt
+    // after that confirmation and make the workspace differ from its baseline.
+    // Automatic context writes stay paused until this worker is collected.
+    file_task_next_ = {};
+    file_task_title_ = title;
+    file_task_exit_ = false;
+    file_task_cancelled_ = false;
+    file_task_cancel_.set_label("Cancelar operação");
+    file_task_cancel_.set_sensitive(true);
+    file_task_exit_button_.set_label("Sair ao terminar");
+    file_task_status_.set_text("Preparando a operação…");
+    auto observer = file_task_observe_;
+    file_task_ = std::make_shared<project_file::ConfirmationTask>(
+        std::move(work),
+        [observer, title](Phase, project_file::OperationControl &control) {
+          if (observer)
+            observer(title, control);
+        });
+    file_task_spinner_.start();
+    present_file_confirmation();
+    root_.set_sensitive(false);
+    file_task_poll_ = Glib::signal_timeout().connect(
+        sigc::track_obj([this] { return poll_file_confirmation(); }, *this),
+        20);
+  } catch (...) {
+    auto completion = std::move(file_task_done_);
+    stop_file_confirmation();
+    project_file::ConfirmationResult result;
+    result.error = std::current_exception();
+    if (completion)
+      completion(result);
+    else
+      show_error("Operação do arquivo",
+                 std::runtime_error("Não foi possível iniciar a operação."));
   }
 }
 bool MainWindow::poll_file_confirmation() {
@@ -162,14 +208,14 @@ bool MainWindow::poll_file_confirmation() {
         file_task_status_.set_text("Conferindo o conteúdo…");
         break;
       case Phase::Writing:
-        file_task_status_.set_text("Preparando a versão no histórico…");
+        file_task_status_.set_text("Preparando o conteúdo da operação…");
         break;
       case Phase::Committing:
         file_task_status_.set_text(
             "Confirmando no arquivo. Aguarde o resultado…");
         break;
       case Phase::Finishing:
-        file_task_status_.set_text("Conferindo a recuperação…");
+        file_task_status_.set_text("Finalizando e conferindo a recuperação…");
         break;
       case Phase::Done:
         break;
@@ -179,6 +225,7 @@ bool MainWindow::poll_file_confirmation() {
   }
   const auto result = file_task_->result();
   const auto exiting = file_task_exit_;
+  auto done = std::move(file_task_done_);
   auto next = std::move(file_task_next_);
   file_task_.reset();
   file_task_retry_.disconnect();
@@ -186,6 +233,25 @@ bool MainWindow::poll_file_confirmation() {
   root_.set_sensitive(true);
   modal_host_.dismiss_dialog(file_task_token_);
   file_task_token_ = 0;
+  if (done) {
+    bool completed = false;
+    try {
+      done(result);
+      completed = true;
+    } catch (const std::exception &e) {
+      show_error("Operação do arquivo", e);
+    }
+    if (completed && !result.error && !result.cancelled && exiting)
+      close();
+    else if (result.cancelled) {
+      if (auto *editor = common_editor(writing_workspace_))
+        editor->focus_text(-1);
+      status_bar_.set_text(
+          "Operação cancelada. O projeto anterior e as áreas de trabalho foram "
+          "preservados; confirmações anteriores continuam salvas.");
+    }
+    return false;
+  }
   if (result.cancelled) {
     if (next)
       next();
@@ -227,6 +293,7 @@ void MainWindow::stop_file_confirmation() {
     file_task_.reset();
   }
   file_task_next_ = {};
+  file_task_done_ = {};
   if (file_task_token_) {
     modal_host_.dismiss_dialog(file_task_token_);
     file_task_token_ = 0;

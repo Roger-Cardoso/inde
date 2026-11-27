@@ -2099,11 +2099,24 @@ struct Session::Impl {
   void save_composite() {
     State candidate = working;
     validate(candidate);
+    auto bytes = encode_json(encode(candidate));
+    auto hash = sha(bytes);
+    if(!uncertain && !storage_error && bytes==saved_bytes) {
+      // A confirmation barrier must still detect external changes, but saving
+      // an identical protected snapshot must not rewrite its receipts. These
+      // bytes are also part of the encompassing .inde transport snapshot.
+      Tx tx(*db);
+      const auto base=load();
+      const auto current=read_work(base.rev,base.hash);
+      if(base.rev!=persisted || base.hash!=saved_hash || base.bytes!=saved_bytes)
+        fail("persisted_revision_conflict");
+      if(current.rev!=generation || current.hash!=journal_hash || current.bytes!=bytes)
+        fail("working_generation_conflict");
+      return;
+    }
     if (persisted == std::numeric_limits<std::int64_t>::max() ||
         generation == std::numeric_limits<std::int64_t>::max())
       fail("revision_limit");
-    auto bytes = encode_json(encode(candidate));
-    auto hash = sha(bytes);
     transaction(candidate, "save", [&] {
       const auto base = load();
       const auto current = read_work(base.rev, base.hash);

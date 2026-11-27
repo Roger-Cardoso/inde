@@ -37,6 +37,16 @@ def saved_text(path=None,title='Uma obra transportável'):
         row=inner.execute("SELECT content FROM documents WHERE title=?",(title,)).fetchone();content=row[0] if row else None
     return seq,content
 
+def working_text(title='Uma obra transportável'):
+    for meta in (root/'state').rglob('session.json'):
+        value=json.loads(meta.read_text())
+        if Path(value['file'])!=packet:continue
+        working=meta.parent/value['working']/'data/project.sqlite3'
+        with sqlite3.connect(f'file:{working}?mode=ro',uri=True) as db:
+            row=db.execute('SELECT content FROM documents WHERE title=?',(title,)).fetchone()
+            return row[0] if row else None
+    return None
+
 def observed():
     try:return json.loads(state_file.read_text())
     except (FileNotFoundError,json.JSONDecodeError):return {}
@@ -103,6 +113,8 @@ def choose_destination(path,title='Salvar cópia transportável do mesmo projeto
     else:input_('key','Return')
     wait(lambda s:subprocess.run(['xdotool','search','--all','--onlyvisible','--pid',str(s.get('pid',0)),'--name',title],env=env,capture_output=True).returncode!=0,'Seletor fechado')
     wait(lambda s:path.exists(),'Cópia publicada')
+    tick=observed().get('observer_tick',0)
+    wait(lambda s:s.get('observer_tick',0)>tick and not s.get('file_task',{}).get('active'),'Operação do arquivo concluída')
     input_('windowactivate','--sync',str(observed()['window']))
 
 
@@ -151,7 +163,7 @@ try:
     assert 'work-' not in found[0].read_text()
     start('crash');document();append(' Recuperar esta escrita.')
     wait(lambda s:not s.get('busy'),'Gravação nativa do rascunho')
-    time.sleep(1.0)
+    wait(lambda s:working_text()==s.get('content'),'Rascunho confirmado na área nativa antes da interrupção')
     os.killpg(app.pid,signal.SIGKILL);app.wait(timeout=10);log.close()
     assert saved_text()[1]==initial
     start('recover')
@@ -198,7 +210,7 @@ try:
     wait(lambda s:not any(c.get('mapped') and c.get('window') and str(c['window'])!=str(s.get('window')) and c.get('role')=='entry' for c in s.get('controls',[])),'Seletor de abertura fechado')
     quit_normal()
     start('reserve-and-open-saved');document('Documento no arquivo unico');append(' Rascunho reservado.')
-    time.sleep(1.0)
+    wait(lambda s:working_text('Documento no arquivo unico')==s.get('content'),'Rascunho reservado na área nativa')
     os.killpg(app.pid,signal.SIGKILL);app.wait(timeout=10);log.close()
     start('open-saved');click(label='Abrir o estado salvo');document('Documento no arquivo unico')
     wait(lambda s:s.get('content')=='Primeira escrita em arquivo.','Abrir salvo manteve conteúdo confirmado')

@@ -13,10 +13,13 @@ on:
       - cpp/main_window_comic.cpp
       - cpp/main_window_smoke.hpp
       - cpp/object_usage_probe.cpp
+      - cpp/object_composite_pilot.cpp
+      - cpp/object_native_tests.cpp
       - cpp/overlay/**
       - tests/project_file/**
       - scripts/demos/Abrir-demo-arquivo-unico*.sh
       - scripts/demos/Abrir-demo-confirmacao-assincrona.sh
+      - scripts/demos/Abrir-demo-operacoes-arquivo.sh
       - .github/workflows/inde-p5.yml
   pull_request:
     paths:
@@ -29,10 +32,13 @@ on:
       - cpp/main_window_comic.cpp
       - cpp/main_window_smoke.hpp
       - cpp/object_usage_probe.cpp
+      - cpp/object_composite_pilot.cpp
+      - cpp/object_native_tests.cpp
       - cpp/overlay/**
       - tests/project_file/**
       - scripts/demos/Abrir-demo-arquivo-unico*.sh
       - scripts/demos/Abrir-demo-confirmacao-assincrona.sh
+      - scripts/demos/Abrir-demo-operacoes-arquivo.sh
       - .github/workflows/inde-p5.yml
   workflow_dispatch:
 
@@ -107,9 +113,9 @@ jobs:
       - name: Build native core tests and editor
         run: |
           cmake -S cpp -B build-nativo -G Ninja -DCMAKE_BUILD_TYPE=Release -DINDE_BUILD_CORE_TESTS=ON
-          cmake --build build-nativo --parallel 2 --target inde inde_project_file_cli inde_project_file_tests inde_project_file_native_tests inde_project_file_session_tests inde_project_file_task_tests inde_project_file_benchmark
+          cmake --build build-nativo --parallel 2 --target inde inde_object_native_tests inde_project_file_cli inde_project_file_tests inde_project_file_native_tests inde_project_file_session_tests inde_project_file_task_tests inde_project_file_benchmark
       - name: Run native P5 integration and refusal cases
-        run: ctest --test-dir build-nativo -R '^inde_project_file' --output-on-failure
+        run: ctest --test-dir build-nativo -R '^(inde_project_file|inde_object_native_tests)' --output-on-failure
       - name: Produce a real synthetic native project and versioned file
         run: build-nativo/inde_project_file_native_tests "$RUNNER_TEMP/p5-native-demo"
       - name: Open actual demo and save and quit by keyboard
@@ -122,6 +128,8 @@ jobs:
         run: xvfb-run -a dbus-run-session -- python3 tests/project_file/test_native_session.py "$RUNNER_TEMP/p5c-native-session"
       - name: Verify responsive confirmation, cancellation, queued exit and recovery
         run: xvfb-run -a dbus-run-session -- python3 tests/project_file/test_native_confirmation.py "$RUNNER_TEMP/p5d-native-confirmation"
+      - name: Verify combined asynchronous open, create, copies and paginated history
+        run: xvfb-run -a dbus-run-session -- python3 tests/project_file/test_native_operations.py "$RUNNER_TEMP/p5d2-native-operations"
       - name: Measure persistent confirmation and history growth
         run: |
           mkdir -p "$RUNNER_TEMP/p5c-performance"
@@ -148,6 +156,7 @@ jobs:
             ${{ runner.temp }}/p5c-native-session
             ${{ runner.temp }}/p5c-performance
             ${{ runner.temp }}/p5d-native-confirmation
+            ${{ runner.temp }}/p5d2-native-operations
             dados/p5-demo-*
           if-no-files-found: warn
           retention-days: 7

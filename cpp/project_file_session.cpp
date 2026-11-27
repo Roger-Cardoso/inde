@@ -1,5 +1,6 @@
 #include "project_file_session.hpp"
 #include "inde/persistence/json.hpp"
+#include "project_file_operation.hpp"
 #include "project_file_transport.hpp"
 #include <fcntl.h>
 #include <fstream>
@@ -98,10 +99,11 @@ struct FileSession::Impl {
   Store store;
   State base;
   bool uncertain{};
-  Impl(fs::path f, fs::path r)
+  Impl(fs::path f, fs::path r, OperationControl *control)
       : file(fs::weakly_canonical(fs::absolute(f).parent_path()) /
              f.filename()),
-        root(std::move(r)), store(Store::open(file)), base(store.head()) {}
+        root(std::move(r)), store(Store::open(file, {}, control)),
+        base(store.head()) {}
   void metadata(const char *status) {
     atomic_write(root / "session.json",
                  encode_json(V::Object{{"format", "INDE-WORKSPACE-1"},
@@ -118,8 +120,9 @@ FileSession::FileSession(std::unique_ptr<Impl> p) : impl_(std::move(p)) {}
 FileSession::~FileSession() = default;
 std::unique_ptr<FileSession> FileSession::open(const fs::path &file,
                                                const fs::path &state_root,
-                                               RecoveryChoice choice) {
-  auto p = std::make_unique<Impl>(file, state_root);
+                                               RecoveryChoice choice,
+                                               OperationControl *control) {
+  auto p = std::make_unique<Impl>(file, state_root, control);
   const auto raw = p->file.string();
   p->root /= p->base.store_id + "-" + sha256(Bytes(raw.begin(), raw.end()));
   private_directory(p->root);
@@ -166,6 +169,8 @@ std::unique_ptr<FileSession> FileSession::open(const fs::path &file,
       bool safe = true;
       try {
         for (const auto &entry : fs::recursive_directory_iterator(p->work)) {
+          if (control)
+            control->check();
           const auto status = entry.symlink_status();
           if (!fs::is_directory(status) &&
               (!fs::is_regular_file(status) ||
@@ -177,12 +182,14 @@ std::unique_ptr<FileSession> FileSession::open(const fs::path &file,
       }
       bool same = false;
       try {
-        same = directory_matches(p->store, p->base, p->work, p->file);
+        same = directory_matches(p->store, p->base, p->work, p->file, control);
       } catch (const std::exception &) {
         // An interrupted SQLite workspace may need recovery by its owner.
         // A damaged/changed authoritative file must still refuse opening.
         static_cast<void>(p->store.head());
       }
+      if (control)
+        control->check();
       if (same)
         reuse = true;
       else if (choice == RecoveryChoice::Ask)
@@ -210,8 +217,10 @@ std::unique_ptr<FileSession> FileSession::open(const fs::path &file,
   }
   if (!reuse) {
     p->work = p->root / ("work-" + uuid() + ".inde");
-    unpack_directory(p->store, p->base.sequence, p->work);
+    unpack_directory(p->store, p->base.sequence, p->work, control, false);
   }
+  if (control)
+    control->seal();
   p->metadata("working");
   return std::unique_ptr<FileSession>(new FileSession(std::move(p)));
 }
@@ -247,34 +256,43 @@ State FileSession::save(const std::string &label, OperationControl *control) {
   }
   return impl_->base;
 }
-void FileSession::finish() {
+void FileSession::finish(OperationControl *control) {
   need(!impl_->uncertain, "reopen_required",
        "Reabra para conferir a confirmação anterior.");
-  need(directory_matches(impl_->store, impl_->base, impl_->work, impl_->file),
+  need(directory_matches(impl_->store, impl_->base, impl_->work, impl_->file,
+                         control),
        "session_dirty",
        "A área mudou depois do salvamento; ela será preservada para "
        "recuperação.");
+  if (control)
+    control->seal();
   impl_->metadata("clean");
 }
-std::vector<Revision> FileSession::history() const {
-  return impl_->store.history();
+std::vector<Revision> FileSession::history(OperationControl *control) const {
+  return impl_->store.history(control);
 }
-void FileSession::copy_to(const fs::path &path) const {
-  need(directory_matches(impl_->store, impl_->base, impl_->work, impl_->file),
+void FileSession::copy_to(const fs::path &path,
+                          OperationControl *control) const {
+  need(directory_matches(impl_->store, impl_->base, impl_->work, impl_->file,
+                         control),
        "session_dirty", "Salve o trabalho antes de copiar o arquivo.");
-  impl_->store.copy_to(path);
+  impl_->store.copy_to(path, control);
 }
-State FileSession::restore(std::int64_t sequence) {
+State FileSession::restore(std::int64_t sequence, OperationControl *control) {
   need(!impl_->uncertain, "reopen_required",
        "Reabra para conferir a confirmação anterior.");
-  need(directory_matches(impl_->store, impl_->base, impl_->work, impl_->file),
+  need(directory_matches(impl_->store, impl_->base, impl_->work, impl_->file,
+                         control),
        "session_dirty", "Salve o trabalho antes de retomar outro estado.");
-  if (impl_->store.state(sequence).hash == impl_->base.hash)
+  if (impl_->store.state(sequence).hash == impl_->base.hash) {
+    if (control)
+      control->seal();
     return impl_->base;
+  }
   const auto next_work = impl_->root / ("work-" + uuid() + ".inde");
-  unpack_directory(impl_->store, sequence, next_work);
-  impl_->base =
-      impl_->store.restore(impl_->base, sequence, "Retomar estado no editor");
+  unpack_directory(impl_->store, sequence, next_work, control, false);
+  impl_->base = impl_->store.restore(impl_->base, sequence,
+                                     "Retomar estado no editor", control);
   impl_->work = next_work;
   try {
     impl_->metadata("working");

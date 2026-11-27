@@ -18,6 +18,8 @@ O editor tem uma base nativa aproveitável e recursos reais, mas ainda não ofer
 
 **Aceite e continuidade:** após o usuário informar aprovação do teste C, [P5-D1](ARQUIVO-UNICO-P5-D1.md) separa a confirmação de Salvar/fechar/encerrar do processamento da interface, com pausa de edição, cancelamento antes da confirmação final e saída pendente. Abertura, criação, cópias e histórico ainda têm trechos síncronos. As pendências de fluidez e E3–E7 permanecem.
 
+**Aceite D1 e lote D2:** o usuário aprovou D1 e autorizou o próximo da fila como grande lote combinado. [P5-D2](ARQUIVO-UNICO-P5-D2.md) reúne abertura/troca, criação, duas cópias, consulta paginada e restauração do histórico no trabalhador exclusivo. A drenagem e a adoção nativa seguem na interface. A fase 5 e as pendências editoriais continuam abertas.
+
 ## 1. O resultado a alcançar
 
 Um escritor deve conseguir abrir seu projeto, escrever, inserir uma imagem, criar duas tabelas, colocá-las lado a lado, continuar escrevendo, reorganizar o conjunto, consultar suas marcações, desfazer um engano, salvar, encerrar e retomar sem desmontar o documento nem precisar compreender as divisões internas do programa.

@@ -216,6 +216,11 @@ int main(int argc, char **argv) {
             "Restoration changed content");
       unpack_directory(store, restored.sequence, root / "Estado-anterior.inde");
       unpack_directory(store, second.sequence, root / "Estado-posterior.inde");
+      if(g_getenv("P5_HISTORY_PAGES")) {
+        for(int i=0;i<104;++i)
+          store.restore(store.head(),i%2 ? first.sequence : second.sequence,
+                        "Estado fictício para paginação");
+      }
       store.verify();
     }
     check(inventory(root / "Estado-anterior.inde") == source_bytes,

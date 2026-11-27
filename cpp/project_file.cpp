@@ -436,7 +436,9 @@ struct Store::Impl {
            "Limite de versões atingido. As versões anteriores foram "
            "preservadas.");
   }
-  State load(std::int64_t sequence) const {
+  State load(std::int64_t sequence, OperationControl *control = nullptr) const {
+    if (control)
+      control->check();
     State result;
     result.project_id = project_id;
     result.store_id = store_id;
@@ -451,6 +453,8 @@ struct Store::Impl {
                "v.key=e.key WHERE e.seq=? ORDER BY e.key");
     rows.bind(1, sequence);
     while (rows.step()) {
+      if (control)
+        control->check();
       need(result.records.size() < options.limits.entries, "entry_limit",
            "Estado excede o limite de elementos.");
       Record r;
@@ -604,7 +608,10 @@ Store Store::create(const std::filesystem::path &path,
        "A confirmação do nome do arquivo foi incerta; preserve-o e confira.");
   return result;
 }
-Store Store::open(const std::filesystem::path &path, Options options) {
+Store Store::open(const std::filesystem::path &path, Options options,
+                  OperationControl *control) {
+  if (control)
+    control->checkpoint(OperationPhase::Checking);
   auto p = std::make_unique<Impl>(path, std::move(options), false);
   need(integer(p->db, "PRAGMA application_id") == 1229866033 &&
            integer(p->db, "PRAGMA user_version") == 1,
@@ -623,7 +630,7 @@ Store Store::open(const std::filesystem::path &path, Options options) {
        "project_identity", "Identificação inválida.");
   p->data_version = integer(p->db, "PRAGMA data_version");
   Store result(std::move(p));
-  result.verify();
+  result.verify(control);
   return result;
 }
 State Store::head() const {
@@ -634,12 +641,14 @@ State Store::state(std::int64_t sequence) const {
   impl_->ready();
   return impl_->load(sequence);
 }
-std::vector<Revision> Store::history() const {
+std::vector<Revision> Store::history(OperationControl *control) const {
   impl_->ready();
   std::vector<Revision> result;
   Query q(impl_->db, "SELECT seq,parent,restored_from,hash,label,created_at "
                      "FROM states ORDER BY seq");
   while (q.step()) {
+    if (control)
+      control->check();
     Revision r;
     r.sequence = q.integer(0);
     if (sqlite3_column_type(q.q, 1) != SQLITE_NULL)
@@ -674,7 +683,9 @@ Bytes Store::blob(const std::string &hash) const {
        "Recurso não coincide com sua conferência de integridade.");
   return result;
 }
-void Store::verify() const {
+void Store::verify(OperationControl *control) const {
+  if (control)
+    control->checkpoint(OperationPhase::Checking);
   impl_->ready();
   need(schema_digest(impl_->db) == expected_schema(), "schema_changed",
        "Estrutura de armazenamento alterada.");
@@ -684,7 +695,7 @@ void Store::verify() const {
   Query fk(impl_->db, "PRAGMA foreign_key_check");
   need(!fk.step(), "foreign_key", "Há referências de banco inválidas.");
   impl_->bounds();
-  const auto list = history();
+  const auto list = history(control);
   need(!list.empty() && list.front().sequence == 0, "history_invalid",
        "Histórico inicial ausente.");
   for (std::size_t i = 0; i < list.size(); ++i) {
@@ -700,14 +711,17 @@ void Store::verify() const {
     if (r.restored_from)
       need(r.hash == list[static_cast<std::size_t>(*r.restored_from)].hash,
            "history_invalid", "Restauração diverge do estado indicado.");
-    impl_->load(r.sequence);
+    impl_->load(r.sequence, control);
   }
   need(integer(impl_->db, "SELECT seq FROM head WHERE id=1") ==
            list.back().sequence,
        "history_invalid", "O estado atual não é a última versão confirmada.");
   Query blobs(impl_->db, "SELECT hash FROM blobs");
-  while (blobs.step())
+  while (blobs.step()) {
+    if (control)
+      control->check();
     static_cast<void>(blob(blobs.str(0)));
+  }
   need(integer(impl_->db,
                "SELECT count(*) FROM record_versions v WHERE NOT EXISTS(SELECT "
                "1 FROM entries e WHERE e.version_id=v.id)") == 0,
@@ -717,9 +731,10 @@ void Store::verify() const {
                "record_versions v WHERE v.blob_hash=b.hash)") == 0,
        "orphan_blob", "Recurso sem versão identificada.");
 }
-void Store::copy_to(const std::filesystem::path &given) const {
+void Store::copy_to(const std::filesystem::path &given,
+                    OperationControl *control) const {
   impl_->ready();
-  verify();
+  verify(control);
   const auto original = head();
   const auto target = std::filesystem::absolute(given);
   need(!std::filesystem::exists(std::filesystem::symlink_status(target)),
@@ -736,7 +751,19 @@ void Store::copy_to(const std::filesystem::path &given) const {
         sqlite3_backup_init(destination.impl_->db, "main", impl_->db, "main");
     need(backup != nullptr, "copy_failed",
          "Não foi possível iniciar a cópia verificável.");
-    const int result = sqlite3_backup_step(backup, -1);
+    int result = SQLITE_OK;
+    try {
+      if (control)
+        control->checkpoint(OperationPhase::Writing);
+      do {
+        if (control)
+          control->check();
+        result = sqlite3_backup_step(backup, 64);
+      } while (result == SQLITE_OK);
+    } catch (...) {
+      sqlite3_backup_finish(backup);
+      throw;
+    }
     const int finished = sqlite3_backup_finish(backup);
     need(result == SQLITE_DONE && finished == SQLITE_OK, "copy_failed",
          "A cópia não foi confirmada; o destino pendente foi preservado.");
@@ -744,12 +771,14 @@ void Store::copy_to(const std::filesystem::path &given) const {
          "A cópia não pôde ser confirmada.");
   }
   {
-    auto check = Store::open(pending);
+    auto check = Store::open(pending, {}, control);
     need(check.head().hash == original.hash &&
              check.head().sequence == original.sequence,
          "copy_failed", "A cópia não corresponde ao estado observado.");
   }
   impl_->ready();
+  if (control)
+    control->seal();
   need(::renameat2(AT_FDCWD, pending.c_str(), AT_FDCWD, target.c_str(),
                    RENAME_NOREPLACE) == 0,
        "destination_publish",
@@ -884,17 +913,22 @@ State Store::apply(const State &expected, const std::vector<Edit> &edits,
   return next;
 }
 State Store::restore(const State &expected, std::int64_t sequence,
-                     const std::string &label) {
+                     const std::string &label, OperationControl *control) {
+  if (control)
+    control->checkpoint(OperationPhase::Writing);
   impl_->ready();
   Transaction tx(impl_->db);
   impl_->expected(expected);
   auto next = impl_->load(sequence);
-  if (next.hash == expected.hash)
+  if (next.hash == expected.hash) {
+    if (control)
+      control->seal();
     return impl_->current();
+  }
   need(expected.sequence < std::numeric_limits<std::int64_t>::max(),
        "revision_limit", "Limite de revisões atingido.");
   next.sequence = expected.sequence + 1;
-  impl_->publish(next, label, sequence, tx);
+  impl_->publish(next, label, sequence, tx, control);
   return next;
 }
 } // namespace inde::project_file

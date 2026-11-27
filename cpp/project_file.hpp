@@ -72,7 +72,8 @@ class Store {
 public:
   static Store create(const std::filesystem::path &,
                       const std::string &project_id, Options = {});
-  static Store open(const std::filesystem::path &, Options = {});
+  static Store open(const std::filesystem::path &, Options = {},
+                    OperationControl * = nullptr);
   Store(Store &&) noexcept;
   Store &operator=(Store &&) noexcept;
   ~Store();
@@ -80,15 +81,16 @@ public:
   Store &operator=(const Store &) = delete;
   State head() const;
   State state(std::int64_t sequence) const;
-  std::vector<Revision> history() const;
+  std::vector<Revision> history(OperationControl * = nullptr) const;
   Bytes blob(const std::string &hash) const;
   State apply(const State &expected, const std::vector<Edit> &,
               const std::vector<Blob> &, const std::string &label,
               OperationControl * = nullptr);
   State restore(const State &expected, std::int64_t sequence,
-                const std::string &label);
-  void verify() const;
-  void copy_to(const std::filesystem::path &new_file) const;
+                const std::string &label, OperationControl * = nullptr);
+  void verify(OperationControl * = nullptr) const;
+  void copy_to(const std::filesystem::path &new_file,
+               OperationControl * = nullptr) const;
 
 private:
   struct Impl;

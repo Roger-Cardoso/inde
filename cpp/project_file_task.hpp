@@ -14,6 +14,11 @@ struct ConfirmationResult {
 // worker until ready(). No GTK objects or ProjectService cross this boundary.
 class ConfirmationTask {
 public:
+  using Work = std::function<std::int64_t(OperationControl &)>;
+  // Work owns its value captures; borrowed sessions remain exclusively reserved
+  // by the owner until ready(). The completion handler runs on the owner
+  // thread.
+  explicit ConfirmationTask(Work, OperationControl::Observer = {});
   explicit ConfirmationTask(FileSession &, OperationControl::Observer = {});
   ~ConfirmationTask();
   bool cancel() noexcept;

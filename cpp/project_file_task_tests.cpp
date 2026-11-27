@@ -198,6 +198,183 @@ int main() {
              "Reopen duplicated commit");
       }
       verify_file(file, dir / "Confirmed.inde", saved, "Confirmado sem recibo");
+      {
+        // The same worker owns the session for every file operation. Nothing
+        // reads or mutates it from the caller until the result is acquired.
+        auto session = FileSession::open(file, state);
+        const auto before = session->baseline();
+        const auto work = session->working();
+        Gate gate(OperationPhase::Writing);
+        unsigned writing = 0;
+        ConfirmationTask restore(
+            [&](auto &control) {
+              return session->restore(first.sequence, &control).sequence;
+            },
+            [&](auto phase, auto &control) {
+              // First Writing materializes the reserved directory, second
+              // Writing is the actual authoritative restore transaction.
+              if (phase == OperationPhase::Writing && ++writing == 2)
+                gate.observe(phase, control);
+            });
+        gate.wait();
+        need(restore.cancel(), "Restore cancellation refused");
+        const auto cancelled = result(restore);
+        need(cancelled.cancelled && !cancelled.error &&
+                 session->baseline().hash == before.hash &&
+                 session->working() == work,
+             "Cancelled restore changed active state");
+        need(session->history().back().sequence == before.sequence,
+             "Cancelled restore advanced history");
+        Gate commit(OperationPhase::Committing);
+        ConfirmationTask resumed(
+            [&](auto &control) {
+              return session->restore(first.sequence, &control).sequence;
+            },
+            [&](auto phase, auto &control) { commit.observe(phase, control); });
+        commit.wait();
+        need(!resumed.cancel(), "Restore accepted late cancellation");
+        commit.release();
+        const auto restored = result(resumed);
+        need(!restored.error && !restored.cancelled &&
+                 restored.sequence == before.sequence + 1,
+             "Restore worker failed");
+        need(session->working() != work && fs::exists(work) &&
+                 read(session->working() / "nota.txt") == "Original",
+             "Restore lost an area");
+        need(session->history().back().restored_from == first.sequence,
+             "Restore provenance missing");
+        session->finish();
+        Gate copy_gate(OperationPhase::Writing);
+        const auto copy = dir / "Cancelled-copy.inde";
+        ConfirmationTask copying(
+            [&](auto &control) {
+              session->copy_to(copy, &control);
+              return 0;
+            },
+            [&](auto phase, auto &control) {
+              copy_gate.observe(phase, control);
+            });
+        copy_gate.wait();
+        need(copying.cancel(), "Copy cancel refused");
+        need(result(copying).cancelled && !fs::exists(copy),
+             "Cancelled copy published target");
+        const auto complete = dir / "History-copy.inde";
+        Gate publish(OperationPhase::Committing);
+        ConfirmationTask copied(
+            [&](auto &control) {
+              session->copy_to(complete, &control);
+              return 0;
+            },
+            [&](auto phase, auto &control) {
+              publish.observe(phase, control);
+            });
+        publish.wait();
+        need(!fs::exists(complete) && !copied.cancel(),
+             "Copy seal boundary invalid");
+        publish.release();
+        need(!result(copied).error, "History copy failed");
+        auto check = Store::open(complete);
+        need(check.history().size() == session->history().size() &&
+                 check.head().hash == session->baseline().hash,
+             "History copy mismatch");
+        const auto original_bytes = read(complete);
+        ConfirmationTask collision([&](auto &control) {
+          session->copy_to(complete, &control);
+          return 0;
+        });
+        need(bool(result(collision).error) && read(complete) == original_bytes,
+             "Copy replaced destination");
+        auto rows = std::make_shared<std::vector<Revision>>();
+        ConfirmationTask listing([&](auto &control) {
+          *rows = session->history(&control);
+          return 0;
+        });
+        need(!result(listing).error &&
+                 rows->back().sequence == restored.sequence,
+             "History worker failed");
+        const auto prior_work = session->working(),
+                   parent = prior_work.parent_path();
+        const auto prior_sequence = session->baseline().sequence;
+        ConfirmationTask receipt(
+            [&](auto &control) {
+              return session->restore(before.sequence, &control).sequence;
+            },
+            [&](auto phase, auto &) {
+              if (phase == OperationPhase::Committing)
+                need(chmod(parent.c_str(), 0500) == 0,
+                     "Set restore receipt fault");
+            });
+        const auto uncertain = result(receipt);
+        need(chmod(parent.c_str(), 0700) == 0, "Restore receipt permission");
+        need(bool(uncertain.error) && !uncertain.cancelled &&
+                 session->needs_reopen() && session->working() != prior_work &&
+                 fs::exists(prior_work) &&
+                 session->baseline().sequence == prior_sequence + 1,
+             "Restore lost its post-commit uncertainty or working areas");
+        try {
+          std::rethrow_exception(uncertain.error);
+        } catch (const Error &e) {
+          need(e.code == "session_uncertain", "Wrong restore receipt error");
+        }
+      }
+      {
+        const auto target = dir / "Cancelled-pack.inde";
+        Gate gate(OperationPhase::Writing);
+        ConfirmationTask packing(
+            [&](auto &control) {
+              return pack_directory(source, target, profile, &control).sequence;
+            },
+            [&](auto phase, auto &control) { gate.observe(phase, control); });
+        gate.wait();
+        need(packing.cancel(), "Pack cancel refused");
+        need(result(packing).cancelled && !fs::exists(target),
+             "Cancelled pack published");
+        const auto published = dir / "Published-pack.inde";
+        Gate seal(OperationPhase::Committing);
+        ConfirmationTask packed(
+            [&](auto &control) {
+              return pack_directory(source, published, profile, &control)
+                  .sequence;
+            },
+            [&](auto phase, auto &control) { seal.observe(phase, control); });
+        seal.wait();
+        need(!fs::exists(published) && !packed.cancel(),
+             "Temporary COMMIT sealed parent operation");
+        seal.release();
+        need(!result(packed).error, "Pack failed after publication seal");
+        const auto cancelled_state = dir / "cancelled-open-state";
+        Gate reading(OperationPhase::Checking);
+        std::unique_ptr<FileSession> opened;
+        ConfirmationTask opening(
+            [&](auto &control) {
+              opened = FileSession::open(published, cancelled_state,
+                                         RecoveryChoice::Ask, &control);
+              return opened->baseline().sequence;
+            },
+            [&](auto phase, auto &control) {
+              reading.observe(phase, control);
+            });
+        reading.wait();
+        need(opening.cancel(), "Open cancel refused");
+        need(result(opening).cancelled && !opened,
+             "Cancelled open changed binding");
+        Gate binding(OperationPhase::Committing);
+        ConfirmationTask bound(
+            [&](auto &control) {
+              opened = FileSession::open(published, dir / "opened-state",
+                                         RecoveryChoice::Ask, &control);
+              return opened->baseline().sequence;
+            },
+            [&](auto phase, auto &control) {
+              binding.observe(phase, control);
+            });
+        binding.wait();
+        need(!bound.cancel(), "Open binding accepted late cancel");
+        binding.release();
+        need(!result(bound).error && opened &&
+                 read(opened->working() / "nota.txt") == "Original",
+             "Opening worker failed");
+      }
     }
     // Cancel after candidate rows have been written, before COMMIT. A rollback
     // must remove the candidate and retain every earlier state.
@@ -227,9 +404,27 @@ int main() {
            "Candidate was published on cancellation");
       store.verify();
     }
+    {
+      Gate done(OperationPhase::Done);
+      ConfirmationTask read_only(
+          [](OperationControl &) -> std::int64_t { return 7; },
+          [&](auto phase, auto &control) { done.observe(phase, control); });
+      done.wait();
+      need(!read_only.cancel(), "Completed read accepted cancellation");
+      done.release();
+      need(result(read_only).sequence == 7, "Read-only completion failed");
+      ConfirmationTask error([](OperationControl &) -> std::int64_t {
+        throw Error("operation_cancelled",
+                    "Injected error without cancellation");
+      });
+      const auto failed = result(error);
+      need(bool(failed.error) && !failed.cancelled,
+           "An error masqueraded as cancellation");
+    }
     fs::remove_all(root);
     std::cout << "P5-D: worker ownership, cancellation race, rollback, sealed "
-                 "commit, teardown, both profiles and uncertain receipt OK\n";
+                 "commit, teardown, both profiles, "
+                 "open/pack/copy/history/restore and uncertain receipt OK\n";
     return 0;
   } catch (const std::exception &e) {
     std::cerr << e.what() << "\nEvidence: " << root << '\n';

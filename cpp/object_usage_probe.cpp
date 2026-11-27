@@ -38,12 +38,13 @@ struct ProjectFileTaskProbe {
   }
   static void attach(MainWindow &window,const std::filesystem::path &state) {
     const auto root=state.parent_path();
-    window.file_task_observe_=[root](project_file::OperationControl &control) {
+    window.file_task_observe_=[root](const std::string &title, project_file::OperationControl &control) {
       // Deterministic observation gates exist only in this explicit test host.
       // Normal applications never read these files or delay the worker.
       const auto hold=root/"file-task-hold";
       std::ifstream f(hold);std::string requested;std::getline(f,requested);
-      if(requested!=phase(control.phase()))return;
+      std::string operation;std::getline(f,operation);
+      if(requested!=phase(control.phase()) || (!operation.empty() && operation!=title))return;
       std::ofstream(root/"file-task-entered")<<requested;
       const auto end=std::chrono::steady_clock::now()+std::chrono::seconds(12);
       while(std::filesystem::exists(hold)) {
@@ -53,8 +54,9 @@ struct ProjectFileTaskProbe {
       }
     };
   }
+  static void open(MainWindow &window,const std::filesystem::path &path) {window.open_project_at(path);}
   static persistence::json::Value::Object observe(MainWindow &window) {
-    persistence::json::Value::Object s{{"active",bool(window.file_task_)},
+    persistence::json::Value::Object s{{"active",bool(window.file_task_)},{"operation",window.file_task_title_},
       {"exit_requested",window.file_task_exit_},{"message",window.status_bar_.get_text().raw()}};
     if(window.file_task_){s["phase"]=phase(window.file_task_->phase());s["cancellable"]=window.file_task_->cancellable();}
     return s;
@@ -73,8 +75,9 @@ int run_object_usage_probe(const Glib::RefPtr<Gtk::Application> &app,
   sigc::connection poll;
   std::int64_t ticks{};
   app->signal_activate().connect([&] {
-    main=std::make_unique<inde::ui::MainWindow>(open_existing?std::optional<std::filesystem::path>(project):std::nullopt);
+    main=std::make_unique<inde::ui::MainWindow>(std::nullopt);
     inde::ui::ProjectFileTaskProbe::attach(*main,state_file);
+    if(open_existing)inde::ui::ProjectFileTaskProbe::open(*main,project);
     app->add_window(*main);main->unmaximize();main->set_default_size(1190,750);
     main->present();
     poll=Glib::signal_timeout().connect([&] {
@@ -103,8 +106,8 @@ int run_object_usage_probe(const Glib::RefPtr<Gtk::Application> &app,
         }
         if(auto *b=dynamic_cast<Gtk::CheckButton *>(&w))label=b->get_label();
         const auto name=w.get_name().raw();
-        if(name.starts_with("native-"))if(auto *l=dynamic_cast<Gtk::Label *>(&w))label=l->get_text();
-        if(!label.empty() || dynamic_cast<Gtk::Entry *>(&w) || name.starts_with("native-") || name=="project-file-state" ||
+        if(name.starts_with("native-") || name.starts_with("project-file-history-"))if(auto *l=dynamic_cast<Gtk::Label *>(&w))label=l->get_text();
+        if(!label.empty() || dynamic_cast<Gtk::Entry *>(&w) || name.starts_with("native-") || name=="project-file-state" || name.starts_with("project-file-history-") ||
            name.starts_with("specialty-") || name.starts_with("writing-paragraph-")) {
           graphene_rect_t bounds{};
           auto *coordinate_root=GTK_WIDGET(main->gobj());

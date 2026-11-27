@@ -7,16 +7,14 @@ struct ConfirmationTask::Impl {
   ConfirmationResult result;
   std::atomic<bool> ready{};
   std::thread worker;
-  explicit Impl(FileSession &session, OperationControl::Observer observer)
+  explicit Impl(Work work, OperationControl::Observer observer)
       : control(std::move(observer)) {
-    worker = std::thread([this, &session] {
+    worker = std::thread([this, work = std::move(work)] {
       try {
-        session.save("Confirmar trabalho no editor", &control);
-        control.report(OperationPhase::Finishing);
-        session.finish();
-        result.sequence = session.baseline().sequence;
+        result.sequence = work(control);
+        control.complete();
       } catch (const Error &error) {
-        if (error.code == "operation_cancelled")
+        if (error.code == "operation_cancelled" && control.cancelled())
           result.cancelled = true;
         else
           result.error = std::current_exception();
@@ -29,7 +27,16 @@ struct ConfirmationTask::Impl {
   }
 };
 ConfirmationTask::ConfirmationTask(FileSession &s, OperationControl::Observer o)
-    : impl_(std::make_unique<Impl>(s, std::move(o))) {}
+    : ConfirmationTask(
+          [&s](OperationControl &control) {
+            s.save("Confirmar trabalho no editor", &control);
+            control.report(OperationPhase::Finishing);
+            s.finish();
+            return s.baseline().sequence;
+          },
+          std::move(o)) {}
+ConfirmationTask::ConfirmationTask(Work work, OperationControl::Observer o)
+    : impl_(std::make_unique<Impl>(std::move(work), std::move(o))) {}
 ConfirmationTask::~ConfirmationTask() {
   cancel();
   wait();
