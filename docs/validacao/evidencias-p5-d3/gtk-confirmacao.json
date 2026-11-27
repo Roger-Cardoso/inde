@@ -1,0 +1,16 @@
+{
+  "responsive_event_loop": true,
+  "editing_paused": true,
+  "early_cancel_preserves_file_and_work": true,
+  "retry_after_cancel": true,
+  "cancel_refused_after_seal": true,
+  "quit_queued": true,
+  "quit_withdrawn": true,
+  "window_close_waits": true,
+  "crash_before_commit_rolled_back": true,
+  "crash_workspace_recovered": true,
+  "failed_async_quit_preserves_work": true,
+  "failed_quit_reopened": true,
+  "close_project_async": true,
+  "no_duplicate_revision": true
+}

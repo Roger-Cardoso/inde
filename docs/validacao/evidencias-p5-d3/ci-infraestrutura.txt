@@ -1,0 +1,14 @@
+Run 46026854904, first attempt: dependency setup failed before compilation.
+clang++ OFF job 140600369076; fail-fast cancelled the three other matrix jobs.
+2026-11-27T15:39:41.4403267Z hint: 'development'. The just-created branch can be renamed via this command:
+2026-11-27T15:39:41.4403603Z hint:
+2026-11-27T15:39:41.4403810Z hint: 	git branch -m <name>
+2026-11-27T15:39:41.9818245Z [command]/usr/bin/git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin +3add1e58765f218d97ee5ffca5528aa2168d7ec7:refs/remotes/origin/feature/inde-p5-single-file
+2026-11-27T15:39:42.9634115Z  * [new ref]         3add1e58765f218d97ee5ffca5528aa2168d7ec7 -> origin/feature/inde-p5-single-file
+2026-11-27T15:39:42.9702458Z 3add1e58765f218d97ee5ffca5528aa2168d7ec7
+2026-11-27T15:39:43.0849060Z 3add1e58765f218d97ee5ffca5528aa2168d7ec7
+2026-11-27T15:39:43.8427811Z   403  Forbidden [IP: 13.107.213.40 443]
+2026-11-27T15:39:56.8152459Z E: Failed to fetch https://packages.microsoft.com/ubuntu/24.04/prod/dists/noble/InRelease  403  Forbidden [IP: 13.107.213.40 443]
+2026-11-27T15:39:56.8153359Z E: The repository 'https://packages.microsoft.com/ubuntu/24.04/prod noble InRelease' is no longer signed.
+2026-11-27T15:39:56.8178428Z ##[error]Process completed with exit code 100.
+2026-11-27T15:39:56.9874403Z Cleaning up orphan processes

@@ -1,0 +1,45 @@
+{
+  "format": "INDE-P5-D3-FIRST-CI-1",
+  "run_id": 46025120447,
+  "url": "https://github.com/Roger-Cardoso/inde/actions/runs/46025120447",
+  "head_sha": "ba6b446acb7dae1409ee54699adb24e38d5a3aea",
+  "note": "Initial D3 revision; final receipt/exit protection is validated by run 46026854904.",
+  "jobs": [
+    {
+      "id": 140594415707,
+      "name": "native-project",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 140594416062,
+      "name": "versioned-store (g++, ON)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 140594416112,
+      "name": "versioned-store (g++, OFF)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 140594416119,
+      "name": "versioned-store (clang++, OFF)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 140594416135,
+      "name": "thread-safety",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 140594416218,
+      "name": "versioned-store (clang++, ON)",
+      "status": "completed",
+      "conclusion": "success"
+    }
+  ]
+}

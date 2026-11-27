@@ -1,0 +1,15 @@
+Test project /home/roger/Documents/Projects/GitHub/INDE/obj01-audit/build-p5
+    Start 1: inde_project_file_tests
+1/5 Test #1: inde_project_file_tests .................   Passed    0.82 sec
+    Start 2: inde_project_file_transport_tests
+2/5 Test #2: inde_project_file_transport_tests .......   Passed    5.43 sec
+    Start 3: inde_project_file_session_tests
+3/5 Test #3: inde_project_file_session_tests .........   Passed    0.59 sec
+    Start 4: inde_project_file_block_session_tests
+4/5 Test #4: inde_project_file_block_session_tests ...   Passed    0.60 sec
+    Start 5: inde_project_file_task_tests
+5/5 Test #5: inde_project_file_task_tests ............   Passed    1.29 sec
+
+100% tests passed out of 5
+
+Total Test time (real) =   8.74 sec

@@ -1,0 +1,7 @@
+Test project /home/roger/Documents/Projects/GitHub/INDE/obj01-audit/build-p5-thread
+    Start 5: inde_project_file_task_tests
+1/1 Test #5: inde_project_file_task_tests .....   Passed    4.32 sec
+
+100% tests passed out of 1
+
+Total Test time (real) =   4.32 sec

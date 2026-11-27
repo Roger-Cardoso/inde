@@ -15,9 +15,22 @@ Data: 27/11/2026. Base `2fad9a3`, branch `feature/inde-p5-single-file`. D2 foi a
 - Lançador entregue: abriu o aplicativo normal, recebeu Salvar/Encerrar por teclado e teve o arquivo conferido.
 - Transições complementares para pastas: 6 controles gráficos aprovados, em roteiro local separado da CI.
 
-## CI em acompanhamento
+## CI final
 
-Revisão enviada: `ba6b446acb7dae1409ee54699adb24e38d5a3aea`. [Execução D3](https://github.com/Roger-Cardoso/inde/actions/runs/46025120447). O resultado final será registrado depois de todos os trabalhos terminarem. Os resultados locais não são apresentados como resultados remotos.
+Revisão validada: `3add1e58765f218d97ee5ffca5528aa2168d7ec7`. [Execução D3 — seis trabalhos aprovados](https://github.com/Roger-Cardoso/inde/actions/runs/46026854904), concluída com `success`.
+
+| Trabalho remoto | Resultado |
+| --- | --- |
+| GCC, compilação estrita | 5/5 testes P5 |
+| GCC, ASan/UBSan/LeakSanitizer | 5/5 testes P5 |
+| Clang, compilação estrita | 5/5 testes P5 |
+| Clang, ASan/UBSan/LeakSanitizer | 5/5 testes P5 |
+| Clang, ThreadSanitizer | 1/1 teste do trabalhador e transmissão da preparação |
+| Editor nativo | Compilação; 9/9 testes de integração/objeto/recuperação; demonstração; sessões integral e por blocos; D1; D2; D3 com 23 verificações; regressão do crescimento do histórico aprovados |
+
+A primeira tentativa dessa revisão recebeu HTTP 403 do repositório Microsoft pré-configurado no runner durante `apt-get update`, antes de compilar a variante Clang sem instrumentação. O fail-fast cancelou as outras três variantes da matriz. Depois de o trabalho nativo terminar com sucesso, foram repetidos somente os quatro trabalhos afetados; todos passaram. Os resultados do editor e de concorrência foram conservados. A ocorrência está em `ci-infraestrutura.txt`, com os IDs dos logs originais/reutilizados em `ci.json` e `ci-resultados.txt`.
+
+A primeira revisão D3 (`ba6b446`) também concluiu seis trabalhos com sucesso, conforme `ci-primeira-revisao.json`. Ela não substitui a execução final da proteção de saída. Os nove testes remotos nativos não são apresentados como reexecução de todos os 73 testes locais ou dos 103 gerais; as quatro variantes de compilador/instrumentação exercitam combinações dos mesmos cinco testes P5.
 
 ## Achado e correção da recuperação
 
@@ -33,6 +46,14 @@ Uma falha ainda na preparação nativa mantém a janela aberta e retira o pedido
 
 Falhas posteriores na publicação do `.inde`, com o trabalho privado já confirmado, conservam a opção anterior de encerrar preservando essa área. O roteiro D1 foi reexecutado para verificar essa distinção.
 
+| Fronteira da falha | Comportamento verificado |
+| --- | --- |
+| Escritores nativos ainda sem recibo confirmado | Janela permanece aberta, pedido de saída retirado, texto disponível para nova tentativa |
+| Cancelamento antes da confirmação do arquivo | Arquivo anterior preservado; escritas privadas já iniciadas podem terminar |
+| Gravação do arquivo falha após preparar o trabalho privado | Pode voltar ou encerrar explicitamente preservando a área de recuperação |
+| Interrupção depois do texto e antes dos objetos | Retoma a área preservada e confirma a escrita recuperada |
+| Journal privado quente ou frio interrompido | SQLite trata o auxiliar, com campos dos registros preservados |
+
 ## Escopo das provas
 
 A reserva SQLite do roteiro gráfico retém uma escrita real enquanto o observador continua recebendo eventos. Os gates adicionais só existem no host de teste explícito; o aplicativo normal não lê esses arquivos. Os resultados são produzidos pelos serviços reais, com entrada de teclado/mouse, e não por emissão de sinais de widgets.
@@ -45,4 +66,6 @@ As observações de fluidez da suíte geral incluem entrada X11 e polling, sob c
 
 As três bases compactadas e os 758 arquivos congelados foram novamente conferidos. Main e projetos autorais são preservados; todos os ensaios usam pastas fictícias novas. Os manifestos A–D2 permanecem históricos nas respectivas revisões.
 
-O roteiro entregue está em [Demonstração P5-D3](../roteiros/ARQUIVO-UNICO-P5-D3.md). O fechamento terá manifesto de fontes/evidências e resultado da CI na revisão de código indicada, com verificador `tests/project_file/verify_preparation_evidence.py`.
+O roteiro entregue está em [Demonstração P5-D3](../roteiros/ARQUIVO-UNICO-P5-D3.md). O [manifesto de fontes e evidências](evidencias-p5-d3/manifesto.json) identifica a revisão de código e o resultado da CI. As 58 fontes listadas foram comparadas byte a byte com esse commit. `ci-execucao.json` registra a identidade e a conclusão obtidas do GitHub. Na raiz desta cópia, `python3 tests/project_file/verify_preparation_evidence.py` confere os hashes e os seis resultados efetivos.
+
+Os roteiros complementares de lançador normal e transições para pastas foram validados localmente e conservados em `evidencias-p5-d3`, separados dos percursos de CI. A aprovação humana de D3 e uma eventual promoção/release continuam distintas desta validação técnica.

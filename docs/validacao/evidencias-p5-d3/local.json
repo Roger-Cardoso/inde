@@ -1,0 +1,22 @@
+{
+  "format": "INDE-P5-D3-LOCAL-1",
+  "date": "2026-11-27",
+  "code_commit": "3add1e58765f218d97ee5ffca5528aa2168d7ec7",
+  "native": 73,
+  "editor": 103,
+  "p5_core": 5,
+  "p5_clang_asan_ubsan_lsan": 5,
+  "p5_clang_tsan": 1,
+  "gtk_preparation": 23,
+  "gtk_operations": 18,
+  "gtk_whole": 14,
+  "gtk_blocks": 14,
+  "gtk_confirmation": 14,
+  "gtk_legacy_supplement": 6,
+  "normal_launcher": true,
+  "frozen_files": 758,
+  "archives": 3,
+  "main_head": "d41a5c9b9809ca7d40beb6ff10f22f1a5b451e0b",
+  "main_preexisting_change": "Preparar-ponte.sh mode 100644 -> 100755; preserved",
+  "real_author_projects_used": false
+}

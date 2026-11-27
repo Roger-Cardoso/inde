@@ -1,0 +1,79 @@
+versioned-store (g++, ON) — success — log job 140608231245
+2026-11-27T15:56:09.4210770Z -- The CXX compiler identification is GNU 13.3.0
+2026-11-27T15:56:27.5373304Z Test project /home/runner/work/inde/inde/build-p5
+2026-11-27T15:56:28.0420295Z 1/5 Test #1: inde_project_file_tests .................   Passed    0.46 sec
+2026-11-27T15:56:33.7102340Z 2/5 Test #2: inde_project_file_transport_tests .......   Passed    5.67 sec
+2026-11-27T15:56:34.1486099Z 3/5 Test #3: inde_project_file_session_tests .........   Passed    0.44 sec
+2026-11-27T15:56:34.6640446Z 4/5 Test #4: inde_project_file_block_session_tests ...   Passed    0.52 sec
+2026-11-27T15:56:35.6018467Z 5/5 Test #5: inde_project_file_task_tests ............   Passed    0.94 sec
+2026-11-27T15:56:35.6020331Z 100% tests passed, 0 tests failed out of 5
+2026-11-27T15:56:35.6020848Z Total Test time (real) =   8.07 sec
+
+versioned-store (clang++, OFF) — success — log job 140608231533
+2026-11-27T15:56:00.1455483Z -- The CXX compiler identification is Clang 18.1.3
+2026-11-27T15:56:11.1209285Z Test project /home/runner/work/inde/inde/build-p5
+2026-11-27T15:56:11.8096345Z 1/5 Test #1: inde_project_file_tests .................   Passed    0.69 sec
+2026-11-27T15:56:15.1254514Z 2/5 Test #2: inde_project_file_transport_tests .......   Passed    3.31 sec
+2026-11-27T15:56:15.3647771Z 3/5 Test #3: inde_project_file_session_tests .........   Passed    0.24 sec
+2026-11-27T15:56:15.6785001Z 4/5 Test #4: inde_project_file_block_session_tests ...   Passed    0.31 sec
+2026-11-27T15:56:16.7321880Z 5/5 Test #5: inde_project_file_task_tests ............   Passed    1.05 sec
+2026-11-27T15:56:16.7325027Z 100% tests passed, 0 tests failed out of 5
+2026-11-27T15:56:16.7325381Z Total Test time (real) =   5.61 sec
+
+versioned-store (clang++, ON) — success — log job 140608231714
+2026-11-27T15:55:51.2040759Z -- The CXX compiler identification is Clang 18.1.3
+2026-11-27T15:56:00.8592836Z Test project /home/runner/work/inde/inde/build-p5
+2026-11-27T15:56:01.3465924Z 1/5 Test #1: inde_project_file_tests .................   Passed    0.42 sec
+2026-11-27T15:56:06.8960491Z 2/5 Test #2: inde_project_file_transport_tests .......   Passed    5.54 sec
+2026-11-27T15:56:07.3051610Z 3/5 Test #3: inde_project_file_session_tests .........   Passed    0.39 sec
+2026-11-27T15:56:07.7760053Z 4/5 Test #4: inde_project_file_block_session_tests ...   Passed    0.47 sec
+2026-11-27T15:56:08.6434971Z 5/5 Test #5: inde_project_file_task_tests ............   Passed    0.87 sec
+2026-11-27T15:56:08.6437785Z 100% tests passed, 0 tests failed out of 5
+2026-11-27T15:56:08.6438378Z Total Test time (real) =   7.78 sec
+
+versioned-store (g++, OFF) — success — log job 140608231780
+2026-11-27T15:56:16.9757378Z -- The CXX compiler identification is GNU 13.3.0
+2026-11-27T15:56:33.0314078Z Test project /home/runner/work/inde/inde/build-p5
+2026-11-27T15:56:33.2985037Z 1/5 Test #1: inde_project_file_tests .................   Passed    0.22 sec
+2026-11-27T15:56:34.7039868Z 2/5 Test #2: inde_project_file_transport_tests .......   Passed    1.40 sec
+2026-11-27T15:56:34.8303076Z 3/5 Test #3: inde_project_file_session_tests .........   Passed    0.13 sec
+2026-11-27T15:56:34.9804302Z 4/5 Test #4: inde_project_file_block_session_tests ...   Passed    0.15 sec
+2026-11-27T15:56:35.3482229Z 5/5 Test #5: inde_project_file_task_tests ............   Passed    0.37 sec
+2026-11-27T15:56:35.3483265Z 100% tests passed, 0 tests failed out of 5
+2026-11-27T15:56:35.3483738Z Total Test time (real) =   2.32 sec
+
+thread-safety — success — log job 140600368657 (retained success)
+2026-11-27T15:39:50.1123518Z -- The CXX compiler identification is Clang 18.1.3
+2026-11-27T15:39:58.9928877Z Test project /home/runner/work/inde/inde/build-p5-thread
+2026-11-27T15:40:00.0982943Z 1/1 Test #5: inde_project_file_task_tests .....   Passed    1.06 sec
+2026-11-27T15:40:00.1034427Z 100% tests passed, 0 tests failed out of 1
+2026-11-27T15:40:00.1034790Z Total Test time (real) =   1.11 sec
+
+native-project — success — log job 140600369197 (retained success)
+2026-11-27T15:40:06.6323603Z -- The CXX compiler identification is GNU 13.3.0
+2026-11-27T15:51:54.3977080Z Test project /home/runner/work/inde/inde/build-nativo
+2026-11-27T15:51:55.2656224Z 1/9 Test #17: inde_object_native_tests ................   Passed    0.80 sec
+2026-11-27T15:51:55.5915835Z 2/9 Test #19: inde_project_file_tests .................   Passed    0.30 sec
+2026-11-27T15:51:56.2289837Z 3/9 Test #20: inde_project_file_native_tests ..........   Passed    0.64 sec
+2026-11-27T15:51:58.1809666Z 4/9 Test #21: inde_project_file_transport_tests .......   Passed    1.95 sec
+2026-11-27T15:51:58.2832856Z 5/9 Test #22: inde_recovery_transport_tests ...........   Passed    0.10 sec
+2026-11-27T15:51:58.4512635Z 6/9 Test #23: inde_project_file_session_tests .........   Passed    0.17 sec
+2026-11-27T15:51:58.6410640Z 7/9 Test #24: inde_project_file_block_session_tests ...   Passed    0.19 sec
+2026-11-27T15:51:59.3298005Z 8/9 Test #25: inde_project_file_block_native_tests ....   Passed    0.69 sec
+2026-11-27T15:51:59.7683168Z 9/9 Test #26: inde_project_file_task_tests ............   Passed    0.44 sec
+2026-11-27T15:51:59.7686133Z 100% tests passed, 0 tests failed out of 9
+2026-11-27T15:51:59.7686765Z Total Test time (real) =   5.37 sec
+2026-11-27T15:52:00.4594192Z P5 native schema37 roundtrip: full Document, PNG, table, equation, divergent row, planning/text link, edition, restoration and original preservation OK
+2026-11-27T15:52:07.3959031Z P5 GTK demo: actual launcher, keyboard Save/Quit, capture and verification OK
+2026-11-27T15:52:08.1450182Z P5 native schema37 roundtrip: full Document, PNG, table, equation, divergent row, planning/text link, edition, restoration and original preservation OK
+2026-11-27T15:52:41.6223830Z P5-B GTK: real Save, history restore, recents, crash recovery and failure-safe normal exit OK
+2026-11-27T15:52:42.4330499Z P5 native schema37 roundtrip: full Document, PNG, table, equation, divergent row, planning/text link, edition, restoration and original preservation OK
+2026-11-27T15:53:15.9485321Z P5-B GTK: real Save, history restore, recents, crash recovery and failure-safe normal exit OK
+2026-11-27T15:53:16.7528923Z P5 native schema37 roundtrip: full Document, PNG, table, equation, divergent row, planning/text link, edition, restoration and original preservation OK
+2026-11-27T15:53:32.0717502Z P5-D GTK: responsive loop, cancel boundary, rollback, queued exit, recovery and project close OK
+2026-11-27T15:53:33.3670793Z P5 native schema37 roundtrip: full Document, PNG, table, equation, divergent row, planning/text link, edition, restoration and original preservation OK
+2026-11-27T15:54:03.6999145Z P5-D2 GTK: combined asynchronous lifecycle, cancellation, pagination, publication and queued quit OK
+2026-11-27T15:54:04.5020753Z P5 native schema37 roundtrip: full Document, PNG, table, equation, divergent row, planning/text link, edition, restoration and original preservation OK
+2026-11-27T15:54:20.4666926Z P5-D3 GTK: cooperative native preparation, object worker, cancel, retry, queued quit and clean reopen OK
+2026-11-27T15:54:23.1040385Z P5-C history growth and exact restoration OK
+
