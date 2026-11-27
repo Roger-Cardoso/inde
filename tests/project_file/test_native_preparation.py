@@ -137,6 +137,16 @@ c=sqlite3.connect(sys.argv[1]);c.execute('BEGIN IMMEDIATE');c.execute("UPDATE re
     start('recover-native-preparation');click(label='Retomar o trabalho preservado');document()
     assert observed()['content']==interrupted
     input_('key','ctrl+s');wait(lambda s:saved()[1]==interrupted,'Recuperar a fronteira texto/objetos');settled()
+    append(' Rascunho na falha da preparacao.');failed_text=observed()['content'];before_failure=saved()
+    meta=next((root/'state').rglob('session.json'));v=json.loads(meta.read_text())
+    data_folder=meta.parent/v['working']/'data'
+    os.chmod(data_folder,0o500)
+    try:
+        input_('key','ctrl+q');click(label='Fechar')
+        settled();assert not observed()['file_task']['exit_requested'];assert app.poll() is None and saved()==before_failure and observed()['content']==failed_text
+        assert not any(c.get('mapped') and c.get('label')=='Encerrar preservando o trabalho' for c in observed()['controls'])
+    finally:os.chmod(data_folder,0o700)
+    input_('key','ctrl+s');wait(lambda s:saved()[1]==failed_text,'Repetir após falha na preparação');settled()
     append(' Fechar depois dos objetos.');closing=observed()['content'];gate('objects');heartbeat()
     input_('key','alt+F4');wait(lambda s:s['file_task']['exit_requested'],'Fechar aguarda os objetos')
     hold.unlink();assert app.wait(timeout=40)==0;log.close();assert saved()[1]==closing
@@ -144,7 +154,7 @@ c=sqlite3.connect(sys.argv[1]);c.execute('BEGIN IMMEDIATE');c.execute("UPDATE re
     # A normal close from the compound sheet goes through preparation too.
     quit_normal()
     for p in root.glob('*.log'):assert not any(x in p.read_text() for x in ['Gtk-CRITICAL','Gdk-CRITICAL','GLib-GObject-CRITICAL']),p
-    checks=['interrupted_cold_journal_recovered','recovery_records_unchanged','crash_between_native_writers_preserves_file','crash_between_native_writers_recovers_text','recovered_native_preparation_confirms','native_sqlite_wait_responsive','native_sqlite_wait_completed','responsive_before_file_capture','editing_paused_during_preparation','preparation_cancel_preserves_file','preparation_cancel_preserves_text','objects_worker_responsive','objects_cancel_preserves_file','retry_captures_latest_text','object_noop_preserves_revision','quit_queued_during_objects','quit_withdrawn_during_objects','window_close_waits_for_objects','clean_native_reopen','normal_quit','no_gtk_criticals']
+    checks=['failed_native_preparation_keeps_editor_open','retry_after_native_preparation_failure','interrupted_cold_journal_recovered','recovery_records_unchanged','crash_between_native_writers_preserves_file','crash_between_native_writers_recovers_text','recovered_native_preparation_confirms','native_sqlite_wait_responsive','native_sqlite_wait_completed','responsive_before_file_capture','editing_paused_during_preparation','preparation_cancel_preserves_file','preparation_cancel_preserves_text','objects_worker_responsive','objects_cancel_preserves_file','retry_captures_latest_text','object_noop_preserves_revision','quit_queued_during_objects','quit_withdrawn_during_objects','window_close_waits_for_objects','clean_native_reopen','normal_quit','no_gtk_criticals']
     (root/'resultado.json').write_text(json.dumps(dict.fromkeys(checks,True),indent=2)+'\n')
     print('P5-D3 GTK: cooperative native preparation, object worker, cancel, retry, queued quit and clean reopen OK')
 finally:

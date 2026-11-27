@@ -126,7 +126,7 @@ void MainWindow::start_file_confirmation(std::function<void()> next,
         true, stamp, exiting);
   } catch (...) {
     stop_file_confirmation();
-    file_confirmation_failed(std::current_exception(), exiting);
+    file_confirmation_failed(std::current_exception(), false);
   }
 }
 void MainWindow::start_file_operation(
@@ -186,7 +186,7 @@ void MainWindow::launch_file_task(const std::string &title,
     if (done)
       done(result);
     else
-      file_confirmation_failed(error, exiting);
+      file_confirmation_failed(error, exiting && !prepare);
   }
 }
 void MainWindow::advance_file_preparation() {
@@ -273,6 +273,8 @@ bool MainWindow::poll_file_confirmation() {
     return true;
   }
   auto result = file_task_->result();
+  const bool preparation_failed =
+      bool(result.error) && file_task_->phase() == Phase::Preparing;
   try {
     if (file_native_started_)
       writing_workspace_.finish_project_flush();
@@ -285,6 +287,8 @@ bool MainWindow::poll_file_confirmation() {
   file_prepared_work_ = {};
   file_native_started_ = false;
   const auto exiting = file_task_exit_;
+  if (result.error)
+    file_task_exit_ = false;
   auto done = std::move(file_task_done_);
   auto next = std::move(file_task_next_);
   file_task_.reset();
@@ -320,7 +324,9 @@ bool MainWindow::poll_file_confirmation() {
   } else if (result.error) {
     if (next)
       next();
-    file_confirmation_failed(result.error, exiting);
+    // Before native receipts are confirmed, an exit claiming preserved work
+    // could discard a buffer that only exists in memory. Keep the editor open.
+    file_confirmation_failed(result.error, exiting && !preparation_failed);
   } else {
     preserve_file_work_ = false;
     status_bar_.set_text("Arquivo único confirmado — estado " +

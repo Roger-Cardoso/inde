@@ -10,7 +10,7 @@ Depois dos recibos, a interface captura o Documento atual e prepara a confirmaç
 
 O caminho atende Salvar, fechar projeto, encerrar e a confirmação anterior a abrir/criar/copiar com histórico/consultar estados. A cópia do estado atual e a saída de uma pasta para um arquivo também usam a preparação, sem tentar salvar novamente o arquivo original quando se escolhe continuar numa cópia.
 
-O fechamento normal de um arquivo não executa uma barreira síncrona anterior ao progresso, nem repete a drenagem depois de a confirmação ter terminado. O encerramento explicitamente escolhido para preservar trabalho, após uma falha, também não exige reabrir uma composição incerta antes de permitir fechar a janela.
+O fechamento normal de um arquivo não executa uma barreira síncrona anterior ao progresso, nem repete a drenagem depois de a confirmação ter terminado. Uma falha antes de confirmar os recibos nativos mantém o editor aberto: nessa fronteira não se oferece saída que alegue preservar trabalho possivelmente só presente na memória. O encerramento explicitamente escolhido para preservar trabalho, após uma falha, também não exige reabrir uma composição incerta antes de permitir fechar a janela.
 
 ## Propriedade e cancelamento
 

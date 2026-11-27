@@ -7,11 +7,17 @@ Data: 27/11/2026. Base `2fad9a3`, branch `feature/inde-p5-single-file`. D2 foi a
 - Núcleo P5: 5/5, incluindo transmissão da preparação, cancelamento, falha, entrega duplicada e destruição enquanto aguarda.
 - Núcleo P5 com Clang ASan/UBSan/LeakSanitizer: 5/5; Clang ThreadSanitizer: 1/1.
 - Novo teste nativo de recuperação: journals quente/frio interrompidos por processo, igualdade dos campos, preservação do formato, ausência de banco novo, recusa de journal órfão, links, WAL e versão desconhecida.
-- Novo roteiro gráfico: 21 verificações aprovadas, incluindo reserva SQLite real durante a espera, escrita recente, cancelamento, nova tentativa, journal frio, interrupção entre escritores e retomada.
+- Novo roteiro gráfico: 23 verificações aprovadas, incluindo reserva SQLite real durante a espera, escrita recente, cancelamento, nova tentativa, journal frio, interrupção entre escritores e retomada.
 - Regressões gráficas: D2, 18 verificações; sessão integral, 14; sessão por blocos, 14; D1, 14. Todos aprovados na revisão final.
 - Suíte geral do editor: 103/103 em 269,317 s, incluindo entrada real, especialidades, objetos, parágrafos vazios e reordenação lateral.
 
-O conjunto nativo final, a demonstração entregue, as transições complementares para pastas e o resultado remoto serão acrescentados ao fechamento das evidências.
+- Conjunto nativo final: 73/73 em 170,29 s, incluindo o novo teste da recuperação privada.
+- Lançador entregue: abriu o aplicativo normal, recebeu Salvar/Encerrar por teclado e teve o arquivo conferido.
+- Transições complementares para pastas: 6 controles gráficos aprovados, em roteiro local separado da CI.
+
+## CI em acompanhamento
+
+Revisão enviada: `ba6b446acb7dae1409ee54699adb24e38d5a3aea`. [Execução D3](https://github.com/Roger-Cardoso/inde/actions/runs/46025120447). O resultado final será registrado depois de todos os trabalhos terminarem. Os resultados locais não são apresentados como resultados remotos.
 
 ## Achado e correção da recuperação
 
@@ -20,6 +26,12 @@ Uma regressão após interrupção deixou o texto principal persistido e um jour
 O caminho novo passa esse banco ao proprietário e ao SQLite, sem apagar o auxiliar manualmente. Um journal quente é recuperado normalmente. Para o auxiliar frio restante, uma transação reconfirma o mesmo marcador privado de formato 1, conferido sob reserva. Todos os campos dos registros são comparados antes/depois. Não há migração do schema canônico 37, resolução automática de pendências ou retenção/descarte de dados.
 
 Os processos de teste são interrompidos antes/depois da sincronização do journal. Isso não é prova de perda elétrica, hardware defeituoso ou todos os sistemas de arquivos.
+
+## Falhas antes e depois dos recibos
+
+Uma falha ainda na preparação nativa mantém a janela aberta e retira o pedido de saída. Não é oferecida uma opção que prometa preservar trabalho possivelmente só em memória. O teste retira temporariamente a permissão de escrita da pasta de dados, tenta encerrar, confere arquivo/texto preservados e volta a salvar depois de restabelecer a permissão.
+
+Falhas posteriores na publicação do `.inde`, com o trabalho privado já confirmado, conservam a opção anterior de encerrar preservando essa área. O roteiro D1 foi reexecutado para verificar essa distinção.
 
 ## Escopo das provas
 
