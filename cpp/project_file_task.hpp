@@ -32,4 +32,20 @@ private:
   struct Impl;
   std::unique_ptr<Impl> impl_;
 };
+// GTK supplies immutable work after its existing native writers have delivered
+// their receipts. Waiting/cancellation never calls back into the UI thread.
+class Preparation {
+public:
+  Preparation();
+  ~Preparation();
+  Preparation(const Preparation &) = delete;
+  Preparation &operator=(const Preparation &) = delete;
+  void provide(ConfirmationTask::Work);
+  void fail(std::exception_ptr);
+  std::int64_t run(OperationControl &);
+
+private:
+  struct Impl;
+  std::unique_ptr<Impl> impl_;
+};
 } // namespace inde::project_file

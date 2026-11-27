@@ -1,7 +1,53 @@
 #include "project_file_task.hpp"
 #include "project_file_session.hpp"
+#include <chrono>
+#include <condition_variable>
+#include <mutex>
 #include <thread>
 namespace inde::project_file {
+struct Preparation::Impl {
+  std::mutex mutex;
+  std::condition_variable changed;
+  bool supplied{};
+  ConfirmationTask::Work work;
+  std::exception_ptr error;
+};
+Preparation::Preparation() : impl_(std::make_unique<Impl>()) {}
+Preparation::~Preparation() = default;
+void Preparation::provide(ConfirmationTask::Work work) {
+  std::lock_guard lock(impl_->mutex);
+  if (impl_->supplied || !work)
+    throw Error("preparation_state", "Preparação já entregue ou vazia.");
+  impl_->work = std::move(work);
+  impl_->supplied = true;
+  impl_->changed.notify_all();
+}
+void Preparation::fail(std::exception_ptr error) {
+  std::lock_guard lock(impl_->mutex);
+  if (impl_->supplied || !error)
+    throw Error("preparation_state", "Resultado de preparação inválido.");
+  impl_->error = std::move(error);
+  impl_->supplied = true;
+  impl_->changed.notify_all();
+}
+std::int64_t Preparation::run(OperationControl &control) {
+  control.checkpoint(OperationPhase::Preparing);
+  ConfirmationTask::Work work;
+  std::exception_ptr error;
+  {
+    std::unique_lock lock(impl_->mutex);
+    while (!impl_->supplied) {
+      control.check();
+      impl_->changed.wait_for(lock, std::chrono::milliseconds(10));
+    }
+    work = std::move(impl_->work);
+    error = impl_->error;
+  }
+  control.check();
+  if (error)
+    std::rethrow_exception(error);
+  return work(control);
+}
 struct ConfirmationTask::Impl {
   OperationControl control;
   ConfirmationResult result;
@@ -41,9 +87,11 @@ ConfirmationTask::~ConfirmationTask() {
   cancel();
   wait();
 }
-bool ConfirmationTask::cancel() noexcept { return impl_->control.cancel(); }
+bool ConfirmationTask::cancel() noexcept {
+  return !ready() && impl_->control.cancel();
+}
 bool ConfirmationTask::cancellable() const noexcept {
-  return impl_->control.cancellable();
+  return !ready() && impl_->control.cancellable();
 }
 OperationPhase ConfirmationTask::phase() const noexcept {
   return impl_->control.phase();

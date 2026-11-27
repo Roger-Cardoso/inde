@@ -27,6 +27,8 @@ namespace inde::ui {
 struct ProjectFileTaskProbe {
   static std::string phase(project_file::OperationPhase p) {
     switch(p) {
+      case project_file::OperationPhase::Preparing:return "preparing";
+      case project_file::OperationPhase::Objects:return "objects";
       case project_file::OperationPhase::Reading:return "reading";
       case project_file::OperationPhase::Checking:return "checking";
       case project_file::OperationPhase::Writing:return "writing";
@@ -91,9 +93,10 @@ int run_object_usage_probe(const Glib::RefPtr<Gtk::Application> &app,
         double tx=0,ty=0;gtk_native_get_surface_transform(native,&tx,&ty);
         state["surface_offset_x"]=tx;state["surface_offset_y"]=ty;
       }
-      V::Array controls;
+      V::Array controls,labels;
       std::function<void(Gtk::Widget &)> visit=[&](Gtk::Widget &w) {
         std::string label;
+        if(auto *message=dynamic_cast<Gtk::Label *>(&w);message && message->get_mapped() && !message->get_text().empty())labels.emplace_back(message->get_text().raw());
         if(auto *b=dynamic_cast<Gtk::Button *>(&w)) {
           label=b->get_label();
           if(label.empty()) {
@@ -199,7 +202,7 @@ int run_object_usage_probe(const Glib::RefPtr<Gtk::Application> &app,
         }
         g_object_unref(top);
       }
-      state["controls"]=std::move(controls);
+      state["controls"]=std::move(controls);state["labels"]=std::move(labels);
       if(auto *objects=locate<inde::ui::ObjectDocumentEditor>(*main)) {
         state["document"]=inde::ui::ObjectNativeProbe::state(*objects).at("source_document");
         state["busy"]=inde::ui::ObjectNativeProbe::busy(*objects);

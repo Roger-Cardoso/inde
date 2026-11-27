@@ -20,6 +20,8 @@ O editor tem uma base nativa aproveitável e recursos reais, mas ainda não ofer
 
 **Aceite D1 e lote D2:** o usuário aprovou D1 e autorizou o próximo da fila como grande lote combinado. [P5-D2](ARQUIVO-UNICO-P5-D2.md) reúne abertura/troca, criação, duas cópias, consulta paginada e restauração do histórico no trabalhador exclusivo. A drenagem e a adoção nativa seguem na interface. A fase 5 e as pendências editoriais continuam abertas.
 
+**Aceite D2 e lote D3:** após aprovação do usuário, [P5-D3](ARQUIVO-UNICO-P5-D3.md) trabalha a preparação nativa: acompanha recuperação/salvamento sem esperar os coordenadores no thread GTK e confirma os objetos por trabalhador exclusivo antes do arquivo. A adoção da folha permanece na interface, com etapa de passagem explícita. Fase 5 e E3–E7 continuam abertas.
+
 ## 1. O resultado a alcançar
 
 Um escritor deve conseguir abrir seu projeto, escrever, inserir uma imagem, criar duas tabelas, colocá-las lado a lado, continuar escrevendo, reorganizar o conjunto, consultar suas marcações, desfazer um engano, salvar, encerrar e retomar sem desmontar o documento nem precisar compreender as divisões internas do programa.

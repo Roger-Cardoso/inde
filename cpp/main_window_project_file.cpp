@@ -145,11 +145,6 @@ void MainWindow::create_project_file_at(const fs::path &path) {
     start_file_confirmation([this, path] { create_project_file_at(path); });
     return;
   }
-  if (!project_file_) {
-    comic_workspace_.save_changes();
-    writing_workspace_.flush_changes();
-    remember_context();
-  }
   auto candidate =
       std::make_shared<std::unique_ptr<project_file::FileSession>>();
   const auto root = project_file::FileSession::default_root();
@@ -186,7 +181,8 @@ void MainWindow::create_project_file_at(const fs::path &path) {
         }
         if (!result.cancelled)
           adopt_project_file(std::move(*candidate));
-      });
+      },
+      !project_file_);
 }
 void MainWindow::open_project_file_at(const fs::path &path, Choice choice) {
   if (!guard_comic_project_change() || modal_host_.has_dialog())
@@ -214,11 +210,6 @@ void MainWindow::open_project_file_at(const fs::path &path, Choice choice) {
           [this, path, choice] { open_project_file_at(path, choice); });
       return;
     }
-    if (!project_file_) {
-      comic_workspace_.save_changes();
-      writing_workspace_.flush_changes();
-      remember_context();
-    }
     auto candidate =
         std::make_shared<std::unique_ptr<project_file::FileSession>>();
     const auto root = project_file::FileSession::default_root();
@@ -236,7 +227,8 @@ void MainWindow::open_project_file_at(const fs::path &path, Choice choice) {
           }
           if (!result.cancelled)
             adopt_project_file(std::move(*candidate));
-        });
+        },
+        !project_file_);
   } catch (const std::exception &e) {
     show_error("Não foi possível abrir o arquivo único", e);
   }
@@ -346,13 +338,6 @@ void MainWindow::copy_project_file_to(const fs::path &path, bool current_only) {
   const auto root = project_file::FileSession::default_root();
   auto candidate =
       std::make_shared<std::unique_ptr<project_file::FileSession>>();
-  if (!session || current_only) {
-    comic_workspace_.save_changes();
-    writing_workspace_.flush_changes();
-    remember_context();
-    if (!session)
-      service_.save();
-  }
   start_file_operation(
       "Criando cópia do projeto",
       [path, source, root, session, current_only, candidate](auto &control) {
@@ -389,7 +374,8 @@ void MainWindow::copy_project_file_to(const fs::path &path, bool current_only) {
         } else
           status_bar_.set_text(
               "Cópia transportável criada; o projeto original continua ativo.");
-      });
+      },
+      !session || current_only, !session);
 }
 void MainWindow::show_file_history() {
   if (!project_file_ || file_task_ || modal_host_.has_dialog())

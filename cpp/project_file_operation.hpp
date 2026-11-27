@@ -3,6 +3,8 @@
 #include <functional>
 namespace inde::project_file {
 enum class OperationPhase {
+  Preparing,
+  Objects,
   Reading,
   Checking,
   Writing,

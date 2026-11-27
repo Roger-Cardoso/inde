@@ -18,7 +18,7 @@
 
 #include <gtkmm.h>
 #include "publication_service.hpp"
-namespace inde::project_file { class FileSession; class ConfirmationTask; class OperationControl; enum class RecoveryChoice; struct ConfirmationResult; struct Revision; }
+namespace inde::project_file { class FileSession; class ConfirmationTask; class OperationControl; class Preparation; enum class RecoveryChoice; struct ConfirmationResult; struct Revision; }
 #include "comic_ui.hpp"
 #include <optional>
 
@@ -56,7 +56,7 @@ private:
   void present_file_history(std::vector<project_file::Revision>);
   void start_file_operation(const std::string &,
       std::function<std::int64_t(project_file::OperationControl &)>,
-      std::function<void(const project_file::ConfirmationResult &)>);
+      std::function<void(const project_file::ConfirmationResult &)>, bool = false, bool = false);
   void create_legacy_project(const std::filesystem::path &, const std::string &);
   void open_legacy_project(const std::filesystem::path &);
   bool finish_project_file_close();
@@ -65,6 +65,8 @@ private:
   void setup_file_confirmation();
   void start_file_confirmation(std::function<void()> = {}, bool = false);
   void present_file_confirmation();
+  void launch_file_task(const std::string &, std::function<std::int64_t(project_file::OperationControl &)>, bool, bool, bool);
+  void advance_file_preparation();
   void cancel_file_confirmation();
   void queue_file_confirmation_exit();
   bool poll_file_confirmation();
@@ -116,6 +118,9 @@ private:
   std::function<void(const std::string &, project_file::OperationControl &)> file_task_observe_;
   std::function<void()> file_task_next_;
   std::function<void(const project_file::ConfirmationResult &)> file_task_done_;
+  std::shared_ptr<project_file::Preparation> file_preparation_;
+  std::function<std::int64_t(project_file::OperationControl &)> file_prepared_work_;
+  bool file_native_started_{}, file_stamp_native_{}, file_finish_announced_{};
   std::string file_task_title_{"Salvando projeto"};
   sigc::connection file_task_poll_, file_task_retry_;
   std::uint64_t file_task_token_{};

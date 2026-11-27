@@ -175,6 +175,11 @@ struct Runtime {
   std::mutex mutex;
   std::unique_ptr<objects::pilot::Session> session;
 };
+struct ProjectSaveReceipt {
+  std::optional<V> state;
+  project::Document document;
+  std::optional<std::map<std::string,std::string>> visible;
+};
 struct Life {
   bool alive = true;
 };
@@ -302,6 +307,7 @@ struct ObjectDocumentEditor::Impl {
   Gtk::ComboBoxText objects, formulas, context;
   std::vector<std::pair<std::string,std::string>> object_choices;
   std::shared_ptr<Runtime> runtime = std::make_shared<Runtime>();
+  std::shared_ptr<ProjectSaveReceipt> project_save_receipt;
   std::shared_ptr<Life> life = std::make_shared<Life>();
   V state;
   std::filesystem::path project_path;
@@ -3391,7 +3397,7 @@ bool ObjectDocumentEditor::can_leave() const {
       return false;
   return !(text_composing && text_composing()) && !impl_->draft &&
          !impl_->busy && !impl_->choosing_image &&
-         impl_->pending_actions == 0 &&
+         impl_->pending_actions == 0 && !impl_->project_save_receipt &&
          text(impl_->state, "persistence_status") != "uncertain";
 }
 bool ObjectDocumentEditor::request_leave(const std::string &action,
@@ -3436,6 +3442,40 @@ bool ObjectDocumentEditor::request_leave(const std::string &action,
   }
   return false;
 }
+std::function<void()> ObjectDocumentEditor::prepare_project_save(
+    const std::filesystem::path &project,const project::Document &document) {
+  if(project!=impl_->project_path)return {};
+  if(!can_leave())throw std::runtime_error("Conclua a edição dos objetos antes de confirmar o projeto.");
+  if(impl_->project_save_receipt)throw std::runtime_error("Confirmação dos objetos já preparada.");
+  auto receipt=std::make_shared<ProjectSaveReceipt>();receipt->document=document;
+  receipt->visible=visible_paragraphs?visible_paragraphs(document):impl_->visible_text;
+  impl_->project_save_receipt=receipt;
+  auto runtime=impl_->runtime;
+  // Only the pure session/runtime, value snapshot and receipt enter the worker.
+  // No widget, service owned by GTK or callback into this editor is captured.
+  return [runtime,receipt,document] {
+    std::lock_guard lock(runtime->mutex);
+    auto &session=*runtime->session;
+    try {
+      session.synchronize_document(document);
+      const auto state=session.request(O{{"op","view"}}).at("state");
+      const auto result=session.request(O{{"op","save"},{"expected",state.at("revision")}});
+      receipt->state=result.at("state");
+      if(!result.at("accepted").as_boolean())
+        throw std::runtime_error("A confirmação dos objetos foi recusada: "+result.at("error").as_string());
+    } catch(...) {
+      const auto error=std::current_exception();
+      try {receipt->state=session.request(O{{"op","view"}}).at("state");}catch(...){}
+      std::rethrow_exception(error);
+    }
+  };
+}
+void ObjectDocumentEditor::finish_project_save() {
+  auto receipt=std::move(impl_->project_save_receipt);
+  if(!receipt || !receipt->state)return;
+  impl_->source_document=receipt->document;impl_->visible_text=std::move(receipt->visible);
+  impl_->state=std::move(*receipt->state);impl_->render();
+}
 void ObjectDocumentEditor::save_for_project(
     const std::filesystem::path &project) {
   if (project != impl_->project_path)
@@ -3462,7 +3502,7 @@ const V &ObjectNativeProbe::state(const ObjectDocumentEditor &w) {
 }
 bool ObjectNativeProbe::busy(const ObjectDocumentEditor &w) {
   return w.impl_->busy || w.impl_->choosing_image ||
-         w.impl_->pending_actions != 0;
+         w.impl_->pending_actions != 0 || bool(w.impl_->project_save_receipt);
 }
 bool ObjectNativeProbe::draft(const ObjectDocumentEditor &w) {
   return w.impl_->draft;

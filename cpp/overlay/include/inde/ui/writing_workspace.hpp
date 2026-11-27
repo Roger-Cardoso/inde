@@ -39,6 +39,9 @@ public:
   void refresh();
   void reset();
   void flush_changes();
+  bool poll_project_flush();
+  std::function<void()> prepare_project_objects();
+  void finish_project_flush();
   void show_document_objects();
   bool objects_can_leave() const;
   bool request_objects_leave(const std::string &, std::function<void()>);
@@ -517,6 +520,7 @@ private:
   std::optional<std::string> selected_entity_reference_id_;
   application::DocumentEditSession edit_session_;
   application::DocumentSaveCoordinator save_worker_;
+  unsigned file_flush_stage_{};
   application::DocumentRecoveryCoordinator recovery_worker_;
   std::string recovery_session_, recovery_error_;
   std::uint64_t saved_revision_{}, checkpoint_submitted_{}, checkpoint_confirmed_{};

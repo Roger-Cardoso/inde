@@ -670,7 +670,7 @@ void MainWindow::create_project() {
     if (response != Gtk::ResponseType::ACCEPT)
       return;
     try {
-      writing_workspace_.flush_changes();
+      if(!project_file_)writing_workspace_.flush_changes();
       remember_context();
       const auto file = dialog->get_file();
       if (!file)
@@ -714,7 +714,7 @@ void MainWindow::open_project_at(const std::filesystem::path &path) {
   if(project_file_ && !file_barrier_ready_){start_file_confirmation([this,path]{open_project_at(path);});return;}
   if(!guard_comic_project_change())return;
   try {
-    writing_workspace_.flush_changes();
+    if(!file_barrier_ready_)writing_workspace_.flush_changes();
     remember_context();
     review_workspace_.reset();
     open_legacy_project(path);
@@ -788,7 +788,7 @@ void MainWindow::close_project() {
   if(modal_host_.has_dialog())return;
   if(project_file_ && !file_barrier_ready_){start_file_confirmation([this]{close_project();});return;}
   try {
-    writing_workspace_.flush_changes();
+    if(!file_barrier_ready_)writing_workspace_.flush_changes();
     remember_context();
     review_workspace_.reset();
     focus_button_.set_active(false);
@@ -831,12 +831,14 @@ void MainWindow::close_project() {
 bool MainWindow::on_close_request() {
   if(file_exit_ready_){file_exit_ready_=false;context_save_.disconnect();maximize_idle_.disconnect();return Gtk::ApplicationWindow::on_close_request();}
   if(file_task_){queue_file_confirmation_exit();return true;}
+  if(preserve_file_work_ && project_file_){context_save_.disconnect();maximize_idle_.disconnect();return Gtk::ApplicationWindow::on_close_request();}
   if(!writing_workspace_.request_objects_leave("encerrar o programa", [this]{ close(); }))return true;
   if(!guard_comic_project_change())return true;
   if(publication_token_ || publication_retry_.connected()){
     if(publication_page_ && !publication_page_->can_leave())return true;
     publication_retry_.disconnect();modal_host_.dismiss_dialog(publication_token_);publication_token_=0;
   }
+  if(project_file_ && !preserve_file_work_){start_file_confirmation({},true);return true;}
   try {
     writing_workspace_.flush_changes();
     remember_context();

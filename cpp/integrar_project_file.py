@@ -6,7 +6,7 @@ def expand(name, text):
         text=text.replace(old,new)
     if name=='include/inde/ui/main_window.hpp':
         replace('  friend struct ComicWorkspaceProbe;', '  friend struct ComicWorkspaceProbe;\n  friend struct ProjectFileTaskProbe;')
-        replace('#include "publication_service.hpp"','#include "publication_service.hpp"\nnamespace inde::project_file { class FileSession; class ConfirmationTask; class OperationControl; enum class RecoveryChoice; struct ConfirmationResult; struct Revision; }')
+        replace('#include "publication_service.hpp"','#include "publication_service.hpp"\nnamespace inde::project_file { class FileSession; class ConfirmationTask; class OperationControl; class Preparation; enum class RecoveryChoice; struct ConfirmationResult; struct Revision; }')
         replace('  void open_project();','''  void open_project();
   void choose_project_file(bool create);
   void open_project_file_at(const std::filesystem::path &, project_file::RecoveryChoice);
@@ -19,7 +19,7 @@ def expand(name, text):
   void present_file_history(std::vector<project_file::Revision>);
   void start_file_operation(const std::string &,
       std::function<std::int64_t(project_file::OperationControl &)>,
-      std::function<void(const project_file::ConfirmationResult &)>);
+      std::function<void(const project_file::ConfirmationResult &)>, bool = false, bool = false);
   void create_legacy_project(const std::filesystem::path &, const std::string &);
   void open_legacy_project(const std::filesystem::path &);
   bool finish_project_file_close();
@@ -28,6 +28,8 @@ def expand(name, text):
   void setup_file_confirmation();
   void start_file_confirmation(std::function<void()> = {}, bool = false);
   void present_file_confirmation();
+  void launch_file_task(const std::string &, std::function<std::int64_t(project_file::OperationControl &)>, bool, bool, bool);
+  void advance_file_preparation();
   void cancel_file_confirmation();
   void queue_file_confirmation_exit();
   bool poll_file_confirmation();
@@ -40,6 +42,9 @@ def expand(name, text):
   std::function<void(const std::string &, project_file::OperationControl &)> file_task_observe_;
   std::function<void()> file_task_next_;
   std::function<void(const project_file::ConfirmationResult &)> file_task_done_;
+  std::shared_ptr<project_file::Preparation> file_preparation_;
+  std::function<std::int64_t(project_file::OperationControl &)> file_prepared_work_;
+  bool file_native_started_{}, file_stamp_native_{}, file_finish_announced_{};
   std::string file_task_title_{"Salvando projeto"};
   sigc::connection file_task_poll_, file_task_retry_;
   std::uint64_t file_task_token_{};
@@ -49,14 +54,21 @@ def expand(name, text):
   Gtk::Label file_task_status_;
   Gtk::Button file_task_cancel_{"Cancelar salvamento"};
   Gtk::Button file_task_exit_button_{"Sair após salvar"};''')
+    elif name=='include/inde/ui/writing_workspace.hpp':
+        replace('  void flush_changes();','''  void flush_changes();
+  bool poll_project_flush();
+  std::function<void()> prepare_project_objects();
+  void finish_project_flush();''')
+        replace('  application::DocumentSaveCoordinator save_worker_;','  application::DocumentSaveCoordinator save_worker_;\n  unsigned file_flush_stage_{};')
     elif name=='src/ui/main_window.cpp':
         replace('if(service_.current() && !modal_host_.has_dialog())remember_context();','if(service_.current() && !file_task_ && !modal_host_.has_dialog())remember_context();')
         replace('  setup_keyboard();','  setup_keyboard();\n  setup_file_confirmation();')
         replace('header_.set_sensitive(!active);','header_.set_sensitive(!active && !file_task_);')
         replace('MainWindow::~MainWindow() {','MainWindow::~MainWindow() { stop_file_confirmation();')
         replace('void MainWindow::save_project() {','void MainWindow::save_project() {\n  if(project_file_){start_file_confirmation();return;}')
-        replace('  if(modal_host_.has_dialog())return;\n  try {\n    writing_workspace_.flush_changes();\n    remember_context();\n    review_workspace_.reset();\n    focus_button_', '  if(modal_host_.has_dialog())return;\n  if(project_file_ && !file_barrier_ready_){start_file_confirmation([this]{close_project();});return;}\n  try {\n    writing_workspace_.flush_changes();\n    remember_context();\n    review_workspace_.reset();\n    focus_button_')
-        replace('bool MainWindow::on_close_request() {', 'bool MainWindow::on_close_request() {\n  if(file_exit_ready_){file_exit_ready_=false;context_save_.disconnect();maximize_idle_.disconnect();return Gtk::ApplicationWindow::on_close_request();}\n  if(file_task_){queue_file_confirmation_exit();return true;}')
+        replace('  if(modal_host_.has_dialog())return;\n  try {\n    writing_workspace_.flush_changes();\n    remember_context();\n    review_workspace_.reset();\n    focus_button_', '  if(modal_host_.has_dialog())return;\n  if(project_file_ && !file_barrier_ready_){start_file_confirmation([this]{close_project();});return;}\n  try {\n    if(!file_barrier_ready_)writing_workspace_.flush_changes();\n    remember_context();\n    review_workspace_.reset();\n    focus_button_')
+        replace('  try {\n    writing_workspace_.flush_changes();\n    remember_context();\n    review_workspace_.reset();\n  } catch (const std::exception &error)', '  if(project_file_ && !preserve_file_work_){start_file_confirmation({},true);return true;}\n  try {\n    writing_workspace_.flush_changes();\n    remember_context();\n    review_workspace_.reset();\n  } catch (const std::exception &error)')
+        replace('bool MainWindow::on_close_request() {', 'bool MainWindow::on_close_request() {\n  if(file_exit_ready_){file_exit_ready_=false;context_save_.disconnect();maximize_idle_.disconnect();return Gtk::ApplicationWindow::on_close_request();}\n  if(file_task_){queue_file_confirmation_exit();return true;}\n  if(preserve_file_work_ && project_file_){context_save_.disconnect();maximize_idle_.disconnect();return Gtk::ApplicationWindow::on_close_request();}')
         replace('#include "inde/ui/main_window.hpp"', '#include "inde/ui/main_window.hpp"\n#include "project_file_session.hpp"')
         replace('void MainWindow::setup_actions() {','''void MainWindow::setup_actions() {
   add_action("new-project-file", [this]{choose_project_file(true);});
@@ -69,6 +81,18 @@ def expand(name, text):
   file->append("Salvar cópia em arquivo único…", "win.copy-project-file");
   file->append("Estados do arquivo único…", "win.project-file-history");''')
         replace('    service_.open(path);','    open_legacy_project(path);')
+        replace('''    writing_workspace_.flush_changes();
+    remember_context();
+    review_workspace_.reset();
+    open_legacy_project(path);''','''    if(!file_barrier_ready_)writing_workspace_.flush_changes();
+    remember_context();
+    review_workspace_.reset();
+    open_legacy_project(path);''')
+        replace('''      writing_workspace_.flush_changes();
+      remember_context();
+      const auto file = dialog->get_file();''','''      if(!project_file_)writing_workspace_.flush_changes();
+      remember_context();
+      const auto file = dialog->get_file();''')
         replace('''      service_.create(path, name.empty() ? "Novo projeto" : name);
       comic_workspace_.reset();
       review_workspace_.reset();

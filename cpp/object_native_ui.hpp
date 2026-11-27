@@ -38,6 +38,8 @@ public:
   std::function<void()> save_document;
   std::function<project::Document(const project::Document &)> commit_document;
   void save_for_project(const std::filesystem::path &);
+  std::function<void()> prepare_project_save(const std::filesystem::path &, const project::Document &);
+  void finish_project_save();
 
 private:
   friend struct ObjectNativeProbe;

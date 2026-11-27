@@ -110,6 +110,76 @@ int main() {
       need(accepted.load() != sealed.load(),
            "Cancellation crossed commit boundary");
     }
+    {
+      auto pending = std::make_shared<Preparation>();
+      std::atomic<bool> ran{};
+      Gate preparing(OperationPhase::Preparing);
+      ConfirmationTask task(
+          [pending](auto &c) { return pending->run(c); },
+          [&](auto phase, auto &c) { preparing.observe(phase, c); });
+      preparing.wait();
+      need(!ran && !task.ready(), "Preparation ran before delivery");
+      pending->provide([&](auto &c) {
+        c.check();
+        ran = true;
+        return 42;
+      });
+      preparing.release();
+      const auto complete = result(task);
+      need(!complete.error && !complete.cancelled && complete.sequence == 42 &&
+               ran,
+           "Preparation receipt not delivered");
+      bool duplicate = false;
+      try {
+        pending->provide([](auto &) -> std::int64_t { return 0; });
+      } catch (const Error &e) {
+        duplicate = e.code == "preparation_state";
+      }
+      need(duplicate, "Preparation accepted duplicate delivery");
+    }
+    {
+      auto pending = std::make_shared<Preparation>();
+      std::atomic<bool> ran{};
+      Gate preparing(OperationPhase::Preparing);
+      ConfirmationTask task(
+          [pending](auto &c) { return pending->run(c); },
+          [&](auto phase, auto &c) { preparing.observe(phase, c); });
+      preparing.wait();
+      need(task.cancel(), "Cancel pending preparation refused");
+      pending->provide([&](auto &) -> std::int64_t {
+        ran = true;
+        return 0;
+      });
+      need(result(task).cancelled && !ran,
+           "Cancelled preparation executed work");
+    }
+    {
+      auto pending = std::make_shared<Preparation>();
+      ConfirmationTask task([pending](auto &c) { return pending->run(c); });
+      pending->fail(std::make_exception_ptr(
+          Error("native_flush_failed", "Preserve the workspace")));
+      const auto failed = result(task);
+      need(bool(failed.error) && !failed.cancelled, "Preparation failure lost");
+      need(!task.cancel() && !task.cancellable(),
+           "Completed failure accepted cancellation");
+      try {
+        std::rethrow_exception(failed.error);
+      } catch (const Error &e) {
+        need(e.code == "native_flush_failed",
+             "Preparation changed native error");
+      }
+    }
+    {
+      auto pending = std::make_shared<Preparation>();
+      Gate preparing(OperationPhase::Preparing);
+      {
+        ConfirmationTask task(
+            [pending](auto &c) { return pending->run(c); },
+            [&](auto phase, auto &c) { preparing.observe(phase, c); });
+        preparing.wait();
+      }
+      // Destruction cancels/joins a waiting task without a GTK callback.
+    }
     for (const auto profile :
          {TransportProfile::WholeFile, TransportProfile::Blocks}) {
       const auto dir = root / (profile == TransportProfile::Blocks ? "blocks"

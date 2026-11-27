@@ -7,6 +7,7 @@
 
 ## Fase 5 antecipada — arquivo de projeto
 
+- [P5-D3: preparação nativa, escritores e objetos](arquitetura/ARQUIVO-UNICO-P5-D3.md), [demonstração](roteiros/ARQUIVO-UNICO-P5-D3.md), [validação](validacao/VALIDACAO-P5-D3.md).
 - [P5-D2: lote combinado de abertura, criação, cópias e histórico](arquitetura/ARQUIVO-UNICO-P5-D2.md), [demonstração](roteiros/ARQUIVO-UNICO-P5-D2.md), [validação](validacao/VALIDACAO-P5-D2.md).
 - [P5-D1: confirmação em segundo plano, cancelamento e saída](arquitetura/ARQUIVO-UNICO-P5-D1.md), [demonstração](roteiros/ARQUIVO-UNICO-P5-D1.md), [validação](validacao/VALIDACAO-P5-D1.md).
 

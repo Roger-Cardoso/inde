@@ -196,12 +196,12 @@ void WritingWorkspace::focus_common_sheet() {
 }
 
 void WritingWorkspace::schedule_common_sheet() {
-  if (!object_editor_ || common_sheet_idle_.connected())
+  if (file_flush_stage_ || !object_editor_ || common_sheet_idle_.connected())
     return;
   // Adopt accepted edits and visibility before GTK lays out the next frame.
   common_sheet_idle_ = Glib::signal_idle().connect([this] {
     common_sheet_idle_.disconnect();
-    if (!object_editor_ || !current_document_)
+    if (file_flush_stage_ || !object_editor_ || !current_document_)
       return false;
     if (composing_input() || !objects_can_leave()) {
       // Input-method ownership stays with GTK; no viewport is replaced while

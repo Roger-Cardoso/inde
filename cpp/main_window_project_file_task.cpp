@@ -98,13 +98,7 @@ void MainWindow::start_file_confirmation(std::function<void()> next,
     });
     g_weak_ref_init(focus.get(),
                     get_focus() ? G_OBJECT(get_focus()->gobj()) : nullptr);
-    comic_workspace_.save_changes();
-    writing_workspace_.flush_changes();
-    remember_context();
-    // Match the previous explicit Save contract; closing does not stamp a
-    // fresh manifest merely because the window/project is being closed.
-    if (!exiting && !next)
-      service_.save();
+    const bool stamp = !exiting && !next;
     file_task_next_ = [this, focus, paragraph_focus, next = std::move(next)] {
       if (paragraph_focus) {
         // Use the editor's guarded focus path. Direct GTK focus can select a
@@ -120,27 +114,16 @@ void MainWindow::start_file_confirmation(std::function<void()> next,
       if (file_barrier_ready_ && !file_task_exit_ && next)
         next();
     };
-    file_task_title_ = "Salvando projeto";
-    file_task_cancel_.set_label("Cancelar salvamento");
-    file_task_exit_ = exiting;
-    file_task_cancelled_ = false;
-    file_task_cancel_.set_sensitive(true);
-    file_task_exit_button_.set_label(exiting ? "Continuar no editor"
-                                             : "Sair ao terminar");
-    file_task_status_.set_text("Conferindo o conteúdo do projeto…");
-    auto observer = file_task_observe_;
-    file_task_ = std::make_shared<project_file::ConfirmationTask>(
-        *project_file_, [observer, title = file_task_title_](
-                            Phase, project_file::OperationControl &control) {
-          if (observer)
-            observer(title, control);
-        });
-    file_task_spinner_.start();
-    present_file_confirmation();
-    root_.set_sensitive(false);
-    file_task_poll_ = Glib::signal_timeout().connect(
-        sigc::track_obj([this] { return poll_file_confirmation(); }, *this),
-        20);
+    auto *session = project_file_.get();
+    launch_file_task(
+        "Salvando projeto",
+        [session](auto &control) {
+          session->save("Confirmar trabalho no editor", &control);
+          control.report(Phase::Finishing);
+          session->finish();
+          return session->baseline().sequence;
+        },
+        true, stamp, exiting);
   } catch (...) {
     stop_file_confirmation();
     file_confirmation_failed(std::current_exception(), exiting);
@@ -148,23 +131,38 @@ void MainWindow::start_file_confirmation(std::function<void()> next,
 }
 void MainWindow::start_file_operation(
     const std::string &title, project_file::ConfirmationTask::Work work,
-    std::function<void(const project_file::ConfirmationResult &)> done) {
+    std::function<void(const project_file::ConfirmationResult &)> done,
+    bool prepare, bool stamp) {
   if (file_task_ || modal_host_.has_dialog())
     return;
+  file_task_next_ = {};
   file_task_done_ = std::move(done);
+  launch_file_task(title, std::move(work), prepare, stamp, false);
+}
+void MainWindow::launch_file_task(const std::string &title,
+                                  project_file::ConfirmationTask::Work work,
+                                  bool prepare, bool stamp, bool exiting) {
   try {
-    // The caller has drained the writers, either through source confirmation
-    // or before capture. Draining again can publish a fresh composition receipt
-    // after that confirmation and make the workspace differ from its baseline.
-    // Automatic context writes stay paused until this worker is collected.
-    file_task_next_ = {};
     file_task_title_ = title;
-    file_task_exit_ = false;
+    file_task_exit_ = exiting;
     file_task_cancelled_ = false;
-    file_task_cancel_.set_label("Cancelar operação");
+    file_task_cancel_.set_label(title == "Salvando projeto"
+                                    ? "Cancelar salvamento"
+                                    : "Cancelar operação");
     file_task_cancel_.set_sensitive(true);
-    file_task_exit_button_.set_label("Sair ao terminar");
-    file_task_status_.set_text("Preparando a operação…");
+    file_task_exit_button_.set_label(exiting ? "Continuar no editor"
+                                             : "Sair ao terminar");
+    file_task_status_.set_text(prepare ? "Preparando a escrita e a recuperação…"
+                                       : "Preparando a operação…");
+    file_native_started_ = false;
+    file_finish_announced_ = false;
+    file_stamp_native_ = stamp;
+    if (prepare) {
+      file_prepared_work_ = std::move(work);
+      file_preparation_ = std::make_shared<project_file::Preparation>();
+      auto preparation = file_preparation_;
+      work = [preparation](auto &control) { return preparation->run(control); };
+    }
     auto observer = file_task_observe_;
     file_task_ = std::make_shared<project_file::ConfirmationTask>(
         std::move(work),
@@ -172,6 +170,7 @@ void MainWindow::start_file_operation(
           if (observer)
             observer(title, control);
         });
+    // Present the pause BEFORE waiting for writers; no nested GTK loop.
     file_task_spinner_.start();
     present_file_confirmation();
     root_.set_sensitive(false);
@@ -179,21 +178,52 @@ void MainWindow::start_file_operation(
         sigc::track_obj([this] { return poll_file_confirmation(); }, *this),
         20);
   } catch (...) {
-    auto completion = std::move(file_task_done_);
+    const auto error = std::current_exception();
+    auto done = std::move(file_task_done_);
     stop_file_confirmation();
     project_file::ConfirmationResult result;
-    result.error = std::current_exception();
-    if (completion)
-      completion(result);
+    result.error = error;
+    if (done)
+      done(result);
     else
-      show_error("Operação do arquivo",
-                 std::runtime_error("Não foi possível iniciar a operação."));
+      file_confirmation_failed(error, exiting);
   }
+}
+void MainWindow::advance_file_preparation() {
+  if (!file_preparation_)
+    return;
+  try {
+    if (!file_native_started_) {
+      comic_workspace_.save_changes();
+      file_native_started_ = true;
+    }
+    if (!writing_workspace_.poll_project_flush())
+      return;
+    auto objects = writing_workspace_.prepare_project_objects();
+    remember_context();
+    if (file_stamp_native_)
+      service_.save();
+    auto work = std::move(file_prepared_work_);
+    file_preparation_->provide(
+        [objects = std::move(objects), work = std::move(work)](auto &control) {
+          if (objects) {
+            control.checkpoint(Phase::Objects);
+            objects();
+            control.check();
+          }
+          return work(control);
+        });
+  } catch (...) {
+    file_preparation_->fail(std::current_exception());
+  }
+  file_preparation_.reset();
 }
 bool MainWindow::poll_file_confirmation() {
   if (!file_task_)
     return false;
   if (!file_task_->ready()) {
+    if (!file_task_cancelled_)
+      advance_file_preparation();
     const bool cancellable = file_task_->cancellable();
     const bool focus_status = !cancellable && file_task_cancel_.is_focus();
     file_task_cancel_.set_sensitive(cancellable);
@@ -201,6 +231,13 @@ bool MainWindow::poll_file_confirmation() {
       file_task_status_.grab_focus();
     if (!file_task_cancelled_) {
       switch (file_task_->phase()) {
+      case Phase::Preparing:
+        file_task_status_.set_text(
+            "Aguardando a escrita e seus pontos de recuperação…");
+        break;
+      case Phase::Objects:
+        file_task_status_.set_text("Conferindo e confirmando os objetos…");
+        break;
       case Phase::Reading:
         file_task_status_.set_text("Lendo o conteúdo do projeto…");
         break;
@@ -223,7 +260,30 @@ bool MainWindow::poll_file_confirmation() {
     }
     return true;
   }
-  const auto result = file_task_->result();
+  if (!file_finish_announced_) {
+    // Leave a main-loop turn for GTK to paint the handoff. The task and pause
+    // still own the session; exit requests remain queued and editing is
+    // blocked.
+    file_finish_announced_ = true;
+    const bool cancelled_focus = file_task_cancel_.is_focus();
+    file_task_cancel_.set_sensitive(false);
+    if (cancelled_focus)
+      file_task_status_.grab_focus();
+    file_task_status_.set_text("Recebendo o resultado e atualizando a folha…");
+    return true;
+  }
+  auto result = file_task_->result();
+  try {
+    if (file_native_started_)
+      writing_workspace_.finish_project_flush();
+  } catch (...) {
+    if (!result.error)
+      result.error = std::current_exception();
+    result.cancelled = false;
+  }
+  file_preparation_.reset();
+  file_prepared_work_ = {};
+  file_native_started_ = false;
   const auto exiting = file_task_exit_;
   auto done = std::move(file_task_done_);
   auto next = std::move(file_task_next_);
@@ -291,6 +351,13 @@ void MainWindow::stop_file_confirmation() {
     file_task_->cancel();
     file_task_->wait();
     file_task_.reset();
+  }
+  file_preparation_.reset();
+  file_prepared_work_ = {};
+  file_native_started_ = false;
+  try {
+    writing_workspace_.finish_project_flush();
+  } catch (...) {
   }
   file_task_next_ = {};
   file_task_done_ = {};
