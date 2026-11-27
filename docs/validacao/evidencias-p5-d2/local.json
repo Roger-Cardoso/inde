@@ -1,0 +1,31 @@
+{
+  "format": "INDE-P5-D2-LOCAL-1",
+  "date": "2026-11-27",
+  "native": {
+    "first_run": 72,
+    "passed": 71,
+    "retest_passed": 1,
+    "retest_target": "inde_object_native_tests"
+  },
+  "editor": {
+    "first_run": 103,
+    "passed": 102,
+    "retest_passed": 1,
+    "retest_target": "test_project_binding_copy_recovery_and_source_conflict"
+  },
+  "p5_gcc": 5,
+  "p5_clang_asan_ubsan_lsan": 5,
+  "p5_clang_tsan": 1,
+  "gtk_operations": 18,
+  "gtk_whole": 14,
+  "gtk_blocks": 14,
+  "gtk_confirmation": 14,
+  "gtk_legacy_supplement": 6,
+  "normal_launcher": true,
+  "main_head": "d41a5c9b9809ca7d40beb6ff10f22f1a5b451e0b",
+  "main_status": "M Preparar-ponte.sh",
+  "main_preexisting_change": "Preparar-ponte.sh: mode 100644 -> 100755; preserved",
+  "frozen_files_verified": 758,
+  "archives_verified": 3,
+  "real_author_projects_used": false
+}

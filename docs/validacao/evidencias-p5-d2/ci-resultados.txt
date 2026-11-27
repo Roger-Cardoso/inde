@@ -1,0 +1,76 @@
+thread-safety — success
+2026-11-27T14:36:15.2181957Z -- The CXX compiler identification is Clang 18.1.3
+2026-11-27T14:36:25.0397796Z Test project /home/runner/work/inde/inde/build-p5-thread
+2026-11-27T14:36:25.9832482Z 1/1 Test #5: inde_project_file_task_tests .....   Passed    0.87 sec
+2026-11-27T14:36:25.9858729Z 100% tests passed, 0 tests failed out of 1
+2026-11-27T14:36:25.9859090Z Total Test time (real) =   0.95 sec
+
+versioned-store (clang++, ON) — success
+2026-11-27T14:36:16.1329558Z -- The CXX compiler identification is Clang 18.1.3
+2026-11-27T14:36:31.6942234Z Test project /home/runner/work/inde/inde/build-p5
+2026-11-27T14:36:32.1358756Z 1/5 Test #1: inde_project_file_tests .................   Passed    0.39 sec
+2026-11-27T14:36:37.3154114Z 2/5 Test #2: inde_project_file_transport_tests .......   Passed    5.18 sec
+2026-11-27T14:36:37.6932225Z 3/5 Test #3: inde_project_file_session_tests .........   Passed    0.38 sec
+2026-11-27T14:36:38.1579184Z 4/5 Test #4: inde_project_file_block_session_tests ...   Passed    0.46 sec
+2026-11-27T14:36:38.9694465Z 5/5 Test #5: inde_project_file_task_tests ............   Passed    0.81 sec
+2026-11-27T14:36:38.9696179Z 100% tests passed, 0 tests failed out of 5
+2026-11-27T14:36:38.9696700Z Total Test time (real) =   7.28 sec
+
+native-project — success
+2026-11-27T14:36:10.1848862Z -- The CXX compiler identification is GNU 13.3.0
+2026-11-27T14:44:34.0015166Z Test project /home/runner/work/inde/inde/build-nativo
+2026-11-27T14:44:34.6296921Z 1/8 Test #17: inde_object_native_tests ................   Passed    0.55 sec
+2026-11-27T14:44:34.8359589Z 2/8 Test #19: inde_project_file_tests .................   Passed    0.20 sec
+2026-11-27T14:44:35.2826743Z 3/8 Test #20: inde_project_file_native_tests ..........   Passed    0.45 sec
+2026-11-27T14:44:36.5040358Z 4/8 Test #21: inde_project_file_transport_tests .......   Passed    1.22 sec
+2026-11-27T14:44:36.5931422Z 5/8 Test #22: inde_project_file_session_tests .........   Passed    0.09 sec
+2026-11-27T14:44:36.6958920Z 6/8 Test #23: inde_project_file_block_session_tests ...   Passed    0.10 sec
+2026-11-27T14:44:37.1827169Z 7/8 Test #24: inde_project_file_block_native_tests ....   Passed    0.49 sec
+2026-11-27T14:44:37.4583352Z 8/8 Test #25: inde_project_file_task_tests ............   Passed    0.28 sec
+2026-11-27T14:44:37.4584839Z 100% tests passed, 0 tests failed out of 8
+2026-11-27T14:44:37.4585129Z Total Test time (real) =   3.46 sec
+2026-11-27T14:44:37.9573525Z P5 native schema37 roundtrip: full Document, PNG, table, equation, divergent row, planning/text link, edition, restoration and original preservation OK
+2026-11-27T14:44:47.2510208Z P5 GTK demo: actual launcher, keyboard Save/Quit, capture and verification OK
+2026-11-27T14:44:47.7968712Z P5 native schema37 roundtrip: full Document, PNG, table, equation, divergent row, planning/text link, edition, restoration and original preservation OK
+2026-11-27T14:45:16.7636259Z P5-B GTK: real Save, history restore, recents, crash recovery and failure-safe normal exit OK
+2026-11-27T14:45:17.3357290Z P5 native schema37 roundtrip: full Document, PNG, table, equation, divergent row, planning/text link, edition, restoration and original preservation OK
+2026-11-27T14:45:45.4105586Z P5-B GTK: real Save, history restore, recents, crash recovery and failure-safe normal exit OK
+2026-11-27T14:45:45.9687954Z P5 native schema37 roundtrip: full Document, PNG, table, equation, divergent row, planning/text link, edition, restoration and original preservation OK
+2026-11-27T14:45:58.4455163Z P5-D GTK: responsive loop, cancel boundary, rollback, queued exit, recovery and project close OK
+2026-11-27T14:45:59.2764178Z P5 native schema37 roundtrip: full Document, PNG, table, equation, divergent row, planning/text link, edition, restoration and original preservation OK
+2026-11-27T14:46:26.9057973Z P5-D2 GTK: combined asynchronous lifecycle, cancellation, pagination, publication and queued quit OK
+2026-11-27T14:46:28.7527029Z P5-C history growth and exact restoration OK
+
+versioned-store (g++, ON) — success
+2026-11-27T14:36:00.5565053Z -- The CXX compiler identification is GNU 13.3.0
+2026-11-27T14:36:25.9253042Z Test project /home/runner/work/inde/inde/build-p5
+2026-11-27T14:36:27.6202270Z 1/5 Test #1: inde_project_file_tests .................   Passed    1.65 sec
+2026-11-27T14:36:38.3258941Z 2/5 Test #2: inde_project_file_transport_tests .......   Passed   10.56 sec
+2026-11-27T14:36:39.0700666Z 3/5 Test #3: inde_project_file_session_tests .........   Passed    0.70 sec
+2026-11-27T14:36:39.8817563Z 4/5 Test #4: inde_project_file_block_session_tests ...   Passed    0.81 sec
+2026-11-27T14:36:41.5114478Z 5/5 Test #5: inde_project_file_task_tests ............   Passed    1.63 sec
+2026-11-27T14:36:41.5117206Z 100% tests passed, 0 tests failed out of 5
+2026-11-27T14:36:41.5117569Z Total Test time (real) =  15.59 sec
+
+versioned-store (g++, OFF) — success
+2026-11-27T14:35:42.7414414Z -- The CXX compiler identification is GNU 13.3.0
+2026-11-27T14:35:54.8317519Z Test project /home/runner/work/inde/inde/build-p5
+2026-11-27T14:35:55.3772709Z 1/5 Test #1: inde_project_file_tests .................   Passed    0.34 sec
+2026-11-27T14:35:57.9163388Z 2/5 Test #2: inde_project_file_transport_tests .......   Passed    2.45 sec
+2026-11-27T14:35:58.2507516Z 3/5 Test #3: inde_project_file_session_tests .........   Passed    0.29 sec
+2026-11-27T14:35:58.4644747Z 4/5 Test #4: inde_project_file_block_session_tests ...   Passed    0.21 sec
+2026-11-27T14:35:59.2452519Z 5/5 Test #5: inde_project_file_task_tests ............   Passed    0.78 sec
+2026-11-27T14:35:59.2455114Z 100% tests passed, 0 tests failed out of 5
+2026-11-27T14:35:59.2455457Z Total Test time (real) =   4.41 sec
+
+versioned-store (clang++, OFF) — success
+2026-11-27T14:36:11.0656876Z -- The CXX compiler identification is Clang 18.1.3
+2026-11-27T14:36:22.3958690Z Test project /home/runner/work/inde/inde/build-p5
+2026-11-27T14:36:22.6203594Z 1/5 Test #1: inde_project_file_tests .................   Passed    0.22 sec
+2026-11-27T14:36:24.0446559Z 2/5 Test #2: inde_project_file_transport_tests .......   Passed    1.42 sec
+2026-11-27T14:36:24.1608724Z 3/5 Test #3: inde_project_file_session_tests .........   Passed    0.12 sec
+2026-11-27T14:36:24.2963489Z 4/5 Test #4: inde_project_file_block_session_tests ...   Passed    0.14 sec
+2026-11-27T14:36:24.6290652Z 5/5 Test #5: inde_project_file_task_tests ............   Passed    0.33 sec
+2026-11-27T14:36:24.6292051Z 100% tests passed, 0 tests failed out of 5
+2026-11-27T14:36:24.6292392Z Total Test time (real) =   2.23 sec
+

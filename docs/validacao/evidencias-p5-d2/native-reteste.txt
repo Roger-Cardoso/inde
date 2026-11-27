@@ -1,0 +1,7 @@
+Test project /home/roger/Documents/Projects/GitHub/INDE/obj01-audit/build-nativo
+    Start 17: inde_object_native_tests
+1/1 Test #17: inde_object_native_tests .........   Passed    2.29 sec
+
+100% tests passed out of 1
+
+Total Test time (real) =   2.30 sec

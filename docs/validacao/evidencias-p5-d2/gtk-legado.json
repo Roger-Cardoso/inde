@@ -1,0 +1,8 @@
+{
+  "open_folder_cancel_preserves_file": true,
+  "open_folder_confirms_source": true,
+  "new_folder_cancel_preserves_binding": true,
+  "new_folder_confirms_source": true,
+  "responsive_source_confirmation": true,
+  "normal_quit": true
+}

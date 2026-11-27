@@ -1,0 +1,20 @@
+{
+  "open_cancel": true,
+  "open_retry": true,
+  "history_cancel": true,
+  "history_pagination": true,
+  "restore_cancel": true,
+  "restore_no_duplicate": true,
+  "copy_cancel": true,
+  "copy_sealed_publication": true,
+  "full_history_preserved": true,
+  "current_copy_cancel": true,
+  "current_copy_adopted": true,
+  "create_cancel": true,
+  "create_adopted": true,
+  "switch_cancel_preserves_binding": true,
+  "switch_adopted": true,
+  "quit_after_history": true,
+  "responsive_loop_all_operations": true,
+  "no_gtk_criticals": true
+}

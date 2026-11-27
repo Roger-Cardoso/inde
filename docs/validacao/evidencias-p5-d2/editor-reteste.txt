@@ -1,0 +1,6 @@
+test_project_binding_copy_recovery_and_source_conflict (test_obj01_native.NativeObjects.test_project_binding_copy_recovery_and_source_conflict) ... ok
+
+----------------------------------------------------------------------
+Ran 1 test in 1.823s
+
+OK
